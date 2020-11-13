@@ -9,8 +9,7 @@ import * as reducers from './reducers';
 //export reducers;
 
 export default [
-  // ### MARC-kentät taulukosta: https://workgroups.helsinki.fi/x/K1ohCw
-  // ### Vertaa Henrin vanhan version taulukkoon?
+  // ###MARC-kentät taulukosta: https://workgroups.helsinki.fi/x/K1ohCw
 
   // Copy duplicate instance of (non-identical) repeatable field from source to base
   copy({tagPattern: /^(013|015|016|017|050|052|055|060|070|080|082|083|084|210|242|246|255|258|321)$/}),
@@ -28,15 +27,27 @@ export default [
   copy({tagPattern: /^(010|018|027|030|031|043|044|049|085|088|222|243|247|263|306|310|357|384|507|514)$/, compareTagsOnly: true}),
 
   // Exclude certain subfields from identicalness comparison
-  // (the fields are considered identical if all other subfields than these are identical)
-  copy({tagPattern: /^036$/, excludeSubfields: ["b", "6", "8"]}),
+  // (the fields are considered identical if all other subfields than excludeSubfields are identical)
+  // copy({tagPattern: /^036$/, excludeSubfields: ["b", "6", "8"]}), // ###vai tarvitaanko lainkaan?
   copy({tagPattern: /^(648|650|651|653|655|656|657)$/, excludeSubfields: ["9"]}),
   // ###Näihin vielä oma sääntö osakentälle 4:
   copy({tagPattern: /^(600|610|611|630|654|662)$/, excludeSubfields: ["9"]}),
 
   // If source field is longer, replace base field with source field
-  select({tagPattern: /^(033|034|039|045|046|257|300)/, equalityFunction = subsetEquality})
+  select({tagPattern: /^(033|034|039|045|046|257|300)/, equalityFunction = subsetEquality}),
+
+  // ### Miten kentän 006 kustomoitu reducer lisätään tähän listaan?
+  copy({tagPattern: /^006$/}) // ???
 ];
 
+// Customized reducers for fields:
+// [006, 007, 008, 040, 042, 240, 250, 260, 264, 347, 500, 506, 830, 856, 995]
 
+// ###Ei käsitellä tässä lainkaan? https://workgroups.helsinki.fi/x/3JwzCQ
+// [000, 020, 022, 024, 028, 036, 100, 110, 111, 130, 245, 300, 588]
+
+/**
+ * Test 01 = 006
+ * Test 02 = 006
+ *  */
 
