@@ -2,12 +2,8 @@
     "leader": "01331com a22003494i 4500",
     "fields": [
         {
-            "tag": "001",
-            "value": "001_source"
-        },
-        {
-            "tag": "006",
-            "value": "006_source"
+            "tag": "007",
+            "value": "cr_007_base"
         },
         {
             "tag": "010",
@@ -16,11 +12,11 @@
             "subfields": [
                 {
                     "code": "a",
-                    "value": "010a_source"
+                    "value": "010a_base"
                 },
                 {
                     "code": "b",
-                    "value": "010b_source"
+                    "value": "010b_base"
                 }
             ]
         }

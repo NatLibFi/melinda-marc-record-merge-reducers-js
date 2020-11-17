@@ -1,9 +1,9 @@
 {
-    "leader": "01331cam a22003494i 4500",
+    "leader": "01331com a22003494i 4500",
     "fields": [
         {
             "tag": "001",
-            "value": "001_base"
+            "value": "001_source"
         },
         {
             "tag": "006",
@@ -16,7 +16,11 @@
             "subfields": [
                 {
                     "code": "a",
-                    "value": "010a_base"
+                    "value": "010a_source"
+                },
+                {
+                    "code": "b",
+                    "value": "010b_source"
                 }
             ]
         }

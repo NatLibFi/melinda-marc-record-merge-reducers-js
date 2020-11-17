@@ -13,6 +13,10 @@
                 {
                     "code": "a",
                     "value": "010a_base"
+                },
+                {
+                    "code": "b",
+                    "value": "010b_base"
                 }
             ]
         }

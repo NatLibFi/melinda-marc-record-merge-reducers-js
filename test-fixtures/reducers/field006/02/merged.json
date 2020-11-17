@@ -7,7 +7,7 @@
         },
         {
             "tag": "006",
-            "value": "006_base"
+            "value": "006_source"
         },
         {
             "tag": "010",
@@ -17,6 +17,10 @@
                 {
                     "code": "a",
                     "value": "010a_base"
+                },
+                {
+                    "code": "b",
+                    "value": "010b_base"
                 }
             ]
         }

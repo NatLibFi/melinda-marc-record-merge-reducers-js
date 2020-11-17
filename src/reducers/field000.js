@@ -9,16 +9,9 @@ export default ({tagPattern}) => (base, source) => {
     debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
     debug(`source.leader: ${source.leader}`);
 
-    const [baseField] = baseFields;
-    const [sourceField] = sourceFields;
-
-    // Test 02: If field 006 is missing in Melinda, copy it from source if Leader 000/06 is 'o' or 'p'
-    if (baseFields.length === 0 && (source.leader[6] === 'o' || source.leader[6] === 'p')) {
-        debug(`Copying field ${sourceField.tag} from source`);
-        base.insertField(sourceField);
-        return base;
+    // Test 01: If Leader 000/06 or 07 is different, do not merge
+    if (source.leader[6] !== base.leader[6] || source.leader[7] !== base.leader[7]) {
+        throw new Error(`Leader 000/06 or 07 is different in base and source`);
     }
-    // Test 03: If field 006 exists in Melinda, keep it
-    debug(`Keeping base field ${baseField.tag}`);
     return base;
   }

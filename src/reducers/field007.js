@@ -12,13 +12,13 @@ export default ({tagPattern}) => (base, source) => {
     const [baseField] = baseFields;
     const [sourceField] = sourceFields;
 
-    // Test 02: If field 006 is missing in Melinda, copy it from source if Leader 000/06 is 'o' or 'p'
-    if (baseFields.length === 0 && (source.leader[6] === 'o' || source.leader[6] === 'p')) {
+    // Test 04: Copy field 007 from source if 007/00-01 are the same in base and source
+    if (baseField.value[0] === sourceField.value[0] && baseField.value[1] === sourceField.value[1]) {
         debug(`Copying field ${sourceField.tag} from source`);
         base.insertField(sourceField);
         return base;
     }
-    // Test 03: If field 006 exists in Melinda, keep it
+    // Test 05: Otherwise keep existing field 007
     debug(`Keeping base field ${baseField.tag}`);
     return base;
   }

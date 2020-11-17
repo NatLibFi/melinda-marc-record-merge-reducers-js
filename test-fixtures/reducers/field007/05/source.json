@@ -2,12 +2,8 @@
     "leader": "01331com a22003494i 4500",
     "fields": [
         {
-            "tag": "001",
-            "value": "001_source"
-        },
-        {
-            "tag": "006",
-            "value": "006_source"
+            "tag": "007",
+            "value": "cs_007_source"
         },
         {
             "tag": "010",

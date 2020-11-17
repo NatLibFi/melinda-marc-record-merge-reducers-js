@@ -3,14 +3,16 @@
  * https://workgroups.helsinki.fi/pages/viewpage.action?pageId=154377436
  *
  */
-import {reducers} from '@natlibfi-marc-record-merge';
+import {reducers} from '@natlibfi/marc-record-merge';
 import * as reducers from './reducers';
+import createDebugLogger from 'debug';
+
 
 //export reducers;
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 export default [
   // ###MARC-kentät taulukosta: https://workgroups.helsinki.fi/x/K1ohCw
-
   // Copy duplicate instance of (non-identical) repeatable field from source to base
   copy({tagPattern: /^(013|015|016|017|050|052|055|060|070|080|082|083|084|210|242|246|255|258|321)$/}),
   copy({tagPattern: /^(336|337|338|340|341|342|343|344|346|348|351|352|355|362|363|365|366|370|377)$/}),
@@ -18,36 +20,29 @@ export default [
   copy({tagPattern: /^(520|521|522|524|525|530|534|535|536|538|541|542|544|545|546|547|550|552|555)$/}),
   copy({tagPattern: /^(556|562|563|565|567|580|581|584|585|586|720|730|740|751|752|753|754|758|760)$/}),
   copy({tagPattern: /^(762|765|767|770|772|775|776|777|780|785|786|787|883|886|887|900|910|911|940)$/}),
-  // ###Näihin vielä oma sääntö osakentälle 4:
-  copy({tagPattern: /^(700|710|711|800|810|811)$/}),
-  // ###Näihin vielä lisättävä ISIL (osakenttä 5):
-  copy({tagPattern: /^(037|540|561)$/}),
+  // ###Erityinen sääntö ISIL-koodin käsittelyyn? (osakenttä 5):
+  copy({tagPattern: /^(037|040|506|540|561)$/}),
 
   // Copy non-repeatable field from source only if missing from base
   copy({tagPattern: /^(010|018|027|030|031|043|044|049|085|088|222|243|247|263|306|310|357|384|507|514)$/, compareTagsOnly: true}),
 
   // Exclude certain subfields from identicalness comparison
   // (the fields are considered identical if all other subfields than excludeSubfields are identical)
-  // copy({tagPattern: /^036$/, excludeSubfields: ["b", "6", "8"]}), // ###vai tarvitaanko lainkaan?
+  copy({tagPattern: /^036$/, excludeSubfields: ["b", "6", "8"]}),
+  copy({tagPattern: /^(700|710|711|800|810|811)$/, excludeSubfields: ["4"]}),
   copy({tagPattern: /^(648|650|651|653|655|656|657)$/, excludeSubfields: ["9"]}),
-  // ###Näihin vielä oma sääntö osakentälle 4:
-  copy({tagPattern: /^(600|610|611|630|654|662)$/, excludeSubfields: ["9"]}),
+  copy({tagPattern: /^(600|610|611|630|654|662)$/, excludeSubfields: ["4", "9"]}),
 
   // If source field is longer, replace base field with source field
   select({tagPattern: /^(033|034|039|045|046|257|300)/, equalityFunction = subsetEquality}),
 
-  // ### Miten kentän 006 kustomoitu reducer lisätään tähän listaan?
-  copy({tagPattern: /^006$/}) // ???
+  // Customized reducers
+  field000({tagPattern: /^000$/}), // Test 01
+  field006({tagPattern: /^006$/}), // Test 02 and 03
+  field007({tagPattern: /^007$/}) // Test 04 and 05
 ];
 
 // Customized reducers for fields:
 // [006, 007, 008, 040, 042, 240, 250, 260, 264, 347, 500, 506, 830, 856, 995]
-
-// ###Ei käsitellä tässä lainkaan? https://workgroups.helsinki.fi/x/3JwzCQ
 // [000, 020, 022, 024, 028, 036, 100, 110, 111, 130, 245, 300, 588]
-
-/**
- * Test 01 = 006
- * Test 02 = 006
- *  */
 
