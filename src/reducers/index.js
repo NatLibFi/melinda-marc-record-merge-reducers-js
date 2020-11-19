@@ -38,8 +38,9 @@ export default [
 
   // Customized reducers
   field000({tagPattern: /^000$/}), // Test 01
-  field006({tagPattern: /^006$/}), // Test 02 and 03
-  field007({tagPattern: /^007$/}) // Test 04 and 05
+  field006({tagPattern: /^006$/}), // Tests 02 and 03
+  field007({tagPattern: /^007$/}), // Tests 04 and 05
+  field008({tagPattern: /^008$/}) // Tests 06, 07, and 08
 ];
 
 // Customized reducers for fields:
