@@ -15,16 +15,12 @@
                     "value": "sidottu"
                 },
                 {
-                    "code": "6",
-                    "value": "joku koodi"
-                },
-                {
                     "code": "q",
                     "value": "Tampereen kaupunginmuseo"
                 },
                 {
-                    "code": "c",
-                    "value": "10 €"
+                    "code": "6",
+                    "value": "006_6_source"
                 }
             ]
         }
