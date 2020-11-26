@@ -9,9 +9,9 @@ export default ({tagPattern}) => (base, source) => {
     debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
     debug(`source.leader: ${source.leader}`);
 
-    // Test 01: If Leader 000/06 or 07 is different, do not merge
+    // Test 01: If LDR 000/06 or 07 is different, do not merge
     if (source.leader[6] !== base.leader[6] || source.leader[7] !== base.leader[7]) {
-        throw new Error(`Leader 000/06 or 07 is different in base and source`);
+        throw new Error(`LDR 000/06 or 07 is different in base and source`);
     }
     return base;
   }

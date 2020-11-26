@@ -2,16 +2,16 @@ import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './field000';
+import createReducer from './leader';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 import createDebugLogger from 'debug';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
-describe('reducers/field000', () => {
+describe('reducers/leader', () => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const {expect} = chai;
-  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'field000');
+  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'leader');
 
   fs.readdirSync(fixturesPath).forEach(subDir => {
     const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON, failWhenNotFound: false});
@@ -24,7 +24,7 @@ describe('reducers/field000', () => {
       const expectedError = getFixture({components: ['expected-error.txt'], reader: READERS.TEXT});
       // Bypass expected error in testing
       if (expectedError) {
-        expect(() => createReducer.to.throw(Error, 'Leader'));
+        expect(() => createReducer.to.throw(Error, 'LDR'));
         return;
       }
       const mergedRecord = createReducer({tagPattern})(base, source);

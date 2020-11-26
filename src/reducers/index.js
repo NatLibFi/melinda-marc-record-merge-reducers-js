@@ -37,7 +37,7 @@ export default [
   select({tagPattern: /^(033|034|039|045|046|257|300)/, equalityFunction = subsetEquality}),
 
   // Customized reducers
-  field000({tagPattern: /^000$/}), // Test 01
+  leader({tagPattern: /^LDR$/}), // Test 01
   field006({tagPattern: /^006$/}), // Tests 02 and 03
   field007({tagPattern: /^007$/}), // Tests 04 and 05
   field008({tagPattern: /^008$/}) // Tests 06, 07, and 08
