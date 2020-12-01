@@ -1,0 +1,82 @@
+{"melindaCustomMergeFields":
+  [
+    {
+      "tag": "leader",
+      "repeatable": "false",
+      "fieldType": "controlField"
+    },
+    {
+      "tag": "006",
+      "repeatable": "true",
+      "fieldType": "controlField"
+    },
+    {
+      "tag": "007",
+      "repeatable": "true",
+      "fieldType": "controlField"
+    },
+    {
+      "tag": "008",
+      "repeatable": "false",
+      "fieldType": "controlField"
+    },
+    {
+      "tag": "020",
+      "repeatable": "true",
+      "fieldType": "dataField",
+      "indicators": {"ind1": "", "ind2": ""},
+      "subfields": [
+        {"code": "a", "repeatable": "false"},
+        {"code": "c", "repeatable": "false"},
+        {"code": "q", "repeatable": "true"},
+        {"code": "z", "repeatable": "true"},
+        {"code": "6", "repeatable": "false"},
+        {"code": "8", "repeatable": "true"}
+      ]
+    },
+    {
+      "tag": "022",
+      "repeatable": "true",
+      "fieldType": "dataField",
+      "indicators": {"ind1": ["", "0", "1"], "ind2": [""]},
+      "subfields": [
+        {"code": "a", "repeatable": "false"},
+        {"code": "l", "repeatable": "false"},
+        {"code": "m", "repeatable": "true"},
+        {"code": "y", "repeatable": "true"},
+        {"code": "z", "repeatable": "true"},
+        {"code": "2", "repeatable": "false"},
+        {"code": "6", "repeatable": "false"},
+        {"code": "8", "repeatable": "true"}
+        ]
+    },
+    {
+      "tag": "024",
+      "repeatable": "true",
+      "fieldType": "dataField",
+      "indicators": {"ind1": ["0", "1", "2", "3", "4", "7", "8"], "ind2": ["0", "1"]},
+      "subfields": [
+        {"code": "a", "repeatable": "false"},
+        {"code": "c", "repeatable": "false"},
+        {"code": "d", "repeatable": "false"},
+        {"code": "q", "repeatable": "true"},
+        {"code": "z", "repeatable": "true"},
+        {"code": "2", "repeatable": "false"},
+        {"code": "8", "repeatable": "true"}
+      ]
+    },
+    {
+      "tag": "028",
+      "repeatable": "true",
+      "fieldType": "dataField",
+      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "6"], "ind2": ["0", "1", "2", "3"]},
+      "subfields": [
+        {"code": "a", "repeatable": "false"},
+        {"code": "b", "repeatable": "false"},
+        {"code": "q", "repeatable": "true"},
+        {"code": "6", "repeatable": "false"},
+        {"code": "8", "repeatable": "true"}
+      ]
+    }
+  ]
+}

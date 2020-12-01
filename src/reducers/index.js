@@ -4,7 +4,7 @@
  *
  */
 import {reducers} from '@natlibfi/marc-record-merge';
-import * as reducers from './reducers';
+import * as localReducers from './reducers';
 import createDebugLogger from 'debug';
 
 
@@ -26,12 +26,12 @@ export default [
   // Copy non-repeatable field from source only if missing from base
   copy({tagPattern: /^(010|018|027|030|031|043|044|049|085|088|222|243|247|263|306|310|357|384|507|514)$/, compareTagsOnly: true}),
 
-  // Exclude certain subfields from identicalness comparison
-  // (the fields are considered identical if all other subfields than excludeSubfields are identical)
+  // Exclude subfields from identicalness comparison and/or drop subfields from source before copying
+  // Fields are considered identical if all other subfields than excludeSubfields are identical
   copy({tagPattern: /^036$/, excludeSubfields: ["b", "6", "8"]}),
-  copy({tagPattern: /^(700|710|711|800|810|811)$/, excludeSubfields: ["4"]}),
-  copy({tagPattern: /^(648|650|651|653|655|656|657)$/, excludeSubfields: ["9"]}),
-  copy({tagPattern: /^(600|610|611|630|654|662)$/, excludeSubfields: ["4", "9"]}),
+  copy({tagPattern: /^(648|653|655|656|657)$/, excludeSubfields: ["9"]}),
+  copy({tagPattern: /^(700|710|711|800|810|811)$/, dropSubfields: ["4"]}),
+  copy({tagPattern: /^(600|610|611|630|650|651|654|662)$/, excludeSubfields: ["9"], dropSubfields: ["4"]}),
 
   // If source field is longer, replace base field with source field
   select({tagPattern: /^(033|034|039|045|046|257|300)/, equalityFunction = subsetEquality}),
@@ -46,4 +46,3 @@ export default [
 // Customized reducers for fields:
 // [006, 007, 008, 040, 042, 240, 250, 260, 264, 347, 500, 506, 830, 856, 995]
 // [000, 020, 022, 024, 028, 036, 100, 110, 111, 130, 245, 300, 588]
-

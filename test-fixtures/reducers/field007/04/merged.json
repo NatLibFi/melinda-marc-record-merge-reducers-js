@@ -1,28 +1,28 @@
 {
-    "leader": "01331com a22003494i 4500",
-    "fields": [
+  "leader": "01331com a22003494i 4500",
+  "fields": [
+    {
+      "tag": "007",
+      "value": "cr_007_base"
+    },
+    {
+      "tag": "007",
+      "value": "cr_007_source"
+    },
+    {
+      "tag": "010",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
         {
-            "tag": "007",
-            "value": "cr_007_base"
+          "code": "a",
+          "value": "010a_base"
         },
         {
-            "tag": "007",
-            "value": "cr_007_source"
-        },
-        {
-            "tag": "010",
-            "ind1": " ",
-            "ind2": " ",
-            "subfields": [
-                {
-                    "code": "a",
-                    "value": "010a_base"
-                },
-                {
-                    "code": "b",
-                    "value": "010b_base"
-                }
-            ]
+          "code": "b",
+          "value": "010b_base"
         }
-    ]
+      ]
+    }
+  ]
 }

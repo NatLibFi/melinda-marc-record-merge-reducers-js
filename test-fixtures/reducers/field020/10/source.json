@@ -1,32 +1,32 @@
 {
-    "leader": "01331cam a22003494i 4500",
-    "fields": [
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
         {
-            "tag": "020",
-            "ind1": " ",
-            "ind2": " ",
-            "subfields": [
-                {
-                    "code": "a",
-                    "value": "951-861-386-9"
-                },
-                {
-                    "code": "q",
-                    "value": "sidottu"
-                },
-                {
-                    "code": "q",
-                    "value": "Tampereen kaupunginmuseo"
-                },
-                {
-                    "code": "c",
-                    "value": "10 €"
-                },
-                {
-                    "code": "6",
-                    "value": "006_6_source"
-                }
-            ]
+          "code": "a",
+          "value": "951-861-386-9"
+        },
+        {
+          "code": "q",
+          "value": "sidottu"
+        },
+        {
+          "code": "q",
+          "value": "Tampereen kaupunginmuseo"
+        },
+        {
+          "code": "c",
+          "value": "10 €"
+        },
+        {
+          "code": "6",
+          "value": "006_6_source"
         }
-    ]
+      ]
+    }
+  ]
 }
