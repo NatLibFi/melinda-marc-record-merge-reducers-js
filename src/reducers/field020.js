@@ -2,6 +2,7 @@ import createDebugLogger from 'debug';
 import {normalizeSync} from 'normalize-diacritics';
 import fs from 'fs';
 import path from 'path';
+import {MarcRecord} from '@natlibfi/marc-record';
 
 export default ({tagPattern}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -17,56 +18,66 @@ export default ({tagPattern}) => (base, source) => {
   const [sourceField] = sourceFields;
   debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
 
+  // Normalize subfield values
+  const baseSubsNormalized = baseField.subfields
+    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+  const sourceSubsNormalized = sourceField.subfields
+    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+
   // Get field details from melindaCustomMergeFields.json
-  const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaFieldsTest.json'), 'utf8'));
-  //debug(`melindaFieldsTest: ${JSON.stringify(melindaFields, undefined, 2)}`);
-  const [fieldDetails] = melindaFields.melindaCustomMergeFields.filter(field => field.tag === baseField.tag);
+  const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
+  const [fieldDetails] = melindaFields.fields.filter(field => field.tag === baseField.tag);
   debug(`fieldDetails: ${JSON.stringify(fieldDetails, undefined, 2)}`);
-  const fieldSubs = fieldDetails.subfields;
-  debug(`fieldSubs: ${JSON.stringify(fieldSubs, undefined, 2)}`);
-  const allSubs = fieldSubs.map(sub => sub.code);
-  debug(`allSubs: ${JSON.stringify(allSubs, undefined, 2)}`);
-  const repSubs = fieldSubs.filter(sub => sub.repeatable === "true");
-  debug(`repSubs: ${JSON.stringify(repSubs, undefined, 2)}`);
+  // Data to compare between base and source fields
+  const dataToCompare = {
+    tag: baseField.tag,
+    repSubs: fieldDetails.subfields.filter(sub => sub.repeatable === "true").map(sub => sub.code),
+    nonRepSubs: fieldDetails.subfields.filter(sub => sub.repeatable === "false").map(sub => sub.code)
+  };
+  debug(`dataToCompare: ${JSON.stringify(dataToCompare, undefined, 2)}`);
 
+  //checkSubfields(dataToCompare);
 
-  function getFieldDetails(melindaFields) {
+  // First check whether the values of significant subfields are equal
+  // If not, fields do not match and records are not merged at all
+  // 020: $a (ISBN)
+
+  const significantCodes = ["a"];
+  compareSignificantSubs(significantCodes);
+
+  function compareSignificantSubs(codes) {
+    const compareBaseValues = baseSubsNormalized
+      .filter(subfield => codes.indexOf(subfield.code) !== -1)
+      .map(sub => sub.value);
+    const compareSourceValues = sourceSubsNormalized
+      .filter(subfield => codes.indexOf(subfield.code) !== -1)
+      .map(sub => sub.value);
+    debug(`compareBaseValues: ${JSON.stringify(compareBaseValues, undefined, 2)}`);
+    debug(`compareSourceValues: ${JSON.stringify(compareSourceValues, undefined, 2)}`);
+
+    // Test 09: If values of significant subfields are different, do not merge
+    if (arrayEquals(compareBaseValues, compareSourceValues) === false) {
+      debug(`Field ${baseField.tag} does not match in base and source, records not merged`);
+      return base;
+    }
+
+    // https://masteringjs.io/tutorials/fundamentals/compare-arrays
+    function arrayEquals(a, b) {
+      return Array.isArray(a) &&
+        Array.isArray(b) &&
+        a.length === b.length &&
+        a.every((val, index) => val === b[index]);
+    }
   }
-
-
-  // Define field tag and codes of subfields to compare for identical values
-/*  const fieldTag = baseField.tag;
-  debug(`fieldTag: ${fieldTag}`);
-  const subCodesToCompare = ["a"];
-
-  const baseSubsToCompare = baseField.subfields.filter(subfield => subCodesToCompare.indexOf(subfield.code) !== -1);
-  debug(`baseSubsToCompare: ${JSON.stringify(baseSubsToCompare, undefined, 2)}`);
-  const sourceSubsToCompare = sourceField.subfields.filter(subfield => subCodesToCompare.indexOf(subfield.code) !== -1);
-  debug(`sourceSubsToCompare: ${JSON.stringify(sourceSubsToCompare, undefined, 2)}`);
-
-  // Normalize one subfield for comparison (in this case ‡a, ISBN)
-
-/*    const baseSubA = normalizeSubfieldValue(baseField.subfields.filter(subfield => subfield.code === "a")[0].value);
-  debug(`baseSubA: ${JSON.stringify(baseSubA, undefined, 2)}`);
-  const sourceSubA = normalizeSubfieldValue(sourceField.subfields.filter(subfield => subfield.code === "a")[0].value);
-  debug(`sourceSubA: ${JSON.stringify(sourceSubA, undefined, 2)}`);*/
-
-  /*select
-  strictEquality mutta vain osakentälle ‡a?
-verrataan osakenttää ‡a > jos eri, tietueita ei yhdistetä vaan tuodaan se uutena
+  /* verrataan osakenttää ‡a > jos eri, tietueita ei yhdistetä vaan tuodaan se uutena
   väliviivoja ei huomioida vertailussa
-  Niin, että kun se $a matchaa, niin pidetään pohja(Melinda) -tietueen kenttä, ja lisätään siihen lähdetietueesta ne osakentät mitä siinä ei oo
+  Niin, että kun se $a matchaa, niin pidetään pohja(Melinda) -tietueen kenttä,
+  ja lisätään siihen lähdetietueesta ne osakentät mitä siinä ei oo
   Niitä pitää ehkä myös järjestää jotenkin fiksusti
   sit jos se $a ei matchaa, niin tuodaan koko kenttä
   */
-  // Test 09: If subfield a is different, copy field from source to base as new field
-/*  if (baseSubA !== sourceSubA) {
-      debug(`Copying source field ${sourceField.tag} to base`);
-      base.insertField(sourceField);
-      return base;
-  }
 
-  // Test 10: If subfield a is the same, copy other subfields from source field to base field
+  // Test 10: If values of significant subfields are equal, copy other subfields from source field to base field
   // - subfields to drop (c)
   // - non-repeatable subfields (6) only if missing from base
   // - repeatable subfields (q, z, 8) as additional copies
@@ -85,10 +96,21 @@ verrataan osakenttää ‡a > jos eri, tietueita ei yhdistetä vaan tuodaan se u
   // 3. samalle funktiolle myös repsubs, laitetaan boolean "isrepeatable", voi laittaa multipleita
   // lopuksi poistetaan tuplasisältöiset
   // otetaan vastaan tag mitä kenttää käsitellään, niin voi käyttää useammassa kentässä
-  // Esa Koskela slackissa, IT-tukihenkilö
-  // katso branchisäännöt
 
-  if (baseSubA === sourceSubA) {
+  /*function checkSubfields(obj) {
+    /*const testTag = obj.tag;
+    const testRepSubs = obj.repSubs;
+    const testNonRepSubs = obj.nonRepSubs;
+    debug(`testTag: ${testTag}`);
+    debug(`testRepSubs: ${JSON.stringify(testRepSubs, undefined, 2)}`);
+    debug(`testNonRepSubs: ${JSON.stringify(testNonRepSubs, undefined, 2)}`);*/
+    /*base.containsFieldWithValue(obj.tag, [{code: 'a'}]);
+    return;
+  }
+
+
+
+  if (baseSubValue === sourceSubValue) {
       const dropSubs = ["c"];
       const nonRepSubs = ["6"];
       const repSubs = ["q", "z", "8"];
@@ -117,31 +139,32 @@ verrataan osakenttää ‡a > jos eri, tietueita ei yhdistetä vaan tuodaan se u
       //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
 
-      /*const addSubfieldsToBaseField = baseField.subfields.push(sourceField => sourceField.subfields.code.indexOf(repSubsSource) !== -1);
+      const addSubfieldsToBaseField = baseField.subfields.push(sourceField => sourceField.subfields.code.indexOf(repSubsSource) !== -1);
       //const modifieldBaseField = baseField;
-      debug(`baseField: ${JSON.stringify(baseField, undefined, 2)}`);*/
+      debug(`baseField: ${JSON.stringify(baseField, undefined, 2)}`);
 
-/*      return base;
-  }*/
-
-  function normalizeSubfieldValue(value) {
-      // Regexp options: g: global search, u: unicode
-      const punctuation = /[.,\-/#!$%^&*;:{}=_`~()[\]]/gu;
-      return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
+      return base;
   }
 
-  /*function isIdenticalSubfield(baseSub) {
+
+  function isIdenticalSubfield(baseSub) {
       const normBaseSub = normalizeSubfield(baseSub);
       return sourceField.subfields.some(sourceSub => {
         const normSourceSub = normalizeSubfield(sourceSub);
         return normSourceSub === normBaseSub;
       });
-  }*/
+  }
 
   function replaceBasefieldWithModifiedBasefield(base) {
       const index = base.fields.findIndex(field => field === baseField);
       base.fields.splice(index, 1, modifiedBasefield); // eslint-disable-line functional/immutable-data
       debug(`Adding new subfields to ${baseField.tag}`);
       return base;
+  }*/
+  function normalizeSubfieldValue(value) {
+    // Regexp options: g: global search, u: unicode
+    const punctuation = /[.,\-/#!$%^&*;:{}=_`~()[\]]/gu;
+    return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
   }
+  return base; // testing
 }

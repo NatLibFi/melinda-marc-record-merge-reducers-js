@@ -40,7 +40,8 @@ export default [
   leader({tagPattern: /^LDR$/}), // Test 01
   field006({tagPattern: /^006$/}), // Tests 02 and 03
   field007({tagPattern: /^007$/}), // Tests 04 and 05
-  field008({tagPattern: /^008$/}) // Tests 06, 07, and 08
+  field008({tagPattern: /^008$/}), // Tests 06, 07, and 08
+  field020({tagPattern: /^020$/}) // Tests 09 and 10
 ];
 
 // Customized reducers for fields:
