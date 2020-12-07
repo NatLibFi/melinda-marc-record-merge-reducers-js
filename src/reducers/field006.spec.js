@@ -4,12 +4,10 @@ import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './field006';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
-import createDebugLogger from 'debug';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/field006', () => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'field006');
 
@@ -18,10 +16,8 @@ describe('reducers/field006', () => {
     it(subDir, () => {
       const base = new MarcRecord(getFixture('base.json'));
       const source = new MarcRecord(getFixture('source.json'));
-      const tagPattern = new RegExp(getFixture({components: ['tagPattern.txt'], reader: READERS.TEXT}), 'u');
-      debug(`tagPattern: ${tagPattern}`);
       const expectedRecord = getFixture('merged.json');
-      const mergedRecord = createReducer({tagPattern})(base, source);
+      const mergedRecord = createReducer()(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
     });
   });

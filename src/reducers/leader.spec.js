@@ -18,8 +18,6 @@ describe('reducers/leader', () => {
     it(subDir, () => {
       const base = new MarcRecord(getFixture('base.json'));
       const source = new MarcRecord(getFixture('source.json'));
-      const tagPattern = new RegExp(getFixture({components: ['tagPattern.txt'], reader: READERS.TEXT}), 'u');
-      debug(`tagPattern: ${tagPattern}`);
       const expectedRecord = getFixture('merged.json');
       const expectedError = getFixture({components: ['expected-error.txt'], reader: READERS.TEXT});
       // Bypass expected error in testing
@@ -27,7 +25,7 @@ describe('reducers/leader', () => {
         expect(() => createReducer.to.throw(Error, 'LDR'));
         return;
       }
-      const mergedRecord = createReducer({tagPattern})(base, source);
+      const mergedRecord = createReducer()(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
     });
   });

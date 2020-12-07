@@ -1,9 +1,9 @@
 import createDebugLogger from 'debug';
 
-export default ({tagPattern}) => (base, source) => {
+export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(tagPattern);
-  const sourceFields = source.get(tagPattern);
+  const baseFields = base.get(/^008$/);
+  const sourceFields = source.get(/^008$/);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   debug(`base.leader: ${base.leader}`);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
@@ -57,7 +57,6 @@ export default ({tagPattern}) => (base, source) => {
       {levelCode: 9, levelValue: "u"},
       {levelCode: 10, levelValue: "z"}
     ];
-    const fieldLevelCode = (levelCodes.filter(level => level.levelValue === field.leader[17]))[0].levelCode;
-    return fieldLevelCode;
+    return (levelCodes.filter(level => level.levelValue === field.leader[17]))[0].levelCode;
   }
 }
