@@ -38,7 +38,10 @@
 	"dependencies": {
 		"@natlibfi/marc-record": "^6.1.1",
 		"@natlibfi/marc-record-merge": "^6.0.0-beta.1",
+		"@natlibfi/marc-record-validate": "^6.0.1",
+		"@natlibfi/marc-record-validators-melinda": "^8.2.5",
 		"debug": "^4.2.0",
+		"lodash.isequal": "^4.5.0",
 		"marc-record-js": "^0.3.2",
 		"normalize-diacritics": "^2.12.0"
 	},
@@ -62,7 +65,9 @@
 		"nyc": "^15.1.0"
 	},
 	"peerDependencies": {
-		"@natlibfi/marc-record-merge": "^1.0.0-beta.1"
+		"@natlibfi/marc-record-merge": "^6.0.0-beta.1",
+		"@natlibfi/marc-record-validate": "^5.0.0",
+		"typescript": "3.7.0-beta"
 	},
 	"eslintConfig": {
 		"extends": "@natlibfi/melinda-backend"

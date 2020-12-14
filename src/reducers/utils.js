@@ -27,21 +27,47 @@ export function normalizeSubfieldValue(value) {
   return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
 }
 
-// Compare normalized subfield values between base and source fields
-// Note: Subfields must be in the same order in base and source
-// ###Jos tämä ei riitä, pitää keksiä funktio joka vertaa jokaista sourceValues-arvoa jokaiseen baseValues-arvoon ja katsoo löytyykö jostain kohtaa matchi
-export function compareSubValues(codes, baseField, sourceField) {
-  const baseValues = normalizeSubfields(baseField)
+export function strictEquality(subfieldA, subfieldB) {
+  return subfieldA.code === subfieldB.code &&
+  subfieldA.value === subfieldB.value;
+}
+
+// Compare base and source subfield arrays defined by the given array of subfield codes
+// Returns true if all compared subfields are equal
+export function compareSubfields(baseField, sourceField, codes) {
+  const baseSubsNormToCompare = baseField.subfields
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
-    .map(sub => sub.value);
-  const sourceValues = normalizeSubfields(sourceField)
+    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+  const sourceSubsNormToCompare = sourceField.subfields
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
-    .map(sub => sub.value);
-  debug(`baseValues: ${JSON.stringify(baseValues, undefined, 2)}`);
-  debug(`sourceValues: ${JSON.stringify(sourceValues, undefined, 2)}`);
-  if (sourceValues.every((val, index) => val === baseValues[index]) === true) {
+    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+  debug(`baseSubsNormToCompare: ${JSON.stringify(baseSubsNormToCompare, undefined, 2)}`);
+  debug(`sourceSubsNormToCompare: ${JSON.stringify(sourceSubsNormToCompare, undefined, 2)}`);
+
+  // Returns the base subfields for which a matching source subfield is found
+  const equalSubfieldsBase = baseSubsNormToCompare
+    .filter(baseSubfield => sourceSubsNormToCompare
+      .some(sourceSubfield => strictEquality(baseSubfield, sourceSubfield)));
+  debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
+
+  // Returns the source subfields for which a matching base subfield is found
+  const equalSubfieldsSource = sourceSubsNormToCompare
+    .filter(sourceSubfield => baseSubsNormToCompare
+      .some(baseSubfield => strictEquality(sourceSubfield, baseSubfield)));
+  debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
+
+  debug(`baseSubsNormToCompare.length: ${baseSubsNormToCompare.length}`);
+  debug(`sourceSubsNormToCompare.length: ${sourceSubsNormToCompare.length}`);
+  debug(`equalSubfieldsBase.length: ${equalSubfieldsBase.length}`);
+  debug(`equalSubfieldsSource.length: ${equalSubfieldsSource.length}`);
+
+  // If the same number of matches is found both ways, all compared subfields are equal
+  if (baseSubsNormToCompare.length === equalSubfieldsBase.length
+      && sourceSubsNormToCompare.length === equalSubfieldsSource.length) {
+    debug(`All compared subfields are equal`);
     return true;
   }
+  debug(`All compared subfields are not equal`);
   return false;
 }
 
