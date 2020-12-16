@@ -34,36 +34,29 @@ export function strictEquality(subfieldA, subfieldB) {
 
 // Compare base and source subfield arrays defined by the given array of subfield codes
 // Returns true if all compared subfields are equal
-export function compareSubfields(baseField, sourceField, codes) {
-  const baseSubsNormComp = baseField.subfields
+export function compareAllSubfields(baseField, sourceField, codes) {
+  const baseSubsNorm = baseField.subfields
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
     .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
-  const sourceSubsNormComp = sourceField.subfields
+  const sourceSubsNorm = sourceField.subfields
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
     .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
-  debug(`baseSubsNormComp: ${JSON.stringify(baseSubsNormComp, undefined, 2)}`);
-  debug(`sourceSubsNormComp: ${JSON.stringify(sourceSubsNormComp, undefined, 2)}`);
 
-  // Returns the base subfields for which a matching source subfield is found
-  const equalSubfieldsBase = baseSubsNormComp
-    .filter(baseSubfield => sourceSubsNormComp
-      .some(sourceSubfield => strictEquality(baseSubfield, sourceSubfield)));
-  debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
+  // Get base subfields for which a matching source subfield is found
+  const equalSubfieldsBase = baseSubsNorm
+    .filter(baseSub => sourceSubsNorm
+      .some(sourceSub => strictEquality(baseSub, sourceSub)));
+  //debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
 
-  // Returns the source subfields for which a matching base subfield is found
-  const equalSubfieldsSource = sourceSubsNormComp
-    .filter(sourceSubfield => baseSubsNormComp
-      .some(baseSubfield => strictEquality(sourceSubfield, baseSubfield)));
-  debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
-
-  debug(`baseSubsNormComp.length: ${baseSubsNormComp.length}`);
-  debug(`sourceSubsNormComp.length: ${sourceSubsNormComp.length}`);
-  debug(`equalSubfieldsBase.length: ${equalSubfieldsBase.length}`);
-  debug(`equalSubfieldsSource.length: ${equalSubfieldsSource.length}`);
+  // Get source subfields for which a matching base subfield is found
+  const equalSubfieldsSource = sourceSubsNorm
+    .filter(sourceSub => baseSubsNorm
+      .some(baseSub => strictEquality(sourceSub, baseSub)));
+  //debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
   // If the same number of matches is found both ways, all compared subfields are equal
-  if (baseSubsNormComp.length === equalSubfieldsBase.length
-      && sourceSubsNormComp.length === equalSubfieldsSource.length
+  if (baseSubsNorm.length === equalSubfieldsBase.length
+      && sourceSubsNorm.length === equalSubfieldsSource.length
       && equalSubfieldsBase.length === equalSubfieldsSource.length) {
     debug(`All compared subfields are equal`);
     return true;
@@ -72,10 +65,76 @@ export function compareSubfields(baseField, sourceField, codes) {
   return false;
 }
 
+// Get non-repeatable subfields to copy from source to base
+// Filter out dropped and identifying subfields
+export function getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes) {
+  const nonRepSubs = sourceField.subfields
+  .filter(subfield => nonRepCodes
+    .filter(code => (dropCodes.indexOf(code) === -1) && (idCodes.indexOf(code) === -1)).indexOf(subfield.code) !== -1);
+  return nonRepSubs;
+}
+
+// Get repeatable subfields to copy from source to base
+export function getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes) {
+  // First get all repeatable subfields and filter out dropped and identifying subfields
+  const allRepSubs = sourceField.subfields
+    .filter(subfield => repCodes
+      .filter(code => (dropCodes.indexOf(code) === -1) && (idCodes.indexOf(code) === -1)).indexOf(subfield.code) !== -1);
+  debug(`allRepSubs: ${JSON.stringify(allRepSubs, undefined, 2)}`);
+
+  // Add temporary index property to array elements (subfields) to identify them even when values are normalized
+  const allIndexedRepSubs = allRepSubs
+    .map(sub => ({...sub, index: allRepSubs.indexOf(sub)}));
+  debug(`allIndexedRepSubs: ${JSON.stringify(allIndexedRepSubs, undefined, 2)}`);
+
+  // Then filter out duplicates already existing in base
+  const nonDupRepSubsNorm = filterDuplicates(baseField, allIndexedRepSubs);
+  debug(`nonDupRepSubsNorm: ${JSON.stringify(nonDupRepSubsNorm, undefined, 2)}`);
+
+  function filterDuplicates(baseField, allIndexedRepSubs) {
+    // Normalize subfield values for comparison
+    const allIndexedRepSubsNorm = allIndexedRepSubs
+      .map(({code, value, index}) => ({code, value: normalizeSubfieldValue(value), index}));
+    debug(`allIndexedRepSubsNorm: ${JSON.stringify(allIndexedRepSubsNorm, undefined, 2)}`);
+
+    function strictEquality(subfieldA, subfieldB) {
+      return subfieldA.code === subfieldB.code &&
+      subfieldA.value === subfieldB.value;
+    }
+    // Get base subfields for which a matching subfield in source (allIndexedRepSubsNorm) is found
+    const dupRepSubsBase = normalizeSubfields(baseField)
+      .filter(baseSub => allIndexedRepSubsNorm
+        .some(sourceSub => strictEquality(baseSub, sourceSub)));
+    debug(`Match in source found for normalized base subfield: ${JSON.stringify(dupRepSubsBase, undefined, 2)}`);
+
+    // Get source subfields for which a matching base subfield is found
+    const dupRepSubsSource = allIndexedRepSubsNorm
+      .filter(sourceSub => normalizeSubfields(baseField)
+        .some(baseSub => strictEquality(sourceSub, baseSub)));
+    debug(`Match in base found for normalized source subfield: ${JSON.stringify(dupRepSubsSource, undefined, 2)}`);
+
+    // Returns an array of non-duplicate repeatable subfields from source
+    // Subfields still include the temporary index property and values are normalized
+    const result = allIndexedRepSubsNorm
+      .filter(sub => dupRepSubsSource
+          .map(sub => sub.value).indexOf(sub.value) === -1);
+    return result;
+  }
+
+  // Get the non-normalized versions of non-duplicate repeatable subfields
+  // Drop the temporary index property
+  const nonDupRepSubsToCopy = allIndexedRepSubs
+    .filter(sub => nonDupRepSubsNorm
+      .map(sub => sub.index).indexOf(sub.index) !== -1)
+        .map(({code, value, index}) => ({code, value}));
+  debug(`nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
+  return nonDupRepSubsToCopy;
+}
+
 // Modify existing base field in Melinda
 export function modifyBaseField(base, baseField, modifiedField) {
   const index = base.fields.findIndex(field => field === baseField);
   base.fields.splice(index, 1, modifiedField); // eslint-disable-line functional/immutable-data
-  debug(`Adding new subfields to ${baseField.tag}`);
+  debug(`Adding new subfields to field ${baseField.tag}`);
   return base;
 }

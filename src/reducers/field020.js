@@ -1,7 +1,15 @@
 import createDebugLogger from 'debug';
 //import {createValidator} from './validate.js';
 
-import {normalizeSubfields, normalizeSubfieldValue, getFieldSpecs, compareSubfields, modifyBaseField} from './utils.js';
+import {
+//  normalizeSubfields,
+//  normalizeSubfieldValue,
+  getFieldSpecs,
+  compareAllSubfields,
+  getNonRepSubs,
+  getRepSubs,
+  modifyBaseField
+} from './utils.js';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -18,143 +26,51 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
   debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
 
-  // Get field specs from melindaCustomMergeFields.json
-  const fieldSpecs = getFieldSpecs(baseField.tag);
-  debug(`fieldSpecs: ${JSON.stringify(fieldSpecs, undefined, 2)}`);
-  // Get arrays of repeatable and non-repeatable subfield codes from field specs
-  const repCodes = fieldSpecs.subfields.filter(sub => sub.repeatable === "true").map(sub => sub.code);
+  // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
+  const repCodes = getFieldSpecs(baseField.tag).subfields
+    .filter(sub => sub.repeatable === "true")
+    .map(sub => sub.code);
   debug(`repCodes: ${JSON.stringify(repCodes, undefined, 2)}`);
-  const nonRepCodes = fieldSpecs.subfields.filter(sub => sub.repeatable === "false").map(sub => sub.code);
+  const nonRepCodes = getFieldSpecs(baseField.tag).subfields
+    .filter(sub => sub.repeatable === "false")
+    .map(sub => sub.code);
   debug(`nonRepCodes: ${JSON.stringify(nonRepCodes, undefined, 2)}`);
 
-  // Normalize subfield values for comparison
-  const baseSubsNormalized = normalizeSubfields(baseField);
-  debug(`baseSubsNormalized: ${JSON.stringify(baseSubsNormalized, undefined, 2)}`);
-  const sourceSubsNormalized = normalizeSubfields(sourceField);
-  debug(`sourceSubsNormalized: ${JSON.stringify(sourceSubsNormalized, undefined, 2)}`);
-
   // First check whether the values of identifying subfields are equal
-  // Identifying subfields define the uniqueness of the record: if they are different, the records cannot be merged
+  // Identifying subfields define the uniqueness of the record
+  // If they are different, the records cannot be merged
   // 020: $a (ISBN)
   const idCodes = ["a"];
 
   // Test 09: If values are not equal, fields do not match and records are not merged at all
-  if (compareSubfields(baseField, sourceField, idCodes) === false) {
+  if (compareAllSubfields(baseField, sourceField, idCodes) === false) {
     debug(`Field ${baseField.tag}: One or more subfields (${idCodes}) not matching in base and source, records not merged`);
     return base;
   }
   // If values are equal, continue with the merge process
   debug(`Field ${baseField.tag}: Matching subfields (${idCodes}) found in source and base, continuing with merge`);
 
-  // Test 10: If values of identifying subfields are equal, copy other subfields from source field to base field
-  // - If there are subfields to drop, do that first (020: $c)
-  // - non-repeatable subfields are copied only if missing from base
-  // (020: $a, $c, $6 --> but $a was already checked and $c dropped, so only $6 is copied here)
-  // - repeatable subfields are copied as additional instances (020: $q, $z, $8)
-
+  // Test 10:
+  // If values of identifying subfields are equal, copy other subfields from source field to base field
+  // If there are subfields to drop, do that first (020: $c)
   const dropCodes = ["c"];
-  // It doesn't matter whether dropCodes or idCodes are repeatable or not:
-  // Both cases are checked and if these subs are found, they are not copied
 
-  const nonreps = getNonRepSubsToCopy(sourceField, nonRepCodes, dropCodes, idCodes);
-  debug(`getNonRepSubsToCopy: ${JSON.stringify(getNonRepSubsToCopy(sourceField, nonRepCodes, dropCodes, idCodes), undefined, 2)}`);
+  // Non-repeatable subfields are copied only if missing from base
+  // 020: $a, $c, $6 (but $a was already checked and $c dropped, so only $6 is copied here)
+  const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
+  debug(`nonRepSubsToCopy: ${JSON.stringify(nonRepSubsToCopy, undefined, 2)}`);
 
-  // Non-repeatable subfields to copy: filter out dropped and identifying subfields
-  function getNonRepSubsToCopy(sourceField, nonRepCodes, dropCodes, idCodes) {
-    const nonRepSubsToCopy = sourceField.subfields
-    .filter(subfield => nonRepCodes
-      .filter(code => (dropCodes.indexOf(code) === -1) && (idCodes.indexOf(code) === -1)).indexOf(subfield.code) !== -1);
-    return nonRepSubsToCopy;
-  }
-
-  const reps = getRepSubsToCopy(sourceField, repCodes, dropCodes, idCodes);
-  debug(`getRepSubsToCopy: ${JSON.stringify(getRepSubsToCopy(sourceField, repCodes, dropCodes, idCodes), undefined, 2)}`);
-
-  // Repeatable subfields to copy: first filter out dropped and identifying subfields
-  function getRepSubsToCopy(sourceField, repCodes, dropCodes, idCodes) {
-    const repSubsToCopy = sourceField.subfields
-    .filter(subfield => repCodes
-      .filter(code => (dropCodes.indexOf(code) === -1) && (idCodes.indexOf(code) === -1)).indexOf(subfield.code) !== -1);
-    return repSubsToCopy;
-  }
-
-  // Add temporary index property to array elements (subfield objects) to identify them even when values are normalized
-  const indexedRepSubsToCopy = reps.map(sub => ({...sub, index: reps.indexOf(sub)}));
-  debug(`indexedRepSubsToCopy: ${JSON.stringify(indexedRepSubsToCopy, undefined, 2)}`);
-  /*
-  [
-    {
-      "code": "q",
-      "value": "sidottu",
-      "index": 0
-    },
-    {
-      "code": "q",
-      "value": "Tampereen kaupunginmuseo",
-      "index": 1
-    }
-  ]
-  */
-
-  // Then filter out duplicates already existing in base
-
-  /*const repSubsBase = baseField.subfields.filter(subfield => repCodes
-    .filter(code => (dropCodes.indexOf(code) === -1) && (idCodes.indexOf(code) === -1)).indexOf(subfield.code) !== -1);
-  debug(`repSubsBase: ${JSON.stringify(repSubsBase, undefined, 2)}`);*/
-
-  /*const nonRepSubsToCopyNormalized = getNonRepSubsToCopy(sourceField, nonRepCodes, dropCodes, idCodes)
-  .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
-  debug(`nonRepSubsToCopyNormalized: ${JSON.stringify(nonRepSubsToCopyNormalized, undefined, 2)}`);*/
-
-/*  const repSubsToCopyNormalized = getRepSubsToCopy(sourceField, repCodes, dropCodes, idCodes)
-  .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
-  debug(`repSubsToCopyNormalized: ${JSON.stringify(repSubsToCopyNormalized, undefined, 2)}`);*/
-
-  const repSubsToCopyNormalized = indexedRepSubsToCopy
-  .map(({code, value, index}) => ({code, value: normalizeSubfieldValue(value), index}));
-  debug(`repSubsToCopyNormalized: ${JSON.stringify(repSubsToCopyNormalized, undefined, 2)}`);
-
-  function strictEquality(subfieldA, subfieldB) {
-    return subfieldA.code === subfieldB.code &&
-    subfieldA.value === subfieldB.value;
-  }
-
-  // Returns the base subfields for which a matching source subfield (repSubsToCopyNormalized) is found
-  const duplicateRepSubsBase = baseSubsNormalized
-    .filter(baseSubfield => repSubsToCopyNormalized
-      .some(sourceSubfield => strictEquality(baseSubfield, sourceSubfield)));
-  debug(`Match in source found for normalized base subfield: ${JSON.stringify(duplicateRepSubsBase, undefined, 2)}`);
-
-  // Returns the source (repSubsToCopyNormalized) subfields for which a matching base subfield is found
-  const duplicateRepSubsSource = repSubsToCopyNormalized
-    .filter(sourceSubfield => baseSubsNormalized
-      .some(baseSubfield => strictEquality(sourceSubfield, baseSubfield)));
-  debug(`Match in base found for normalized source subfield: ${JSON.stringify(duplicateRepSubsSource, undefined, 2)}`);
-
-  // Get normalized non-duplicate repeatable subfields from source
-  const nonDupRepSubsNormalized = repSubsToCopyNormalized
-    .filter(sub => duplicateRepSubsSource
-        .map(sub => sub.value).indexOf(sub.value) === -1);
-  debug(`nonDupRepSubsNormalized: ${JSON.stringify(nonDupRepSubsNormalized, undefined, 2)}`);
-
-  // Get the non-normalized versions of non-duplicate repeatable subfields to copy to base
-  const indexedNonDupRepSubsToCopy = indexedRepSubsToCopy
-    .filter(sub => nonDupRepSubsNormalized
-      .map(sub => sub.index).indexOf(sub.index) !== -1);
-  debug(`indexedNonDupRepSubsToCopy: ${JSON.stringify(indexedNonDupRepSubsToCopy, undefined, 2)}`);
-
-  // Drop the temporary index property
-  const nonDupRepSubsToCopy = indexedNonDupRepSubsToCopy
-    .map(({code, value, index}) => ({code, value}));
-  debug(`nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
+  // Repeatable subfields are copied if the value is different
+  // 020: $q, $z, $8
+  const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
+  debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
   // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
   // Note: Copied subfields are added to the end of the subfields array, so the order may not be correct according to MARC
+  // ### Onko joku työkalu jolla voi järjestää fieldin sisällä subfieldit MARCin mukaiseen oikeaan järjestykseen?
   const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
-  debug(`modifiedBaseField: ${JSON.stringify(modifiedBaseField, undefined, 2)}`);
-  modifiedBaseField.subfields.push(...nonDupRepSubsToCopy, ...nonreps);
+  modifiedBaseField.subfields.push(...repSubsToCopy, ...nonRepSubsToCopy);
   debug(`modifiedBaseField.subfields: ${JSON.stringify(modifiedBaseField.subfields, undefined, 2)}`);
-
   modifyBaseField(base, baseField, modifiedBaseField);
   return base;
 }
