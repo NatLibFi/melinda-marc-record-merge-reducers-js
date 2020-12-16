@@ -1,5 +1,4 @@
 import createDebugLogger from 'debug';
-import cloneDeep from 'lodash';
 //import {createValidator} from './validate.js';
 
 import {normalizeSubfields, normalizeSubfieldValue, getFieldSpecs, compareSubfields, modifyBaseField} from './utils.js';
@@ -50,9 +49,8 @@ export default () => (base, source) => {
   // Test 10: If values of identifying subfields are equal, copy other subfields from source field to base field
   // - If there are subfields to drop, do that first (020: $c)
   // - non-repeatable subfields are copied only if missing from base
-  // (020: $a, $c, $6 --> but $a was already checked and $c dropped, so only $6 copied here)
+  // (020: $a, $c, $6 --> but $a was already checked and $c dropped, so only $6 is copied here)
   // - repeatable subfields are copied as additional instances (020: $q, $z, $8)
-  // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
 
   const dropCodes = ["c"];
   // It doesn't matter whether dropCodes or idCodes are repeatable or not:
@@ -80,6 +78,24 @@ export default () => (base, source) => {
     return repSubsToCopy;
   }
 
+  // Add temporary index property to array elements (subfield objects) to identify them even when values are normalized
+  const indexedRepSubsToCopy = reps.map(sub => ({...sub, index: reps.indexOf(sub)}));
+  debug(`indexedRepSubsToCopy: ${JSON.stringify(indexedRepSubsToCopy, undefined, 2)}`);
+  /*
+  [
+    {
+      "code": "q",
+      "value": "sidottu",
+      "index": 0
+    },
+    {
+      "code": "q",
+      "value": "Tampereen kaupunginmuseo",
+      "index": 1
+    }
+  ]
+  */
+
   // Then filter out duplicates already existing in base
 
   /*const repSubsBase = baseField.subfields.filter(subfield => repCodes
@@ -90,8 +106,12 @@ export default () => (base, source) => {
   .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
   debug(`nonRepSubsToCopyNormalized: ${JSON.stringify(nonRepSubsToCopyNormalized, undefined, 2)}`);*/
 
-  const repSubsToCopyNormalized = getRepSubsToCopy(sourceField, repCodes, dropCodes, idCodes)
+/*  const repSubsToCopyNormalized = getRepSubsToCopy(sourceField, repCodes, dropCodes, idCodes)
   .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+  debug(`repSubsToCopyNormalized: ${JSON.stringify(repSubsToCopyNormalized, undefined, 2)}`);*/
+
+  const repSubsToCopyNormalized = indexedRepSubsToCopy
+  .map(({code, value, index}) => ({code, value: normalizeSubfieldValue(value), index}));
   debug(`repSubsToCopyNormalized: ${JSON.stringify(repSubsToCopyNormalized, undefined, 2)}`);
 
   function strictEquality(subfieldA, subfieldB) {
@@ -111,24 +131,30 @@ export default () => (base, source) => {
       .some(baseSubfield => strictEquality(sourceSubfield, baseSubfield)));
   debug(`Match in base found for normalized source subfield: ${JSON.stringify(duplicateRepSubsSource, undefined, 2)}`);
 
-  // Get non-duplicate repeatable subfields from source
-  const nonDupRepSubsToCopy = repSubsToCopyNormalized
+  // Get normalized non-duplicate repeatable subfields from source
+  const nonDupRepSubsNormalized = repSubsToCopyNormalized
     .filter(sub => duplicateRepSubsSource
         .map(sub => sub.value).indexOf(sub.value) === -1);
-  debug(`nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
-  // Normalized subfield values have to be used for comparison
-  // But how to get the non-normalized values back at this point for the subfields that will be copied to base? (nonDupRepSubsToCopy)
+  debug(`nonDupRepSubsNormalized: ${JSON.stringify(nonDupRepSubsNormalized, undefined, 2)}`);
 
-  // Create a modified version of base, add the subfields there and replace original base with modified base
-  // Koska marc-recordiin ei voi lisätä pelkkiä subfieldejä, pitää lisätä kokonainen field (record.insertField)
-  const modifiedBaseField = cloneDeep(baseField);
+  // Get the non-normalized versions of non-duplicate repeatable subfields to copy to base
+  const indexedNonDupRepSubsToCopy = indexedRepSubsToCopy
+    .filter(sub => nonDupRepSubsNormalized
+      .map(sub => sub.index).indexOf(sub.index) !== -1);
+  debug(`indexedNonDupRepSubsToCopy: ${JSON.stringify(indexedNonDupRepSubsToCopy, undefined, 2)}`);
+
+  // Drop the temporary index property
+  const nonDupRepSubsToCopy = indexedNonDupRepSubsToCopy
+    .map(({code, value, index}) => ({code, value}));
+  debug(`nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
+
+  // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
+  // Note: Copied subfields are added to the end of the subfields array, so the order may not be correct according to MARC
+  const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
   debug(`modifiedBaseField: ${JSON.stringify(modifiedBaseField, undefined, 2)}`);
-  //modifiedBaseField.subfields.push(nonreps, reps);
-  debug(`baseField.subfields: ${JSON.stringify(baseField.subfields, undefined, 2)}`);
-  // miksi tästä tulee undefined vaikka pitäisi tulla sama kuin baseField.subfields?
+  modifiedBaseField.subfields.push(...nonDupRepSubsToCopy, ...nonreps);
   debug(`modifiedBaseField.subfields: ${JSON.stringify(modifiedBaseField.subfields, undefined, 2)}`);
 
-  //modifyBaseField(base, baseField, modifiedBaseField);
-
-  return base; // testing
+  modifyBaseField(base, baseField, modifiedBaseField);
+  return base;
 }

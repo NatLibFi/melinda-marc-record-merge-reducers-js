@@ -35,35 +35,36 @@ export function strictEquality(subfieldA, subfieldB) {
 // Compare base and source subfield arrays defined by the given array of subfield codes
 // Returns true if all compared subfields are equal
 export function compareSubfields(baseField, sourceField, codes) {
-  const baseSubsNormToCompare = baseField.subfields
+  const baseSubsNormComp = baseField.subfields
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
     .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
-  const sourceSubsNormToCompare = sourceField.subfields
+  const sourceSubsNormComp = sourceField.subfields
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
     .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
-  debug(`baseSubsNormToCompare: ${JSON.stringify(baseSubsNormToCompare, undefined, 2)}`);
-  debug(`sourceSubsNormToCompare: ${JSON.stringify(sourceSubsNormToCompare, undefined, 2)}`);
+  debug(`baseSubsNormComp: ${JSON.stringify(baseSubsNormComp, undefined, 2)}`);
+  debug(`sourceSubsNormComp: ${JSON.stringify(sourceSubsNormComp, undefined, 2)}`);
 
   // Returns the base subfields for which a matching source subfield is found
-  const equalSubfieldsBase = baseSubsNormToCompare
-    .filter(baseSubfield => sourceSubsNormToCompare
+  const equalSubfieldsBase = baseSubsNormComp
+    .filter(baseSubfield => sourceSubsNormComp
       .some(sourceSubfield => strictEquality(baseSubfield, sourceSubfield)));
   debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
 
   // Returns the source subfields for which a matching base subfield is found
-  const equalSubfieldsSource = sourceSubsNormToCompare
-    .filter(sourceSubfield => baseSubsNormToCompare
+  const equalSubfieldsSource = sourceSubsNormComp
+    .filter(sourceSubfield => baseSubsNormComp
       .some(baseSubfield => strictEquality(sourceSubfield, baseSubfield)));
   debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
-  debug(`baseSubsNormToCompare.length: ${baseSubsNormToCompare.length}`);
-  debug(`sourceSubsNormToCompare.length: ${sourceSubsNormToCompare.length}`);
+  debug(`baseSubsNormComp.length: ${baseSubsNormComp.length}`);
+  debug(`sourceSubsNormComp.length: ${sourceSubsNormComp.length}`);
   debug(`equalSubfieldsBase.length: ${equalSubfieldsBase.length}`);
   debug(`equalSubfieldsSource.length: ${equalSubfieldsSource.length}`);
 
   // If the same number of matches is found both ways, all compared subfields are equal
-  if (baseSubsNormToCompare.length === equalSubfieldsBase.length
-      && sourceSubsNormToCompare.length === equalSubfieldsSource.length) {
+  if (baseSubsNormComp.length === equalSubfieldsBase.length
+      && sourceSubsNormComp.length === equalSubfieldsSource.length
+      && equalSubfieldsBase.length === equalSubfieldsSource.length) {
     debug(`All compared subfields are equal`);
     return true;
   }

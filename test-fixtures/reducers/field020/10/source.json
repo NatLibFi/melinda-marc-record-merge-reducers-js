@@ -12,11 +12,15 @@
         },
         {
           "code": "q",
-          "value": "Sidottu"
+          "value": "sidottu"
         },
         {
           "code": "q",
           "value": "Tampereen kaupunginmuseo"
+        },
+        {
+          "code": "q",
+          "value": "Joku TestiArvo &!Tähän"
         },
         {
           "code": "c",
