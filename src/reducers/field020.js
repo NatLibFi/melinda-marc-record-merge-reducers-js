@@ -1,24 +1,18 @@
 import createDebugLogger from 'debug';
-//import {createValidator} from './validate.js';
 
 import {
-//  normalizeSubfields,
-//  normalizeSubfieldValue,
   getFieldSpecs,
   compareAllSubfields,
   getNonRepSubs,
   getRepSubs,
-  modifyBaseField
+  modifyBaseField,
+  sortSubfields
 } from './utils.js';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(/^020$/);
   const sourceFields = source.get(/^020$/);
-
-  /*const validator = await createValidator();
-  const validationResults = await validator(source, true, true);
-  debug(`validationResults: ${JSON.stringify(validationResults, undefined, 2)}`);*/
 
   // Since the arrays contain only one field at a time, they can be destructured into objects
   const [baseField] = baseFields;
@@ -66,11 +60,20 @@ export default () => (base, source) => {
   debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
   // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
-  // Note: Copied subfields are added to the end of the subfields array, so the order may not be correct according to MARC
-  // ### Onko joku työkalu jolla voi järjestää fieldin sisällä subfieldit MARCin mukaiseen oikeaan järjestykseen?
+  // Subfields in the modified base field are arranged in alphabetical order (a-z, 0-9)
+  // This does not always correspond to correct MARC order
   const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
-  modifiedBaseField.subfields.push(...repSubsToCopy, ...nonRepSubsToCopy);
+  const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
+  modifiedBaseField.subfields = sortedSubfields;
   debug(`modifiedBaseField.subfields: ${JSON.stringify(modifiedBaseField.subfields, undefined, 2)}`);
   modifyBaseField(base, baseField, modifiedBaseField);
+
+  // Toiminto jolla otetaan alkuperäisen kentän subfieldit järjestyksessä arrayihin
+
   return base;
 }
+
+// Entä kun kenttä 020 on toistettava, miten otetaan huomioon useampi kpl samaa kenttää samassa tietueessa?
+// Tännekin samantyyppinen compareTagsOnly-toiminto kuin copyssä, kun on toistettavia ja ei-toistettavia kenttiä?
+// Uusi testi jossa on useampi 020
+

@@ -138,3 +138,47 @@ export function modifyBaseField(base, baseField, modifiedField) {
   debug(`Adding new subfields to field ${baseField.tag}`);
   return base;
 }
+
+// Sort subfields by default in alphabetical order (a-z, 0-9)
+const sortOrder = [
+  'a','b','c','d','e',
+  'f','g','h','i','j',
+  'k','l','m','n','o',
+  'p','q','r','s','t',
+  'u','v','w','x','y','z',
+  '0','1','2','3','4',
+  '5','6','7','8','9'];
+export function sortSubfields(subfields, order = sortOrder, orderedSubfields = []) {
+  debug(`Order: ${order}`); // testing
+  const [filter, ...rest] = order;
+  if (filter === undefined) {
+    return [...orderedSubfields, ...subfields];
+  }
+  debug(`Subfield sort filter: ${JSON.stringify(filter)}`);
+  debug(`Subfields: ${JSON.stringify(subfields)}`);
+  debug(`Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
+
+  const filtered = subfields.filter(sub => {
+    if (typeof filter === 'string') {
+        return sub.code === filter;
+    }
+    return;
+//    return sub.code === filter && new RegExp(filter, 'u').test(sub.value);
+//    return sub.code === filter.code && new RegExp(filter.value, 'u').test(sub.value);
+  });
+  debug(`Filtered subfields: ${JSON.stringify(filtered, undefined, 2)}`);
+
+  const restSubfields = subfields.filter(sub => {
+    if (typeof filter === 'string') {
+      return sub.code !== filter;
+    }
+    return;
+//    return sub.code !== filter && !new RegExp(filter, 'u').test(sub.value);
+//    return sub.code !== filter.code && !new RegExp(filter.value, 'u').test(sub.value);
+  });
+if (filtered.length > 0) {
+    return sortSubfields(restSubfields, rest, [...orderedSubfields, ...filtered]);
+  }
+  return sortSubfields(restSubfields, rest, orderedSubfields);
+}
+
