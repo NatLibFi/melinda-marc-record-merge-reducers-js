@@ -25,15 +25,11 @@
 * for the JavaScript code in this file.
 *
 */
-import createDebugLogger from 'debug';
-import {normalizeSync} from 'normalize-diacritics';
-import merge from '@natlibfi/marc-record-merge';
-import reducers from './reducers';
+import {MarcRecord} from '@natlibfi/marc-record';
+import * as Reducers from './reducers';
 
-const mergedRecord = await merge(record1, record2,  reducers);
-
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-const normalizeTest = normalizeSync('åéäè');
-debug(`testataan: ${normalizeTest}`);
-
-// export all reducers here
+export {Reducers};
+export default ({base, source, reducers}) => {
+  const sourceRecord = MarcRecord.clone(source);
+  return reducers.reduce((baseRecord, reducer) => reducer(baseRecord, sourceRecord), MarcRecord.clone(base));
+};

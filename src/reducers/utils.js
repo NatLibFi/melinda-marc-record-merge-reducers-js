@@ -13,6 +13,16 @@ export function getFieldSpecs(fieldTag) {
   const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === fieldTag);
   return fieldSpecs;
 }
+export function getRepCodes(fieldTag) {
+  return getFieldSpecs(fieldTag).subfields
+        .filter(sub => sub.repeatable === "true")
+        .map(sub => sub.code);
+}
+export function getNonRepCodes(fieldTag) {
+  return getFieldSpecs(fieldTag).subfields
+        .filter(sub => sub.repeatable === "false")
+        .map(sub => sub.code);
+}
 
 // Normalize subfield values for comparison, returns array of normalized subfields
 export function normalizeSubfields(field) {
@@ -58,10 +68,10 @@ export function compareAllSubfields(baseField, sourceField, codes) {
   if (baseSubsNorm.length === equalSubfieldsBase.length
       && sourceSubsNorm.length === equalSubfieldsSource.length
       && equalSubfieldsBase.length === equalSubfieldsSource.length) {
-    debug(`All compared subfields are equal`);
+    debug(`All compared subfields (${codes}) are equal`);
     return true;
   }
-  debug(`All compared subfields are not equal`);
+  debug(`All compared subfields (${codes}) are not equal`);
   return false;
 }
 
@@ -163,8 +173,6 @@ export function sortSubfields(subfields, order = sortOrder, orderedSubfields = [
         return sub.code === filter;
     }
     return;
-//    return sub.code === filter && new RegExp(filter, 'u').test(sub.value);
-//    return sub.code === filter.code && new RegExp(filter.value, 'u').test(sub.value);
   });
   debug(`Filtered subfields: ${JSON.stringify(filtered, undefined, 2)}`);
 
@@ -173,8 +181,6 @@ export function sortSubfields(subfields, order = sortOrder, orderedSubfields = [
       return sub.code !== filter;
     }
     return;
-//    return sub.code !== filter && !new RegExp(filter, 'u').test(sub.value);
-//    return sub.code !== filter.code && !new RegExp(filter.value, 'u').test(sub.value);
   });
 if (filtered.length > 0) {
     return sortSubfields(restSubfields, rest, [...orderedSubfields, ...filtered]);
