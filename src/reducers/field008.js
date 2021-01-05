@@ -26,8 +26,8 @@ export default () => (base, source) => {
   if (basePubYear === sourcePubYear && baseCountry === sourceCountry && baseLanguage === sourceLanguage) {
     // Test 06: Source level code is better (smaller number)
     if (getLevelCode(source) < getLevelCode(base)) {
-        replaceBasefieldWithSourcefield(base)
-        return base;
+      replaceBasefieldWithSourcefield(base);
+      return base;
     }
   }
   // Test 07: Base level code is better or the same
@@ -46,17 +46,17 @@ export default () => (base, source) => {
     // Melinda record level codes from highest (1) to lowest (10)
     // levelValue = value of 000/17
     const levelCodes = [
-      {levelCode: 1, levelValue: "#"},
-      {levelCode: 2, levelValue: "4"},
-      {levelCode: 3, levelValue: "1"},
-      {levelCode: 4, levelValue: "5"},
-      {levelCode: 5, levelValue: "7"},
-      {levelCode: 6, levelValue: "2"},
-      {levelCode: 7, levelValue: "3"},
-      {levelCode: 8, levelValue: "8"},
-      {levelCode: 9, levelValue: "u"},
-      {levelCode: 10, levelValue: "z"}
+      {levelCode: 1, levelValue: '#'},
+      {levelCode: 2, levelValue: '4'},
+      {levelCode: 3, levelValue: '1'},
+      {levelCode: 4, levelValue: '5'},
+      {levelCode: 5, levelValue: '7'},
+      {levelCode: 6, levelValue: '2'},
+      {levelCode: 7, levelValue: '3'},
+      {levelCode: 8, levelValue: '8'},
+      {levelCode: 9, levelValue: 'u'},
+      {levelCode: 10, levelValue: 'z'}
     ];
-    return (levelCodes.filter(level => level.levelValue === field.leader[17]))[0].levelCode;
+    return levelCodes.filter(level => level.levelValue === field.leader[17])[0].levelCode;
   }
-}
+};

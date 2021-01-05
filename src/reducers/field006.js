@@ -21,4 +21,4 @@ export default () => (base, source) => {
   // Test 03: If field 006 exists in Melinda, keep it
   debug(`Keeping base field ${baseField.tag}`);
   return base;
-}
+};

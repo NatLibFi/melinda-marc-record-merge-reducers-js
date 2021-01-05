@@ -2,8 +2,8 @@ import createDebugLogger from 'debug';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(/^LDR$/);
-  const sourceFields = source.get(/^LDR$/);
+  const baseFields = base.get(/^LDR$/u);
+  const sourceFields = source.get(/^LDR$/u);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   debug(`base.leader: ${base.leader}`);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
@@ -14,4 +14,4 @@ export default () => (base, source) => {
     throw new Error(`LDR 000/06 or 07 is different in base and source`);
   }
   return base;
-  }
+};

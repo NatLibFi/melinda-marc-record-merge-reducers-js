@@ -15,19 +15,19 @@ export function getFieldSpecs(fieldTag) {
 }
 export function getRepCodes(fieldTag) {
   return getFieldSpecs(fieldTag).subfields
-        .filter(sub => sub.repeatable === "true")
-        .map(sub => sub.code);
+    .filter(sub => sub.repeatable === 'true')
+    .map(sub => sub.code);
 }
 export function getNonRepCodes(fieldTag) {
   return getFieldSpecs(fieldTag).subfields
-        .filter(sub => sub.repeatable === "false")
-        .map(sub => sub.code);
+    .filter(sub => sub.repeatable === 'false')
+    .map(sub => sub.code);
 }
 
 // Normalize subfield values for comparison, returns array of normalized subfields
 export function normalizeSubfields(field) {
   const normalizedSubs = field.subfields
-  .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
   return normalizedSubs;
 }
 
@@ -65,9 +65,9 @@ export function compareAllSubfields(baseField, sourceField, codes) {
   //debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
   // If the same number of matches is found both ways, all compared subfields are equal
-  if (baseSubsNorm.length === equalSubfieldsBase.length
-      && sourceSubsNorm.length === equalSubfieldsSource.length
-      && equalSubfieldsBase.length === equalSubfieldsSource.length) {
+  if (baseSubsNorm.length === equalSubfieldsBase.length &&
+      sourceSubsNorm.length === equalSubfieldsSource.length &&
+      equalSubfieldsBase.length === equalSubfieldsSource.length) {
     debug(`All compared subfields (${codes}) are equal`);
     return true;
   }
@@ -79,8 +79,8 @@ export function compareAllSubfields(baseField, sourceField, codes) {
 // Filter out dropped and identifying subfields
 export function getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes) {
   const nonRepSubs = sourceField.subfields
-  .filter(subfield => nonRepCodes
-    .filter(code => (dropCodes.indexOf(code) === -1) && (idCodes.indexOf(code) === -1)).indexOf(subfield.code) !== -1);
+    .filter(subfield => nonRepCodes
+      .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
   return nonRepSubs;
 }
 
@@ -89,7 +89,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes)
   // First get all repeatable subfields and filter out dropped and identifying subfields
   const allRepSubs = sourceField.subfields
     .filter(subfield => repCodes
-      .filter(code => (dropCodes.indexOf(code) === -1) && (idCodes.indexOf(code) === -1)).indexOf(subfield.code) !== -1);
+      .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
   debug(`allRepSubs: ${JSON.stringify(allRepSubs, undefined, 2)}`);
 
   // Add temporary index property to array elements (subfields) to identify them even when values are normalized
@@ -127,7 +127,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes)
     // Subfields still include the temporary index property and values are normalized
     const result = allIndexedRepSubsNorm
       .filter(sub => dupRepSubsSource
-          .map(sub => sub.value).indexOf(sub.value) === -1);
+        .map(sub => sub.value).indexOf(sub.value) === -1);
     return result;
   }
 
@@ -136,7 +136,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes)
   const nonDupRepSubsToCopy = allIndexedRepSubs
     .filter(sub => nonDupRepSubsNorm
       .map(sub => sub.index).indexOf(sub.index) !== -1)
-        .map(({code, value, index}) => ({code, value}));
+    .map(({code, value, index}) => ({code, value})); // eslint-disable-line no-unused-vars
   debug(`nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
   return nonDupRepSubsToCopy;
 }
@@ -151,13 +151,44 @@ export function modifyBaseField(base, baseField, modifiedField) {
 
 // Sort subfields by default in alphabetical order (a-z, 0-9)
 const sortOrder = [
-  'a','b','c','d','e',
-  'f','g','h','i','j',
-  'k','l','m','n','o',
-  'p','q','r','s','t',
-  'u','v','w','x','y','z',
-  '0','1','2','3','4',
-  '5','6','7','8','9'];
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'l',
+  'm',
+  'n',
+  'o',
+  'p',
+  'q',
+  'r',
+  's',
+  't',
+  'u',
+  'v',
+  'w',
+  'x',
+  'y',
+  'z',
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9'
+];
+
 export function sortSubfields(subfields, order = sortOrder, orderedSubfields = []) {
   debug(`Order: ${order}`); // testing
   const [filter, ...rest] = order;
@@ -168,11 +199,12 @@ export function sortSubfields(subfields, order = sortOrder, orderedSubfields = [
   debug(`Subfields: ${JSON.stringify(subfields)}`);
   debug(`Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
 
+  /* eslint-disable */
   const filtered = subfields.filter(sub => {
     if (typeof filter === 'string') {
-        return sub.code === filter;
+      return sub.code === filter;
     }
-    return;
+
   });
   debug(`Filtered subfields: ${JSON.stringify(filtered, undefined, 2)}`);
 
@@ -180,9 +212,9 @@ export function sortSubfields(subfields, order = sortOrder, orderedSubfields = [
     if (typeof filter === 'string') {
       return sub.code !== filter;
     }
-    return;
+  /* eslint-enable */
   });
-if (filtered.length > 0) {
+  if (filtered.length > 0) {
     return sortSubfields(restSubfields, rest, [...orderedSubfields, ...filtered]);
   }
   return sortSubfields(restSubfields, rest, orderedSubfields);

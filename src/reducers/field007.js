@@ -14,11 +14,11 @@ export default () => (base, source) => {
 
   // Test 04: Copy field 007 from source if 007/00-01 are the same in base and source
   if (baseField.value[0] === sourceField.value[0] && baseField.value[1] === sourceField.value[1]) {
-      debug(`Copying field ${sourceField.tag} from source`);
-      base.insertField(sourceField);
-      return base;
+    debug(`Copying field ${sourceField.tag} from source`);
+    base.insertField(sourceField);
+    return base;
   }
   // Test 05: Otherwise keep existing field 007
   debug(`Keeping base field ${baseField.tag}`);
   return base;
-}
+};

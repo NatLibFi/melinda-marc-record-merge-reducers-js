@@ -9,7 +9,6 @@ import createDebugLogger from 'debug';
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/leader', () => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'leader');
 

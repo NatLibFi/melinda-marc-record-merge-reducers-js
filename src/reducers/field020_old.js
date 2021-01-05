@@ -20,9 +20,9 @@ export default () => (base, source) => {
   const fieldSpecs = getFieldSpecs(baseField.tag);
   debug(`fieldSpecs: ${JSON.stringify(fieldSpecs, undefined, 2)}`);
   // Get arrays of repeatable and non-repeatable subfield codes from field specs
-  const repCodes = fieldSpecs.subfields.filter(sub => sub.repeatable === "true").map(sub => sub.code);
+  const repCodes = fieldSpecs.subfields.filter(sub => sub.repeatable === 'true').map(sub => sub.code);
   debug(`repCodes: ${JSON.stringify(repCodes, undefined, 2)}`);
-  const nonRepCodes = fieldSpecs.subfields.filter(sub => sub.repeatable === "false").map(sub => sub.code);
+  const nonRepCodes = fieldSpecs.subfields.filter(sub => sub.repeatable === 'false').map(sub => sub.code);
   debug(`nonRepCodes: ${JSON.stringify(nonRepCodes, undefined, 2)}`);
 
   // Normalize subfield values for comparison
@@ -34,7 +34,7 @@ export default () => (base, source) => {
   // First check whether the values of identifying subfields are equal
   // Identifying subfields define the uniqueness of the record: if they are different, the records cannot be merged
   // 020: $a (ISBN)
-  const idCodes = ["a"];
+  const idCodes = ['a'];
 
   // Test 09: If values are not equal, fields do not match and records are not merged at all
   if (compareAllSubValues(idCodes, baseField, sourceField) === false) {
@@ -71,7 +71,7 @@ export default () => (base, source) => {
     return nonRepSubsToCopy;
   }*/
 
-/*  const copyNonRepSubs = sourceField.subfields
+  /*  const copyNonRepSubs = sourceField.subfields
     .filter(subfield => nonRepCodes
       .filter(code => (dropCodes.indexOf(code) === -1) && (idCodes.indexOf(code) === -1)).indexOf(subfield.code) !== -1);
   debug(`copyNonRepSubs: ${JSON.stringify(copyNonRepSubs, undefined, 2)}`);*/
@@ -115,7 +115,7 @@ export default () => (base, source) => {
 
   //debug(`uniqueCopyRepSubs: ${JSON.stringify(uniqueCopyRepSubs, undefined, 2)}`);
 
-  const dropSubs = [{code: "c", value: "10 €"}];
+  const dropSubs = [{code: 'c', value: '10 €'}];
   debug(`dropSubs: ${JSON.stringify(dropSubs, undefined, 2)}`);
   debug(`value: ${dropSubs.map(sub => sub.value)}`);
   debug(`containsFieldWithValue: ${source.containsFieldWithValue('020', dropSubs)}`);
@@ -124,8 +124,8 @@ export default () => (base, source) => {
   //const dropSubsRegexp = [{code: "c", value: /^10 €$/u}];
   //debug(`dropSubsRegexp: ${JSON.stringify(dropSubsRegexp, undefined, 2)}`);
   //debug(`value: ${dropSubsRegexp.map(sub => sub.value)}`);
-  debug(`containsFieldWithValue testi: ${source.containsFieldWithValue('020', [{code: "c", value: /(10 €)/u}])}`);
-  const [field] = source.getFields('020', [{code: "c", value: /^10/u}]);
+  debug(`containsFieldWithValue testi: ${source.containsFieldWithValue('020', [{code: 'c', value: /(10 €)/u}])}`);
+  const [field] = source.getFields('020', [{code: 'c', value: /^10/u}]);
   debug(`field: ${JSON.stringify(field, undefined, 2)}`);
 
   // funktio joka ottaa vastaan sen mitä etsitään, olio johon tulee tag ja arrayt
@@ -143,4 +143,4 @@ export default () => (base, source) => {
   // otetaan vastaan tag mitä kenttää käsitellään, niin voi käyttää useammassa kentässä
 
   return base; // testing
-}
+};
