@@ -2,8 +2,8 @@ import createDebugLogger from 'debug';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(/^008$/);
-  const sourceFields = source.get(/^008$/);
+  const baseFields = base.get(/^008$/u);
+  const sourceFields = source.get(/^008$/u);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   debug(`base.leader: ${base.leader}`);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);

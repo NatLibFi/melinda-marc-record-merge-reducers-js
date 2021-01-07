@@ -4,7 +4,6 @@ import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './leader';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
-import createDebugLogger from 'debug';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
