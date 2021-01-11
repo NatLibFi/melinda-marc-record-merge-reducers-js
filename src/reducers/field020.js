@@ -12,7 +12,7 @@ import {
 
 // Test 09: Copy new field from source to base record (case 1)
 // Test 10: Copy subfields from source field to base field (case 2)
-// Test 11: Both cases in the same record: copy a new field (case 1) and add subfields to an existing field (case 2)
+// Test 11: Both cases in the same record: copy two new fields (case 1) and add subfields to an existing field (case 2)
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -81,7 +81,7 @@ export default () => (base, source) => {
     debug(`loopBase: ${JSON.stringify(loopBase, undefined, 2)}`);
     // Destructure array returned by loopBase into object to pass to loopSource
     const [obj] = loopBase;
-    debug(`obj: ${JSON.stringify(obj, undefined, 2)}`);
+    debug(`obj: ${JSON.stringify(obj, undefined, 2)}`); // ###tämä on ok, vain 1 kpl kutakin eri kenttää
     return obj;
   }); // loopSource end
   debug(`loopSource: ${JSON.stringify(loopSource, undefined, 2)}`);

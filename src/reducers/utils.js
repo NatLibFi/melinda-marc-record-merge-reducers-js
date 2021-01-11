@@ -220,3 +220,61 @@ export function sortSubfields(subfields, order = sortOrder, orderedSubfields = [
   return sortSubfields(restSubfields, rest, orderedSubfields);
 }
 
+// Process repeatable field
+export function repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
+  debug(`Working on field ${tagString}`);
+  // First check whether the values of identifying subfields are equal
+  // 020: $a (ISBN)
+  const idCodes = ['a'];
+
+  // Case 1: If all identifying subfield values are not equal the entire source field is copied to base as a new field
+  if (compareAllSubfields(baseField, sourceField, idCodes) === false) {
+    //debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
+    base.insertField(sourceField);
+    debug(`Base after copying: ${JSON.stringify(base, undefined, 2)}`);
+    debug(`Field ${tagString}: One or more subfields (${idCodes}) not matching, source field copied as new field to Melinda`);
+    return base; // Base record returned in case 1
+  }
+
+  // Case 2: If identifying subfield values are equal, continue with the merge process
+  debug(`Field ${tagString}: Matching subfields (${idCodes}) found in source and Melinda, continuing with merge`);
+
+  // If there are subfields to drop, define them first
+  // 020: $c
+  const dropCodes = ['c'];
+
+  // Copy other subfields from source field to base field
+  // For non-repeatable subfields, the value existing in base (Melinda) is preferred
+  // Non-repeatable subfields are copied from source only if missing completely in base
+  // 020: $a, $c, $6 (but $a was already checked and $c dropped, so only $6 is copied here)
+  const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
+  debug(`nonRepSubsToCopy: ${JSON.stringify(nonRepSubsToCopy, undefined, 2)}`);
+
+  // Repeatable subfields are copied if the value is different
+  // 020: $q, $z, $8
+  const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
+  debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
+
+  // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
+  // Subfields in the modified base field are arranged by default in alphabetical order (a-z, 0-9)
+  // To use a custom sorting order, set it as the second parameter in sortSubfields
+  const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
+  const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
+  /* eslint-disable functional/immutable-data */
+  modifiedBaseField.subfields = sortedSubfields;
+  modifyBaseField(base, baseField, modifiedBaseField);
+  debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
+  return base; // Base record returned in case 2
+}
+
+// Process non-repeatable field
+export function nonRepeatableField(base, tagString, baseFields, sourceFields) {
+  // If the field is missing completely from base, it is copied as a new field
+  if (baseFields.length === 0) {
+      debug(`Missing field ${tagString} copied from source to Melinda`);
+      sourceFields.forEach(f => base.insertField(f));
+      return base;
+  }
+  // Otherwise the original base field is kept
+  return base;
+}

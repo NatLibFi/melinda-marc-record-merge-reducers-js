@@ -54,21 +54,6 @@
           "value": "020_6_source"
         }
       ]
-    },
-    {
-      "tag": "020",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "951-861-386-7"
-        },
-        {
-          "code": "q",
-          "value": "020_q3_source"
-        }
-      ]
     }
   ]
 }
