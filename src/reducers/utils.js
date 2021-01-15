@@ -221,6 +221,7 @@ export function sortSubfields(subfields, order = sortOrder, orderedSubfields = [
 }
 
 // Process repeatable field
+// ###Tarvitaanko tänne vai kustomoituna joka reduceriin oma?
 export function repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
   debug(`Working on field ${tagString}`);
   // First check whether the values of identifying subfields are equal

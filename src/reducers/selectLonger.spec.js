@@ -2,16 +2,14 @@ import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './field020b';
+import createReducer from './selectLonger';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
-//import createDebugLogger from 'debug';
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 
-describe('reducers/field020b', () => {
-  //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+describe('reducers/selectLonger', () => {
   const {expect} = chai;
-  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'field020b');
+  const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'selectLonger');
 
   fs.readdirSync(fixturesPath).forEach(subDir => {
     const {getFixture} = fixturesFactory({root: [fixturesPath, subDir], reader: READERS.JSON, failWhenNotFound: false});
