@@ -1,0 +1,47 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "033",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "fish"
+        },
+        {
+          "code": "b",
+          "value": "bird"
+        },
+        {
+          "code": "c",
+          "value": "cow"
+        },
+        {
+          "code": "d",
+          "value": "duck"
+        }
+      ]
+    },
+    {
+      "tag": "033",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "doggy"
+        },
+        {
+          "code": "b",
+          "value": "cat"
+        },
+        {
+          "code": "c",
+          "value": "horsey"
+        }
+      ]
+    }
+  ]
+}

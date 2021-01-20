@@ -12,13 +12,13 @@ export default () => (base, source) => {
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;
 
-  // Test 02: If field 006 is missing in Melinda, copy it from source if Leader 000/06 is 'o' or 'p'
-  if (baseFields.length === 0 && (source.leader[6] === 'o' || source.leader[6] === 'p')) {
-    debug(`Copying field ${sourceField.tag} from source`);
+  // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field
+  if ((source.leader[6] === 'o' || source.leader[6] === 'p')) {
+    debug(`Copying field ${sourceField.tag} from source to Melinda`);
     base.insertField(sourceField);
     return base;
   }
-  // Test 03: If field 006 exists in Melinda, keep it
-  debug(`Keeping base field ${baseField.tag}`);
+  // Test 03: If Leader 000/06 is something else, do nothing
+  debug(`Keeping Melinda field ${baseField.tag}`);
   return base;
 };

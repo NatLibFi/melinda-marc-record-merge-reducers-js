@@ -6,6 +6,8 @@ import {normalizeSubfieldValue} from './utils.js';
 // Longer means fulfilling either (but not both) of these conditions:
 // Test 01: Subfield values in source are supersets of subfield values Melinda
 // Test 02: Source has more subfields than Melinda
+// Test 03: Two instances of the same repeatable field, one has supersets and one has more subfields
+// Test 04: Same as 03 but fields are in different order
 
 const fieldTags = /^(?<tags>033|034|039|045|046|257|300)$/u;
 // Repeatable: 033, 034, 046, 257, 300
@@ -22,9 +24,7 @@ export default () => (base, source) => {
   if (sourceFields.length > 1 || baseFields.length > 1) {
     // Iterate through all fields in base and source arrays
     const outerLoop = sourceFields.map(sourceField => {
-      const innerLoop = baseFields.map(baseField => {
-        return selectLongerField(baseField, sourceField);
-      });
+      const innerLoop = baseFields.map(baseField => selectLongerField(baseField, sourceField));
       // Destructure array returned by innerLoop into object to pass to outerLoop
       const [tempObj] = innerLoop;
       return tempObj;
@@ -33,9 +33,7 @@ export default () => (base, source) => {
     // Filter out duplicates and return only one result object in MarcRecord format
     const stringified = outerLoop.map(obj => JSON.stringify(obj));
     //debug(`stringified: ${JSON.stringify(stringified, undefined, 2)}`);
-    const filtered = JSON.parse(stringified.filter((item, index) => {
-      return stringified.indexOf(item) >= index;
-    }));
+    const filtered = JSON.parse(stringified.filter((item, index) => stringified.indexOf(item) >= index));
     debug(`filtered: ${JSON.stringify(filtered, undefined, 2)}`);
     return new MarcRecord(filtered);
   }

@@ -12,13 +12,17 @@ export default () => (base, source) => {
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;
 
-  // Test 04: Copy field 007 from source if 007/00-01 are the same in base and source
-  if (baseField.value[0] === sourceField.value[0] && baseField.value[1] === sourceField.value[1]) {
+  // Test 04: If 007/00-01 are different in base and source, copy 007 from source to base as new field
+  debug(`base 0: ${baseField.value[0]}`);
+  debug(`base 1: ${baseField.value[1]}`);
+  debug(`source 0: ${sourceField.value[0]}`);
+  debug(`source 1: ${sourceField.value[1]}`);
+  if ((baseField.value[0] !== sourceField.value[0]) || (baseField.value[1] !== sourceField.value[1])) {
     debug(`Copying field ${sourceField.tag} from source`);
     base.insertField(sourceField);
     return base;
   }
-  // Test 05: Otherwise keep existing field 007
-  debug(`Keeping base field ${baseField.tag}`);
+  // Test 05: If 007/00-01 are the same, keep existing field 007 in base
+  debug(`Keeping Melinda field ${baseField.tag}`);
   return base;
 };

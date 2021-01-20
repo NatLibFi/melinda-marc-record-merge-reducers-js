@@ -33,7 +33,7 @@ export function normalizeSubfields(field) {
 
 export function normalizeSubfieldValue(value) {
   // Regexp options: g: global search, u: unicode
-  const punctuation = /[.,\-/#!$%^&*;:{}=_`~()[\]]/gu;
+  const punctuation = /[.,\-/#!?$%^&*;:{}=_`~()[\]]/gu;
   return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
 }
 
@@ -112,9 +112,9 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes)
       subfieldA.value === subfieldB.value;
     }
     // Get base subfields for which a matching subfield in source (allIndexedRepSubsNorm) is found
-    const dupRepSubsBase = normalizeSubfields(baseField)
+    /*const dupRepSubsBase = normalizeSubfields(baseField)
       .filter(baseSub => allIndexedRepSubsNorm
-        .some(sourceSub => strictEquality(baseSub, sourceSub)));
+        .some(sourceSub => strictEquality(baseSub, sourceSub)));*/
     //debug(`Match in source found for normalized base subfield: ${JSON.stringify(dupRepSubsBase, undefined, 2)}`);
 
     // Get source subfields for which a matching base subfield is found
@@ -150,7 +150,7 @@ export function modifyBaseField(base, baseField, modifiedField) {
 }
 
 // Sort subfields by default in alphabetical order (a-z, 0-9)
-const sortOrder = [
+const alphabetical = [
   'a',
   'b',
   'c',
@@ -189,15 +189,15 @@ const sortOrder = [
   '9'
 ];
 
-export function sortSubfields(subfields, order = sortOrder, orderedSubfields = []) {
+export function sortSubfields(subfields, order = alphabetical, orderedSubfields = []) {
   //debug(`Order: ${order}`); // testing
   const [filter, ...rest] = order;
   if (filter === undefined) {
     return [...orderedSubfields, ...subfields];
   }
-  //debug(`Subfield sort filter: ${JSON.stringify(filter)}`);
-  //debug(`Subfields: ${JSON.stringify(subfields)}`);
-  //debug(`Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
+  debug(`Subfield sort filter: ${JSON.stringify(filter)}`);
+  debug(`Subfields: ${JSON.stringify(subfields)}`);
+  debug(`Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
 
   /* eslint-disable */
   const filtered = subfields.filter(sub => {
@@ -272,9 +272,9 @@ export function repeatableField(base, tagString, baseField, sourceField, repCode
 export function nonRepeatableField(base, tagString, baseFields, sourceFields) {
   // If the field is missing completely from base, it is copied as a new field
   if (baseFields.length === 0) {
-      debug(`Missing field ${tagString} copied from source to Melinda`);
-      sourceFields.forEach(f => base.insertField(f));
-      return base;
+    debug(`Missing field ${tagString} copied from source to Melinda`);
+    sourceFields.forEach(f => base.insertField(f));
+    return base;
   }
   // Otherwise the original base field is kept
   return base;
