@@ -195,9 +195,9 @@ export function sortSubfields(subfields, order = alphabetical, orderedSubfields 
   if (filter === undefined) {
     return [...orderedSubfields, ...subfields];
   }
-  debug(`Subfield sort filter: ${JSON.stringify(filter)}`);
-  debug(`Subfields: ${JSON.stringify(subfields)}`);
-  debug(`Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
+  //debug(`Subfield sort filter: ${JSON.stringify(filter)}`);
+  //debug(`Subfields: ${JSON.stringify(subfields)}`);
+  //debug(`Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
 
   /* eslint-disable */
   const filtered = subfields.filter(sub => {

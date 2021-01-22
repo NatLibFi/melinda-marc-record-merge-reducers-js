@@ -2,71 +2,67 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "020",
+      "tag": "022",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-8"
+          "value": "1455-8905"
         },
         {
-          "code": "q",
-          "value": "020_q1_source"
+          "code": "m",
+          "value": "022_m1_source"
         },
         {
-          "code": "q",
-          "value": "020_q2_source"
+          "code": "m",
+          "value": "022_m2_source"
         },
         {
           "code": "6",
-          "value": "020_6b_source"
+          "value": "022_6b_source"
         }
       ]
     },
     {
-      "tag": "020",
+      "tag": "022",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-9"
+          "value": "1455-8904"
         },
         {
-          "code": "q",
+          "code": "m",
           "value": "sidottu"
         },
         {
-          "code": "q",
-          "value": "Tampereen kaupunginmuseo"
+          "code": "m",
+          "value": "testi"
         },
         {
-          "code": "q",
+          "code": "m",
           "value": "Joku TestiArvo &!Tähän"
         },
         {
-          "code": "c",
-          "value": "10 €"
-        },
-        {
           "code": "6",
-          "value": "020_6_source"
+          "value": "022_6_source"
         }
       ]
     },
     {
-      "tag": "020",
+      "tag": "022",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-7"
+          "value": "1455-8906"
         },
         {
-          "code": "q",
-          "value": "020_q3_source"
+          "code": "m",
+          "value": "022_m3_source"
         }
       ]
     }

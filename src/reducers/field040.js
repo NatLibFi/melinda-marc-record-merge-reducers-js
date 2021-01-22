@@ -11,50 +11,65 @@ import {
   sortSubfields
 } from './utils.js';
 
-// Test 12: Copy new field from source to base record (case 1)
-// Test 13: Copy subfields from source field to base field (case 2)
-// Test 14: Both cases in the same record: copy a new field (case 1) and add subfields to an existing field (case 2)
+// Test 18: Copy new field from source to base record (case 1)
+// Test 19: Copy subfields from source field to base field (case 2)
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const fieldTag = /^022$/u; // Tag in regexp format (for use in MarcRecord functions)
+  const fieldTag = /^040$/u; // Tag in regexp format (for use in MarcRecord functions)
   const tagString = fieldTag.source.slice(1, 4); // Tag number as string
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
+  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
   const repCodes = getRepCodes(tagString);
   const nonRepCodes = getNonRepCodes(tagString);
 
-  // If there are multiple instances of the field in source and/or base
-  if (sourceFields.length > 1 || baseFields.length > 1) {
-    // Iterate through all fields in base and source arrays
-    const outerLoop = sourceFields.map(sourceField => {
-      const innerLoop = baseFields.map(baseField => repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes));
-      // Destructure array returned by innerLoop into object to pass to outerLoop
-      const [tempObj] = innerLoop;
-      return tempObj;
-    });
-    // The outer loop returns an array with as many duplicate objects as there are fields
-    // Filter out duplicates and return only one result object in MarcRecord format
-    const stringified = outerLoop.map(obj => JSON.stringify(obj));
-    const filtered = JSON.parse(stringified.filter((item, index) => stringified.indexOf(item) >= index));
-    return new MarcRecord(filtered);
-  }
-
-  // Default case: there is just one instance of the field in both source and base
+  // Since 040 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
   const [baseField] = baseFields;
+  debug(`baseField: ${JSON.stringify(baseField, undefined, 2)}`);
   const [sourceField] = sourceFields;
+  debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
 
   // Run the function to get the base record to return
-  return repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
+  return field040(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
 
-
-  function repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
+  function field040(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
     debug(`Working on field ${tagString}`);
+
+    // In all cases, source $a value is copied to a new $d and $a is removed
+
+    // ### tee tästä funktio, jolla yhden osakentän arvon voi siirtää toiseen
+    // ### tsekkaa vielä sisältöihmisiltä oliko tämä nyt oikea tapa tehdä 040
+    // Get string value of source $a
+    const valueA = String(sourceField.subfields
+      .filter(sub => sub.code === 'a')
+        .map(sub => sub.value));
+    // Add new $d with value of $a to source field
+    sourceField.subfields.push({code: 'd', value: valueA});
+    // Remove old $a completely (filter to new array without $a) and sort subfields
+    const newSubs = sortSubfields(sourceField.subfields.filter(subfield => subfield.code !== 'a'));
+    // Replace source subfields with new array
+    // ###Changes to the destructured sourceField object are directly reflected in the sourceFields array(?)
+    sourceField.subfields = newSubs;
+    debug(`sourceField final: ${JSON.stringify(sourceField, undefined, 2)}`);
+    debug(`sourceFields final: ${JSON.stringify(sourceFields, undefined, 2)}`);
+
+    // Case 1: If field 040 is missing completely from Melinda, copy it from source as a new field
+    if(baseFields.length === 0) {
+      debug(`Missing field ${tagString} copied from source to Melinda`);
+      sourceFields.forEach(f => base.insertField(f));
+      return base;
+    }
+
+    // Case 2: If field 040 exists in Melinda, copy missing subfields from source
+
+
+
     // First check whether the values of identifying subfields are equal
-    // 022: $a (ISSN)
+    // 020: $a (ISBN)
     const idCodes = ['a'];
 
     // Case 1: If all identifying subfield values are not equal the entire source field is copied to base as a new field
@@ -70,18 +85,18 @@ export default () => (base, source) => {
     debug(`Field ${tagString}: Matching subfields (${idCodes}) found in source and Melinda, continuing with merge`);
 
     // If there are subfields to drop, define them first
-    // 022: No subfields to drop
-    const dropCodes = [];
+    // 020: $c
+    const dropCodes = ['c'];
 
     // Copy other subfields from source field to base field
     // For non-repeatable subfields, the value existing in base (Melinda) is preferred
     // Non-repeatable subfields are copied from source only if missing completely in base
-    // 022: $a, $l, $2, $6
+    // 020: $a, $c, $6 (but $a was already checked and $c dropped, so only $6 is copied here)
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
     //debug(`nonRepSubsToCopy: ${JSON.stringify(nonRepSubsToCopy, undefined, 2)}`);
 
     // Repeatable subfields are copied if the value is different
-    // 022: $m, $y, $z, $8
+    // 020: $q, $z, $8
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
     //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 

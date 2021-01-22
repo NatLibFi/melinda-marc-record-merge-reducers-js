@@ -2,13 +2,17 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "020",
+      "tag": "024",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-9"
+          "value": "FILNM9500119"
+        },
+        {
+          "code": "c",
+          "value": "024_c_source"
         },
         {
           "code": "q",
@@ -20,53 +24,49 @@
         },
         {
           "code": "q",
-          "value": "Tampereen kaupunginmuseo"
+          "value": "testi"
         },
         {
           "code": "q",
           "value": "Joku TestiArvo &!Tähän"
-        },
-        {
-          "code": "6",
-          "value": "020_6_source"
         }
       ]
     },
     {
-      "tag": "020",
+      "tag": "024",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-8"
+          "value": "FILNM9500118"
         },
         {
           "code": "q",
-          "value": "020_q1_source"
+          "value": "024_q1_source"
         },
         {
           "code": "q",
-          "value": "020_q2_source"
+          "value": "024_q2_source"
         },
         {
-          "code": "6",
-          "value": "020_6b_source"
+          "code": "c",
+          "value": "024_cb_source"
         }
       ]
     },
     {
-      "tag": "020",
+      "tag": "024",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-7"
+          "value": "FILNM9500117"
         },
         {
           "code": "q",
-          "value": "020_q3_source"
+          "value": "024_q3_source"
         }
       ]
     }

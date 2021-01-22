@@ -16,7 +16,8 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // Copy duplicate instance of (non-identical) repeatable field from source to base
 /* eslint-disable require-unicode-regexp */
-const copyTags = new RegExp(String((/^(?<tags>013|015|016|017|050|052|055|060|070|080|082|083|084|210|242|246|255|258|321)$/u).source) +
+const copyTags = new RegExp(String(
+  (/^(?<tags>013|015|016|017|028|050|052|055|060|070|080|082|083|084|210|242|246|255|258|321)$/u).source) +
   (/^(?<tags>336|337|338|340|341|342|343|344|346|348|351|352|355|362|363|365|366|370|377)$/u).source +
   (/^(?<tags>380|381|382|383|385|386|388|490|501|502|504|505|508|509|510|511|513|515|518)$/u).source +
   (/^(?<tags>520|521|522|524|525|530|534|535|536|538|541|542|544|545|546|547|550|552|555)$/u).source +
@@ -38,8 +39,10 @@ const copyTagsSpecial5 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclu
 
 // Customized reducers still to be done for fields:
 // [040, 042, 240, 250, 260, 264, 347, 500, 506, 830, 856, 995]
-// [022, 024, 028, 036, 100, 110, 111, 130, 245, 300, 588]
+// [100, 110, 111, 130, 245, 300, 588]
 
+// Huom. tarkistettava missä järjestyksessä reducerit ajetaan
+// Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
 const allReducers = [
   copy({tagPattern: copyTags}),
   copy({tagPattern: copyTagsNonRep, compareTagsOnly: true}),
@@ -53,7 +56,9 @@ const allReducers = [
   localReducers.field006(), // Tests 02 and 03
   localReducers.field007(), // Tests 04 and 05
   localReducers.field008(), // Tests 06, 07, and 08
-  localReducers.field020() // Tests 09, 10 and 11
+  localReducers.field020(), // Tests 09, 10 and 11
+  localReducers.field022(), // Tests 12, 13 and 14
+  localReducers.field024() // Tests 15, 16 and 17
 ];
 
 // ### Miten tästä rakennetaan kokonaisuus jossa tutkitaan tietueen kaikki kentät?
@@ -62,7 +67,7 @@ const allReducers = [
 // Siis esim. speksin mukaan kentän 540 arvo riippuu siitä, mikä on kentän 506 arvo.
 // Pannaanko silloin samaan reduceriin sekä 540 että 506?
 // täytyy panna oikeaan järjestykseen tähän allReducers arrayhin
-// molemmat kentät samaan testiin source/base.get(506)
+// molemmat kentät samaan testiin ja siihen source/base.get(506)
 export {localReducers};
 export default ({base, source, allReducers}) => {
   debug(`inside export default`);
