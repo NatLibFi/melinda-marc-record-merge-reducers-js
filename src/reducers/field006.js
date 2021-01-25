@@ -13,7 +13,7 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
 
   // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field
-  if ((source.leader[6] === 'o' || source.leader[6] === 'p')) {
+  if (source.leader[6] === 'o' || source.leader[6] === 'p') {
     debug(`Copying field ${sourceField.tag} from source to Melinda`);
     base.insertField(sourceField);
     return base;

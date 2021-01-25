@@ -76,8 +76,8 @@ export function compareAllSubfields(baseField, sourceField, codes) {
 }
 
 // Get non-repeatable subfields to copy from source to base
-// Filter out dropped and identifying subfields
-export function getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes) {
+// Filter out dropped and identifying subfields, if given
+export function getNonRepSubs(sourceField, nonRepCodes, dropCodes = [], idCodes = []) {
   const nonRepSubs = sourceField.subfields
     .filter(subfield => nonRepCodes
       .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
@@ -85,8 +85,8 @@ export function getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes) {
 }
 
 // Get repeatable subfields to copy from source to base
-export function getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes) {
-  // First get all repeatable subfields and filter out dropped and identifying subfields
+export function getRepSubs(baseField, sourceField, repCodes, dropCodes = [], idCodes = []) {
+  // First get all repeatable subfields and filter out dropped and identifying subfields, if given
   const allRepSubs = sourceField.subfields
     .filter(subfield => repCodes
       .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
@@ -137,7 +137,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes)
     .filter(sub => nonDupRepSubsNorm
       .map(sub => sub.index).indexOf(sub.index) !== -1)
     .map(({code, value, index}) => ({code, value})); // eslint-disable-line no-unused-vars
-  //debug(`nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
+  debug(`nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
   return nonDupRepSubsToCopy;
 }
 

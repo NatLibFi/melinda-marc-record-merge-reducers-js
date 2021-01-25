@@ -17,7 +17,7 @@ export default () => (base, source) => {
   debug(`base 1: ${baseField.value[1]}`);
   debug(`source 0: ${sourceField.value[0]}`);
   debug(`source 1: ${sourceField.value[1]}`);
-  if ((baseField.value[0] !== sourceField.value[0]) || (baseField.value[1] !== sourceField.value[1])) {
+  if (baseField.value[0] !== sourceField.value[0] || baseField.value[1] !== sourceField.value[1]) {
     debug(`Copying field ${sourceField.tag} from source`);
     base.insertField(sourceField);
     return base;
