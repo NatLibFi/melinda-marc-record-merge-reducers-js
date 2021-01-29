@@ -22,16 +22,16 @@
           "value": "fin"
         },
         {
+          "code": "e",
+          "value": "rda"
+        },
+        {
           "code": "d",
           "value": "FI-Em"
         },
         {
           "code": "d",
           "value": "FI-Hhu38"
-        },
-        {
-          "code": "e",
-          "value": "rda"
         }
       ]
     }

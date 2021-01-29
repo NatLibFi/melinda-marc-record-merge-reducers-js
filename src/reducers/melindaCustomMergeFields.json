@@ -419,23 +419,6 @@
       ]
     },
     {
-      "tag": "260",
-      "repeatable": "true",
-      "fieldType": "dataField",
-      "indicators": {"ind1": ["", "2", "3"], "ind2": ""},
-      "subfields": [
-        {"code": "a", "repeatable": "true"},
-        {"code": "b", "repeatable": "true"},
-        {"code": "c", "repeatable": "true"},
-        {"code": "e", "repeatable": "true"},
-        {"code": "f", "repeatable": "true"},
-        {"code": "g", "repeatable": "true"},
-        {"code": "3", "repeatable": "false"},
-        {"code": "6", "repeatable": "false"},
-        {"code": "8", "repeatable": "true"}
-      ]
-    },
-    {
       "tag": "264",
       "repeatable": "true",
       "fieldType": "dataField",

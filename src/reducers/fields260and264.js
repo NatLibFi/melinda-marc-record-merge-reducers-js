@@ -16,11 +16,12 @@ import {
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const fieldTag = /^(260|264)$/u; // Tag in regexp format (for use in MarcRecord functions) ### ei toimi
-  const tagString = fieldTag.source.slice(1, 4); // Tag number as string ### ei toimi
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
+  const tagString = getTagString(baseFields, sourceFields);
 
   // ### Tarvitaan tarkemmat speksit kenttien 260 ja 264 käsittelyyn
+  // sisääntulevassa tietueessa on joko 264 _1 $b $c tai 264 _1 $b (kustantaja ja kustannusvuosi)
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
   const repCodes = getRepCodes(tagString);

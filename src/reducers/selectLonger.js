@@ -2,16 +2,19 @@ import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {normalizeSubfieldValue} from './utils.js';
 
-// If source field is longer, replace Melinda field with source field
-// Longer means fulfilling either (but not both) of these conditions:
-// Test 01: Subfield values in source are supersets of subfield values Melinda
-// Test 02: Source has more subfields than Melinda
-// Test 03: Two instances of the same repeatable field, one has supersets and one has more subfields
-// Test 04: Same as 03 but fields are in different order
-
-const fieldTags = /^(?<tags>033|034|039|045|046|257|300)$/u;
+// These rules apply to fields:
 // Repeatable: 033, 034, 046, 257, 300
 // Non-repeatable: 039, 045
+// If source field is longer, replace Melinda field with source field
+// Longer means fulfilling either (but not both) of these conditions:
+// a) Subfield values in source are supersets of subfield values Melinda
+// b) Source has more subfields than Melinda
+// Test 01: 033 and 039: case a)
+// Test 02: 033 and 039: case b)
+// Test 03: 033 and 033: Two instances of the same repeatable field, one a) and one b)
+// Test 04: 033 and 033: Same as 03 but fields are in different order
+
+const fieldTags = /^(?<tags>033|034|039|045|046|257|300)$/u;
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');

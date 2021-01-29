@@ -13,6 +13,10 @@
         {
           "code": "e",
           "value": "kirjoittaja"
+        },
+        {
+          "code": "0",
+          "value": "(FIN11)123456789"
         }
       ]
     }

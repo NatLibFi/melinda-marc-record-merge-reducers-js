@@ -2,6 +2,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
+  getTagString,
   getRepCodes,
   getNonRepCodes,
   compareAllSubfields,
@@ -14,14 +15,13 @@ import {
 // Test 15: Copy new field from source to base record (case 1)
 // Test 16: Copy subfields from source field to base field (case 2)
 // Test 17: Both cases in the same record: copy a new field (case 1) and add subfields to an existing field (case 2)
-// Note that subfields are not alphabetized here in the new field that is copied as is (c comes after q)
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const fieldTag = /^024$/u; // Tag in regexp format (for use in MarcRecord functions)
-  const tagString = fieldTag.source.slice(1, 4); // Tag number as string
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
+  const tagString = getTagString(baseFields, sourceFields);
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
   const repCodes = getRepCodes(tagString);
@@ -50,7 +50,6 @@ export default () => (base, source) => {
 
   // Run the function to get the base record to return
   return repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
-
 
   function repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
     debug(`Working on field ${tagString}`);
@@ -86,14 +85,11 @@ export default () => (base, source) => {
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
     //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
-    // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
-    // Subfields in the modified base field are arranged by default in alphabetical order (a-z, 0-9)
-    // To use a different sorting order, set it as the second parameter in sortSubfields
-    // Example: copy subfield sort order from source field
-    // const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-
+    // Create modified base field and replace old base record in Melinda with it
+    // Copy subfield sort order from source field
+    const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
     const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
-    const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
+    const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], orderFromSource);
     /* eslint-disable functional/immutable-data */
     modifiedBaseField.subfields = sortedSubfields;
     modifyBaseField(base, baseField, modifiedBaseField);

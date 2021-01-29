@@ -15,12 +15,12 @@
           "value": "fin"
         },
         {
-          "code": "d",
-          "value": "FI-Em"
-        },
-        {
           "code": "e",
           "value": "rda"
+        },
+        {
+          "code": "d",
+          "value": "FI-Em"
         }
       ]
     }

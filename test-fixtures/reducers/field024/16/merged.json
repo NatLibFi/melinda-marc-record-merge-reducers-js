@@ -11,10 +11,6 @@
           "value": "FILNM9500119"
         },
         {
-          "code": "c",
-          "value": "024_c_source"
-        },
-        {
           "code": "q",
           "value": "jotain"
         },
@@ -29,7 +25,12 @@
         {
           "code": "q",
           "value": "Joku TestiArvo &!Tähän"
-        }      ]
+        },
+        {
+          "code": "c",
+          "value": "024_c_source"
+        }
+      ]
     }
   ]
 }

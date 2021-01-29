@@ -7,19 +7,28 @@ import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
+// Get tag string from field tag for use in other functions
+// By default get it from source, in case the field is missing completely in base
+export function getTagString(baseFields, sourceFields) {
+  if(sourceFields.length === 0) {
+    return baseFields[0].tag;
+  }
+  return sourceFields[0].tag;
+}
+
 // Get field specs from melindaCustomMergeFields.json
-export function getFieldSpecs(fieldTag) {
+export function getFieldSpecs(tagString) {
   const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
-  const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === fieldTag);
+  const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tagString);
   return fieldSpecs;
 }
-export function getRepCodes(fieldTag) {
-  return getFieldSpecs(fieldTag).subfields
+export function getRepCodes(tagString) {
+  return getFieldSpecs(tagString).subfields
     .filter(sub => sub.repeatable === 'true')
     .map(sub => sub.code);
 }
-export function getNonRepCodes(fieldTag) {
-  return getFieldSpecs(fieldTag).subfields
+export function getNonRepCodes(tagString) {
+  return getFieldSpecs(tagString).subfields
     .filter(sub => sub.repeatable === 'false')
     .map(sub => sub.code);
 }
@@ -149,8 +158,12 @@ export function modifyBaseField(base, baseField, modifiedField) {
   return base;
 }
 
-// Sort subfields by default in alphabetical order (a-z, 0-9)
-const alphabetical = [
+// Default subfield sort order if no custom order is given
+const sortDefault = [
+  '8',
+  '6',
+  '7',
+  '3',
   'a',
   'b',
   'c',
@@ -177,19 +190,15 @@ const alphabetical = [
   'x',
   'y',
   'z',
+  '4',
+  '2',
   '0',
   '1',
-  '2',
-  '3',
-  '4',
   '5',
-  '6',
-  '7',
-  '8',
   '9'
 ];
 
-export function sortSubfields(subfields, order = alphabetical, orderedSubfields = []) {
+export function sortSubfields(subfields, order = sortDefault, orderedSubfields = []) {
   //debug(`Order: ${order}`); // testing
   const [filter, ...rest] = order;
   if (filter === undefined) {
@@ -259,6 +268,9 @@ export function repeatableField(base, tagString, baseField, sourceField, repCode
   // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
   // Subfields in the modified base field are arranged by default in alphabetical order (a-z, 0-9)
   // To use a custom sorting order, set it as the second parameter in sortSubfields
+  // Example: Copy subfield sort order from source field
+  // const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
+
   const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
   const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
   /* eslint-disable functional/immutable-data */

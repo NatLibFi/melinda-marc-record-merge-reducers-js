@@ -1,8 +1,3 @@
-/**
- * Erätuonnit: MARC-kenttien käsittely tuonnissa
- * https://workgroups.helsinki.fi/pages/viewpage.action?pageId=154377436
- *
- */
 import {copy} from '@natlibfi/marc-record-merge';
 import * as localReducers from './reducers';
 import {MarcRecord} from '@natlibfi/marc-record';
@@ -12,8 +7,6 @@ export * from './reducers';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // Processing rules for MARC fields by field tag
-// ###MARC-kentät taulukosta: https://workgroups.helsinki.fi/x/K1ohCw
-
 // Copy duplicate instance of (non-identical) repeatable field from source to base
 /* eslint-disable require-unicode-regexp */
 const copyTags = new RegExp(String((/^(?<tags>013|015|016|017|028|050|052|055|060|070|080|082|083|084|210|242|246|255|258|321)$/u).source) +
@@ -29,15 +22,13 @@ const copyTagsNonRep = /^(?<tags>010|018|027|030|031|043|044|049|085|088|222|243
 // Special rules defined for certain sets of fields
 // Exclude subfields from identicalness comparison and/or drop subfields from source before copying
 // Fields are considered identical if all other subfields than excludeSubfields are identical
-// ###Special 1: Erityinen sääntö ISIL-koodin käsittelyyn? (osakenttä 5), ei vielä toteutettu
-const copyTagsSpecial1 = /^(?<tags>040|506|540|561)$/u; // ISIL
-const copyTagsSpecial2 = /^(?<tags>036)$/u; // Exclude subfields b, 6 and 8
-const copyTagsSpecial3 = /^(?<tags>648|653|655|656|657)$/u; // Exclude subfield 9
-const copyTagsSpecial4 = /^(?<tags>700|710|711|800|810|811)$/u; // Drop subfield 4
-const copyTagsSpecial5 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude subfield 9 and drop 4
+const copyTagsSpecial1 = /^(?<tags>036)$/u; // Exclude subfields b, 6 and 8
+const copyTagsSpecial2 = /^(?<tags>648|653|655|656|657)$/u; // Exclude subfield 9
+const copyTagsSpecial3 = /^(?<tags>700|710|711|800|810|811)$/u; // Drop subfield 4
+const copyTagsSpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude subfield 9 and drop 4
 
 // Customized reducers still to be done for fields:
-// [042, 240, 250, 260, 264, 347, 506, 830, 856, 995]
+// [240, 250, 260, 264, 347, 506, 540, 561, 830, 856]
 // [100, 110, 111, 130, 245, 300, 588]
 
 // Huom. tarkistettava missä järjestyksessä reducerit ajetaan
@@ -45,11 +36,10 @@ const copyTagsSpecial5 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclu
 const allReducers = [
   copy({tagPattern: copyTags}),
   copy({tagPattern: copyTagsNonRep, compareTagsOnly: true}),
-  copy({tagPattern: copyTagsSpecial1}),
-  copy({tagPattern: copyTagsSpecial2, excludeSubfields: ['b', '6', '8']}),
-  copy({tagPattern: copyTagsSpecial3, excludeSubfields: ['9']}),
-  copy({tagPattern: copyTagsSpecial4, dropSubfields: ['4']}),
-  copy({tagPattern: copyTagsSpecial5, excludeSubfields: ['9'], dropSubfields: ['4']}),
+  copy({tagPattern: copyTagsSpecial1, excludeSubfields: ['b', '6', '8']}),
+  copy({tagPattern: copyTagsSpecial2, excludeSubfields: ['9']}),
+  copy({tagPattern: copyTagsSpecial3, dropSubfields: ['4']}),
+  copy({tagPattern: copyTagsSpecial4, excludeSubfields: ['9'], dropSubfields: ['4']}),
   localReducers.selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
   localReducers.leader(), // Test 01
   localReducers.field006(), // Tests 02 and 03
@@ -61,7 +51,8 @@ const allReducers = [
   localReducers.field040(), // Tests 18 and 19
   localReducers.field042(), // Tests 19 and 20
   localReducers.fields260and264(), //
-  localReducers.mainEntry() //
+  localReducers.mainEntry(), // main entry fields
+  localReducers.field995() // Test 21
 ];
 
 // ### Miten tästä rakennetaan kokonaisuus jossa tutkitaan tietueen kaikki kentät?

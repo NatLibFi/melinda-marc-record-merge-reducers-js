@@ -15,6 +15,14 @@
           "value": "fin"
         },
         {
+          "code": "e",
+          "value": "rda"
+        },
+        {
+          "code": "e",
+          "value": "jotain"
+        },
+        {
           "code": "d",
           "value": "FI-Em"
         },
@@ -25,14 +33,6 @@
         {
           "code": "d",
           "value": "FI-Hc"
-        },
-        {
-          "code": "e",
-          "value": "rda"
-        },
-        {
-          "code": "e",
-          "value": "jotain"
         }
       ]
     }

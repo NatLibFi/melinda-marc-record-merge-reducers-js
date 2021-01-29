@@ -1,6 +1,7 @@
 import createDebugLogger from 'debug';
 
 import {
+  getTagString,
   getRepCodes,
   getNonRepCodes,
   getRepSubs,
@@ -15,10 +16,9 @@ import {
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const fieldTag = /^042$/u; // Tag in regexp format (for use in MarcRecord functions)
-  const tagString = fieldTag.source.slice(1, 4); // Tag number as string
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
-  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+  const tagString = getTagString(baseFields, sourceFields);
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
   const repCodes = getRepCodes(tagString);
@@ -27,9 +27,7 @@ export default () => (base, source) => {
   // Since 042 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
   const [baseField] = baseFields;
-  debug(`baseField: ${JSON.stringify(baseField, undefined, 2)}`);
   const [sourceField] = sourceFields;
-  debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
 
   // Run the function to get the base record to return
   return field042(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
@@ -51,19 +49,12 @@ export default () => (base, source) => {
     // Non-repeatable subfields are copied from source only if missing completely in base
     // 042: none
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes);
-    debug(`nonRepSubsToCopy: ${JSON.stringify(nonRepSubsToCopy, undefined, 2)}`);
 
     // Repeatable subfields are copied if the value is different
     // 042: $a
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
-    //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
-    // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
-    // Subfields in the modified base field are arranged by default in alphabetical order (a-z, 0-9)
-    // To use a different sorting order, set it as the second parameter in sortSubfields
-    // Example 1: copy subfield sort order from source field
-    // const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-
+    // Create modified base field and replace old base record in Melinda with it
     const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
     /* eslint-disable functional/immutable-data */
