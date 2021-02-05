@@ -2,21 +2,13 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "100",
+      "tag": "010",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "Meikäläinen, Maija"
-        },
-        {
-          "code": "e",
-          "value": "kirjoittaja"
-        },
-        {
-          "code": "0",
-          "value": "(FIN11)123456789"
+          "value": "1234567"
         }
       ]
     }

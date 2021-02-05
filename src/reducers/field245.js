@@ -12,14 +12,11 @@ import {
   sortSubfields
 } from './utils.js';
 
-// Test 09: Copy new field from source to base record (case 1)
-// Test 10: Copy subfields from source field to base field (case 2)
-// Also in test 10: $8 only in base, not source, but seems to carry over into merged?
-// Test 11: Both cases in the same record: copy a new field (case 1) and add subfields to an existing field (case 2)
+// Test ###
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const fieldTag = /^020$/u; // Tag in regexp format (for use in MarcRecord functions)
+  const fieldTag = /^245$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
@@ -53,6 +50,19 @@ export default () => (base, source) => {
 
   // Run the function to get the base record to return
   return repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
+
+  /*
+  Melindassa jo olevaa kenttää suositaan. Yhdistely:
+  Tärkeitä: a, b, n, p (jos ovat erilaiset, ei saa yhdistää, ks. johdanto normalisointi)
+  SS: Siis jos mikä tahansa näistä osakentistä on tulevan tietueen kentässä erilainen,
+  pidetään Melindassa oleva kenttä 245 sellaisenaan?
+  Jos nämä osakentät ovat samat ja sisääntuleva tietue on täydellisempi
+  (enemmän osakenttiä tai pidemmät osakenttien arvot),
+  korvataanko silloin Melindan kenttä 245 sisääntulevan tietueen kentällä 245?
+  Paitsi että otetaan Melindasta 2. indikaattorin arvo?
+  Tulevan tietueen 245-kentän 2. indikaattorin arvo häviää Melindassa jo olevan tietueen 2. indikaattorin arvolle.
+  */
+
 
   function repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
     debug(`Working on field ${tagString}`);

@@ -12,15 +12,22 @@
         },
         {
           "code": "q",
-          "value": "jotain"
-        },
+          "value": "020_q_base"
+        }
+      ]
+    },
+    {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
         {
-          "code": "8",
-          "value": "blöö"
+          "code": "a",
+          "value": "951-861-386-8"
         },
         {
           "code": "q",
-          "value": "sidottu"
+          "value": "020_q_source"
         }
       ]
     }

@@ -1,5 +1,5 @@
+import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-
 
 import {
   //getTagString,
@@ -12,12 +12,12 @@ import {
   sortSubfields
 } from './utils.js';
 
-// Test 01: Source and base have 100, source also has 245
+// Test 01: Source and base have 100, source also has 240
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   // All fields used for main entry, all non-repeatable
-  const fieldTag = /^(100|110|111|130|240|245)$/u; // Tag in regexp format (for use in MarcRecord functions)
+  const fieldTag = /^(100|110|111|130|240|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
@@ -28,56 +28,71 @@ export default () => (base, source) => {
   const sourceTags = sourceFields.map(field => field.tag);
   debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
 
-  // ###Saatava tarkemmat speksit miten pääkirjauskenttiä käsitellään
-  // 110: a b n d c e
-  // 246 ja 700/730/775/776-kentissä i-osakenttä tulee ennen atz-kenttiä
-  // Varmaan noi numerot ok, mutta 775- ja 776-kentässä näyttäisi olevan i a t d jne.
-  // 710-kentän järjestys on muuten a b n d e
-  // Kantsii katsoa myös 111- ja 711-kentät
-  // Toimijakirjauskentät:
-  // 100,110,111,600,610,611,700,710,711 mahdollisesti myös 800,810,811 ja 900,910,911 - riippuen vähän kontekstista
-  // Noi $n:t on muuten noissa toimijakirjauskentässä sit riesa, koska ne voi olla osa sitä toimijannimiosaa tai sitten nimekeosaa
-  // eli noissa pitää, jos rupeaa järjestelemään, niin joko ottaa riski siitä, että kentän merkitykset hajoo tai sit kirjoittaa monimutkaisempaa koodia, joka pilkkoo kentän eka noihin osiin ja järjestelee sitten osakenttiä niiden sisäisesti
-  // $i tulee tosiaan (erityisesti tossa 7XX-sarjassa) kentän alkupuolelle
+  // Test 01: Base has no 1XX/7XX, source has 100 => copied to base as 700
 
-  // Possible combinations of fields:
-  // 100/110/111 + 240 + 245
-  // 130 + 245
-  // 100/110/111/130 + 245
-  // 245
+  /*
+  100/110/111/130 -kenttiä käsitellään ryhmänä niin, että ryhmä otetaan basesta.
+  Jos basessa ei ole 1xx-kenttää, mitään 1xx-kenttää ei myöskään tuoda siihen,
+  tässä tapauksessa sourcen 1xx-kenttä tuodaan baseen
+  vastaavaksi 7xx-sarjan kentäksi. (100→700, 110→710, 111→711, 130→730).
+  Samoin jos sourcessa on 'eri' 1xx-kenttä kuin basessa,
+  sourcen 1xx-kenttä tuodaan baseen vastaavaksi 7xx-sarjan kentäksi.
+  Näissä vielä toki sitten se, että jos basessa on jo 'sama' 7xx-kenttä, kentät pitää yhdistää.
+  */
 
-  // Check that only valid field combinations are present in the source record
-  // (It is assumed that the existing Melinda record is correct)
-  if (sourceFields.length > 1) {
-    const isValid = checkMainEntryFields(sourceTags);
-    if (isValid === false) {
-      // If source main entry is invalid, return existing Melinda field
-      return base;
+  // Array for collecting fields to finally copy from source to base
+  const copyFromSourceToBase = [];
+  const field1XX = ["100", "110", "111", "130"];   // 1XX fields are non-repeatable
+  const field7XX = ["700", "710", "711", "730"];   // 7XX fields are repeatable
+
+  // Case 1: Base (Melinda) has no 1XX/7XX fields
+  if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === false) {
+    debug(`Case 1`);
+  }
+
+  // Case 2: Base (Melinda) has 1XX fields but not 7XX fields
+  if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === false) {
+    debug(`Case 2`);
+  }
+
+  // Case 3: Base (Melinda) has 7XX fields but not 1XX fields
+  if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === true) {
+    debug(`Case 3`);
+  }
+
+  // Case 4: Base (Melinda) has both 1XX and 7XX fields
+  if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === true) {
+    debug(`Case 4`);
+  }
+
+  copy240(source, sourceTags, baseTags);
+  debug(`copyFromSourceToBase: ${JSON.stringify(copyFromSourceToBase, undefined, 2)}`);
+
+  // Field 240 is copied from source only if base does not contain 240 or 130
+  function copy240(source, sourceTags, baseTags) {
+    if ((sourceTags.indexOf("240") !== -1) && (baseTags.indexOf("240") === -1 ) && (baseTags.indexOf("130") === -1)) {
+      // Get an array containing field 240 from the source MarcRecord object
+      const source240 = source.get(/^240$/);
+      // Field 240 is non-repeatable so the source240 array can be destructured into obj240
+      const [obj240] = source240;
+      // Push obj240 into the array of fields to be copied at the end
+      copyFromSourceToBase.push(obj240);
+      debug(`Field 240 copied from source to Melinda`);
+      return;
     }
-    // If source main entry is valid, continue with merge
+    // If the conditions are not fulfilled, nothing happens
     return;
   }
 
-  function checkMainEntryFields(sourceTags) {
-    const allowedCombinations = [
-      ["100", "240", "245"],
-      ["110", "240", "245"],
-      ["111", "240", "245"],
-      ["100", "245"],
-      ["110", "245"],
-      ["111", "245"],
-      ["130", "245"],
-      ["245"]
-    ];
-    const sorted = JSON.stringify(sourceTags.sort()); // in case the fields/tags are not in correct order
-    const allowedStringified = allowedCombinations.map(item => JSON.stringify(item));
-    if(allowedStringified.indexOf(sorted) === -1) {
-      debug(`Combination of fields invalid for main entry`);
+  function checkTagGroup(tags, group) {
+    if (tags.every(tag => group.indexOf(tag) === -1)) {
+      debug(`Record does not contain fields: ${group}`);
       return false;
     }
-    debug(`Combination of fields valid for main entry`);
+    debug(`Record contains one or more fields: ${group}`);
     return true;
   }
+
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
 /*  const repCodes = getRepCodes(tagString);

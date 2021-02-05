@@ -12,15 +12,23 @@
         },
         {
           "code": "q",
-          "value": "jotain"
-        },
-        {
-          "code": "8",
-          "value": "blöö"
+          "value": "sidottu"
         },
         {
           "code": "q",
-          "value": "sidottu"
+          "value": "Tampereen kaupunginmuseo"
+        },
+        {
+          "code": "q",
+          "value": "Joku TestiArvo &!Tähän"
+        },
+        {
+          "code": "c",
+          "value": "10 €"
+        },
+        {
+          "code": "6",
+          "value": "020_6_source"
         }
       ]
     }
