@@ -12,8 +12,6 @@ import {
   sortSubfields
 } from './utils.js';
 
-// Test 01: Source and base have 100, source also has 240
-
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   // All fields used for main entry, all non-repeatable
@@ -28,7 +26,12 @@ export default () => (base, source) => {
   const sourceTags = sourceFields.map(field => field.tag);
   debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
 
-  // Test 01: Base has no 1XX/7XX, source has 100 => copied to base as 700
+  // Test 01: Same 100 in both source and base => do not copy
+  // Test 02: Base has 100, source has 100 with more subfields => copy additional subfields to base 100
+  // Test 03: Base has 100, source has 110 => copy source 110 as 710 to base
+  // Test 04: Base has no 1XX/7XX, source has 110 => copy source 110 as 710 to base
+  // Test 05: Base has 100 and 710, source has same 110 as base 710 => do not copy
+  // Test 06: Base has 100 and 710, source has 110 with more subfields => copy additional subfields to base 710
 
   /*
   100/110/111/130 -kenttiä käsitellään ryhmänä niin, että ryhmä otetaan basesta.
@@ -38,24 +41,45 @@ export default () => (base, source) => {
   Samoin jos sourcessa on 'eri' 1xx-kenttä kuin basessa,
   sourcen 1xx-kenttä tuodaan baseen vastaavaksi 7xx-sarjan kentäksi.
   Näissä vielä toki sitten se, että jos basessa on jo 'sama' 7xx-kenttä, kentät pitää yhdistää.
+
+  100/110/111/130 ovat toisensa poissulkevia, eli tietueessa voi olla vain yksi näistä kerrallaan
+  Tietueessa voi olla 700/710/711/730-kenttiä silloinkin, jos siinä EI ole mitään 100/110/111/130-kenttiä
   */
 
-  // Array for collecting fields to finally copy from source to base
-  const copyFromSourceToBase = [];
-  const field1XX = ["100", "110", "111", "130"];   // 1XX fields are non-repeatable
+  const copyFromSourceToBase = []; // Array for collecting fields to finally copy from source to base
+  const field1XX = ["100", "110", "111", "130"];   // 1XX fields are non-repeatable and mutually exclusive
   const field7XX = ["700", "710", "711", "730"];   // 7XX fields are repeatable
 
   // Case 1: Base (Melinda) has no 1XX/7XX fields
   if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === false) {
+    // If source has 1XX, it is copied to base as 7XX
+    if (checkTagGroup(sourceTags, field1XX) === true) {
+
+    }
+    // If source has 7XX, it is copied to base as is
+    // ### 7XX kentät menee nyt perus-copyllä
+    if (checkTagGroup(sourceTags, field7XX) === true) {
+
+    }
     debug(`Case 1`);
   }
 
   // Case 2: Base (Melinda) has 1XX fields but not 7XX fields
   if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === false) {
+    // If source has 1XX, it is copied to base as 7XX
+    if (checkTagGroup(sourceTags, field1XX) === true) {
+
+    }
+    // If source has 7XX, it is copied to base as is
+    // ### 7XX kentät menee nyt perus-copyllä
+    if (checkTagGroup(sourceTags, field7XX) === true) {
+
+    }
     debug(`Case 2`);
   }
 
   // Case 3: Base (Melinda) has 7XX fields but not 1XX fields
+  // ### Onko tämä edes mahdollista?
   if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === true) {
     debug(`Case 3`);
   }

@@ -15,6 +15,21 @@
           "value": "(FIN11)000138915"
         }
       ]
+    },
+    {
+      "tag": "710",
+      "ind1": "2",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Pohjanmaan liitto."
+        },
+        {
+          "code": "0",
+          "value": "(FIN11)000012865"
+        }
+      ]
     }
   ]
 }

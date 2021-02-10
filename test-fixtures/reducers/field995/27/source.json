@@ -8,7 +8,11 @@
       "subfields": [
         {
           "code": "a",
-          "value": "995_a_source"
+          "value": "995_a1_source"
+        },
+        {
+          "code": "a",
+          "value": "995_a2_source"
         }
       ]
     }

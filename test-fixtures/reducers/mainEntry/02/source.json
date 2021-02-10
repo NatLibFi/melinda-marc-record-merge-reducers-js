@@ -3,39 +3,16 @@
   "fields": [
     {
       "tag": "100",
-      "ind1": " ",
+      "ind1": "1",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "Meikäläinen, Maija"
-        },
-        {
-          "code": "c",
-          "value": "maisteri"
-        },
-        {
-          "code": "e",
-          "value": "kirjoittaja"
+          "value": "Kartio, Johanna."
         },
         {
           "code": "0",
-          "value": "(FIN11)123456789"
-        }
-      ]
-    },
-    {
-      "tag": "240",
-      "ind1": "1",
-      "ind2": "0",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Hieno romaani"
-        },
-        {
-          "code": "l",
-          "value": "suomi"
+          "value": "(FIN11)000138915"
         }
       ]
     }

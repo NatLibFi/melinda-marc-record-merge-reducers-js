@@ -8,7 +8,7 @@ import {
   sortSubfields
 } from './utils.js';
 
-// Test 21: Add new instance of $a
+// Test 25: Base has one $a, source has 2x different $a
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
