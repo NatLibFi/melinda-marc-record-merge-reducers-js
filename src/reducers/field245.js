@@ -3,6 +3,7 @@ import createDebugLogger from 'debug';
 
 import {
   getTagString,
+  checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
   compareAllSubfields,
@@ -12,7 +13,7 @@ import {
   sortSubfields
 } from './utils.js';
 
-// Test ###
+// Test 31: Identical fields in source and base => keep base
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -22,6 +23,10 @@ export default () => (base, source) => {
   const sourceFields = source.get(fieldTag); // Get array of source fields
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
   const tagString = getTagString(baseFields, sourceFields);
+
+  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+    return base;
+  }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
   const repCodes = getRepCodes(tagString);
@@ -49,7 +54,7 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
 
   // Run the function to get the base record to return
-  return repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
+  return getField245(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
 
   /*
   Melindassa jo olevaa kenttää suositaan. Yhdistely:
@@ -64,7 +69,7 @@ export default () => (base, source) => {
   */
 
 
-  function repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
+  function getField245(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
     debug(`Working on field ${tagString}`);
     // First check whether the values of identifying subfields are equal
     // 020: $a (ISBN)

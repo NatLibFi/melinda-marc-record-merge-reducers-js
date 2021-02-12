@@ -2,6 +2,8 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
+  getTagString,
+  checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
   compareAllSubfields,
@@ -20,6 +22,11 @@ export default () => (base, source) => {
   const sourceFields = source.get(fieldTag); // Get array of source fields
   const tagString = getTagString(baseFields, sourceFields);
 
+  // ### Toimiiko kahdella tagilla?
+  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+    return base;
+  }
+
   // ### Tarvitaan tarkemmat speksit kenttien 260 ja 264 käsittelyyn
   // sisääntulevassa tietueessa on joko 264 _1 $b $c tai 264 _1 $b (kustantaja ja kustannusvuosi)
 
@@ -28,7 +35,7 @@ export default () => (base, source) => {
   const nonRepCodes = getNonRepCodes(tagString);
 
   // If there are multiple instances of the field in source and/or base
-/*  if (sourceFields.length > 1 || baseFields.length > 1) {
+  /*  if (sourceFields.length > 1 || baseFields.length > 1) {
     // Iterate through all fields in base and source arrays
     const outerLoop = sourceFields.map(sourceField => {
       const innerLoop = baseFields.map(baseField => repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes));
@@ -95,7 +102,7 @@ export default () => (base, source) => {
     const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
     /* eslint-disable functional/immutable-data */
-    /*modifiedBaseField.subfields = sortedSubfields;
+  /*modifiedBaseField.subfields = sortedSubfields;
     modifyBaseField(base, baseField, modifiedBaseField);
     debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
     return base; // Base record returned in case 2

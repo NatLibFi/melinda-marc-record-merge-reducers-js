@@ -3,6 +3,7 @@ import createDebugLogger from 'debug';
 
 import {
   getTagString,
+  checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
   compareAllSubfields,
@@ -23,6 +24,10 @@ export default () => (base, source) => {
   const sourceFields = source.get(fieldTag); // Get array of source fields
   const tagString = getTagString(baseFields, sourceFields);
 
+  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+    return base;
+  }
+
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
   const repCodes = getRepCodes(tagString);
   const nonRepCodes = getNonRepCodes(tagString);
@@ -31,7 +36,7 @@ export default () => (base, source) => {
   if (sourceFields.length > 1 || baseFields.length > 1) {
     // Iterate through all fields in base and source arrays
     const outerLoop = sourceFields.map(sourceField => {
-      const innerLoop = baseFields.map(baseField => repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes));
+      const innerLoop = baseFields.map(baseField => getField024(base, tagString, baseField, sourceField, repCodes, nonRepCodes));
       // Destructure array returned by innerLoop into object to pass to outerLoop
       const [tempObj] = innerLoop;
       return tempObj;
@@ -49,9 +54,9 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
 
   // Run the function to get the base record to return
-  return repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
+  return getField024(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
 
-  function repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
+  function getField024(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
     debug(`Working on field ${tagString}`);
     // First check whether the values of identifying subfields are equal
     // 024: $a (ISSN)

@@ -66,8 +66,7 @@
 	},
 	"peerDependencies": {
 		"@natlibfi/marc-record-merge": "^6.0.0-beta.1",
-		"@natlibfi/marc-record-validate": "^5.0.0",
-		"typescript": "3.7.0-beta"
+		"@natlibfi/marc-record-validate": "^5.0.0"
 	},
 	"eslintConfig": {
 		"extends": "@natlibfi/melinda-backend"

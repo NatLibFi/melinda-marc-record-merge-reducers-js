@@ -1,9 +1,11 @@
 import createDebugLogger from 'debug';
+import {getTagString, checkIdenticalness} from './utils.js';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(/^008$/u);
   const sourceFields = source.get(/^008$/u);
+  const tagString = getTagString(baseFields, sourceFields);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   debug(`base.leader: ${base.leader}`);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
@@ -11,6 +13,10 @@ export default () => (base, source) => {
 
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;
+
+  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+    return base;
+  }
 
   // First check that these character positions are the same in source and base:
   // 008/07-10 (year of publication), 008/15-17 (country), 008/35-37 (language)

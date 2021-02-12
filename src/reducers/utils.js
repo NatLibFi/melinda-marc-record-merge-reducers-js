@@ -10,10 +10,25 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // Get tag string from field tag for use in other functions
 // By default get it from source, in case the field is missing completely in base
 export function getTagString(baseFields, sourceFields) {
-  if(sourceFields.length === 0) {
+  if (sourceFields.length === 0) {
     return baseFields[0].tag;
   }
   return sourceFields[0].tag;
+}
+
+// Quick identicalness check
+export function checkIdenticalness(baseFields, sourceFields, tagString) {
+  const baseFieldString = normalizeStringValue(JSON.stringify(baseFields));
+  debug(`baseFieldString: ${baseFieldString}`);
+  const sourceFieldString = normalizeStringValue(JSON.stringify(sourceFields));
+  debug(`sourceFieldString: ${sourceFieldString}`);
+  const stringComparison = baseFieldString.localeCompare(sourceFieldString);
+  debug(`stringComparison: ${stringComparison}`);
+  if(stringComparison === 0) {
+    debug(`Field ${tagString} is identical in source and Melinda, no changes made`);
+    return true;
+  }
+  return false;
 }
 
 // Get field specs from melindaCustomMergeFields.json
@@ -36,11 +51,11 @@ export function getNonRepCodes(tagString) {
 // Normalize subfield values for comparison, returns array of normalized subfields
 export function normalizeSubfields(field) {
   const normalizedSubs = field.subfields
-    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
   return normalizedSubs;
 }
 
-export function normalizeSubfieldValue(value) {
+export function normalizeStringValue(value) {
   // Regexp options: g: global search, u: unicode
   const punctuation = /[.,\-/#!?$%^&*;:{}=_`~()[\]]/gu;
   return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
@@ -56,10 +71,10 @@ export function strictEquality(subfieldA, subfieldB) {
 export function compareAllSubfields(baseField, sourceField, codes) {
   const baseSubsNorm = baseField.subfields
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
-    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
   const sourceSubsNorm = sourceField.subfields
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
-    .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
 
   // Get base subfields for which a matching source subfield is found
   const equalSubfieldsBase = baseSubsNorm
@@ -113,7 +128,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes = [], idC
   function filterDuplicates(baseField, allIndexedRepSubs) {
     // Normalize subfield values for comparison
     const allIndexedRepSubsNorm = allIndexedRepSubs
-      .map(({code, value, index}) => ({code, value: normalizeSubfieldValue(value), index}));
+      .map(({code, value, index}) => ({code, value: normalizeStringValue(value), index}));
     //debug(`allIndexedRepSubsNorm: ${JSON.stringify(allIndexedRepSubsNorm, undefined, 2)}`);
 
     function strictEquality(subfieldA, subfieldB) {

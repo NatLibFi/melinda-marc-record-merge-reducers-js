@@ -2,17 +2,17 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "020",
-      "ind1": " ",
-      "ind2": " ",
+      "tag": "245",
+      "ind1": "1",
+      "ind2": "0",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-8"
+          "value": "Valitut teokset"
         },
         {
-          "code": "q",
-          "value": "020_q_source"
+          "code": "c",
+          "value": "Minna Canth."
         }
       ]
     }

@@ -9,8 +9,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // Processing rules for MARC fields by field tag
 // Copy duplicate instance of (non-identical) repeatable field from source to base
 /* eslint-disable require-unicode-regexp */
-const copyTags = new RegExp(String(
-  (/^(?<tags>013|015|016|017|028|050|052|055|060|070|080|082|083|084|210|242|246|255|258|321)$/u).source) +
+const copyTags = new RegExp(String((/^(?<tags>013|015|016|017|028|050|052|055|060|070|080|082|083|084|210|242|246|255|258|321)$/u).source) +
   (/^(?<tags>336|337|338|340|341|342|343|344|346|348|351|352|355|362|363|365|366|370|377)$/u).source +
   (/^(?<tags>380|381|382|383|385|386|388|490|500|501|502|504|505|508|509|510|511|513|515|518)$/u).source +
   (/^(?<tags>520|521|522|524|525|530|534|535|536|538|541|542|544|545|546|547|550|552|555)$/u).source +
@@ -53,8 +52,8 @@ const allReducers = [
   localReducers.field040(), // Tests 18 and 19
   localReducers.field042(), // Tests 20 and 21
   localReducers.fields260and264(), //
-  localReducers.field830(), // Tests 22, 23, 24, 25 and 26
-  localReducers.field995() // Test 27
+  localReducers.field830(), // Tests 22-29
+  localReducers.field995() // Test 30
 ];
 
 // ### Miten tästä rakennetaan kokonaisuus jossa tutkitaan tietueen kaikki kentät?

@@ -2,7 +2,8 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
-  //getTagString,
+  getTagString,
+  checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
   compareAllSubfields,
@@ -26,6 +27,11 @@ export default () => (base, source) => {
   const sourceTags = sourceFields.map(field => field.tag);
   debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
 
+  // ### Toimiiko monella tagilla?
+  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+    return base;
+  }
+
   // Test 01: Same 100 in both source and base => do not copy
   // Test 02: Base has 100, source has 100 with more subfields => copy additional subfields to base 100
   // Test 03: Base has 100, source has 110 => copy source 110 as 710 to base
@@ -47,8 +53,8 @@ export default () => (base, source) => {
   */
 
   const copyFromSourceToBase = []; // Array for collecting fields to finally copy from source to base
-  const field1XX = ["100", "110", "111", "130"];   // 1XX fields are non-repeatable and mutually exclusive
-  const field7XX = ["700", "710", "711", "730"];   // 7XX fields are repeatable
+  const field1XX = ['100', '110', '111', '130']; // 1XX fields are non-repeatable and mutually exclusive
+  const field7XX = ['700', '710', '711', '730']; // 7XX fields are repeatable
 
   // Case 1: Base (Melinda) has no 1XX/7XX fields
   if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === false) {
@@ -94,7 +100,7 @@ export default () => (base, source) => {
 
   // Field 240 is copied from source only if base does not contain 240 or 130
   function copy240(source, sourceTags, baseTags) {
-    if ((sourceTags.indexOf("240") !== -1) && (baseTags.indexOf("240") === -1 ) && (baseTags.indexOf("130") === -1)) {
+    if (sourceTags.indexOf('240') !== -1 && baseTags.indexOf('240') === -1 && baseTags.indexOf('130') === -1) {
       // Get an array containing field 240 from the source MarcRecord object
       const source240 = source.get(/^240$/);
       // Field 240 is non-repeatable so the source240 array can be destructured into obj240
@@ -102,10 +108,10 @@ export default () => (base, source) => {
       // Push obj240 into the array of fields to be copied at the end
       copyFromSourceToBase.push(obj240);
       debug(`Field 240 copied from source to Melinda`);
-      return;
+
     }
     // If the conditions are not fulfilled, nothing happens
-    return;
+
   }
 
   function checkTagGroup(tags, group) {
@@ -119,7 +125,7 @@ export default () => (base, source) => {
 
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-/*  const repCodes = getRepCodes(tagString);
+  /*  const repCodes = getRepCodes(tagString);
   const nonRepCodes = getNonRepCodes(tagString);
 
   // If there are multiple instances of the field in source and/or base
@@ -190,7 +196,7 @@ export default () => (base, source) => {
     const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
     /* eslint-disable functional/immutable-data */
-    /*modifiedBaseField.subfields = sortedSubfields;
+  /*modifiedBaseField.subfields = sortedSubfields;
     modifyBaseField(base, baseField, modifiedBaseField);
     debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
     return base; // Base record returned in case 2

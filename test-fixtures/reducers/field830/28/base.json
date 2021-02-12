@@ -2,21 +2,21 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "020",
+      "tag": "830",
       "ind1": " ",
-      "ind2": " ",
+      "ind2": "0",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-9"
+          "value": "Turun kauppakorkeakoulun julkaisuja"
         },
         {
-          "code": "q",
-          "value": "jotain"
+          "code": "n",
+          "value": "Sarja A,"
         },
         {
-          "code": "q",
-          "value": "sidottu"
+          "code": "v",
+          "value": "2:2009"
         }
       ]
     }

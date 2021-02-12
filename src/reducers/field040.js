@@ -2,6 +2,7 @@ import createDebugLogger from 'debug';
 
 import {
   getTagString,
+  checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
   getRepSubs,
@@ -21,6 +22,10 @@ export default () => (base, source) => {
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
   const tagString = getTagString(baseFields, sourceFields);
 
+  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+    return base;
+  }
+
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
   const repCodes = getRepCodes(tagString);
   const nonRepCodes = getNonRepCodes(tagString);
@@ -35,9 +40,9 @@ export default () => (base, source) => {
   const sort040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 
   // Run the function to get the base record to return
-  return field040(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
+  return getField040(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
 
-  function field040(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
+  function getField040(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
     debug(`Working on field ${tagString}`);
 
     // In all cases, source $a value is copied to a new $d and $a is removed

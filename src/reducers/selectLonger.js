@@ -1,6 +1,10 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {normalizeSubfieldValue} from './utils.js';
+import {
+  getTagString,
+  checkIdenticalness,
+  normalizeStringValue
+} from './utils.js';
 
 // These rules apply to fields:
 // Repeatable: 033, 034, 046, 257, 300
@@ -13,15 +17,23 @@ import {normalizeSubfieldValue} from './utils.js';
 // Test 02: 033 and 039: case b)
 // Test 03: 033 and 033: Two instances of the same repeatable field, one a) and one b)
 // Test 04: 033 and 033: Same as 03 but fields are in different order
+// Test 05: Identical 033 and 039 in source and base => keep base
 
-const fieldTags = /^(?<tags>033|034|039|045|046|257|300)$/u;
-
-export default () => (base, source) => {
+export default ({tagPattern}) => (base, source) => {
+//export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(fieldTags);
+  const baseFields = base.get(tagPattern);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
-  const sourceFields = source.get(fieldTags);
+  const sourceFields = source.get(tagPattern);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+  const tagString = getTagString(baseFields, sourceFields);
+  debug(`tagString: ${tagString}`);
+
+  // Test 05
+  // ### Tämä täytyy tehdä niin että käydään yksi kenttä kerrallaan läpi
+  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+    return base;
+  }
 
   // If there are multiple instances of the field in source and/or base
   if (sourceFields.length > 1 || baseFields.length > 1) {
@@ -60,10 +72,10 @@ export default () => (base, source) => {
     const sourceSubs = sourceField.subfields;
 
     const baseSubsNormalized = baseSubs
-      .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+      .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
 
     const sourceSubsNormalized = sourceSubs
-      .map(({code, value}) => ({code, value: normalizeSubfieldValue(value)}));
+      .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
 
     // Returns the base subfields for which a matching source subfield is found
     const equalSubfieldsBase = baseSubsNormalized
