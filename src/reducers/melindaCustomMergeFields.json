@@ -1076,6 +1076,38 @@
       "subfields": [
         {"code": "a", "repeatable": "true"}
       ]
+    },
+    {
+      "tag": "CAT",
+      "repeatable": "true",
+      "fieldType": "dataField",
+      "indicators": {"ind1": "", "ind2": ""},
+      "subfields": [
+        {"code": "a", "repeatable": "false"},
+        {"code": "b", "repeatable": "false"},
+        {"code": "c", "repeatable": "false"},
+        {"code": "l", "repeatable": "false"},
+        {"code": "h", "repeatable": "false"}
+      ]
+    },
+    {
+      "tag": "LOW",
+      "repeatable": "true",
+      "fieldType": "dataField",
+      "indicators": {"ind1": "", "ind2": ""},
+      "subfields": [
+        {"code": "a", "repeatable": "false"}
+      ]
+    },
+    {
+      "tag": "SID",
+      "repeatable": "true",
+      "fieldType": "dataField",
+      "indicators": {"ind1": "", "ind2": ""},
+      "subfields": [
+        {"code": "c", "repeatable": "false"},
+        {"code": "b", "repeatable": "false"}
+      ]
     }
   ]
 }

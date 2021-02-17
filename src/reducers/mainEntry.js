@@ -21,13 +21,14 @@ export default () => (base, source) => {
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+  const tagString = getTagString(baseFields, sourceFields);
+  debug(`tagString: ${tagString}`);
 
   const baseTags = baseFields.map(field => field.tag);
   debug(`baseTags: ${JSON.stringify(baseTags, undefined, 2)}`);
   const sourceTags = sourceFields.map(field => field.tag);
   debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
 
-  // ### Toimiiko monella tagilla?
   if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
     return base;
   }
@@ -38,6 +39,16 @@ export default () => (base, source) => {
   // Test 04: Base has no 1XX/7XX, source has 110 => copy source 110 as 710 to base
   // Test 05: Base has 100 and 710, source has same 110 as base 710 => do not copy
   // Test 06: Base has 100 and 710, source has 110 with more subfields => copy additional subfields to base 710
+  // Test 07: Combine fx00 with and without $0
+  // Test 08: Combine identical fx00
+  // Test 09: Combine fx00 with identical static name subfields, $d missing from base (Punctuation change)
+  // Test 10: Combine fx00 with identical static name subfields, $d missing from source (Punctuation change)
+  // Test 11: Combine fx00 with differing $e (Punctuation change)
+  // Test 12: Combine fx00 with missing $e (Punctuation change)
+  // Test 13: Combine fx00 with missing $e, multiple $e  (Punctuation change)
+  // Test 14: Combine fx00 with $d missing year of death in base
+  // Test 15: Combine fx00 with $d missing year of death in source
+  // Test 16: Combine fx00 with $d missing year of death in base
 
   /*
   100/110/111/130 -kenttiä käsitellään ryhmänä niin, että ryhmä otetaan basesta.

@@ -16,6 +16,9 @@ const copyTags = new RegExp(String((/^(?<tags>013|015|016|017|028|050|052|055|06
   (/^(?<tags>556|562|563|565|567|580|581|584|585|586|720|740|751|752|753|754|758|760)$/u).source +
   (/^(?<tags>762|765|767|770|772|775|776|777|780|785|786|787|883|886|887|900|910|911|940)$/u).source);
 
+// Copy internal Melinda/Aleph fields
+const copyMelindaInternal = /^(?<tags>LOW|CAT|SID)$/u;
+
 // Copy non-repeatable field from source only if missing from base
 const copyTagsNonRep = /^(?<tags>010|018|027|030|031|043|044|049|085|088|222|243|247|263|306|310|357|384|507|514)$/u;
 
@@ -35,13 +38,14 @@ const copyTagsSpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclu
 // Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
 const allReducers = [
   copy({tagPattern: copyTags}),
+  copy({tagPattern: copyMelindaInternal}),
   copy({tagPattern: copyTagsNonRep, compareTagsOnly: true}),
   copy({tagPattern: copyTagsSpecial1, excludeSubfields: ['b', '6', '8']}),
   copy({tagPattern: copyTagsSpecial2, excludeSubfields: ['9']}),
   copy({tagPattern: copyTagsSpecial3, dropSubfields: ['4']}),
   copy({tagPattern: copyTagsSpecial4, excludeSubfields: ['9'], dropSubfields: ['4']}),
   localReducers.leader(), // Test 01
-  localReducers.mainEntry(), // main entry fields
+  localReducers.mainEntry(), // Main entry fields
   localReducers.selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
   localReducers.field006(), // Tests 02 and 03
   localReducers.field007(), // Tests 04 and 05

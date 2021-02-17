@@ -18,9 +18,9 @@ import {
 // Test 03: 033 and 033: Two instances of the same repeatable field, one a) and one b)
 // Test 04: 033 and 033: Same as 03 but fields are in different order
 // Test 05: Identical 033 and 039 in source and base => keep base
+// Test 06: Same as 05 but fields in different order => keep base
 
 export default ({tagPattern}) => (base, source) => {
-//export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(tagPattern);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
@@ -29,8 +29,7 @@ export default ({tagPattern}) => (base, source) => {
   const tagString = getTagString(baseFields, sourceFields);
   debug(`tagString: ${tagString}`);
 
-  // Test 05
-  // ### Tämä täytyy tehdä niin että käydään yksi kenttä kerrallaan läpi
+  // Test 05 and 06
   if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
     return base;
   }

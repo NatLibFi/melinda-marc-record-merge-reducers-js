@@ -13,22 +13,54 @@ import {
   sortSubfields
 } from './utils.js';
 
-// Test ???
+// Test 01: Identical fields in source and base => keep base
+// Test 02: Base updated only by LOAD-KV => copy source 26X over base but keep base CAT fields
 
-export default () => (base, source) => {
+export default ({tagPattern}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const fieldTag = /^(260|264)$/u; // Tag in regexp format (for use in MarcRecord functions) ### ei toimi
-  const baseFields = base.get(fieldTag); // Get array of base fields
-  const sourceFields = source.get(fieldTag); // Get array of source fields
+  const baseFields = base.get(tagPattern); // Get array of base fields
+  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
+  const sourceFields = source.get(tagPattern); // Get array of source fields
+  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
   const tagString = getTagString(baseFields, sourceFields);
+  debug(`tagString: ${tagString}`);
 
-  // ### Toimiiko kahdella tagilla?
   if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
     return base;
   }
 
-  // ### Tarvitaan tarkemmat speksit kenttien 260 ja 264 käsittelyyn
-  // sisääntulevassa tietueessa on joko 264 _1 $b $c tai 264 _1 $b (kustantaja ja kustannusvuosi)
+  // Allowed values for Melinda CAT $a
+  // Two values for testing, in production this should only be LOAD-KV
+  const allowCats = ["LOAD-KV", "FIKKA"];
+
+/*  const baseCats = baseFields.filter(field => field.tag === "CAT");
+  debug(`baseCats: ${JSON.stringify(baseCats, undefined, 2)}`);
+  const subA = baseCats.map(field => field.subfields.filter(subfield => subfield.code === "a"));
+  debug(`subA: ${JSON.stringify(subA, undefined, 2)}`);
+  const catValues = subA.map(sub => sub.map(item => item.value));
+  debug(`catValues: ${JSON.stringify(catValues, undefined, 2)}`);
+  const catVals = catValues.map(([item]) => item);
+  debug(`catVals: ${JSON.stringify(catVals, undefined, 2)}`);*/
+
+  // Array of base CAT $a values (Melinda record cataloguers)
+  const baseCats = baseFields.filter(field => field.tag === "CAT")
+  .map(field => field.subfields.filter(subfield => subfield.code === "a"))
+  .map(sub => sub.map(item => item.value))
+  .map(([item]) => item);
+  debug(`baseCats: ${JSON.stringify(baseCats, undefined, 2)}`);
+
+  // If base CAT $a values include only allowed cataloguers
+  if (baseCats.every(item => allowCats.indexOf(item) !== -1) && baseCats.length > 0) {
+    // Copy source 260/263/264 fields over base
+    // Remove base 263 if source does not have 263
+    debug(`Melinda record catalogued by: ${baseCats}`);
+  }
+
+  // If there are no CAT fields in base or if CAT $a values are not included in allowed cataloguers
+  // Keep base 260 and 264
+  // Copy 263 from source
+  //debug(`Melinda record catalogued by: ${baseCats}`);
+
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
   const repCodes = getRepCodes(tagString);
