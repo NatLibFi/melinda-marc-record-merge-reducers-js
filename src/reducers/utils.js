@@ -1,5 +1,3 @@
-// Custom functions for Melinda merge
-
 import fs from 'fs';
 import path from 'path';
 import {normalizeSync} from 'normalize-diacritics';
@@ -7,43 +5,57 @@ import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-// Get tag string from field tag for use in other functions
-// By default get it from source, in case the field is missing completely in base
-export function getTagString(baseFields, sourceFields) {
-  if (sourceFields.length === 0) {
-    return baseFields[0].tag;
+// Get field tags for use in other functions
+export function getTags(fields) {
+  const tags = fields.map(field => field.tag);
+  // If there is only one field = one tag in the array, it is returned as string
+  if (tags.length === 1) {
+    const [tagString] = tags;
+    debug(`tagString from getTags: ${tagString}`);
+    return tagString;
   }
-  return sourceFields[0].tag;
+  // If there are several fields, return an array of tags
+  debug(`tags from getTags: ${JSON.stringify(tags, undefined, 2)}`);
+  return tags;
 }
 
-// Quick identicalness check
-export function checkIdenticalness(baseFields, sourceFields, tagString) {
-  const baseFieldString = normalizeStringValue(JSON.stringify(baseFields));
-  debug(`baseFieldString: ${baseFieldString}`);
-  const sourceFieldString = normalizeStringValue(JSON.stringify(sourceFields));
-  debug(`sourceFieldString: ${sourceFieldString}`);
-  const stringComparison = baseFieldString.localeCompare(sourceFieldString);
-  debug(`stringComparison: ${stringComparison}`);
-  if(stringComparison === 0) {
-    debug(`Field ${tagString} is identical in source and Melinda, no changes made`);
-    return true;
+// Quick identicalness check (not normalized)
+export function checkIdenticalness(baseFields, sourceFields) {
+  const baseStrings = baseFields.map(field => JSON.stringify(field));
+  debug(`baseStrings: ${JSON.stringify(baseStrings, undefined, 2)}`);
+  const sourceStrings = sourceFields.map(field => JSON.stringify(field));
+  debug(`sourceStrings: ${JSON.stringify(sourceStrings, undefined, 2)}`);
+
+  // https://stackoverflow.com/questions/6229197/how-to-know-if-two-arrays-have-the-same-values
+
+  function containsAll(arr1, arr2) {
+    const result = arr2.every(arr2Item => arr1.includes(arr2Item));
+    debug(`containsAll result: ${JSON.stringify(result, undefined, 2)}`);
+    return result;
   }
-  return false;
+  function sameMembers(arr1, arr2) {
+    const result = containsAll(arr1, arr2) && containsAll(arr2, arr1);
+    debug(`sameMembers result: ${JSON.stringify(result, undefined, 2)}`);
+    return result;
+  }
+  const result = sameMembers(baseStrings, sourceStrings);
+  debug(`result: ${result}`);
+  return result;
 }
 
 // Get field specs from melindaCustomMergeFields.json
-export function getFieldSpecs(tagString) {
+export function getFieldSpecs(tag) {
   const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
-  const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tagString);
+  const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tag);
   return fieldSpecs;
 }
-export function getRepCodes(tagString) {
-  return getFieldSpecs(tagString).subfields
+export function getRepCodes(tag) {
+  return getFieldSpecs(tag).subfields
     .filter(sub => sub.repeatable === 'true')
     .map(sub => sub.code);
 }
-export function getNonRepCodes(tagString) {
-  return getFieldSpecs(tagString).subfields
+export function getNonRepCodes(tag) {
+  return getFieldSpecs(tag).subfields
     .filter(sub => sub.repeatable === 'false')
     .map(sub => sub.code);
 }
@@ -57,6 +69,7 @@ export function normalizeSubfields(field) {
 
 export function normalizeStringValue(value) {
   // Regexp options: g: global search, u: unicode
+  // Huom. normalizeSync normalisoi pois myös ääkköset
   const punctuation = /[.,\-/#!?$%^&*;:{}=_`~()[\]]/gu;
   return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
 }
@@ -165,7 +178,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes = [], idC
   return nonDupRepSubsToCopy;
 }
 
-// Modify existing base field in Melinda
+// Modify existing base field in base
 export function modifyBaseField(base, baseField, modifiedField) {
   const index = base.fields.findIndex(field => field === baseField);
   base.fields.splice(index, 1, modifiedField); // eslint-disable-line functional/immutable-data
@@ -242,67 +255,4 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
     return sortSubfields(restSubfields, rest, [...orderedSubfields, ...filtered]);
   }
   return sortSubfields(restSubfields, rest, orderedSubfields);
-}
-
-// Process repeatable field
-// ###Tarvitaanko tänne vai kustomoituna joka reduceriin oma?
-export function repeatableField(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
-  debug(`Working on field ${tagString}`);
-  // First check whether the values of identifying subfields are equal
-  // 020: $a (ISBN)
-  const idCodes = ['a'];
-
-  // Case 1: If all identifying subfield values are not equal the entire source field is copied to base as a new field
-  if (compareAllSubfields(baseField, sourceField, idCodes) === false) {
-    //debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
-    base.insertField(sourceField);
-    debug(`Base after copying: ${JSON.stringify(base, undefined, 2)}`);
-    debug(`Field ${tagString}: One or more subfields (${idCodes}) not matching, source field copied as new field to Melinda`);
-    return base; // Base record returned in case 1
-  }
-
-  // Case 2: If identifying subfield values are equal, continue with the merge process
-  debug(`Field ${tagString}: Matching subfields (${idCodes}) found in source and Melinda, continuing with merge`);
-
-  // If there are subfields to drop, define them first
-  // 020: $c
-  const dropCodes = ['c'];
-
-  // Copy other subfields from source field to base field
-  // For non-repeatable subfields, the value existing in base (Melinda) is preferred
-  // Non-repeatable subfields are copied from source only if missing completely in base
-  // 020: $a, $c, $6 (but $a was already checked and $c dropped, so only $6 is copied here)
-  const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
-  //debug(`nonRepSubsToCopy: ${JSON.stringify(nonRepSubsToCopy, undefined, 2)}`);
-
-  // Repeatable subfields are copied if the value is different
-  // 020: $q, $z, $8
-  const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
-  //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
-
-  // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
-  // Subfields in the modified base field are arranged by default in alphabetical order (a-z, 0-9)
-  // To use a custom sorting order, set it as the second parameter in sortSubfields
-  // Example: Copy subfield sort order from source field
-  // const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-
-  const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
-  const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
-  /* eslint-disable functional/immutable-data */
-  modifiedBaseField.subfields = sortedSubfields;
-  modifyBaseField(base, baseField, modifiedBaseField);
-  debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
-  return base; // Base record returned in case 2
-}
-
-// Process non-repeatable field
-export function nonRepeatableField(base, tagString, baseFields, sourceFields) {
-  // If the field is missing completely from base, it is copied as a new field
-  if (baseFields.length === 0) {
-    debug(`Missing field ${tagString} copied from source to Melinda`);
-    sourceFields.forEach(f => base.insertField(f));
-    return base;
-  }
-  // Otherwise the original base field is kept
-  return base;
 }

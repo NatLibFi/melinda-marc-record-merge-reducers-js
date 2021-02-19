@@ -2,7 +2,6 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
-  getTagString,
   checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
@@ -22,21 +21,20 @@ export default () => (base, source) => {
   const fieldTag = /^022$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
-  const tagString = getTagString(baseFields, sourceFields);
 
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes(tagString);
-  const nonRepCodes = getNonRepCodes(tagString);
+  const repCodes = getRepCodes("022");
+  const nonRepCodes = getNonRepCodes("022");
 
   // If there are multiple instances of the field in source and/or base
   if (sourceFields.length > 1 || baseFields.length > 1) {
     // Iterate through all fields in base and source arrays
     const outerLoop = sourceFields.map(sourceField => {
-      const innerLoop = baseFields.map(baseField => getField022(base, tagString, baseField, sourceField, repCodes, nonRepCodes));
+      const innerLoop = baseFields.map(baseField => getField022(base, baseField, sourceField, repCodes, nonRepCodes));
       // Destructure array returned by innerLoop into object to pass to outerLoop
       const [tempObj] = innerLoop;
       return tempObj;
@@ -54,11 +52,11 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
 
   // Run the function to get the base record to return
-  return getField022(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
+  return getField022(base, baseField, sourceField, repCodes, nonRepCodes);
 
 
-  function getField022(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
-    debug(`Working on field ${tagString}`);
+  function getField022(base, baseField, sourceField, repCodes, nonRepCodes) {
+    debug(`Working on field 022`);
     // First check whether the values of identifying subfields are equal
     // 022: $a (ISSN)
     const idCodes = ['a'];
@@ -68,19 +66,19 @@ export default () => (base, source) => {
       //debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
       base.insertField(sourceField);
       debug(`Base after copying: ${JSON.stringify(base, undefined, 2)}`);
-      debug(`Field ${tagString}: One or more subfields (${idCodes}) not matching, source field copied as new field to Melinda`);
+      debug(`One or more subfields (${idCodes}) not matching, source field copied as new field to base`);
       return base; // Base record returned in case 1
     }
 
     // Case 2: If identifying subfield values are equal, continue with the merge process
-    debug(`Field ${tagString}: Matching subfields (${idCodes}) found in source and Melinda, continuing with merge`);
+    debug(`Matching subfields (${idCodes}) found in source and base, continuing with merge`);
 
     // If there are subfields to drop, define them first
     // 022: No subfields to drop
     const dropCodes = [];
 
     // Copy other subfields from source field to base field
-    // For non-repeatable subfields, the value existing in base (Melinda) is preferred
+    // For non-repeatable subfields, the value existing in base (base) is preferred
     // Non-repeatable subfields are copied from source only if missing completely in base
     // 022: $a, $l, $2, $6
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
@@ -91,7 +89,7 @@ export default () => (base, source) => {
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
     //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
-    // Create modified base field and replace old base record in Melinda with it
+    // Create modified base field and replace old base record in base with it
     // Copy subfield sort order from source field
     const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
     const modifiedBaseField = JSON.parse(JSON.stringify(baseField));

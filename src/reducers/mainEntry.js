@@ -2,7 +2,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
-  getTagString,
+  getTags,
   checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
@@ -21,17 +21,19 @@ export default () => (base, source) => {
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-  const tagString = getTagString(baseFields, sourceFields);
+  const tagString = getTags(baseFields, sourceFields);
   debug(`tagString: ${tagString}`);
 
-  const baseTags = baseFields.map(field => field.tag);
+  const baseTags = getTags(baseFields);
   debug(`baseTags: ${JSON.stringify(baseTags, undefined, 2)}`);
-  const sourceTags = sourceFields.map(field => field.tag);
+  const sourceTags = getTags(sourceFields);
   debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
 
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
+
+  // ### Keskeneräinen
 
   // Test 01: Same 100 in both source and base => do not copy
   // Test 02: Base has 100, source has 100 with more subfields => copy additional subfields to base 100
@@ -39,6 +41,7 @@ export default () => (base, source) => {
   // Test 04: Base has no 1XX/7XX, source has 110 => copy source 110 as 710 to base
   // Test 05: Base has 100 and 710, source has same 110 as base 710 => do not copy
   // Test 06: Base has 100 and 710, source has 110 with more subfields => copy additional subfields to base 710
+  // ### tästä eteenpäin ei tehty valmiiksi
   // Test 07: Combine fx00 with and without $0
   // Test 08: Combine identical fx00
   // Test 09: Combine fx00 with identical static name subfields, $d missing from base (Punctuation change)
@@ -67,7 +70,7 @@ export default () => (base, source) => {
   const field1XX = ['100', '110', '111', '130']; // 1XX fields are non-repeatable and mutually exclusive
   const field7XX = ['700', '710', '711', '730']; // 7XX fields are repeatable
 
-  // Case 1: Base (Melinda) has no 1XX/7XX fields
+  // Case 1: Base (base) has no 1XX/7XX fields
   if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === false) {
     // If source has 1XX, it is copied to base as 7XX
     if (checkTagGroup(sourceTags, field1XX) === true) {
@@ -81,7 +84,7 @@ export default () => (base, source) => {
     debug(`Case 1`);
   }
 
-  // Case 2: Base (Melinda) has 1XX fields but not 7XX fields
+  // Case 2: Base (base) has 1XX fields but not 7XX fields
   if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === false) {
     // If source has 1XX, it is copied to base as 7XX
     if (checkTagGroup(sourceTags, field1XX) === true) {
@@ -95,13 +98,13 @@ export default () => (base, source) => {
     debug(`Case 2`);
   }
 
-  // Case 3: Base (Melinda) has 7XX fields but not 1XX fields
+  // Case 3: Base (base) has 7XX fields but not 1XX fields
   // ### Onko tämä edes mahdollista?
   if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === true) {
     debug(`Case 3`);
   }
 
-  // Case 4: Base (Melinda) has both 1XX and 7XX fields
+  // Case 4: Base (base) has both 1XX and 7XX fields
   if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === true) {
     debug(`Case 4`);
   }
@@ -118,7 +121,7 @@ export default () => (base, source) => {
       const [obj240] = source240;
       // Push obj240 into the array of fields to be copied at the end
       copyFromSourceToBase.push(obj240);
-      debug(`Field 240 copied from source to Melinda`);
+      debug(`Field 240 copied from source to base`);
 
     }
     // If the conditions are not fulfilled, nothing happens
@@ -175,19 +178,19 @@ export default () => (base, source) => {
       //debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
       base.insertField(sourceField);
       debug(`Base after copying: ${JSON.stringify(base, undefined, 2)}`);
-      debug(`Field ${tagString}: One or more subfields (${idCodes}) not matching, source field copied as new field to Melinda`);
+      debug(`Field ${tagString}: One or more subfields (${idCodes}) not matching, source field copied as new field to base`);
       return base; // Base record returned in case 1
     }
 
     // Case 2: If identifying subfield values are equal, continue with the merge process
-    debug(`Field ${tagString}: Matching subfields (${idCodes}) found in source and Melinda, continuing with merge`);
+    debug(`Field ${tagString}: Matching subfields (${idCodes}) found in source and base, continuing with merge`);
 
     // If there are subfields to drop, define them first
     // 020: $c
     const dropCodes = ['c'];
 
     // Copy other subfields from source field to base field
-    // For non-repeatable subfields, the value existing in base (Melinda) is preferred
+    // For non-repeatable subfields, the value existing in base (base) is preferred
     // Non-repeatable subfields are copied from source only if missing completely in base
     // 020: $a, $c, $6 (but $a was already checked and $c dropped, so only $6 is copied here)
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
@@ -198,7 +201,7 @@ export default () => (base, source) => {
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
     //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
-    // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
+    // Create modified base field and replace old base record in base with it (exception to general rule of data immutability)
     // Subfields in the modified base field are arranged by default in alphabetical order (a-z, 0-9)
     // To use a different sorting order, set it as the second parameter in sortSubfields
     // Example: copy subfield sort order from source field

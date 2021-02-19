@@ -1,11 +1,10 @@
 import createDebugLogger from 'debug';
-import {getTagString, checkIdenticalness} from './utils.js';
+import {checkIdenticalness} from './utils.js';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(/^008$/u);
   const sourceFields = source.get(/^008$/u);
-  const tagString = getTagString(baseFields, sourceFields);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   debug(`base.leader: ${base.leader}`);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
@@ -14,13 +13,13 @@ export default () => (base, source) => {
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;
 
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
   // First check that these character positions are the same in source and base:
   // 008/07-10 (year of publication), 008/15-17 (country), 008/35-37 (language)
-  // Then select the 008 field from the record with the higher Melinda level code
+  // Then select the 008 field from the record with the higher base level code
 
   const basePubYear = baseField.value.slice(7, 11);
   const baseLanguage = baseField.value.slice(35, 38);
@@ -33,26 +32,26 @@ export default () => (base, source) => {
 
   if (basePubYear === sourcePubYear && baseCountry === sourceCountry && baseLanguage === sourceLanguage) {
     // Test 06: If the level code of the source record is better (smaller number)
-    // Replace Melinda field 008 with field 008 from source
+    // Replace base field 008 with field 008 from source
     if (getLevelCode(source) < getLevelCode(base)) {
       replaceBasefieldWithSourcefield(base);
       return base;
     }
   }
-  // Test 07: If the level code of the Melinda record is better or the same, keep existing 008
+  // Test 07: If the level code of the base record is better or the same, keep existing 008
   // Test 08: If the character positions are not the same, keep existing 008
-  debug(`Keeping Melinda field ${baseField.tag}`);
+  debug(`Keeping base field ${baseField.tag}`);
   return base;
 
   function replaceBasefieldWithSourcefield(base) {
     const index = base.fields.findIndex(field => field === baseField);
     base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
-    debug(`Replacing Melinda field ${baseField.tag} with source`);
+    debug(`Replacing base field ${baseField.tag} with source`);
     return base;
   }
 
   function getLevelCode(field) {
-    // Melinda record level codes from highest (1) to lowest (10)
+    // base record level codes from highest (1) to lowest (10)
     // levelValue = value of 000/17
     // levelCode 1 is given if the value is either empty ' ' (space) or '^', depending on where the record comes from
     const levelCodes = [

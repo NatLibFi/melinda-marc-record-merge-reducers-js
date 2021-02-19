@@ -1,7 +1,6 @@
 import createDebugLogger from 'debug';
 
 import {
-  getTagString,
   checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
@@ -19,15 +18,14 @@ export default () => (base, source) => {
   const fieldTag = /^042$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
-  const tagString = getTagString(baseFields, sourceFields);
 
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes(tagString);
-  const nonRepCodes = getNonRepCodes(tagString);
+  const repCodes = getRepCodes("042");
+  const nonRepCodes = getNonRepCodes("042");
 
   // Since 042 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
@@ -35,22 +33,22 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
 
   // Run the function to get the base record to return
-  return getField042(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
+  return getField042(base, baseField, sourceField, repCodes, nonRepCodes);
 
-  function getField042(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
-    debug(`Working on field ${tagString}`);
+  function getField042(base, baseField, sourceField, repCodes, nonRepCodes) {
+    debug(`Working on field 042`);
 
-    // Case 1: If field 042 is missing completely from Melinda, copy it from source as a new field
+    // Case 1: If field 042 is missing completely from base, copy it from source as a new field
     if (baseFields.length === 0) {
-      debug(`Missing field ${tagString} copied from source to Melinda`);
+      debug(`Missing field 042 copied from source to base`);
       sourceFields.forEach(f => base.insertField(f));
       return base;
     }
 
-    // Case 2: If field 042 exists in Melinda, copy missing subfields from source
+    // Case 2: If field 042 exists in base, copy missing subfields from source
 
     // Copy other subfields from source field to base field
-    // For non-repeatable subfields, the value existing in base (Melinda) is preferred
+    // For non-repeatable subfields, the value existing in base (base) is preferred
     // Non-repeatable subfields are copied from source only if missing completely in base
     // 042: none
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes);
@@ -59,7 +57,7 @@ export default () => (base, source) => {
     // 042: $a
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
 
-    // Create modified base field and replace old base record in Melinda with it
+    // Create modified base field and replace old base record in base with it
     const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
     /* eslint-disable functional/immutable-data */

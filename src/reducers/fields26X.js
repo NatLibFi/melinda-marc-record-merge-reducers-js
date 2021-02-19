@@ -2,7 +2,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
-  getTagString,
+  getTags,
   checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
@@ -16,20 +16,25 @@ import {
 // Test 01: Identical fields in source and base => keep base
 // Test 02: Base updated only by LOAD-KV => copy source 26X over base but keep base CAT fields
 
+// ### Keskeneräinen
+
 export default ({tagPattern}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(tagPattern); // Get array of base fields
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(tagPattern); // Get array of source fields
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-  const tagString = getTagString(baseFields, sourceFields);
-  debug(`tagString: ${tagString}`);
 
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  const baseTags = getTags(baseFields);
+  debug(`baseTags: ${JSON.stringify(baseTags, undefined, 2)}`);
+  const sourceTags = getTags(sourceFields);
+  debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
+
+  if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
-  // Allowed values for Melinda CAT $a
+  // Allowed values for base CAT $a
   // Two values for testing, in production this should only be LOAD-KV
   const allowCats = ["LOAD-KV", "FIKKA"];
 
@@ -42,7 +47,7 @@ export default ({tagPattern}) => (base, source) => {
   const catVals = catValues.map(([item]) => item);
   debug(`catVals: ${JSON.stringify(catVals, undefined, 2)}`);*/
 
-  // Array of base CAT $a values (Melinda record cataloguers)
+  // Array of base CAT $a values (base record cataloguers)
   const baseCats = baseFields.filter(field => field.tag === "CAT")
   .map(field => field.subfields.filter(subfield => subfield.code === "a"))
   .map(sub => sub.map(item => item.value))
@@ -53,13 +58,13 @@ export default ({tagPattern}) => (base, source) => {
   if (baseCats.every(item => allowCats.indexOf(item) !== -1) && baseCats.length > 0) {
     // Copy source 260/263/264 fields over base
     // Remove base 263 if source does not have 263
-    debug(`Melinda record catalogued by: ${baseCats}`);
+    debug(`base record catalogued by: ${baseCats}`);
   }
 
   // If there are no CAT fields in base or if CAT $a values are not included in allowed cataloguers
   // Keep base 260 and 264
   // Copy 263 from source
-  //debug(`Melinda record catalogued by: ${baseCats}`);
+  //debug(`base record catalogued by: ${baseCats}`);
 
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
@@ -102,19 +107,19 @@ export default ({tagPattern}) => (base, source) => {
       //debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
       base.insertField(sourceField);
       debug(`Base after copying: ${JSON.stringify(base, undefined, 2)}`);
-      debug(`Field ${tagString}: One or more subfields (${idCodes}) not matching, source field copied as new field to Melinda`);
+      debug(`Field ${tagString}: One or more subfields (${idCodes}) not matching, source field copied as new field to base`);
       return base; // Base record returned in case 1
     }
 
     // Case 2: If identifying subfield values are equal, continue with the merge process
-    debug(`Field ${tagString}: Matching subfields (${idCodes}) found in source and Melinda, continuing with merge`);
+    debug(`Field ${tagString}: Matching subfields (${idCodes}) found in source and base, continuing with merge`);
 
     // If there are subfields to drop, define them first
     // 020: $c
     const dropCodes = ['c'];
 
     // Copy other subfields from source field to base field
-    // For non-repeatable subfields, the value existing in base (Melinda) is preferred
+    // For non-repeatable subfields, the value existing in base (base) is preferred
     // Non-repeatable subfields are copied from source only if missing completely in base
     // 020: $a, $c, $6 (but $a was already checked and $c dropped, so only $6 is copied here)
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
@@ -125,7 +130,7 @@ export default ({tagPattern}) => (base, source) => {
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
     //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
-    // Create modified base field and replace old base record in Melinda with it (exception to general rule of data immutability)
+    // Create modified base field and replace old base record in base with it (exception to general rule of data immutability)
     // Subfields in the modified base field are arranged by default in alphabetical order (a-z, 0-9)
     // To use a different sorting order, set it as the second parameter in sortSubfields
     // Example: copy subfield sort order from source field

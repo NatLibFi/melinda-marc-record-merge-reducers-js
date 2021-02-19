@@ -2,7 +2,6 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {
   modifyBaseField,
-  getTagString,
   checkIdenticalness
 } from './utils.js';
 
@@ -22,12 +21,11 @@ export default () => (base, source) => {
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-  const tagString = getTagString(baseFields, sourceFields);
 
   // Test 27 (identical) and 29 (2x identical fields in different order)
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  /*if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
-  }
+  }*/
 
   // Field 830 is repeatable
   // If there are multiple instances of the field in source and/or base
@@ -61,13 +59,13 @@ export default () => (base, source) => {
     if (baseFields.length > 0) {
       // Then check whether base 830 has $x, if yes, nothing needs to be done (Test 23)
       if (baseField.subfields.map(sub => sub.code).indexOf('x') !== -1) {
-        debug(`Melinda 830 has ISSN, keeping existing field`);
+        debug(`Base 830 has ISSN, keeping existing field`);
         return base;
       }
       // If not, check whether source 830 has $x (Test 25)
       if (sourceField.subfields.map(sub => sub.code).indexOf('x') !== -1) {
         // If source 830 has $x, replace base 830 with source 830
-        debug(`Source 830 has ISSN, copying source 830 to Melinda`);
+        debug(`Source 830 has ISSN, copying source 830 to base`);
         modifyBaseField(base, baseField, sourceField);
         debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
         return base;
@@ -78,7 +76,7 @@ export default () => (base, source) => {
     }
     // If base has no 830, source 830 is copied if it has $x (Test 22)
     if (sourceField.subfields.map(sub => sub.code).indexOf('x') !== -1) {
-      debug(`Source 830 has ISSN, copying source 830 to Melinda`);
+      debug(`Source 830 has ISSN, copying source 830 to base`);
       base.insertField(sourceField);
       debug(`Base after copying: ${JSON.stringify(base, undefined, 2)}`);
       return base;

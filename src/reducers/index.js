@@ -6,6 +6,8 @@ export * from './reducers';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
+// ### Keskeneräinen
+
 // Processing rules for MARC fields by field tag
 // Copy duplicate instance of (non-identical) repeatable field from source to base
 /* eslint-disable require-unicode-regexp */
@@ -16,8 +18,8 @@ const copyTags = new RegExp(String((/^(?<tags>013|015|016|017|028|050|052|055|06
   (/^(?<tags>556|562|563|565|567|580|581|584|585|586|720|740|751|752|753|754|758|760)$/u).source +
   (/^(?<tags>762|765|767|770|772|775|776|777|780|785|786|787|883|886|887|900|910|911|940)$/u).source);
 
-// Copy internal Melinda/Aleph fields
-const copyMelindaInternal = /^(?<tags>LOW|CAT|SID)$/u;
+// Copy internal base/Aleph fields
+const copybaseInternal = /^(?<tags>LOW|CAT|SID)$/u;
 
 // Copy non-repeatable field from source only if missing from base
 const copyTagsNonRep = /^(?<tags>010|018|027|030|031|043|044|049|085|088|222|243|247|263|306|310|357|384|507|514)$/u;
@@ -38,7 +40,7 @@ const copyTagsSpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclu
 // Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
 const allReducers = [
   copy({tagPattern: copyTags}),
-  copy({tagPattern: copyMelindaInternal}),
+  copy({tagPattern: copybaseInternal}),
   copy({tagPattern: copyTagsNonRep, compareTagsOnly: true}),
   copy({tagPattern: copyTagsSpecial1, excludeSubfields: ['b', '6', '8']}),
   copy({tagPattern: copyTagsSpecial2, excludeSubfields: ['9']}),

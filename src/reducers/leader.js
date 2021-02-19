@@ -12,7 +12,7 @@ export default () => (base, source) => {
   // Test 01: If LDR 000/06 or 07 is different, do not merge
   /* eslint-disable functional/no-conditional-statement */
   if (source.leader[6] !== base.leader[6] || source.leader[7] !== base.leader[7]) {
-    throw new Error(`LDR 000/06 or 07 is different in Melinda and source`);
+    throw new Error(`LDR 000/06 or 07 is different in base and source`);
   }
   return base;
 };

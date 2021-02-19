@@ -1,11 +1,10 @@
 import createDebugLogger from 'debug';
-import {getTagString, checkIdenticalness} from './utils.js';
+import {checkIdenticalness} from './utils.js';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(/^007$/u);
   const sourceFields = source.get(/^007$/u);
-  const tagString = getTagString(baseFields, sourceFields);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   debug(`base.leader: ${base.leader}`);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
@@ -14,7 +13,7 @@ export default () => (base, source) => {
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;
 
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
@@ -29,6 +28,6 @@ export default () => (base, source) => {
     return base;
   }
   // Test 05: If 007/00-01 are the same, keep existing field 007 in base
-  debug(`Keeping Melinda field ${baseField.tag}`);
+  debug(`Keeping base field ${baseField.tag}`);
   return base;
 };

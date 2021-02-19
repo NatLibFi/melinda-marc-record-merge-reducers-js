@@ -1,7 +1,6 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {
-  getTagString,
   checkIdenticalness,
   normalizeStringValue
 } from './utils.js';
@@ -9,10 +8,10 @@ import {
 // These rules apply to fields:
 // Repeatable: 033, 034, 046, 257, 300
 // Non-repeatable: 039, 045
-// If source field is longer, replace Melinda field with source field
+// If source field is longer, replace base field with source field
 // Longer means fulfilling either (but not both) of these conditions:
-// a) Subfield values in source are supersets of subfield values Melinda
-// b) Source has more subfields than Melinda
+// a) Subfield values in source are supersets of subfield values base
+// b) Source has more subfields than base
 // Test 01: 033 and 039: case a)
 // Test 02: 033 and 039: case b)
 // Test 03: 033 and 033: Two instances of the same repeatable field, one a) and one b)
@@ -26,11 +25,9 @@ export default ({tagPattern}) => (base, source) => {
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(tagPattern);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-  const tagString = getTagString(baseFields, sourceFields);
-  debug(`tagString: ${tagString}`);
 
   // Test 05 and 06
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
@@ -89,8 +86,8 @@ export default ({tagPattern}) => (base, source) => {
     //debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
     if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
-      debug(`Melinda and source subfields are not equal`);
-      debug(`No changes to Melinda`);
+      debug(`base and source subfields are not equal`);
+      debug(`No changes to base`);
       return base;
     }
 
@@ -112,10 +109,10 @@ export default ({tagPattern}) => (base, source) => {
       return replaceBasefieldWithSourcefield(base);
     }
 
-    debug(`No changes to Melinda`);
+    debug(`No changes to base`);
     return base;
 
-    // Subset equality function from marc-record-merge select reducer
+    // Subset equality function from marc-record-merge select.js
     function subsetEquality(subfieldA, subfieldB) {
       return subfieldA.code === subfieldB.code &&
       (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
@@ -123,7 +120,7 @@ export default ({tagPattern}) => (base, source) => {
     function replaceBasefieldWithSourcefield(base) {
       const index = base.fields.findIndex(field => field === baseField);
       base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
-      debug(`Source field ${sourceField.tag} is longer, replacing Melinda field with source field`);
+      debug(`Source field ${sourceField.tag} is longer, replacing base field with source field`);
       return base;
     }
 

@@ -1,7 +1,6 @@
 import createDebugLogger from 'debug';
 
 import {
-  getTagString,
   checkIdenticalness,
   getRepCodes,
   getNonRepCodes,
@@ -20,15 +19,14 @@ export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-  const tagString = getTagString(baseFields, sourceFields);
 
-  if (checkIdenticalness(baseFields, sourceFields, tagString) === true) {
+  if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes(tagString);
-  const nonRepCodes = getNonRepCodes(tagString);
+  const repCodes = getRepCodes("040");
+  const nonRepCodes = getNonRepCodes("040");
 
   // Since 040 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
@@ -40,10 +38,10 @@ export default () => (base, source) => {
   const sort040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 
   // Run the function to get the base record to return
-  return getField040(base, tagString, baseField, sourceField, repCodes, nonRepCodes);
+  return getField040(base, baseField, sourceField, repCodes, nonRepCodes);
 
-  function getField040(base, tagString, baseField, sourceField, repCodes, nonRepCodes) {
-    debug(`Working on field ${tagString}`);
+  function getField040(base, baseField, sourceField, repCodes, nonRepCodes) {
+    debug(`Working on field 040`);
 
     // In all cases, source $a value is copied to a new $d and $a is removed
     transferSubfieldValue(sourceField, 'a', 'd');
@@ -51,7 +49,7 @@ export default () => (base, source) => {
     debug(`sourceFields final: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
     // Transfer the value of one subfield to another
-    // For 040: transfer source $a value to $d to prepare for copying to Melinda
+    // For 040: transfer source $a value to $d to prepare for copying to base
     function transferSubfieldValue(field, origSub, targetSub) {
       // Get string value of original subfield
       const transferredValue = String(field.subfields
@@ -68,17 +66,17 @@ export default () => (base, source) => {
       field.subfields = newSubfields;
     }
 
-    // Case 1: If field 040 is missing completely from Melinda, copy it from source as a new field
+    // Case 1: If field 040 is missing completely from base, copy it from source as a new field
     if (baseFields.length === 0) {
-      debug(`Missing field ${tagString} copied from source to Melinda`);
+      debug(`Missing field 040 copied from source to base`);
       sourceFields.forEach(f => base.insertField(f));
       return base;
     }
 
-    // Case 2: If field 040 exists in Melinda, copy missing subfields from source
+    // Case 2: If field 040 exists in base, copy missing subfields from source
 
     // Copy other subfields from source field to base field
-    // For non-repeatable subfields, the value existing in base (Melinda) is preferred
+    // For non-repeatable subfields, the value existing in base (base) is preferred
     // Non-repeatable subfields are copied from source only if missing completely in base
     // 040: $a, $b, $c, $8
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes);
@@ -89,7 +87,7 @@ export default () => (base, source) => {
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
     //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
-    // Create modified base field and replace old base record in Melinda with it
+    // Create modified base field and replace old base record in base with it
     const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], sort040);
     /* eslint-disable functional/immutable-data */
