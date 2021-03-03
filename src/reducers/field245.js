@@ -18,19 +18,18 @@ import {
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const fieldTag = /^245$/u; // Tag in regexp format (for use in MarcRecord functions)
-  const baseFields = base.get(fieldTag); // Get array of base fields
-  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
-  const sourceFields = source.get(fieldTag); // Get array of source fields
-  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+  const baseFields = base.get(/^245$/u); // Get array of base fields
+  debug(`### baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
+  const sourceFields = source.get(/^245$/u); // Get array of source fields
+  debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
   if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes("245");
-  const nonRepCodes = getNonRepCodes("245");
+  const repCodes = getRepCodes('245');
+  const nonRepCodes = getNonRepCodes('245');
 
   // If there are multiple instances of the field in source and/or base
   if (sourceFields.length > 1 || baseFields.length > 1) {

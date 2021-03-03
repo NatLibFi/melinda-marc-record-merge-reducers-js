@@ -11,37 +11,60 @@ export function getTags(fields) {
   // If there is only one field = one tag in the array, it is returned as string
   if (tags.length === 1) {
     const [tagString] = tags;
-    debug(`tagString from getTags: ${tagString}`);
+    debug(`### tagString from getTags: ${tagString}`);
     return tagString;
   }
   // If there are several fields, return an array of tags
-  debug(`tags from getTags: ${JSON.stringify(tags, undefined, 2)}`);
+  debug(`### tags from getTags: ${JSON.stringify(tags, undefined, 2)}`);
   return tags;
 }
 
-// Quick identicalness check (not normalized)
+// Quick identicalness check
+// Returns true if base and source (not normalized) are completely identical in stringified form
+// Fields do not have to be in the same order
 export function checkIdenticalness(baseFields, sourceFields) {
   const baseStrings = baseFields.map(field => JSON.stringify(field));
-  debug(`baseStrings: ${JSON.stringify(baseStrings, undefined, 2)}`);
+  debug(`### baseStrings: ${JSON.stringify(baseStrings, undefined, 2)}`);
   const sourceStrings = sourceFields.map(field => JSON.stringify(field));
-  debug(`sourceStrings: ${JSON.stringify(sourceStrings, undefined, 2)}`);
+  debug(`### sourceStrings: ${JSON.stringify(sourceStrings, undefined, 2)}`);
 
   // https://stackoverflow.com/questions/6229197/how-to-know-if-two-arrays-have-the-same-values
 
   function containsAll(arr1, arr2) {
     const result = arr2.every(arr2Item => arr1.includes(arr2Item));
-    debug(`containsAll result: ${JSON.stringify(result, undefined, 2)}`);
+    debug(`### containsAll result: ${JSON.stringify(result, undefined, 2)}`);
     return result;
   }
   function sameMembers(arr1, arr2) {
     const result = containsAll(arr1, arr2) && containsAll(arr2, arr1);
-    debug(`sameMembers result: ${JSON.stringify(result, undefined, 2)}`);
+    debug(`### sameMembers result: ${JSON.stringify(result, undefined, 2)}`);
     return result;
   }
   const result = sameMembers(baseStrings, sourceStrings);
-  debug(`result: ${result}`);
+  debug(`### result: ${result}`);
+  const baseTags = baseFields.map(field => field.tag);
+  if (result === true) {
+    baseTags.forEach(tag => debug(`Field ${tag}: base and source identical, keeping base`));
+  }
   return result;
 }
+
+// Loop through multiple instances of the same fields
+// ### Voiko parametrinä käyttää toista funktiota (fieldFunction) jolle annetaan omia parametrejä?
+/*export function multiLoop(baseFields, sourceFields, fieldFunction(base, baseField, sourceField, repCodes = [], nonRepCodes = [])) {
+  // Iterate through all fields in base and source arrays
+  const outerLoop = sourceFields.map(sourceField => {
+  const innerLoop = baseFields.map(baseField => fieldFunction(base, baseField, sourceField, repCodes = [], nonRepCodes = []));
+  // Destructure array returned by innerLoop into object to pass to outerLoop
+  const [tempObj] = innerLoop;
+  return tempObj;
+  });
+// The outer loop returns an array with as many duplicate objects as there are fields
+// Filter out duplicates and return only one result object in MarcRecord format
+const stringified = outerLoop.map(obj => JSON.stringify(obj));
+const filtered = JSON.parse(stringified.filter((item, index) => stringified.indexOf(item) >= index));
+return new MarcRecord(filtered);
+}*/
 
 // Get field specs from melindaCustomMergeFields.json
 export function getFieldSpecs(tag) {
@@ -69,7 +92,7 @@ export function normalizeSubfields(field) {
 
 export function normalizeStringValue(value) {
   // Regexp options: g: global search, u: unicode
-  // Huom. normalizeSync normalisoi pois myös ääkköset
+  // Note: normalize-diacritics also changes "äöå" to "aoa"
   const punctuation = /[.,\-/#!?$%^&*;:{}=_`~()[\]]/gu;
   return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
 }
@@ -105,10 +128,10 @@ export function compareAllSubfields(baseField, sourceField, codes) {
   if (baseSubsNorm.length === equalSubfieldsBase.length &&
       sourceSubsNorm.length === equalSubfieldsSource.length &&
       equalSubfieldsBase.length === equalSubfieldsSource.length) {
-    debug(`All compared subfields (${codes}) are equal`);
+    codes.forEach(code => debug(`Subfield (${code}): all equal in source and base`));
     return true;
   }
-  debug(`All compared subfields (${codes}) are not equal`);
+  codes.forEach(code => debug(`Subfield (${code}): not equal in source and base`));
   return false;
 }
 
@@ -174,7 +197,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes = [], idC
     .filter(sub => nonDupRepSubsNorm
       .map(sub => sub.index).indexOf(sub.index) !== -1)
     .map(({code, value, index}) => ({code, value})); // eslint-disable-line no-unused-vars
-  debug(`nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
+  debug(`### nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
   return nonDupRepSubsToCopy;
 }
 
@@ -227,14 +250,14 @@ const sortDefault = [
 ];
 
 export function sortSubfields(subfields, order = sortDefault, orderedSubfields = []) {
-  //debug(`Order: ${order}`); // testing
+  //debug(`### Order: ${order}`); // testing
   const [filter, ...rest] = order;
   if (filter === undefined) {
     return [...orderedSubfields, ...subfields];
   }
-  //debug(`Subfield sort filter: ${JSON.stringify(filter)}`);
-  //debug(`Subfields: ${JSON.stringify(subfields)}`);
-  //debug(`Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
+  //debug(`### Subfield sort filter: ${JSON.stringify(filter)}`);
+  //debug(`### Subfields: ${JSON.stringify(subfields)}`);
+  //debug(`### Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
 
   /* eslint-disable */
   const filtered = subfields.filter(sub => {
@@ -243,7 +266,7 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
     }
 
   });
-  //debug(`Filtered subfields: ${JSON.stringify(filtered, undefined, 2)}`);
+  //debug(`### Filtered subfields: ${JSON.stringify(filtered, undefined, 2)}`);
 
   const restSubfields = subfields.filter(sub => {
     if (typeof filter === 'string') {

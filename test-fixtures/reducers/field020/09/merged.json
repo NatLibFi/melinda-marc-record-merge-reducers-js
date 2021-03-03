@@ -12,7 +12,22 @@
         },
         {
           "code": "q",
-          "value": "020_q_base"
+          "value": "020_q_base1"
+        }
+      ]
+    },
+    {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "951-861-386-9"
+        },
+        {
+          "code": "q",
+          "value": "020_q_base2"
         }
       ]
     },
@@ -27,7 +42,22 @@
         },
         {
           "code": "q",
-          "value": "020_q_source"
+          "value": "020_q_source1"
+        }
+      ]
+    },
+    {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "951-861-386-8"
+        },
+        {
+          "code": "q",
+          "value": "020_q_source2"
         }
       ]
     }

@@ -27,8 +27,8 @@ export default () => (base, source) => {
   }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes("024");
-  const nonRepCodes = getNonRepCodes("024");
+  const repCodes = getRepCodes('024');
+  const nonRepCodes = getNonRepCodes('024');
 
   // If there are multiple instances of the field in source and/or base
   if (sourceFields.length > 1 || baseFields.length > 1) {
@@ -64,13 +64,13 @@ export default () => (base, source) => {
     if (compareAllSubfields(baseField, sourceField, idCodes) === false) {
       //debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
       base.insertField(sourceField);
-      debug(`Base after copying: ${JSON.stringify(base, undefined, 2)}`);
-      debug(`One or more subfields (${idCodes}) not matching, source field copied as new field to base`);
+      debug(`### Base after copying: ${JSON.stringify(base, undefined, 2)}`);
+      idCodes.forEach(code => debug(`Subfield (${code}) not matching, source field copied as new field to base`));
       return base; // Base record returned in case 1
     }
 
     // Case 2: If identifying subfield values are equal, continue with the merge process
-    debug(`Matching subfields (${idCodes}) found in source and base, continuing with merge`);
+    idCodes.forEach(code => debug(`Matching subfield (${code}) found in source and base, continuing with merge`));
 
     // If there are subfields to drop, define them first
     // 024: No subfields to drop
@@ -96,7 +96,7 @@ export default () => (base, source) => {
     /* eslint-disable functional/immutable-data */
     modifiedBaseField.subfields = sortedSubfields;
     modifyBaseField(base, baseField, modifiedBaseField);
-    debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
+    debug(`### Base after modification: ${JSON.stringify(base, undefined, 2)}`);
     return base; // Base record returned in case 2
   }
 };

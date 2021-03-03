@@ -5,11 +5,8 @@ export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(/^008$/u);
   const sourceFields = source.get(/^008$/u);
-  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
-  debug(`base.leader: ${base.leader}`);
-  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-  debug(`source.leader: ${source.leader}`);
 
+  // Field 008 is non-repeatable
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;
 
@@ -28,7 +25,7 @@ export default () => (base, source) => {
   const sourceCountry = sourceField.value.slice(15, 18);
   const sourceLanguage = sourceField.value.slice(35, 38);
 
-  debug(`levelCode source: ${getLevelCode(source)}, base: ${getLevelCode(base)}`);
+  debug(`### levelCode source: ${getLevelCode(source)}, base: ${getLevelCode(base)}`);
 
   if (basePubYear === sourcePubYear && baseCountry === sourceCountry && baseLanguage === sourceLanguage) {
     // Test 06: If the level code of the source record is better (smaller number)

@@ -24,8 +24,8 @@ export default () => (base, source) => {
   }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes("042");
-  const nonRepCodes = getNonRepCodes("042");
+  const repCodes = getRepCodes('042');
+  const nonRepCodes = getNonRepCodes('042');
 
   // Since 042 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
@@ -63,7 +63,7 @@ export default () => (base, source) => {
     /* eslint-disable functional/immutable-data */
     modifiedBaseField.subfields = sortedSubfields;
     modifyBaseField(base, baseField, modifiedBaseField);
-    debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
+    debug(`### Base after modification: ${JSON.stringify(base, undefined, 2)}`);
     return base; // Base record returned in case 2
   }
 };

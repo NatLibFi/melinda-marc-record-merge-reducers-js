@@ -29,7 +29,7 @@ export default () => (base, source) => {
 
   // Repeatable subfields are copied if the value is different
   // 995 has only one subfield, $a, which is repeatable
-  const repSubsToCopy = getRepSubs(baseField, sourceField, ["a"]);
+  const repSubsToCopy = getRepSubs(baseField, sourceField, ['a']);
 
   // Create modified base field and replace old base record in base with it
   // Copy subfield sort order from source field
@@ -39,6 +39,6 @@ export default () => (base, source) => {
   /* eslint-disable functional/immutable-data */
   modifiedBaseField.subfields = sortedSubfields;
   modifyBaseField(base, baseField, modifiedBaseField);
-  debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
+  debug(`### Base after modification: ${JSON.stringify(base, undefined, 2)}`);
   return base;
 };

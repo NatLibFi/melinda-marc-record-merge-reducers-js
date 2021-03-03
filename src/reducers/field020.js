@@ -12,7 +12,7 @@ import {
   sortSubfields
 } from './utils.js';
 
-// Test 09: Copy new field from source to base record (case 1)
+// Test 09: Copy new field from source to base record (case 1) (2x) ### ei toimi kunnolla jos on 2 kenttää basessa
 // Test 10: Copy subfields from source field to base field (case 2)
 // Also in test 10: $8 only in base, not source, but seems to carry over into merged?
 // Test 11: Both cases in the same record: copy a new field (case 1) and add subfields to an existing field (case 2)
@@ -21,23 +21,28 @@ export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const fieldTag = /^020$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
-  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
+  debug(`### baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
-  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+  debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
   if (checkIdenticalness(baseFields, sourceFields) === true) {
     return base;
   }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes("020");
-  const nonRepCodes = getNonRepCodes("020");
+  const repCodes = getRepCodes('020');
+  const nonRepCodes = getNonRepCodes('020');
 
   // If there are multiple instances of the field in source and/or base
+  // ### Saisiko tämän utilsiin funktioksi joka ottaa getField020:n parametriksi?
+  // ### Sama tuplasilmukka toistuu monessa kentässä,
+  // ### mutta ongelma on joka kentän kustomoitu funktio jota kutsutaan sisemmän silmukan keskellä,
+  // ### miten sen saa ehjänä mukaan jos importoidaan looppifunktio utilsista?
+
   if (sourceFields.length > 1 || baseFields.length > 1) {
     // Iterate through all fields in base and source arrays
     const outerLoop = sourceFields.map(sourceField => {
-      const innerLoop = baseFields.map(baseField => getField020(base, tagString, baseField, sourceField, repCodes, nonRepCodes));
+      const innerLoop = baseFields.map(baseField => getField020(base, baseField, sourceField, repCodes, nonRepCodes));
       // Destructure array returned by innerLoop into object to pass to outerLoop
       const [tempObj] = innerLoop;
       return tempObj;
@@ -67,13 +72,13 @@ export default () => (base, source) => {
     if (compareAllSubfields(baseField, sourceField, idCodes) === false) {
       //debug(`sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
       base.insertField(sourceField);
-      debug(`Base after copying: ${JSON.stringify(base, undefined, 2)}`);
-      debug(`One or more subfields (${idCodes}) not matching, source field copied as new field to base`);
+      debug(`### Base after copying: ${JSON.stringify(base, undefined, 2)}`);
+      idCodes.forEach(code => debug(`Subfield (${code}) not matching, source field copied as new field to base`));
       return base; // Base record returned in case 1
     }
 
     // Case 2: If identifying subfield values are equal, continue with the merge process
-    debug(`Matching subfields (${idCodes}) found in source and base, continuing with merge`);
+    idCodes.forEach(code => debug(`Matching subfield (${code}) found in source and base, continuing with merge`));
 
     // If there are subfields to drop, define them first
     // 020: $c
@@ -94,13 +99,13 @@ export default () => (base, source) => {
     // Create modified base field and replace old base record in base with it
     // Copy subfield sort order from source field
     const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-    debug(`orderFromSource: ${JSON.stringify(orderFromSource, undefined, 2)}`);
+    debug(`### orderFromSource: ${JSON.stringify(orderFromSource, undefined, 2)}`);
     const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], orderFromSource);
     /* eslint-disable functional/immutable-data */
     modifiedBaseField.subfields = sortedSubfields;
     modifyBaseField(base, baseField, modifiedBaseField);
-    debug(`Base after modification: ${JSON.stringify(base, undefined, 2)}`);
+    debug(`### Base after modification: ${JSON.stringify(base, undefined, 2)}`);
     return base; // Base record returned in case 2
   }
 };
