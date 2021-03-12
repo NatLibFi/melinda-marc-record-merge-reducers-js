@@ -2,11 +2,7 @@ import createDebugLogger from 'debug';
 
 import {
   checkIdenticalness,
-  getRepCodes,
-  getNonRepCodes,
   getRepSubs,
-  getNonRepSubs,
-  modifyBaseField,
   sortSubfields
 } from './utils.js';
 
@@ -23,9 +19,8 @@ export default () => (base, source) => {
     return base;
   }
 
-  // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes('042');
-  const nonRepCodes = getNonRepCodes('042');
+  // 042 has only one subfield, $a, which is repeatable
+  const repCodes = ['a'];
 
   // Since 042 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
@@ -33,37 +28,32 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
 
   // Run the function to get the base record to return
-  return getField042(base, baseField, sourceField, repCodes, nonRepCodes);
+  return mergeField042(base, baseField, sourceField, repCodes);
 
-  function getField042(base, baseField, sourceField, repCodes, nonRepCodes) {
+  function mergeField042(base, baseField, sourceField, repCodes) {
     debug(`Working on field 042`);
 
     // Case 1: If field 042 is missing completely from base, copy it from source as a new field
     if (baseFields.length === 0) {
       debug(`Missing field 042 copied from source to base`);
       sourceFields.forEach(f => base.insertField(f));
-      return base;
+      return base; // Base returned in case 1
     }
 
     // Case 2: If field 042 exists in base, copy missing subfields from source
-
-    // Copy other subfields from source field to base field
-    // For non-repeatable subfields, the value existing in base (base) is preferred
-    // Non-repeatable subfields are copied from source only if missing completely in base
-    // 042: none
-    const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes);
-
     // Repeatable subfields are copied if the value is different
     // 042: $a
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
 
-    // Create modified base field and replace old base record in base with it
-    const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
-    const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy]);
-    /* eslint-disable functional/immutable-data */
-    modifiedBaseField.subfields = sortedSubfields;
-    modifyBaseField(base, baseField, modifiedBaseField);
-    debug(`### Base after modification: ${JSON.stringify(base, undefined, 2)}`);
-    return base; // Base record returned in case 2
+    const newBaseField = JSON.parse(JSON.stringify(baseField));
+    const sortedSubfields = sortSubfields([...baseField.subfields, ...repSubsToCopy]);
+    newBaseField.subfields = sortedSubfields;
+    /* eslint-disable */
+    base.removeField(baseField); // remove old baseField
+    debug(`### Base after removing old baseField: ${JSON.stringify(base, undefined, 2)}`);
+    base.insertField(newBaseField); // insert newBaseField
+    debug(`### Base after inserting newBaseField: ${JSON.stringify(base, undefined, 2)}`);
+    /* eslint-enable */
+    return base; // Base returned in case 2
   }
 };

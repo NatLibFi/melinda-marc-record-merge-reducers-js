@@ -3,22 +3,11 @@
   "fields": [
     {
       "tag": "007",
-      "value": "cr_007_source"
+      "value": "cr_007_source1"
     },
     {
-      "tag": "010",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "010a_source"
-        },
-        {
-          "code": "b",
-          "value": "010b_source"
-        }
-      ]
+      "tag": "007",
+      "value": "cr_007_source2"
     }
   ]
 }

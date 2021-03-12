@@ -12,9 +12,25 @@
         },
         {
           "code": "q",
-          "value": "024_q_base"
+          "value": "024_q_base1"
+        }
+      ]
+    },
+    {
+      "tag": "024",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "FILNM9500118"
+        },
+        {
+          "code": "q",
+          "value": "024_q_base2"
         }
       ]
     }
+
   ]
 }

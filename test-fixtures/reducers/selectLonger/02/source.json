@@ -8,7 +8,26 @@
       "subfields": [
         {
           "code": "a",
-          "value": "good little doggy"
+          "value": "Asian lion"
+        },
+        {
+          "code": "b",
+          "value": "tiger"
+        },
+        {
+          "code": "c",
+          "value": "direwolf"
+        }
+      ]
+    },
+    {
+      "tag": "033",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "doggy"
         },
         {
           "code": "b",
@@ -36,10 +55,6 @@
         {
           "code": "c",
           "value": "cow"
-        },
-        {
-          "code": "d",
-          "value": "duck"
         }
       ]
     }

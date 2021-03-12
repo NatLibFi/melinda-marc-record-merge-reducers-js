@@ -8,7 +8,7 @@
       "subfields": [
         {
           "code": "a",
-          "value": "doggy"
+          "value": "dog"
         },
         {
           "code": "b",
@@ -16,7 +16,34 @@
         },
         {
           "code": "c",
-          "value": "horsey"
+          "value": "horse"
+        },
+        {
+          "code": "d",
+          "value": "hamster"
+        }
+      ]
+    },
+    {
+      "tag": "033",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "lion"
+        },
+        {
+          "code": "b",
+          "value": "tiger"
+        },
+        {
+          "code": "c",
+          "value": "wolf"
+        },
+        {
+          "code": "c",
+          "value": "bear"
         }
       ]
     },
@@ -27,15 +54,19 @@
       "subfields": [
         {
           "code": "a",
-          "value": "goldfish"
+          "value": "fish"
         },
         {
           "code": "b",
-          "value": "bluebird"
+          "value": "bird"
         },
         {
           "code": "c",
           "value": "cow"
+        },
+        {
+          "code": "d",
+          "value": "duck"
         }
       ]
     }

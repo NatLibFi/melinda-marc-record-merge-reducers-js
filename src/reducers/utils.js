@@ -20,12 +20,14 @@ export function getTags(fields) {
 }
 
 // Quick identicalness check
-// Returns true if base and source (not normalized) are completely identical in stringified form
+// Returns true if base and source are completely identical in stringified form
 // Fields do not have to be in the same order
 export function checkIdenticalness(baseFields, sourceFields) {
-  const baseStrings = baseFields.map(field => JSON.stringify(field));
+  const baseStrings = baseFields.map(field => JSON.stringify(field))
+    .map(baseString => baseString.normalize());
   debug(`### baseStrings: ${JSON.stringify(baseStrings, undefined, 2)}`);
-  const sourceStrings = sourceFields.map(field => JSON.stringify(field));
+  const sourceStrings = sourceFields.map(field => JSON.stringify(field))
+    .map(sourceString => sourceString.normalize());
   debug(`### sourceStrings: ${JSON.stringify(sourceStrings, undefined, 2)}`);
 
   // https://stackoverflow.com/questions/6229197/how-to-know-if-two-arrays-have-the-same-values
@@ -48,23 +50,6 @@ export function checkIdenticalness(baseFields, sourceFields) {
   }
   return result;
 }
-
-// Loop through multiple instances of the same fields
-// ### Voiko parametrinä käyttää toista funktiota (fieldFunction) jolle annetaan omia parametrejä?
-/*export function multiLoop(baseFields, sourceFields, fieldFunction(base, baseField, sourceField, repCodes = [], nonRepCodes = [])) {
-  // Iterate through all fields in base and source arrays
-  const outerLoop = sourceFields.map(sourceField => {
-  const innerLoop = baseFields.map(baseField => fieldFunction(base, baseField, sourceField, repCodes = [], nonRepCodes = []));
-  // Destructure array returned by innerLoop into object to pass to outerLoop
-  const [tempObj] = innerLoop;
-  return tempObj;
-  });
-// The outer loop returns an array with as many duplicate objects as there are fields
-// Filter out duplicates and return only one result object in MarcRecord format
-const stringified = outerLoop.map(obj => JSON.stringify(obj));
-const filtered = JSON.parse(stringified.filter((item, index) => stringified.indexOf(item) >= index));
-return new MarcRecord(filtered);
-}*/
 
 // Get field specs from melindaCustomMergeFields.json
 export function getFieldSpecs(tag) {
@@ -141,6 +126,7 @@ export function getNonRepSubs(sourceField, nonRepCodes, dropCodes = [], idCodes 
   const nonRepSubs = sourceField.subfields
     .filter(subfield => nonRepCodes
       .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
+  debug(`### nonRepSubs: ${JSON.stringify(nonRepSubs, undefined, 2)}`);
   return nonRepSubs;
 }
 

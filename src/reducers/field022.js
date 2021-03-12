@@ -1,4 +1,3 @@
-import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
@@ -8,11 +7,10 @@ import {
   compareAllSubfields,
   getRepSubs,
   getNonRepSubs,
-  modifyBaseField,
   sortSubfields
 } from './utils.js';
 
-// Test 12: Copy new field from source to base record (case 1)
+// Test 12: Copy new field from source to base record (case 1) (2x)
 // Test 13: Copy subfields from source field to base field (case 2)
 // Test 14: Both cases in the same record: copy a new field (case 1) and add subfields to an existing field (case 2)
 
@@ -30,31 +28,7 @@ export default () => (base, source) => {
   const repCodes = getRepCodes('022');
   const nonRepCodes = getNonRepCodes('022');
 
-  // If there are multiple instances of the field in source and/or base
-  if (sourceFields.length > 1 || baseFields.length > 1) {
-    // Iterate through all fields in base and source arrays
-    const outerLoop = sourceFields.map(sourceField => {
-      const innerLoop = baseFields.map(baseField => getField022(base, baseField, sourceField, repCodes, nonRepCodes));
-      // Destructure array returned by innerLoop into object to pass to outerLoop
-      const [tempObj] = innerLoop;
-      return tempObj;
-    });
-    // The outer loop returns an array with as many duplicate objects as there are fields
-    // Filter out duplicates and return only one result object in MarcRecord format
-    const stringified = outerLoop.map(obj => JSON.stringify(obj));
-    const filtered = JSON.parse(stringified.filter((item, index) => stringified.indexOf(item) >= index));
-    return new MarcRecord(filtered);
-  }
-
-  // Default case: there is just one instance of the field in both source and base
-  // The arrays can be destructured into objects right away
-  const [baseField] = baseFields;
-  const [sourceField] = sourceFields;
-
-  // Run the function to get the base record to return
-  return getField022(base, baseField, sourceField, repCodes, nonRepCodes);
-
-  function getField022(base, baseField, sourceField, repCodes, nonRepCodes) {
+  function mergeField022(base, baseField, sourceField, repCodes, nonRepCodes) {
     debug(`Working on field 022`);
     // First check whether the values of identifying subfields are equal
     // 022: $a (ISSN)
@@ -62,7 +36,6 @@ export default () => (base, source) => {
 
     // Case 1: If all identifying subfield values are not equal the entire source field is copied to base as a new field
     if (compareAllSubfields(baseField, sourceField, idCodes) === false) {
-      //debug(`### sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
       base.insertField(sourceField);
       debug(`### Base after copying: ${JSON.stringify(base, undefined, 2)}`);
       idCodes.forEach(code => debug(`Subfield (${code}) not matching, source field copied as new field to base`));
@@ -81,22 +54,38 @@ export default () => (base, source) => {
     // Non-repeatable subfields are copied from source only if missing completely in base
     // 022: $a, $l, $2, $6
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
-    //debug(`### nonRepSubsToCopy: ${JSON.stringify(nonRepSubsToCopy, undefined, 2)}`);
 
     // Repeatable subfields are copied if the value is different
     // 022: $m, $y, $z, $8
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes, dropCodes, idCodes);
-    //debug(`### repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
-    // Create modified base field and replace old base record in base with it
+    // Create new base field to replace old one
     // Copy subfield sort order from source field
     const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-    const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
+    //debug(`### orderFromSource: ${JSON.stringify(orderFromSource, undefined, 2)}`);
+    const newBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], orderFromSource);
-    /* eslint-disable functional/immutable-data */
-    modifiedBaseField.subfields = sortedSubfields;
-    modifyBaseField(base, baseField, modifiedBaseField);
-    debug(`### Base after modification: ${JSON.stringify(base, undefined, 2)}`);
-    return base; // Base record returned in case 2
+    newBaseField.subfields = sortedSubfields;
+    // ### Tarvitaanko tähän eslint-disable?
+    /* eslint-disable */
+    base.removeField(baseField); // remove old baseField
+    /** ### Test 14: Tässä vaiheessa kenttien järjestys muuttuu: vanha base poistetaan,
+     * joten ylimmäksi nousee ekalla iteraatiokierroksella sourcesta kopioitu ensimmäinen uusi kenttä.
+     * Uusi base (newBaseField) muodostetaan mergettämällä vanha base ja sourcen toinen kenttä,
+     * ja se lisätään vasta ekan kopioidun kentän perään.
+     * Viimeiseksi lisätään kolmannella kierroksella sourcesta toinen uusi kenttä.
+     * Onko kenttien järjestyksen muuttuminen ongelma?
+     * */
+    debug(`### Base after removing old baseField: ${JSON.stringify(base, undefined, 2)}`);
+    base.insertField(newBaseField); // insert newBaseField
+    debug(`### Base after inserting newBaseField: ${JSON.stringify(base, undefined, 2)}`);
+    /* eslint-enable */
+    return base; // Base returned in case 2
+  }
+
+  if (sourceFields.every(sourceField => baseFields.some(baseField => mergeField022(base, baseField, sourceField, repCodes, nonRepCodes)))) {
+    // No filtering needed here since mergeField022 does it in a customized way
+    debug(`### base returned from if loop: ${JSON.stringify(base, undefined, 2)}`);
+    return base;
   }
 };

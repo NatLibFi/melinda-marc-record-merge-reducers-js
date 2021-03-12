@@ -8,11 +8,26 @@
       "subfields": [
         {
           "code": "a",
-          "value": "FILNM9500118"
+          "value": "FILNM9500117"
         },
         {
           "code": "q",
-          "value": "024_q_source"
+          "value": "024_q_source1"
+        }
+      ]
+    },
+    {
+      "tag": "024",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "FILNM9500116"
+        },
+        {
+          "code": "q",
+          "value": "024_q_source2"
         }
       ]
     }

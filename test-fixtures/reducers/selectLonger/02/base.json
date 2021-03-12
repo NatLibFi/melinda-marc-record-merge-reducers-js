@@ -17,10 +17,25 @@
         {
           "code": "c",
           "value": "horse"
+        }
+      ]
+    },
+    {
+      "tag": "033",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "lion"
         },
         {
-          "code": "d",
-          "value": "hamster"
+          "code": "b",
+          "value": "tiger"
+        },
+        {
+          "code": "c",
+          "value": "wolf"
         }
       ]
     },

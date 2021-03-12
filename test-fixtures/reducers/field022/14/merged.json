@@ -8,6 +8,29 @@
       "subfields": [
         {
           "code": "a",
+          "value": "1455-8905"
+        },
+        {
+          "code": "m",
+          "value": "022_m1_source"
+        },
+        {
+          "code": "m",
+          "value": "022_m2_source"
+        },
+        {
+          "code": "6",
+          "value": "022_6b_source"
+        }
+      ]
+    },
+    {
+      "tag": "022",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
           "value": "1455-8904"
         },
         {
@@ -29,29 +52,6 @@
         {
           "code": "6",
           "value": "022_6_source"
-        }
-      ]
-    },
-    {
-      "tag": "022",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "1455-8905"
-        },
-        {
-          "code": "m",
-          "value": "022_m1_source"
-        },
-        {
-          "code": "m",
-          "value": "022_m2_source"
-        },
-        {
-          "code": "6",
-          "value": "022_6b_source"
         }
       ]
     },

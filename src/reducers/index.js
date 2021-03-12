@@ -16,8 +16,7 @@ const copyIfDifferent = new RegExp(String((/^(?<tags>013|015|016|017|028|050|052
   (/^(?<tags>380|381|382|383|385|386|388|490|500|501|502|504|505|508|509|510|511|513|515|518)$/u).source +
   (/^(?<tags>520|521|522|524|525|530|534|535|536|538|541|542|544|545|546|547|550|552|555)$/u).source +
   (/^(?<tags>556|562|563|565|567|580|581|584|585|586|720|740|751|752|753|754|758|760)$/u).source +
-  (/^(?<tags>762|765|767|770|772|775|776|777|780|785|786|787|883|886|887|900|910|911|940)$/u).source +
-  (/^(?<tags>LOW|CAT|SID)$/u));
+  (/^(?<tags>762|765|767|770|772|775|776|777|780|785|786|787|883|886|887|900|910|911|940)$/u).source);
 
 // Copy field from source only if missing from base (compareTagsOnly = true)
 const copyIfMissing = /^(?<tags>010|018|027|030|031|043|044|049|085|088|222|243|247|260|263|264|306|310|357|384|507|514)$/u;
@@ -43,6 +42,7 @@ const allReducers = [
   copy({tagPattern: copySpecial2, excludeSubfields: ['9']}),
   copy({tagPattern: copySpecial3, dropSubfields: ['4']}),
   copy({tagPattern: copySpecial4, excludeSubfields: ['9'], dropSubfields: ['4']}),
+  localReducers.internalFields(), // LOW, CAT, SID
   localReducers.leader(), // Test 01
   localReducers.mainEntry(), // Main entry fields
   localReducers.selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)

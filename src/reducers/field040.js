@@ -6,11 +6,11 @@ import {
   getNonRepCodes,
   getRepSubs,
   getNonRepSubs,
-  modifyBaseField,
   sortSubfields
 } from './utils.js';
 
 // Test 18: Copy new field from source to base record (case 1)
+// Note: Test 18 base has a dummy 010 field because if fields=[], it is not a valid MarcRecord
 // Test 19: Copy subfields from source field to base field (case 2)
 
 export default () => (base, source) => {
@@ -35,12 +35,12 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
   debug(`### sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
   // Custom subfield sort order for field 040
-  const sort040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
+  const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 
   // Run the function to get the base record to return
-  return getField040(base, baseField, sourceField, repCodes, nonRepCodes);
+  return mergeField040(base, baseField, sourceField, repCodes, nonRepCodes);
 
-  function getField040(base, baseField, sourceField, repCodes, nonRepCodes) {
+  function mergeField040(base, baseField, sourceField, repCodes, nonRepCodes) {
     debug(`Working on field 040`);
 
     // In all cases, source $a value is copied to a new $d and $a is removed
@@ -60,7 +60,7 @@ export default () => (base, source) => {
       field.subfields.push({code: targetSub, value: transferredValue});
       // Remove old original subfield completely (filter to new array without it) and sort subfields
       const filteredSubfields = field.subfields.filter(subfield => subfield.code !== origSub);
-      const newSubfields = sortSubfields(filteredSubfields, sort040);
+      const newSubfields = sortSubfields(filteredSubfields, sortOrder040);
       // Replace subfields with new array
       /* eslint-disable functional/immutable-data */
       field.subfields = newSubfields;
@@ -87,13 +87,20 @@ export default () => (base, source) => {
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
     //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
-    // Create modified base field and replace old base record in base with it
-    const modifiedBaseField = JSON.parse(JSON.stringify(baseField));
-    const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], sort040);
-    /* eslint-disable functional/immutable-data */
-    modifiedBaseField.subfields = sortedSubfields;
-    modifyBaseField(base, baseField, modifiedBaseField);
-    debug(`### Base after modification: ${JSON.stringify(base, undefined, 2)}`);
-    return base; // Base record returned in case 2
+    // Create new base field to replace old one
+    // Copy subfield sort order from source field
+    //const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
+    //debug(`### orderFromSource: ${JSON.stringify(orderFromSource, undefined, 2)}`);
+    const newBaseField = JSON.parse(JSON.stringify(baseField));
+    const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], sortOrder040);
+    newBaseField.subfields = sortedSubfields;
+    // ### Tarvitaanko tähän eslint-disable?
+    /* eslint-disable */
+    base.removeField(baseField); // remove old baseField
+    debug(`### Base after removing old baseField: ${JSON.stringify(base, undefined, 2)}`);
+    base.insertField(newBaseField); // insert newBaseField
+    debug(`### Base after inserting newBaseField: ${JSON.stringify(base, undefined, 2)}`);
+    /* eslint-enable */
+    return base; // Base returned in case 2
   }
 };

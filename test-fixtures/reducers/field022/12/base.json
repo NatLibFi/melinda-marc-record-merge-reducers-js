@@ -12,7 +12,21 @@
         },
         {
           "code": "m",
-          "value": "022_m_base"
+          "value": "022_m_base1"
+        }
+      ]
+    },    {
+      "tag": "022",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "1455-8904"
+        },
+        {
+          "code": "m",
+          "value": "022_m_base2"
         }
       ]
     }
