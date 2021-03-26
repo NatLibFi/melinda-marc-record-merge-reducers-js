@@ -16,8 +16,9 @@ describe('reducers/internalFields', () => {
     it(subDir, () => {
       const base = new MarcRecord(getFixture('base.json'));
       const source = new MarcRecord(getFixture('source.json'));
+      const tagPattern = new RegExp(getFixture({components: ['tagPattern.txt'], reader: READERS.TEXT}), 'u');
       const expectedRecord = getFixture('merged.json');
-      const mergedRecord = createReducer()(base, source);
+      const mergedRecord = createReducer({tagPattern})(base, source);
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
     });
   });

@@ -31,7 +31,7 @@ const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude s
 
 // Customized reducers still to be done for fields:
 // mainEntry: 100|110|111|130|240|700|710|711|730
-// [240, 245, 250, 347, 506, 540, 561, 588, 856]
+// [240, 250, 347, 506, 540, 561, 588, 856]
 
 // Huom. tarkistettava missä järjestyksessä reducerit ajetaan
 // Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
@@ -54,6 +54,7 @@ const allReducers = [
   localReducers.field024(), // Tests 15, 16 and 17
   localReducers.field040(), // Tests 18 and 19
   localReducers.field042(), // Tests 20 and 21
+  localReducers.field245(), // Tests 31, 32 and 33
   localReducers.field830(), // Tests 22-29
   localReducers.field995() // Test 30
 ];
