@@ -11,12 +11,12 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // Processing rules for MARC fields by field tag
 // Copy duplicate instance of non-identical field from source to base
 /* eslint-disable require-unicode-regexp */
-const copyIfDifferent = new RegExp(String((/^(?<tags>013|015|016|017|028|050|052|055|060|070|080|082|083|084|210|242|246|255|258|321)$/u).source) +
-  (/^(?<tags>336|337|338|340|341|342|343|344|346|348|351|352|355|362|363|365|366|370|377)$/u).source +
-  (/^(?<tags>380|381|382|383|385|386|388|490|500|501|502|504|505|508|509|510|511|513|515|518)$/u).source +
-  (/^(?<tags>520|521|522|524|525|530|534|535|536|538|541|542|544|545|546|547|550|552|555)$/u).source +
-  (/^(?<tags>556|562|563|565|567|580|581|584|585|586|720|740|751|752|753|754|758|760)$/u).source +
-  (/^(?<tags>762|765|767|770|772|775|776|777|780|785|786|787|883|886|887|900|910|911|940)$/u).source);
+const copyIfDifferent = new RegExp(String((/^(?<tags>013|015|016|017|028|035|050|052|055|060|070|080|082|083|084|210|242|246|250|255|258|321)$/u).source) +
+  (/^(?<tags>336|337|338|340|341|342|343|344|346|347|348|351|352|355|362|363|365|366|370|377)$/u).source +
+  (/^(?<tags>380|381|382|383|385|386|388|490|500|501|502|504|505|506|508|509|510|511|513|515|518)$/u).source +
+  (/^(?<tags>520|521|522|524|525|530|534|535|536|538|540|541|542|544|545|546|547|550|552|555)$/u).source +
+  (/^(?<tags>556|561|562|563|565|567|580|581|584|585|586|720|740|751|752|753|754|758|760)$/u).source +
+  (/^(?<tags>762|765|767|770|772|775|776|777|780|785|786|787|856|883|886|887|900|910|911|940)$/u).source);
 
 // Copy field from source only if missing from base (compareTagsOnly = true)
 const copyIfMissing = /^(?<tags>010|018|027|030|031|043|044|049|085|088|222|243|247|260|263|264|306|310|357|384|507|514)$/u;
@@ -30,8 +30,7 @@ const copySpecial3 = /^(?<tags>800|810|811)$/u; // Drop subfield 4
 const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude subfield 9 and drop 4
 
 // Customized reducers still to be done for fields:
-// mainEntry: 100|110|111|130|240|700|710|711|730
-// [240, 250, 347, 506, 540, 561, 588, 856]
+// mainEntry: 100|110|111|130|240|700|710|711|730 ja 240?
 
 // Huom. tarkistettava missä järjestyksessä reducerit ajetaan
 // Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
@@ -54,6 +53,7 @@ const allReducers = [
   localReducers.field024(), // Tests 15, 16 and 17
   localReducers.field040(), // Tests 18 and 19
   localReducers.field042(), // Tests 20 and 21
+  localReducers.field240(), // Tests 34, 35
   localReducers.field245(), // Tests 31, 32 and 33
   localReducers.field830(), // Tests 22-29
   localReducers.field995() // Test 30

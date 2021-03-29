@@ -21,12 +21,6 @@ import {
  * Test 06: Same as 05 but fields in different order => keep base
  *  */
 
-/**
- * ### Vai kävisikö tähän vain marc-record-mergen select.js-toiminnallisuus?
- * Jos sitä muuttaa niin, että se osaa käsitellä myös toistettavia kenttiä,
- * nyt se käsittelee kenttiä vain yksi kerrallaan.
- */
-
 export default ({tagPattern}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(tagPattern);
@@ -35,7 +29,11 @@ export default ({tagPattern}) => (base, source) => {
   debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
   // Test 05 and 06
-  if (checkIdenticalness(baseFields, sourceFields) === true) {
+  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
+
+  if (nonIdenticalFields.length === 0) {
+    debug(`Identical fields in source and base`);
     return base;
   }
 

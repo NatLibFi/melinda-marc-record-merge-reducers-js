@@ -21,7 +21,11 @@ export default () => (base, source) => {
   debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
   // Test 27 (identical) and 29 (2x identical fields in different order)
-  if (checkIdenticalness(baseFields, sourceFields) === true) {
+  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
+
+  if (nonIdenticalFields.length === 0) {
+    debug(`Identical fields in source and base`);
     return base;
   }
 

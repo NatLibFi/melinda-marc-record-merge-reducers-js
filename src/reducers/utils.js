@@ -19,40 +19,46 @@ export function getTags(fields) {
   return tags;
 }
 
-// Quick identicalness check
-// Returns true if base and source are completely identical in stringified form
-// Fields do not have to be in the same order
+// Modified from copy functionality in marc-record-merge
 export function checkIdenticalness(baseFields, sourceFields) {
-  const baseStrings = baseFields.map(field => JSON.stringify(field))
-    .map(baseString => baseString.normalize());
-  debug(`### baseStrings: ${JSON.stringify(baseStrings, undefined, 2)}`);
-  const sourceStrings = sourceFields.map(field => JSON.stringify(field))
-    .map(sourceString => sourceString.normalize());
-  debug(`### sourceStrings: ${JSON.stringify(sourceStrings, undefined, 2)}`);
+  // Return array of non-identical fields
+  return sourceFields.filter(filterNonIdentical);
 
-  // https://stackoverflow.com/questions/6229197/how-to-know-if-two-arrays-have-the-same-values
+  function filterNonIdentical(sourceField) {
+    if ('value' in sourceField) {
+      debug(`Checking control field ${sourceField.tag} for identicalness`);
+      return baseFields.some(isIdenticalControlField) === false;
+    }
+    if ('subfields' in sourceField) {
+      debug(`Checking data field ${sourceField.tag} for identicalness`);
+      return baseFields.some(isIdenticalDataField) === false;
+    }
 
-  function containsAll(arr1, arr2) {
-    const result = arr2.every(arr2Item => arr1.includes(arr2Item));
-    debug(`### containsAll result: ${JSON.stringify(result, undefined, 2)}`);
-    return result;
+    // Used to normalize both control fields and subfields
+    function normalizeItem(item) {
+      return item.value.toLowerCase().replace(/\s+/u, '');
+    }
+    function isIdenticalControlField(baseField) {
+      return normalizeItem(sourceField) === normalizeItem(baseField);
+    }
+    function isIdenticalDataField(baseField) {
+      if (sourceField.tag === baseField.tag &&
+          sourceField.ind1 === baseField.ind1 &&
+          sourceField.ind2 === baseField.ind2 &&
+          sourceField.subfields.length === baseField.subfields.length) {
+        return baseField.subfields.every(isIdenticalSubfield);
+      }
+      function isIdenticalSubfield(baseSub) {
+        return sourceField.subfields.some(sourceSub => {
+          return normalizeItem(sourceSub) === normalizeItem(baseSub);
+        });
+      }
+    };
   }
-  function sameMembers(arr1, arr2) {
-    const result = containsAll(arr1, arr2) && containsAll(arr2, arr1);
-    debug(`### sameMembers result: ${JSON.stringify(result, undefined, 2)}`);
-    return result;
-  }
-  const result = sameMembers(baseStrings, sourceStrings);
-  debug(`### result: ${result}`);
-  const baseTags = baseFields.map(field => field.tag);
-  if (result === true) {
-    baseTags.forEach(tag => debug(`Field ${tag}: base and source identical, keeping base`));
-  }
-  return result;
 }
 
 // Get field specs from melindaCustomMergeFields.json
-export function getFieldSpecs(tag) {
+/*export function getFieldSpecs(tag) {
   const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
   const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tag);
   return fieldSpecs;
@@ -66,7 +72,7 @@ export function getNonRepCodes(tag) {
   return getFieldSpecs(tag).subfields
     .filter(sub => sub.repeatable === 'false')
     .map(sub => sub.code);
-}
+}*/
 
 // Normalize subfield values for comparison, returns array of normalized subfields
 export function normalizeSubfields(field) {

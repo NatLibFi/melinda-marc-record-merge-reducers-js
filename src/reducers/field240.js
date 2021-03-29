@@ -4,15 +4,19 @@ import {
   checkIdenticalness
 } from './utils.js';
 
-// Test 31: Identical fields in source and base => keep base
-// Test 32: Source has more subfields => replace base with source (but keep base ind2)
-// Test 33: Same number of subfields (but different content) => keep base
+//### 240-kenttä tuodaan ei-preferoitavasta tietueesta vain, jos preferoitavassa tietueessa ei ole 240-kenttää tai 130-kenttää.
+//### Jos molemmissa tietuesissa on 240-kenttä, ja ne ovat samat, voidaan preferoitavan tietueen 240-kenttää täydentää ei-preferoitavan kentän täydentävillä osakentillä.
+
+// #### Keskeneräinen
+
+// Test 34: Base does not contain 240 or 130 => copy 240 from source
+// Test 35:
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(/^245$/u); // Get array of base fields
+  const baseFields = base.get(/^240$/u); // Get array of base fields
   debug(`### baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
-  const sourceFields = source.get(/^245$/u); // Get array of source fields
+  const sourceFields = source.get(/^240$/u); // Get array of source fields
   debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
   // Test 31
@@ -24,7 +28,7 @@ export default () => (base, source) => {
     return base;
   }
 
-  // Field 245 is non-repeatable
+  // Field 240 is non-repeatable
   // The arrays can be destructured into objects right away
   const [baseField] = baseFields;
   const [sourceField] = sourceFields;

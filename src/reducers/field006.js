@@ -9,7 +9,11 @@ export default () => (base, source) => {
   const baseFields = base.get(/^006$/u);
   const sourceFields = source.get(/^006$/u);
 
-  if (checkIdenticalness(baseFields, sourceFields) === true) {
+  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
+
+  if (nonIdenticalFields.length === 0) {
+    debug(`Identical fields in source and base`);
     return base;
   }
 

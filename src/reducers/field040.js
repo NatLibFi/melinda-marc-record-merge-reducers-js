@@ -2,8 +2,8 @@ import createDebugLogger from 'debug';
 
 import {
   checkIdenticalness,
-  getRepCodes,
-  getNonRepCodes,
+//  getRepCodes,
+//  getNonRepCodes,
   getRepSubs,
   getNonRepSubs,
   sortSubfields
@@ -20,13 +20,19 @@ export default () => (base, source) => {
   const sourceFields = source.get(fieldTag); // Get array of source fields
   debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
-  if (checkIdenticalness(baseFields, sourceFields) === true) {
+  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
+
+  if (nonIdenticalFields.length === 0) {
+    debug(`Identical fields in source and base`);
     return base;
   }
 
   // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-  const repCodes = getRepCodes('040');
-  const nonRepCodes = getNonRepCodes('040');
+//  const repCodes = getRepCodes('040');
+//  const nonRepCodes = getNonRepCodes('040');
+    const repCodes = ['d', 'e', '8'];
+    const nonRepCodes = ['a', 'b', 'c', '6'];
 
   // Since 040 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
