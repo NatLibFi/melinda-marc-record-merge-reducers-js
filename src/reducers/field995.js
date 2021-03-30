@@ -3,6 +3,7 @@ import createDebugLogger from 'debug';
 import {
   checkIdenticalness,
   getRepSubs,
+  makeNewBaseField,
   sortSubfields
 } from './utils.js';
 
@@ -37,16 +38,6 @@ export default () => (base, source) => {
   // Create new base field to replace old one
   // Copy subfield sort order from source field
   const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-  debug(`### orderFromSource: ${JSON.stringify(orderFromSource, undefined, 2)}`);
-  const newBaseField = JSON.parse(JSON.stringify(baseField));
   const sortedSubfields = sortSubfields([...baseField.subfields, ...repSubsToCopy], orderFromSource);
-  newBaseField.subfields = sortedSubfields;
-  // ### Tarvitaanko tähän eslint-disable?
-  /* eslint-disable */
-  base.removeField(baseField); // remove old baseField
-  debug(`### Base after removing old baseField: ${JSON.stringify(base, undefined, 2)}`);
-  base.insertField(newBaseField); // insert newBaseField
-  debug(`### Base after inserting newBaseField: ${JSON.stringify(base, undefined, 2)}`);
-  /* eslint-enable */
-  return base;
+  return makeNewBaseField(base, baseField, sortedSubfields);
 };

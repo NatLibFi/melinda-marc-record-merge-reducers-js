@@ -21,7 +21,7 @@ export function getTags(fields) {
 
 // Modified from copy functionality in marc-record-merge
 export function checkIdenticalness(baseFields, sourceFields) {
-  // Return array of non-identical fields
+  // Return array of non-identical fields in source
   return sourceFields.filter(filterNonIdentical);
 
   function filterNonIdentical(sourceField) {
@@ -55,6 +55,15 @@ export function checkIdenticalness(baseFields, sourceFields) {
       }
     };
   }
+}
+
+// Copy all non-identical fields from source to base
+export function copyNonIdenticalFields(base, nonIdenticalFields) {
+  nonIdenticalFields.forEach(f => base.insertField(f));
+  const tags = nonIdenticalFields.map(field => field.tag);
+  tags.forEach(tag => debug(`Field ${tag} copied from source to base`));
+  debug(`### base at end of copyNonIdenticalFields: ${JSON.stringify(base, undefined, 2)}`);
+  return base;
 }
 
 // Get field specs from melindaCustomMergeFields.json
@@ -270,4 +279,17 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
     return sortSubfields(restSubfields, rest, [...orderedSubfields, ...filtered]);
   }
   return sortSubfields(restSubfields, rest, orderedSubfields);
+}
+
+export function makeNewBaseField(base, baseField, sortedSubfields) {
+  const newBaseField = JSON.parse(JSON.stringify(baseField));
+  newBaseField.subfields = sortedSubfields;
+  // ### Tarvitaanko tähän eslint-disable?
+  /* eslint-disable */
+  base.removeField(baseField); // remove old baseField
+  debug(`### Base after removing old baseField: ${JSON.stringify(base, undefined, 2)}`);
+  base.insertField(newBaseField); // insert newBaseField
+  debug(`### Base after inserting newBaseField: ${JSON.stringify(base, undefined, 2)}`);
+  /* eslint-enable */
+  return base;
 }

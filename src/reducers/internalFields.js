@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {checkIdenticalness} from './utils.js';
+import {checkIdenticalness, copyNonIdenticalFields} from './utils.js';
 
 // Test 01: Identical LOW, CAT, SID (2x each) --> keep base
 // Test 02: Some identical, some different --> copy different from source to base
@@ -23,9 +23,6 @@ export default () => (base, source) => {
 
   // ### Pitäisikö kenttiä järjestää tässä jotenkin?
   function mergeInternal() {
-    nonIdenticalFields.forEach(f => base.insertField(f));
-    const tags = nonIdenticalFields.map(field => field.tag);
-    tags.forEach(tag => debug(`Field ${tag} copied from source to base`));
-    return base;
+    return copyNonIdenticalFields(base, nonIdenticalFields);
   }
 }

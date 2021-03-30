@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {checkIdenticalness} from './utils.js';
+import {checkIdenticalness, copyNonIdenticalFields} from './utils.js';
 
 // Test 04: If 007/00-01 are different in base and source, copy 007 from source to base as new field (2x)
 // Test 05: If 007/00-01 are the same, keep existing field 007 in base (2x)
@@ -23,10 +23,7 @@ export default () => (base, source) => {
     // ### Toimii myös tähän suuntaan, mutta onko näillä käytännössä jotain eroa?
     // ### if (baseFields.every(baseField => sourceFields.some(sourceField => copyField(baseField, sourceField)))) {
     if (sourceFields.every(sourceField => baseFields.some(baseField => copyField(baseField, sourceField)))) {
-      const addToBase = sourceFields.filter(field => !base.containsFieldWithValue(field.tag, field.value));
-      addToBase.forEach(field => base.insertField(field));
-      addToBase.forEach(field => debug(`Copying source field ${field.tag} to base`));
-      return base;
+      return copyNonIdenticalFields(base, nonIdenticalFields);
     }
     function copyField(baseField, sourceField) {
       debug(`### bf 0: ${baseField.value[0]}`);

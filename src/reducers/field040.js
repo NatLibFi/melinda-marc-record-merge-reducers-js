@@ -6,7 +6,8 @@ import {
 //  getNonRepCodes,
   getRepSubs,
   getNonRepSubs,
-  sortSubfields
+  sortSubfields,
+  makeNewBaseField
 } from './utils.js';
 
 // Test 18: Copy new field from source to base record (case 1)
@@ -33,6 +34,8 @@ export default () => (base, source) => {
 //  const nonRepCodes = getNonRepCodes('040');
     const repCodes = ['d', 'e', '8'];
     const nonRepCodes = ['a', 'b', 'c', '6'];
+    // Custom subfield sort order for field 040
+    const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 
   // Since 040 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
@@ -40,8 +43,6 @@ export default () => (base, source) => {
   debug(`### baseField: ${JSON.stringify(baseField, undefined, 2)}`);
   const [sourceField] = sourceFields;
   debug(`### sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
-  // Custom subfield sort order for field 040
-  const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 
   // Run the function to get the base record to return
   return mergeField040(base, baseField, sourceField, repCodes, nonRepCodes);
@@ -94,19 +95,7 @@ export default () => (base, source) => {
     //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
     // Create new base field to replace old one
-    // Copy subfield sort order from source field
-    //const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-    //debug(`### orderFromSource: ${JSON.stringify(orderFromSource, undefined, 2)}`);
-    const newBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], sortOrder040);
-    newBaseField.subfields = sortedSubfields;
-    // ### Tarvitaanko tähän eslint-disable?
-    /* eslint-disable */
-    base.removeField(baseField); // remove old baseField
-    debug(`### Base after removing old baseField: ${JSON.stringify(base, undefined, 2)}`);
-    base.insertField(newBaseField); // insert newBaseField
-    debug(`### Base after inserting newBaseField: ${JSON.stringify(base, undefined, 2)}`);
-    /* eslint-enable */
-    return base; // Base returned in case 2
+    return makeNewBaseField(base, baseField, sortedSubfields);
   }
 };

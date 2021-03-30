@@ -7,7 +7,8 @@ import {
   compareAllSubfields,
   getRepSubs,
   getNonRepSubs,
-  sortSubfields
+  sortSubfields,
+  makeNewBaseField
 } from './utils.js';
 
 // Test 12: Copy new field from source to base record (case 1) (2x)
@@ -68,25 +69,8 @@ export default () => (base, source) => {
     // Create new base field to replace old one
     // Copy subfield sort order from source field
     const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-    //debug(`### orderFromSource: ${JSON.stringify(orderFromSource, undefined, 2)}`);
-    const newBaseField = JSON.parse(JSON.stringify(baseField));
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], orderFromSource);
-    newBaseField.subfields = sortedSubfields;
-    // ### Tarvitaanko tähän eslint-disable?
-    /* eslint-disable */
-    base.removeField(baseField); // remove old baseField
-    /** ### Test 14: Tässä vaiheessa kenttien järjestys muuttuu: vanha base poistetaan,
-     * joten ylimmäksi nousee ekalla iteraatiokierroksella sourcesta kopioitu ensimmäinen uusi kenttä.
-     * Uusi base (newBaseField) muodostetaan mergettämällä vanha base ja sourcen toinen kenttä,
-     * ja se lisätään vasta ekan kopioidun kentän perään.
-     * Viimeiseksi lisätään kolmannella kierroksella sourcesta toinen uusi kenttä.
-     * Onko kenttien järjestyksen muuttuminen ongelma?
-     * */
-    debug(`### Base after removing old baseField: ${JSON.stringify(base, undefined, 2)}`);
-    base.insertField(newBaseField); // insert newBaseField
-    debug(`### Base after inserting newBaseField: ${JSON.stringify(base, undefined, 2)}`);
-    /* eslint-enable */
-    return base; // Base returned in case 2
+    return makeNewBaseField(base, baseField, sortedSubfields);
   }
 
   if (sourceFields.every(sourceField => baseFields.some(baseField => mergeField022(base, baseField, sourceField, repCodes, nonRepCodes)))) {
