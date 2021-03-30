@@ -2,8 +2,6 @@ import createDebugLogger from 'debug';
 
 import {
   checkIdenticalness,
-//  getRepCodes,
-//  getNonRepCodes,
   getRepSubs,
   getNonRepSubs,
   sortSubfields,
@@ -19,30 +17,23 @@ export default () => (base, source) => {
   const fieldTag = /^040$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
-  debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
-  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);
     return base;
   }
-
-  // Get arrays of repeatable and non-repeatable subfield codes from melindaCustomMergeFields.json
-//  const repCodes = getRepCodes('040');
-//  const nonRepCodes = getNonRepCodes('040');
-    const repCodes = ['d', 'e', '8'];
-    const nonRepCodes = ['a', 'b', 'c', '6'];
-    // Custom subfield sort order for field 040
-    const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
+  // Define repeatable and non-repeatable subfield codes
+  const repCodes = ['d', 'e', '8'];
+  const nonRepCodes = ['a', 'b', 'c', '6'];
+  // Custom subfield sort order for field 040
+  const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 
   // Since 040 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
   const [baseField] = baseFields;
-  debug(`### baseField: ${JSON.stringify(baseField, undefined, 2)}`);
   const [sourceField] = sourceFields;
-  debug(`### sourceField: ${JSON.stringify(sourceField, undefined, 2)}`);
 
   // Run the function to get the base record to return
   return mergeField040(base, baseField, sourceField, repCodes, nonRepCodes);
@@ -52,8 +43,6 @@ export default () => (base, source) => {
 
     // In all cases, source $a value is copied to a new $d and $a is removed
     transferSubfieldValue(sourceField, 'a', 'd');
-    debug(`### sourceField final: ${JSON.stringify(sourceField, undefined, 2)}`);
-    debug(`### sourceFields final: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
     // Transfer the value of one subfield to another
     // For 040: transfer source $a value to $d to prepare for copying to base
@@ -85,14 +74,10 @@ export default () => (base, source) => {
     // Copy other subfields from source field to base field
     // For non-repeatable subfields, the value existing in base (base) is preferred
     // Non-repeatable subfields are copied from source only if missing completely in base
-    // 040: $a, $b, $c, $8
     const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes);
-    debug(`### nonRepSubsToCopy: ${JSON.stringify(nonRepSubsToCopy, undefined, 2)}`);
 
     // Repeatable subfields are copied if the value is different
-    // 040: $d, $e, $8
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
-    //debug(`repSubsToCopy: ${JSON.stringify(repSubsToCopy, undefined, 2)}`);
 
     // Create new base field to replace old one
     const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], sortOrder040);

@@ -16,13 +16,10 @@ export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const fieldTag = /^830$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
-  debug(`### baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
-  debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
   // Test 27 (identical) and 29 (2x identical fields in different order)
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
-  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);
@@ -31,17 +28,13 @@ export default () => (base, source) => {
 
   // If base contains 830 fields, they are merged with source
   if (baseFields.length > 0) {
-    debug(`baseFields.length > 0`);
     if (sourceFields.every(sourceField => baseFields.every(baseField => mergeField830(base, baseField, sourceField)))) {
-      debug(`### merge, base returned from if loop: ${JSON.stringify(base, undefined, 2)}`);
       return base;
     }
   }
   // If base does not contain 830 fields, they are copied from source
   if (baseFields.length === 0) {
-    debug(`baseFields.length = 0`);
     if (sourceFields.every(sourceField => copyField830(base, sourceField))) {
-      debug(`###copy, base returned from if loop: ${JSON.stringify(base, undefined, 2)}`);
       return base;
     }
   };
@@ -59,9 +52,7 @@ export default () => (base, source) => {
       debug(`Source 830 has subfield x (ISSN), copying source 830 to base`);
       /* eslint-disable */
       base.removeField(baseField);
-      debug(`### Base after removing baseField: ${JSON.stringify(base, undefined, 2)}`);
       base.insertField(sourceField);
-      debug(`### Base after inserting sourceField: ${JSON.stringify(base, undefined, 2)}`);
       /* eslint-enable */
       return base;
     }
@@ -75,7 +66,6 @@ export default () => (base, source) => {
     if (sourceField.subfields.map(sub => sub.code).indexOf('x') !== -1) {
       debug(`Source 830 has subfield x (ISSN), copying source 830 to base`);
       base.insertField(sourceField);
-      debug(`### Base after copying: ${JSON.stringify(base, undefined, 2)}`);
       return base;
     }
     // If source 830 does not have $x either, nothing is copied (Test 24)

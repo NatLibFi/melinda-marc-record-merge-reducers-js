@@ -2,17 +2,17 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "245",
+      "tag": "240",
       "ind1": "1",
       "ind2": "0",
       "subfields": [
         {
           "code": "a",
-          "value": "Valitut teokset"
+          "value": "Seitsemän veljestä"
         },
         {
-          "code": "c",
-          "value": "Minna Canth."
+          "code": "l",
+          "value": "ruotsi"
         }
       ]
     }

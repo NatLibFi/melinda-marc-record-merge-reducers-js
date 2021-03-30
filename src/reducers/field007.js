@@ -10,7 +10,6 @@ export default () => (base, source) => {
   const sourceFields = source.get(/^007$/u);
 
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
-  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);
@@ -20,24 +19,15 @@ export default () => (base, source) => {
   return mergeField007();
 
   function mergeField007() {
-    // ### Toimii myös tähän suuntaan, mutta onko näillä käytännössä jotain eroa?
-    // ### if (baseFields.every(baseField => sourceFields.some(sourceField => copyField(baseField, sourceField)))) {
     if (sourceFields.every(sourceField => baseFields.some(baseField => copyField(baseField, sourceField)))) {
       return copyNonIdenticalFields(base, nonIdenticalFields);
     }
     function copyField(baseField, sourceField) {
-      debug(`### bf 0: ${baseField.value[0]}`);
-      debug(`### bf 1: ${baseField.value[1]}`);
-      debug(`### sf 0: ${sourceField.value[0]}`);
-      debug(`### sf 1: ${sourceField.value[1]}`);
-
       // Copy source field if source 007/00 and/or 007/01 are different from base
       if (baseField.value[0] !== sourceField.value[0] || baseField.value[1] !== sourceField.value[1]) {
-        debug(`### copyField true`);
         return true;
       }
       // If 007/00 and 01 are identical, keep base field
-      debug(`### copyField false`);
       debug(`Keeping base field ${baseField.tag}`);
       return false;
     }

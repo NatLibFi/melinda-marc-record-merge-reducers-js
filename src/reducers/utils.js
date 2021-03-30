@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
 
@@ -11,17 +9,15 @@ export function getTags(fields) {
   // If there is only one field = one tag in the array, it is returned as string
   if (tags.length === 1) {
     const [tagString] = tags;
-    debug(`### tagString from getTags: ${tagString}`);
     return tagString;
   }
   // If there are several fields, return an array of tags
-  debug(`### tags from getTags: ${JSON.stringify(tags, undefined, 2)}`);
   return tags;
 }
 
 // Modified from copy functionality in marc-record-merge
 export function checkIdenticalness(baseFields, sourceFields) {
-  // Return array of non-identical fields in source
+  // Return array of non-identical fields (source fields not present in base)
   return sourceFields.filter(filterNonIdentical);
 
   function filterNonIdentical(sourceField) {
@@ -62,7 +58,6 @@ export function copyNonIdenticalFields(base, nonIdenticalFields) {
   nonIdenticalFields.forEach(f => base.insertField(f));
   const tags = nonIdenticalFields.map(field => field.tag);
   tags.forEach(tag => debug(`Field ${tag} copied from source to base`));
-  debug(`### base at end of copyNonIdenticalFields: ${JSON.stringify(base, undefined, 2)}`);
   return base;
 }
 
@@ -141,7 +136,6 @@ export function getNonRepSubs(sourceField, nonRepCodes, dropCodes = [], idCodes 
   const nonRepSubs = sourceField.subfields
     .filter(subfield => nonRepCodes
       .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
-  debug(`### nonRepSubs: ${JSON.stringify(nonRepSubs, undefined, 2)}`);
   return nonRepSubs;
 }
 
@@ -151,38 +145,28 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes = [], idC
   const allRepSubs = sourceField.subfields
     .filter(subfield => repCodes
       .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
-  //debug(`allRepSubs: ${JSON.stringify(allRepSubs, undefined, 2)}`);
 
   // Add temporary index property to array elements (subfields) to identify them even when values are normalized
   const allIndexedRepSubs = allRepSubs
     .map(sub => ({...sub, index: allRepSubs.indexOf(sub)}));
-  //debug(`allIndexedRepSubs: ${JSON.stringify(allIndexedRepSubs, undefined, 2)}`);
 
   // Then filter out duplicates already existing in base
   const nonDupRepSubsNorm = filterDuplicates(baseField, allIndexedRepSubs);
-  //debug(`nonDupRepSubsNorm: ${JSON.stringify(nonDupRepSubsNorm, undefined, 2)}`);
 
   function filterDuplicates(baseField, allIndexedRepSubs) {
     // Normalize subfield values for comparison
     const allIndexedRepSubsNorm = allIndexedRepSubs
       .map(({code, value, index}) => ({code, value: normalizeStringValue(value), index}));
-    //debug(`allIndexedRepSubsNorm: ${JSON.stringify(allIndexedRepSubsNorm, undefined, 2)}`);
 
     function strictEquality(subfieldA, subfieldB) {
       return subfieldA.code === subfieldB.code &&
       subfieldA.value === subfieldB.value;
     }
-    // Get base subfields for which a matching subfield in source (allIndexedRepSubsNorm) is found
-    /*const dupRepSubsBase = normalizeSubfields(baseField)
-      .filter(baseSub => allIndexedRepSubsNorm
-        .some(sourceSub => strictEquality(baseSub, sourceSub)));*/
-    //debug(`Match in source found for normalized base subfield: ${JSON.stringify(dupRepSubsBase, undefined, 2)}`);
 
     // Get source subfields for which a matching base subfield is found
     const dupRepSubsSource = allIndexedRepSubsNorm
       .filter(sourceSub => normalizeSubfields(baseField)
         .some(baseSub => strictEquality(sourceSub, baseSub)));
-    //debug(`Match in base found for normalized source subfield: ${JSON.stringify(dupRepSubsSource, undefined, 2)}`);
 
     // Returns an array of non-duplicate repeatable subfields from source
     // Subfields still include the temporary index property and values are normalized
@@ -198,16 +182,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes = [], idC
     .filter(sub => nonDupRepSubsNorm
       .map(sub => sub.index).indexOf(sub.index) !== -1)
     .map(({code, value, index}) => ({code, value})); // eslint-disable-line no-unused-vars
-  debug(`### nonDupRepSubsToCopy: ${JSON.stringify(nonDupRepSubsToCopy, undefined, 2)}`);
   return nonDupRepSubsToCopy;
-}
-
-// Modify existing base field in base
-export function modifyBaseField(base, baseField, modifiedField) {
-  const index = base.fields.findIndex(field => field === baseField);
-  base.fields.splice(index, 1, modifiedField); // eslint-disable-line functional/immutable-data
-  debug(`Adding new subfields to field ${baseField.tag}`);
-  return base;
 }
 
 // Default subfield sort order if no custom order is given
@@ -251,7 +226,6 @@ const sortDefault = [
 ];
 
 export function sortSubfields(subfields, order = sortDefault, orderedSubfields = []) {
-  //debug(`### Order: ${order}`); // testing
   const [filter, ...rest] = order;
   if (filter === undefined) {
     return [...orderedSubfields, ...subfields];
@@ -259,7 +233,6 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
   //debug(`### Subfield sort filter: ${JSON.stringify(filter)}`);
   //debug(`### Subfields: ${JSON.stringify(subfields)}`);
   //debug(`### Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
-
   /* eslint-disable */
   const filtered = subfields.filter(sub => {
     if (typeof filter === 'string') {
@@ -267,8 +240,6 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
     }
 
   });
-  //debug(`### Filtered subfields: ${JSON.stringify(filtered, undefined, 2)}`);
-
   const restSubfields = subfields.filter(sub => {
     if (typeof filter === 'string') {
       return sub.code !== filter;
@@ -281,15 +252,81 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
   return sortSubfields(restSubfields, rest, orderedSubfields);
 }
 
+// Create new base field with custom array of sorted subfields
 export function makeNewBaseField(base, baseField, sortedSubfields) {
   const newBaseField = JSON.parse(JSON.stringify(baseField));
   newBaseField.subfields = sortedSubfields;
-  // ### Tarvitaanko tähän eslint-disable?
   /* eslint-disable */
   base.removeField(baseField); // remove old baseField
-  debug(`### Base after removing old baseField: ${JSON.stringify(base, undefined, 2)}`);
   base.insertField(newBaseField); // insert newBaseField
-  debug(`### Base after inserting newBaseField: ${JSON.stringify(base, undefined, 2)}`);
   /* eslint-enable */
   return base;
+}
+
+/**
+ * Select longer field
+ * Longer means fulfilling either (but not both) of these conditions:
+ *   a) Source has more subfields than base
+ * Or if source and base have the same number of subfields:
+ *   b) Subfield values in source are supersets of subfield values in base
+ * */
+export function selectLongerField(base, baseField, sourceField) {
+  debug(`Comparing field ${baseField.tag}`);
+  const baseSubs = baseField.subfields;
+  const sourceSubs = sourceField.subfields;
+
+  const baseSubsNormalized = baseSubs
+    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
+
+  const sourceSubsNormalized = sourceSubs
+    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
+
+  // Returns the base subfields for which a matching source subfield is found
+  const equalSubfieldsBase = baseSubsNormalized
+    .filter(baseSubfield => sourceSubsNormalized
+      .some(sourceSubfield => subsetEquality(baseSubfield, sourceSubfield)));
+  //debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
+
+  // Returns the source subfields for which a matching base subfield is found
+  const equalSubfieldsSource = sourceSubsNormalized
+    .filter(sourceSubfield => baseSubsNormalized
+      .some(baseSubfield => subsetEquality(sourceSubfield, baseSubfield)));
+  //debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
+
+  // If fields are equally long, keep base
+  if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
+    debug(`No changes to base`);
+    return base;
+  }
+
+  if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length) {
+    debug(`Checking subfield equality`);
+    const totalSubfieldLengthBase = baseSubsNormalized
+      .map(({value}) => value.length)
+      .reduce((acc, value) => acc + value);
+    const totalSubfieldLengthSource = sourceSubsNormalized
+      .map(({value}) => value.length)
+      .reduce((acc, value) => acc + value);
+
+    if (totalSubfieldLengthSource > totalSubfieldLengthBase) {
+      return replaceBasefieldWithSourcefield(base);
+    }
+  }
+  if (sourceSubs.length > baseSubs.length && equalSubfieldsBase.length === baseSubs.length) {
+    return replaceBasefieldWithSourcefield(base);
+  }
+  debug(`No changes to base`);
+  return base;
+
+  // Subset equality function from marc-record-merge select.js
+  function subsetEquality(subfieldA, subfieldB) {
+    return subfieldA.code === subfieldB.code &&
+    (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
+  }
+  function replaceBasefieldWithSourcefield(base) {
+    const index = base.fields.findIndex(field => field === baseField);
+    base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
+    debug(`Source field ${sourceField.tag} is longer, replacing base field with source field`);
+    return base;
+  }
 }

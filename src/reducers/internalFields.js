@@ -10,7 +10,6 @@ export default () => (base, source) => {
   const sourceFields = source.get(/^(LOW|CAT|SID)$/u);
 
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
-  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
   // Test 01
   if (nonIdenticalFields.length === 0) {
@@ -21,8 +20,8 @@ export default () => (base, source) => {
   // Test 02
   return mergeInternal();
 
-  // ### Pitäisikö kenttiä järjestää tässä jotenkin?
   function mergeInternal() {
+    // If specific conditions are applied to copying internal fields, they are defined here
     return copyNonIdenticalFields(base, nonIdenticalFields);
   }
 }

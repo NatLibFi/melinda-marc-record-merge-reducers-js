@@ -11,7 +11,6 @@ export default () => (base, source) => {
   const [sourceField] = sourceFields;
 
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
-  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);
@@ -28,8 +27,6 @@ export default () => (base, source) => {
   const sourcePubYear = sourceField.value.slice(7, 11);
   const sourceCountry = sourceField.value.slice(15, 18);
   const sourceLanguage = sourceField.value.slice(35, 38);
-
-  debug(`### levelCode source: ${getLevelCode(source)}, base: ${getLevelCode(base)}`);
 
   if (basePubYear === sourcePubYear && baseCountry === sourceCountry && baseLanguage === sourceLanguage) {
     // Test 06: If the level code of the source record is better (smaller number)

@@ -17,7 +17,6 @@ export default () => (base, source) => {
   const sourceFields = source.get(fieldTag); // Get array of source fields
 
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
-  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);
@@ -47,7 +46,6 @@ export default () => (base, source) => {
 
     // Case 2: If field 042 exists in base, copy missing subfields from source
     // Repeatable subfields are copied if the value is different
-    // 042: $a
     const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
     const sortedSubfields = sortSubfields([...baseField.subfields, ...repSubsToCopy]);
     return makeNewBaseField(base, baseField, sortedSubfields);
