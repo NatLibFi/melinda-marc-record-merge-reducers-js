@@ -6,8 +6,8 @@ import {checkIdenticalness, copyNonIdenticalFields} from './utils.js';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(/(LOW|CAT|SID)$/u);
-  const sourceFields = source.get(/^(LOW|CAT|SID)$/u);
+  const baseFields = base.get(/(?:LOW|CAT|SID)$/u); // <- NV: does regexp miss initial ^
+  const sourceFields = source.get(/^(?:LOW|CAT|SID)$/u); // <- NV: if it does, same regexp can be used in these two statements
 
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
 
@@ -24,4 +24,4 @@ export default () => (base, source) => {
     // If specific conditions are applied to copying internal fields, they are defined here
     return copyNonIdenticalFields(base, nonIdenticalFields);
   }
-}
+};

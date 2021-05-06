@@ -3,13 +3,13 @@ import createDebugLogger from 'debug';
 
 import {
   getTags,
-  checkIdenticalness,
+  checkIdenticalness
 } from './utils.js';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   // All fields used for main entry, all non-repeatable
-  const fieldTag = /^(100|110|111|130|240|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
+  const fieldTag = /^(?:100|110|111|130|240|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
