@@ -37,8 +37,8 @@ export default () => (base, source) => {
     if (sourceSubs.length > baseSubs.length) {
       const newBaseField = JSON.parse(JSON.stringify(sourceField));
       // But indicator 2 is always taken from the base record
-      newBaseField.ind2 = baseField.ind2;
       /* eslint-disable */
+      newBaseField.ind2 = baseField.ind2;
       base.removeField(baseField); // remove old baseField
       base.insertField(newBaseField); // insert newBaseField
       /* eslint-enable */

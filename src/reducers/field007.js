@@ -33,4 +33,4 @@ export default () => (base, source) => {
     }
     return base;
   }
-}
+};

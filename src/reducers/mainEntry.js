@@ -3,7 +3,7 @@ import createDebugLogger from 'debug';
 
 import {
   getTags,
-  checkIdenticalness,
+  checkIdenticalness
 } from './utils.js';
 
 export default () => (base, source) => {

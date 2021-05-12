@@ -45,11 +45,9 @@ export function checkIdenticalness(baseFields, sourceFields) {
         return baseField.subfields.every(isIdenticalSubfield);
       }
       function isIdenticalSubfield(baseSub) {
-        return sourceField.subfields.some(sourceSub => {
-          return normalizeItem(sourceSub) === normalizeItem(baseSub);
-        });
+        return sourceField.subfields.some(sourceSub => normalizeItem(sourceSub) === normalizeItem(baseSub));
       }
-    };
+    }
   }
 }
 
@@ -255,8 +253,8 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
 // Create new base field with custom array of sorted subfields
 export function makeNewBaseField(base, baseField, sortedSubfields) {
   const newBaseField = JSON.parse(JSON.stringify(baseField));
-  newBaseField.subfields = sortedSubfields;
   /* eslint-disable */
+  newBaseField.subfields = sortedSubfields;
   base.removeField(baseField); // remove old baseField
   base.insertField(newBaseField); // insert newBaseField
   /* eslint-enable */

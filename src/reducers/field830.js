@@ -37,7 +37,7 @@ export default () => (base, source) => {
     if (sourceFields.every(sourceField => copyField830(base, sourceField))) {
       return base;
     }
-  };
+  }
 
   function mergeField830(base, baseField, sourceField) {
     debug(`Working on field 830`);

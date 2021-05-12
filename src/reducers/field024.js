@@ -27,7 +27,7 @@ export default () => (base, source) => {
   }
 
   // Define repeatable and non-repeatable subfield codes
-  const repCodes= ['q', 'z', '8'];
+  const repCodes = ['q', 'z', '8'];
   const nonRepCodes = ['a', 'c', 'd', '2'];
 
   function mergeField024(base, baseField, sourceField, repCodes, nonRepCodes) {

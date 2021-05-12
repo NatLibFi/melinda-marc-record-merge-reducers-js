@@ -21,4 +21,4 @@ export default () => (base, source) => {
   }
   debug(`Keeping base field 006`);
   return base;
-}
+};
