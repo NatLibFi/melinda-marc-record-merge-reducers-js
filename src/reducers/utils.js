@@ -328,3 +328,12 @@ export function selectLongerField(base, baseField, sourceField) {
     return base;
   }
 }
+
+/**
+ * renameSubfieldCodes
+ * 
+ * */
+export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
+  field.subfields.map(currSub => { if ( currSub.code === origCode ) { currSub.code = targetCode; } return currSub; });
+  return field;
+}
