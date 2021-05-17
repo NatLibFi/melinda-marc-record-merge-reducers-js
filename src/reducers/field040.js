@@ -5,8 +5,15 @@ import {
   getRepSubs,
   getNonRepSubs,
   sortSubfields,
-  makeNewBaseField
+  makeNewBaseField,
+  fieldRenameSubfieldCodes
 } from './utils.js';
+
+// Define repeatable and non-repeatable subfield codes
+const repCodes = ['d', 'e', '8'];
+const nonRepCodes = ['a', 'b', 'c', '6'];
+// Custom subfield sort order for field 040
+const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 
 // Test 18: Copy new field from source to base record (case 1)
 // Note: Test 18 base has a dummy 010 field because if fields=[], it is not a valid MarcRecord
@@ -24,11 +31,7 @@ export default () => (base, source) => {
     debug(`Identical fields in source and base`);
     return base;
   }
-  // Define repeatable and non-repeatable subfield codes
-  const repCodes = ['d', 'e', '8'];
-  const nonRepCodes = ['a', 'b', 'c', '6'];
-  // Custom subfield sort order for field 040
-  const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
+
 
   // Since 040 is a non-repeatable field, there can be only one instance in both source and base
   // The arrays can be destructured into objects right away
@@ -42,25 +45,8 @@ export default () => (base, source) => {
     debug(`Working on field 040`);
 
     // In all cases, source $a value is copied to a new $d and $a is removed
-    transferSubfieldValue(sourceField, 'a', 'd');
-
-    // Transfer the value of one subfield to another
-    // For 040: transfer source $a value to $d to prepare for copying to base
-    function transferSubfieldValue(field, origSub, targetSub) {
-      // Get string value of original subfield
-      const transferredValue = String(field.subfields
-        .filter(sub => sub.code === origSub)
-        .map(sub => sub.value));
-      // Add new target subfield instance with value transferred from original subfield
-      /* eslint-disable functional/immutable-data */
-      field.subfields.push({code: targetSub, value: transferredValue});
-      // Remove old original subfield completely (filter to new array without it) and sort subfields
-      const filteredSubfields = field.subfields.filter(subfield => subfield.code !== origSub);
-      const newSubfields = sortSubfields(filteredSubfields, sortOrder040);
-      // Replace subfields with new array
-      /* eslint-disable functional/immutable-data */
-      field.subfields = newSubfields;
-    }
+    sourceField = fieldRenameSubfieldCodes(sourceField, 'a', 'd');
+    sourceField.subfields = sortSubfields(sourceField.subfields, sortOrder040);
 
     // Case 1: If field 040 is missing completely from base, copy it from source as a new field
     if (baseFields.length === 0) {
