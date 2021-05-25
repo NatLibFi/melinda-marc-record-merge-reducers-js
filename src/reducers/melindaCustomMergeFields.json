@@ -1070,7 +1070,7 @@
     },
     {
       "tag": "995",
-      "repeatable": "false",
+      "repeatable": "true",
       "fieldType": "dataField",
       "indicators": {"ind1": "", "ind2": ""},
       "subfields": [

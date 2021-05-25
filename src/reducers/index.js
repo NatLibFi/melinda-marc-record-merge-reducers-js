@@ -61,11 +61,7 @@ const allReducers = [
 
 // ### Miten tästä rakennetaan kokonaisuus jossa tutkitaan tietueen kaikki kentät?
 // Eli kaikki ne joissa käytetään vain copya sekä ne, joille on erikseen kustomoitu omat säännöt.
-// Miten päästään tarkistamaan eri numeroisia kenttiä toisiaan vasten?
-// Siis esim. speksin mukaan kentän 540 arvo riippuu siitä, mikä on kentän 506 arvo.
-// Pannaanko silloin samaan reduceriin sekä 540 että 506?
-// täytyy panna oikeaan järjestykseen tähän allReducers arrayhin
-// molemmat kentät samaan testiin ja siihen source/base.get(506)
+
 export {localReducers};
 export default ({base, source, allReducers}) => {
   debug(`inside export default`);
