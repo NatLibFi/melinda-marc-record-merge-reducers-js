@@ -10,9 +10,10 @@ import {
 // Test 30: Base has one $a, source has 2x different $a
 // Test 31: Identical field 995 in source and base => keep base
 
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const fieldTag = /^995$/u; // Tag in regexp format (for use in MarcRecord functions)
+
 export default () => (base, source) => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const fieldTag = /^995$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
 

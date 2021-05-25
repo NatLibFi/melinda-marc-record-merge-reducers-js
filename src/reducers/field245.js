@@ -1,17 +1,19 @@
 import createDebugLogger from 'debug';
 
 import {
-  checkIdenticalness
+  checkIdenticalness, recordReplaceField
 } from './utils.js';
 
 // Test 31: Identical fields in source and base => keep base
 // Test 32: Source has more subfields => replace base with source (but keep base ind2)
 // Test 33: Same number of subfields (but different content) => keep base
 
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const fieldTag = /^245$/u; // Tag in regexp format (for use in MarcRecord functions)
+
 export default () => (base, source) => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(/^245$/u); // Get array of base fields
-  const sourceFields = source.get(/^245$/u); // Get array of source fields
+  const baseFields = base.get(fieldTag); // Get array of base fields
+  const sourceFields = source.get(fieldTag); // Get array of source fields
 
   // Test 31
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
@@ -35,15 +37,17 @@ export default () => (base, source) => {
     const sourceSubs = sourceField.subfields;
     // If the source field has more subfields, replace base with source (Test 32)
     if (sourceSubs.length > baseSubs.length) {
+      debug(`Source 245 is longer, replacing base field with source field`);
       const newBaseField = JSON.parse(JSON.stringify(sourceField));
       // But indicator 2 is always taken from the base record
       /* eslint-disable */
       newBaseField.ind2 = baseField.ind2;
-      base.removeField(baseField); // remove old baseField
-      base.insertField(newBaseField); // insert newBaseField
+      //base.removeField(baseField); // remove old baseField
+      //base.insertField(newBaseField); // insert newBaseField
+      
       /* eslint-enable */
-      debug(`Source 245 is longer, replacing base field with source field`);
-      return base;
+      return recordReplaceField(base, baseField, newBaseField);
+      // return base;
     }
     // Otherwise keep existing base field (Test 33)
     debug(`Keeping base field 245`);
