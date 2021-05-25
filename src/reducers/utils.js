@@ -328,3 +328,29 @@ export function selectLongerField(base, baseField, sourceField) {
     return base;
   }
 }
+
+/**
+ * renameSubfieldCodes
+ *
+ * */
+export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
+  field.subfields.map(currSub => {
+    if (currSub.code === origCode) {
+      currSub.code = targetCode;
+      return currSub;
+    }
+    return currSub;
+  });
+  return field;
+}
+
+export function recordReplaceField(record, originalField, newField) {
+  const index = record.fields.findIndex(field => field === originalField);
+  if (index === -1) {
+    debug('WARNING: recordReplaceField: Failed to find the original field');
+    return record;
+  }
+  record.fields.splice(index, 1, newField); // eslint-disable-line functional/immutable-data
+  debug(`Replacing base field ${originalField.tag} with source ${newField.tag}`);
+  return record;
+}
