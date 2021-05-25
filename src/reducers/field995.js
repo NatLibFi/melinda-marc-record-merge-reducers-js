@@ -2,13 +2,20 @@ import createDebugLogger from 'debug';
 
 import {
   checkIdenticalness,
-  getRepSubs,
-  makeNewBaseField,
-  sortSubfields
+  compareAllSubfields
 } from './utils.js';
+
+/**
+ * Oikeastaan 995 ei enää tarvitse omaa kenttäspesifistä reduceria,
+ * koska se muutettiin toistettavaksi ja erilaiset toistumat kopioidaan
+ * omina kenttinään, eli se menee normaalin copyn mukaisesti.
+ * Jätetään tämä tänne vielä toistaiseksi, jos 995:n käsittelyyn halutaankin
+ * vielä jatkossa jotain kustomointia.
+*/
 
 // Test 30: Base has one $a, source has 2x different $a
 // Test 31: Identical field 995 in source and base => keep base
+// Test 32: Two base 995 fields in base, two different ones in source
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -23,21 +30,23 @@ export default () => (base, source) => {
     return base;
   }
 
-// ### Päivitä toistettavaksi
-  // Field 995 is non-repeatable
-  // The arrays can be destructured into objects right away
-  const [baseField] = baseFields;
-  const [sourceField] = sourceFields;
-
-  debug(`Working on field 995`);
-
-  // Repeatable subfields are copied if the value is different
-  // 995 has only one subfield, $a, which is repeatable
-  const repSubsToCopy = getRepSubs(baseField, sourceField, ['a']);
-
-  // Create new base field to replace old one
-  // Copy subfield sort order from source field
-  const orderFromSource = sourceField.subfields.map(subfield => subfield.code);
-  const sortedSubfields = sortSubfields([...baseField.subfields, ...repSubsToCopy], orderFromSource);
-  return makeNewBaseField(base, baseField, sortedSubfields);
+  function mergeField995(base, baseField, sourceField) {
+    debug(`Working on field 995`);
+    // 995 has two subfields, $a and $5
+    const subCodes = ['a', '5'];
+    // If all subfield values are not equal, the entire source field is copied to base as a new field
+    if (compareAllSubfields(baseField, sourceField, subCodes) === false) {
+      base.insertField(sourceField);
+      subCodes.forEach(code => debug(`Subfield (${code}) not matching, source field copied as new field to base`));
+      return base;
+    }
+  }
+  if (sourceFields.every(sourceField => baseFields.some(baseField => mergeField995(base, baseField, sourceField)))) {
+    // No filtering needed here since mergeField995 does it in a customized way
+    return base;
+  }
 };
+
+
+
+

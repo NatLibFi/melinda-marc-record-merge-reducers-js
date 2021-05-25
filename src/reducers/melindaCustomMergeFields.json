@@ -1074,7 +1074,8 @@
       "fieldType": "dataField",
       "indicators": {"ind1": "", "ind2": ""},
       "subfields": [
-        {"code": "a", "repeatable": "true"}
+        {"code": "a", "repeatable": "true"},
+        {"code": "5", "repeatable": "true"}
       ]
     },
     {

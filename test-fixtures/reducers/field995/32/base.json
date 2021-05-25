@@ -8,11 +8,22 @@
       "subfields": [
         {
           "code": "a",
-          "value": "995_a1_source"
+          "value": "995_a_base1"
         },
         {
+          "code": "5",
+          "value": "ARTO"
+        }
+      ]
+    },
+    {
+      "tag": "995",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
           "code": "a",
-          "value": "995_a2_source"
+          "value": "995_a_base2"
         },
         {
           "code": "5",
