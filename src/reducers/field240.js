@@ -13,11 +13,11 @@ import {
 // Note: Test base has dummy 010 because if fields = [], it is not recognized as a valid MarcRecord object
 // Test 36: Base contains different 240 => keep base
 // Test 37: Base 240 is subset of source 240 => copy 240 from source
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-export default () => (base, source) => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(/^240$/u); // Get array of base fields
-  const sourceFields = source.get(/^240$/u); // Get array of source fields
+const fieldTag = /^240$/u; // Tag "name" must be a regexp in MarcRecord.get()
+
+function mergeField240(base, baseFields, sourceFields) {
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
   debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
@@ -25,22 +25,31 @@ export default () => (base, source) => {
     debug(`Identical fields in source and base`);
     return base;
   }
+  sourceFields.every(sourceField => baseFields.every(baseField => selectLongerField(base, baseField, sourceField)));
+  return base;
+}
+
+export default () => (base, source) => {
   // Test 34: If base contains field 130, keep base 240 (no need to even look at source)
-  const base130 = base.get(/^130$/u);
-  if (base130.length > 0) {
+  // NV: moved this up for faster processing
+  // NV: simplified code a bit:
+  //const base130 = base.get(/^130$/u);
+  //if (base130.length > 0) {
+  if (base.containsFieldWithValue('130', undefined)) {
     return base;
   }
+
+  const baseFields = base.get(fieldTag); // Get array of base fields
+  const sourceFields = source.get(fieldTag); // Get array of source fields
+
   // Test 35: If base does not contain 130 (checked above) or 240, copy source 240 to base
   if (baseFields.length === 0) {
-    return copyNonIdenticalFields(base, nonIdenticalFields);
+    // NB! We could use simpler function to copy fields.
+    // NB! We should explicitly copy just one source field.
+    return copyNonIdenticalFields(base, sourceFields);
   }
 
   // Run the function to get the base record to return
-  return mergeField240();
+  return mergeField240(base, baseFields, sourceFields);
 
-  function mergeField240() {
-    if (sourceFields.every(sourceField => baseFields.every(baseField => selectLongerField(base, baseField, sourceField)))) {
-      return base;
-    }
-  }
 };
