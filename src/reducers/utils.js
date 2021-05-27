@@ -51,6 +51,7 @@ export function checkIdenticalness(baseFields, sourceFields) {
   }
 }
 
+// NV: This function should be renamed to copyFields(base, fields) even if it is used by nonIdenticalFields
 // Copy all non-identical fields from source to base
 export function copyNonIdenticalFields(base, nonIdenticalFields) {
   nonIdenticalFields.forEach(f => base.insertField(f));
@@ -344,13 +345,41 @@ export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
   return field;
 }
 
+// should this go to marc_record
 export function recordReplaceField(record, originalField, newField) {
   const index = record.fields.findIndex(field => field === originalField);
   if (index === -1) {
     debug('WARNING: recordReplaceField: Failed to find the original field');
+    // Should this function return something for success or failure?
     return record;
   }
-  record.fields.splice(index, 1, newField); // eslint-disable-line functional/immutable-data
+  record.removeField(originalField);
+  record.insertField(newField);
+  return record;
+
+  /*
+  //const index = record.fields.findIndex(field => field === originalField);
+  if (index === -1) {
+    debug('WARNING: recordReplaceField: Failed to find the original field');
+    // Should this function return something for success or failure?
+    return record;
+  }
+
+  record.removeField(originalField);
+  record.insertField(newField);
+  //record.insertField(newField, index);
+  return record;
+
+  record.fields.splice(index, 1, clone(newField)); // eslint-disable-line functional/immutable-data
   debug(`Replacing base field ${originalField.tag} with source ${newField.tag}`);
   return record;
+  */
+}
+
+export function mapDatafield(f) { // copied aped from marc-record-js
+  return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
+
+  function formatSubfields(field) {
+    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
+  }
 }
