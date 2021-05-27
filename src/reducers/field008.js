@@ -4,6 +4,7 @@ import {checkIdenticalness, recordReplaceField} from './utils.js';
 // base record level codes from highest (1) to lowest (10)
 // levelValue = value of 000/17
 // levelCode 1 is given if the value is either empty ' ' (space) or '^', depending on where the record comes from
+/*
 const levelCodes = [
   {levelCode: 1, levelValue: ' '},
   {levelCode: 1, levelValue: '^'},
@@ -17,9 +18,24 @@ const levelCodes = [
   {levelCode: 9, levelValue: 'u'},
   {levelCode: 10, levelValue: 'z'}
 ];
+*/
+
+const ldr17ToLevelCode = {' ': 1, '^': 1, '4': 2, '1': 3, '5': 4, '7': 5, '2': 6, '3': 7, '8': 8, 'u': 9, 'z': 10};
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const regexp008 = /^008$/u;
+
+function getLevelCode(record) {
+  const ldr17 = record.leader.charAt(17); //record.leader[17];
+  if (ldr17 in ldr17ToLevelCode) {
+    const lc = ldr17ToLevelCode[ldr17];
+    debug(`Level code is ${lc}`);
+    return lc;
+  }
+  debug(`LEVEL CODE '${ldr17}' NOT FOUND. USING DEFAULT VALUE 10.`);
+  return 10;
+  //return levelCodes.filter(level => level.levelValue === record.leader[17])[0].levelCode;
+}
 
 function yearLanguageAndCountryAgree(field1, field2) {
   // First check that these character positions are the same in source and base:
@@ -34,31 +50,29 @@ function yearLanguageAndCountryAgree(field1, field2) {
   return basePubYear === sourcePubYear && baseCountry === sourceCountry && baseLanguage === sourceLanguage;
 }
 
-function getLevelCode(field) {
-  // NB! Bad things might happen it LDR/17 is not in levelCodes...
-  return levelCodes.filter(level => level.levelValue === field.leader[17])[0].levelCode;
-}
-
-function keepOriginalValue(originalRecord, alternativeRecord) {
+function requiresModification(originalRecord, alternativeRecord) {
   if (getLevelCode(originalRecord) <= getLevelCode(alternativeRecord)) { // smaller is better!
     // The original version is better or as good as the alternative version.
-    return true;
+    return false;
   }
   const baseFields = originalRecord.get(regexp008);
   const sourceFields = alternativeRecord.get(regexp008);
 
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
 
-  if (nonIdenticalFields.length === 0) {
-    debug('Identical fields in source and base');
+  if (nonIdenticalFields.length === 0 || sourceFields.length === 0) {
+    // debug('Identical fields in source and base');
+    return false;
+  }
+  if (baseFields.length === 0) {
     return true;
   }
-  // Field 008 is non-repeatable:
+  // Field 008 is (or at least it should be) non-repeatable. Examine only the 1st elements:
   return yearLanguageAndCountryAgree(baseFields[0], sourceFields[0]);
 }
 
 export default () => (base, source) => {
-  if (!keepOriginalValue(base, source)) {
+  if (requiresModification(base, source)) {
     const baseFields = base.get(regexp008);
     const sourceFields = source.get(regexp008);
     // Test 06: If the level code of the source record is better (smaller number)
