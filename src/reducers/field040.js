@@ -37,6 +37,22 @@ export default () => (base, source) => {
   // Run the function to get the base record to return
   return mergeField040(base, baseFields, sourceFields);
 
+  function copyMissingSubfields(base, baseField, sourceField) {
+    // Case 2: If field 040 exists in base, copy missing subfields from source
+
+    // Copy other subfields from source field to base field
+    // For non-repeatable subfields, the value existing in base (base) is preferred
+    // Non-repeatable subfields are copied from source only if missing completely in base
+    const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes);
+
+    // Repeatable subfields are copied if the value is different
+    const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
+
+    // Create new base field to replace old one
+    const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], sortOrder040);
+    return makeNewBaseField(base, baseField, sortedSubfields);
+  }
+
   function mergeField040(record, baseFields, sourceFields) {
     debug(`Working on field 040`);
     // In all cases, source $a value is copied to a new $d and $a is removed.
@@ -55,25 +71,14 @@ export default () => (base, source) => {
 
     // Case 1: If field 040 is missing completely from base, copy it from source as a new field.
     //         Assume that the sort order is decent as well.
+    // NB! This theoretically copies all, not just one.
     if (baseFields.length === 0) {
       debug(`Missing field 040 copied from source to base`);
-      sourceFields.forEach(f => base.insertField(f));
+      sourceFields.forEach(f => base.insertField(f)); // NB! the can be only one, or at least should
       return base;
     }
 
+    return copyMissingSubfields(base, baseField, sourceField);
 
-    // Case 2: If field 040 exists in base, copy missing subfields from source
-
-    // Copy other subfields from source field to base field
-    // For non-repeatable subfields, the value existing in base (base) is preferred
-    // Non-repeatable subfields are copied from source only if missing completely in base
-    const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes);
-
-    // Repeatable subfields are copied if the value is different
-    const repSubsToCopy = getRepSubs(baseField, sourceField, repCodes);
-
-    // Create new base field to replace old one
-    const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], sortOrder040);
-    return makeNewBaseField(base, baseField, sortedSubfields);
   }
 };
