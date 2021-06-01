@@ -4,7 +4,7 @@ import {checkIdenticalness, copyFields} from './utils.js';
 // Test 04: If 007/00-01 are different in base and source, copy 007 from source to base as new field (2x)
 // Test 05: If 007/00-01 are the same, keep existing field 007 in base (2x)
 
-// TODO: handle merging better.ns
+// NB: handle merging better.ns
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(/^007$/u);
