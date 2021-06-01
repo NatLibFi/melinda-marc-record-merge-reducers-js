@@ -51,13 +51,26 @@ export function checkIdenticalness(baseFields, sourceFields) {
   }
 }
 
-// NV: This function should be renamed to copyFields(base, fields) even if it is used by nonIdenticalFields
-// Copy all non-identical fields from source to base
-export function copyNonIdenticalFields(base, nonIdenticalFields) {
-  nonIdenticalFields.forEach(f => base.insertField(f));
-  const tags = nonIdenticalFields.map(field => field.tag);
-  tags.forEach(tag => debug(`Field ${tag} copied from source to base`));
-  return base;
+function fieldToString(f) {
+  return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
+
+  function formatSubfields(field) {
+    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
+  }
+}
+export function mapDatafield(f) { // copied aped from marc-record-js
+  return fieldToString(f);
+}
+
+// Copy all (typically non-identical in our context) fields from source to base
+export function copyFields(record, fields) {
+  fields.forEach(f => {
+    debug('Field '+fieldToString(f)+' copied from source to base');
+    record.insertField(f);
+  });
+  // const tags = fields.map(field => field.tag);
+  // tags.forEach(tag => debug('Field '+ mapDataField(tcopied from source to base`));
+  return record;
 }
 
 // Get field specs from melindaCustomMergeFields.json
@@ -376,10 +389,4 @@ export function recordReplaceField(record, originalField, newField) {
   */
 }
 
-export function mapDatafield(f) { // copied aped from marc-record-js
-  return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
 
-  function formatSubfields(field) {
-    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
-  }
-}
