@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {checkIdenticalness, copyNonIdenticalFields} from './utils.js';
+import {checkIdenticalness, copyFields} from './utils.js';
 
 // Test 01: Identical LOW, CAT, SID (2x each) --> keep base
 // Test 02: Some identical, some different --> copy different from source to base
@@ -22,6 +22,6 @@ export default () => (base, source) => {
 
   function mergeInternal() {
     // If specific conditions are applied to copying internal fields, they are defined here
-    return copyNonIdenticalFields(base, nonIdenticalFields);
+    return copyFields(base, nonIdenticalFields);
   }
 };
