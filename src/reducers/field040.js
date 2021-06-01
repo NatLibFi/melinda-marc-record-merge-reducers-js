@@ -55,8 +55,8 @@ export default () => (base, source) => {
 
   function mergeField040(record, baseFields, sourceFields) {
     debug(`Working on field 040`);
-    // In all cases, source $a value is copied to a new $d and $a is removed.
-    // NB! Feature: If base has no 040, the added 040 field won't have $a subfield.
+    // Rename subfield $a to $d, dont' remove $a and add $d, since it would mess the original order.
+    // NB! Feature (not bug): If base has no 040, the added 040 field won't have $a subfield, which is fine.
     sourceFields.map(field => fieldRenameSubfieldCodes(field, 'a', 'd'));
 
     // Since 040 is a non-repeatable field, there *should* be only one instance in both source and base
