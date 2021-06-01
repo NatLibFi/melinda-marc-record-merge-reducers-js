@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 
 import {
-  checkIdenticalness, copyNonIdenticalFields, selectLongerField
+  checkIdenticalness, copyFields, selectLongerField
 } from './utils.js';
 
 //### 240-kenttä tuodaan ei-preferoitavasta tietueesta vain, jos preferoitavassa tietueessa ei ole 240-kenttää tai 130-kenttää.
@@ -46,7 +46,7 @@ export default () => (base, source) => {
   if (baseFields.length === 0) {
     // NB! We could use simpler function to copy fields.
     // NB! We should explicitly copy just one source field.
-    return copyNonIdenticalFields(base, sourceFields);
+    return copyFields(base, sourceFields);
   }
 
   // Run the function to get the base record to return
