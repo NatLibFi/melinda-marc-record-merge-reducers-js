@@ -52,12 +52,15 @@ export function checkIdenticalness(baseFields, sourceFields) {
 }
 
 function fieldToString(f) {
-  return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
+  if ( 'subfields' in f ) {
+    return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
+  }
 
   function formatSubfields(field) {
     return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
   }
 }
+
 export function mapDatafield(f) { // copied aped from marc-record-js
   return fieldToString(f);
 }
