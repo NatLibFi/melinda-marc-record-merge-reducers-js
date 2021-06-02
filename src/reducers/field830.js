@@ -16,7 +16,7 @@ const fieldTag = /^830$/u; // Tag in regexp format (for use in MarcRecord functi
 
 function conditionallyCopyField(record, field) {
   // If base has no 830, source 830 is copied if it has $x (Test 22)
-  debug(' inspect "'+mapDatafield(field)+'"');
+  debug(` inspect "${mapDatafield(field)}"`);
   if (field.subfields.map(sub => sub.code).indexOf('x') !== -1) {
     debug(' Source 830 has subfield x (ISSN), copying source 830 to base');
     record.insertField(field);
@@ -28,7 +28,7 @@ function conditionallyCopyField(record, field) {
 }
 
 function conditionallyCopyFields(record, candFields) {
-  debug('Copy '+candFields.length+' fields?');
+  debug(`Copy ${candFields.length} fields?`);
   candFields.forEach(field => conditionallyCopyField(record, field));
   return record;
 }
