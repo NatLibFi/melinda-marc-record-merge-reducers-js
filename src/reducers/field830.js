@@ -4,7 +4,7 @@ import {
 } from './utils.js';
 
 // Test 22: Base has no 830, source has 830 with $x => copy source 830 to base (2x)
-// Test 23: removed, did not agree with specs.
+// Test 23: Base does not have source, append source to base + keep existing.
 // Test 24: Base has no 830, source 830 does not have $x => do nothing.
 // Test 25: Base has 830 with no $x, source has same 830 with $x => copy source 830 to base
 // Test 26: Base has 2x 830, one with $x and one without, source has both with $x => copy missing 830 with $x, don't remove the missing one
@@ -13,7 +13,6 @@ import {
 // Test 29: 2x identical 830 fields in source and base in different order => keep both base fields
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const fieldTag = /^830$/u; // Tag in regexp format (for use in MarcRecord functions)
-
 
 function conditionallyCopyField(record, field) {
   // If base has no 830, source 830 is copied if it has $x (Test 22)
