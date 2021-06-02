@@ -8,7 +8,7 @@ const fieldTag = /^(?:LOW|CAT|SID)$/u;
 
 export default () => (base, source) => {
   const baseFields = base.get(fieldTag);
-  const sourceFields = source.get(/fieldTag);
+  const sourceFields = source.get(fieldTag);
 
   const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
 
