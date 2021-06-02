@@ -5,6 +5,8 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // Get field tags for use in other functions
 export function getTags(fields) {
+  // NV: is there a reason why this sometimes reutrn an array and sometimes just a string?
+  // I think it's a bad idea...
   const tags = fields.map(field => field.tag);
   // If there is only one field = one tag in the array, it is returned as string
   if (tags.length === 1) {
@@ -51,28 +53,28 @@ export function checkIdenticalness(baseFields, sourceFields) {
   }
 }
 
-function fieldToString(f) {
-  if ( 'subfields' in f ) {
+function localFieldToString(f) {
+  if ('subfields' in f) {
     return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
   }
-
+  return `${f.tag}    ${f.value}`;
   function formatSubfields(field) {
     return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
   }
 }
 
-export function mapDatafield(f) { // copied aped from marc-record-js
-  return fieldToString(f);
+export function fieldToString(f) { // copied aped from marc-record-js
+  return localFieldToString(f);
 }
 
 // Copy all (typically non-identical in our context) fields from source to base
 export function copyFields(record, fields) {
   fields.forEach(f => {
-    debug('Field '+fieldToString(f)+' copied from source to base');
+    debug(`Field ${fieldToString(f)} copied from source to base`);
     record.insertField(f);
   });
   // const tags = fields.map(field => field.tag);
-  // tags.forEach(tag => debug('Field '+ mapDataField(tcopied from source to base`));
+  // tags.forEach(tag => debug('Field '+ mapDataField(copied from source to base`));
   return record;
 }
 
