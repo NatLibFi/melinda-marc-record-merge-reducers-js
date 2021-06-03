@@ -24,17 +24,14 @@ const nonRepCodes = ['a', 'c', '6'];
 // If there are subfields to drop, define them first
 const dropCodes = ['c'];
 
+
+// These subfield must be equal (after normalization?):
 const idCodes = ['a'];
 
 function mergeField020Step2(base, baseField, sourceField) {
-
-
-  // Case 2: If identifying subfield values are equal, continue with the merge process
-  idCodes.forEach(code => debug(`Matching subfield (${code}) found in source and base, continuing with merge`));
-
-  // Copy other subfields from source field to base field
-  // For non-repeatable subfields, the value existing in base is preferred
-  // Non-repeatable subfields are copied from source only if missing completely in base
+  // Copy other subfields from source field to base field.
+  // For non-repeatable subfields, the value existing in base is preferred.
+  // Non-repeatable subfields are copied from source only if missing completely in base.
   const nonRepSubsToCopy = getNonRepSubs(sourceField, nonRepCodes, dropCodes, idCodes);
 
   // Repeatable subfields are copied from source to base if the value is different
@@ -56,12 +53,15 @@ function mergeField020(base, baseField, sourceField) {
   // Also "All" is misleading,
   if (compareAllSubfields(baseField, sourceField, idCodes) === false) {
     base.insertField(sourceField);
-    idCodes.forEach(code => debug(`Subfield (${code}) not matching, source field copied as new field to base`));
+    debug('One or more mismatch in subfield(s) (‡'+idCodes.join("/‡")+"). Source field copied as new field to base");
+    // NV: The original debug message here was not right. If there are multiple codes in idCodes one mismatch is enough to cause failure.
+    //     idCodes.forEach(code => debug('One of the subfields (${code}) not matching, source field copied as new field to base`));
     return base; // Base returned in case 1
   }
+  // Case 2: If identifying subfield values are equal, continue with the merge process
+  idCodes.forEach(code => debug(`Matching subfield (${code}) found in source and base, continuing with merge`));
 
   return mergeField020Step2(base, baseField, sourceField);
-
 }
 
 export default () => (base, source) => {

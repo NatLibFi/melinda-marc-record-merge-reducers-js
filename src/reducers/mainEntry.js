@@ -3,142 +3,141 @@ import createDebugLogger from 'debug';
 
 import {
   getTags,
-  getNonIdenticalFields,
-  copyFields
+  checkIdenticalness,
+  fieldToString
 } from './utils.js';
 
-export default () => (base, source) => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  // All fields used for main entry, all non-repeatable
-  const fieldTag = /^(?:100|110|111|130|240|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
-  const baseFields = base.get(fieldTag); // Get array of base fields
-  debug(`### baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
-  const sourceFields = source.get(fieldTag); // Get array of source fields
-  debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-//  const tagString = getTags(baseFields, sourceFields);
-//  debug(`tagString: ${tagString}`);
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+// All fields used for main entry, 1XX and 240 are unrepeatable
+const fieldTag = /^(?:100|110|111|130|240|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
+
+/*
+function has1XX(record) {
+  const fields = record.get(/^1..$/u);
+  return fields.length !== 0;
+}
+*/
+
+function is1XXOr7XX(str) {
+  const c = str.charAt(0);
+  return c === '1' || c === '7';
+}
+
+function is7XX(str) {
+  const c = str.charAt(0);
+  return c === '7';
+}
+
+function is1XX(str) {
+  const c = str.charAt(0);
+  return c === '1';
+}
+
+function fieldAlreadyExists(existingFieldsAsStrings, candFieldAsString) {
+  const candIs1Or7 = is1XXOr7XX(candFieldAsString);
+  return existingFieldsAsStrings.some((existingFieldAsString) => {
+    if (candIs1Or7 && is1XXOr7XX(existingFieldAsString)) {
+      return existingFieldAsString.substring(1) === candFieldAsString.substring(1);
+    }
+    return existingFieldAsString === candFieldAsString;
+  });
+}
+
+
+function insertField7XX(record, field) {
+  const newField = JSON.parse(JSON.stringify(field));
+  // The source field is copied to base as 7XX even if it is 1XX.
+  if (newField.tag.charAt(0) === '7') {
+    record.insertField(newField);
+    debug(`case 1: add ${fieldToString(newField)}`);
+    return record;
+  }
+  newField.tag = `7${newField.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
+  record.insertField(newField);
+  debug(`case 1: add "${fieldToString(newField)}" (source was 1XX)`);
+  return record;
+}
+
+// Test 01: Same 100 in both source and base => do not copy
+// Test 02: Base has 100, source has 100 with more subfields => copy additional subfields to base 100
+// Test 03: Base has 100, source has 110 => copy source 110 as 710 to base
+// Test 04: Base has no 1XX/7XX, source has 110 => copy source 110 as 710 to base
+// Test 05: Base has 100 and 710, source has same 110 as base 710 => do not copy
+// Test 06: Base has 100 and 710, source has 110 with more subfields => copy additional subfields to base 710
+// ### tästä eteenpäin ei tehty valmiiksi
+// Test 07: Combine fx00 with and without $0
+// Test 08: Combine identical fx00
+// Test 09: Combine fx00 with identical static name subfields, $d missing from base (Punctuation change)
+// Test 10: Combine fx00 with identical static name subfields, $d missing from source (Punctuation change)
+// Test 11: Combine fx00 with differing $e (Punctuation change)
+// Test 12: Combine fx00 with missing $e (Punctuation change)
+// Test 13: Combine fx00 with missing $e, multiple $e  (Punctuation change)
+// Test 14: Combine fx00 with $d missing year of death in base
+// Test 15: Combine fx00 with $d missing year of death in source
+// Test 16: Combine fx00 with $d missing year of death in base
+
+function isMainOrAddedEntryAndConditionsApply(existingFieldsAsStrings, candFieldAsString) {
+  // field must be a main entry (1XX) or added entry (7XX)
+  if (!is1XXOr7XX(candFieldAsString)) {
+    return false;
+  }
+  return true; // simplify, hopefully we will merge 1XX and 7XX fields later on...
+  /*
+  // Case 1: Base (base) has no 1XX/7XX fields
+  if (!existingFieldsAsStrings.some((str) => is1XXOr7XX(str))) {
+      return true;
+  }
+  // Case 2: Base (base) has 1XX fields but not 7XX fields
+  if (existingFieldsAsStrings.some((str) => is1XX(str)) && !existingFieldsAsStrings.some((str) => is7XX(str))) {
+    return true;
+  }
+  return false;
+  */
+}
+
+function handleCandidateField(record, existingFieldsAsStrings, candField) {
+  const candFieldAsString = fieldToString(candField);
+  if (fieldAlreadyExists(existingFieldsAsStrings, candFieldAsString)) {
+    // No action required
+    debug(`No need to add ${candFieldAsString}`);
+    return record;
+  }
+
+  // Case 1: Base (base) has no 1XX/7XX fields
+  if (isMainOrAddedEntryAndConditionsApply(existingFieldsAsStrings, candFieldAsString)) {
+    return insertField7XX(record, candField);
+  }
+  debug(`TODO: handle ${fieldToString(candFieldAsString)}`);
+
+  return record;
+}
+
+/*
   const copyFromSourceToBase = []; // Array for collecting fields to finally copy from source to base
   const field1XX = ['100', '110', '111', '130']; // 1XX fields are non-repeatable and mutually exclusive
   const field7XX = ['700', '710', '711', '730']; // 7XX fields are repeatable
 
-  const baseTags = getTags(baseFields);
-  debug(`### baseTags: ${JSON.stringify(baseTags, undefined, 2)}`);
-  const sourceTags = getTags(sourceFields);
-  debug(`### sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
-
-  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
-  debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
-
-  // Test 01: If source and base are identical, return original base
-  if (nonIdenticalFields.length === 0) {
-    debug(`Identical fields in source and base`);
-    return base;
-  }
-
-  // Test 00: If source has more than one 1XX field, stop the merge process here and return original base
-  // ### Basea ei kai tarvitse tarkistaa, koska sitä ei ruveta tässä muokkaamaan muuten kuin lisäämällä tarvittaessa kenttiä sourcesta
-  if(getFieldSubset(sourceFields, field1XX).length > 1) {
-    debug(`Invalid source record, more than one 1XX field present`);
-    return base;
-  }
-
+  //const tagString = getTags(baseFields, sourceFields);
+  //debug(`tagString: ${tagString}`);
+  //const baseTags = getTags(baseFields);
+  //debug(`baseTags: ${JSON.stringify(baseTags, undefined, 2)}`);
+  //const sourceTags = getTags(sourceFields);
+  //debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
 
   // ### Keskeneräinen
 
-  // Test 00: More than one 1XX field in source => return base
-  // Test 01: Same 100 in both source and base => do not copy
-  // Test 02: Base has 100, source has 100 with more subfields => copy additional subfields to base 100
-  // Test 03: Base has 100, source has 110 => copy source 110 as 710 to base
-  // Test 04: Base has no 1XX/7XX, source has 110 => copy source 110 as 710 to base
-  // Test 05: Base has 100 and 710, source has same 110 as base 710 => do not copy
-  // Test 06: Base has 100 and 710, source has 110 with more subfields => copy additional subfields to base 710
-  // ### tästä eteenpäin ei tehty valmiiksi
-  // Test 07: Combine fx00 with and without $0
-  // Test 08: Combine identical fx00
-  // Test 09: Combine fx00 with identical static name subfields, $d missing from base (Punctuation change)
-  // Test 10: Combine fx00 with identical static name subfields, $d missing from source (Punctuation change)
-  // Test 11: Combine fx00 with differing $e (Punctuation change)
-  // Test 12: Combine fx00 with missing $e (Punctuation change)
-  // Test 13: Combine fx00 with missing $e, multiple $e  (Punctuation change)
-  // Test 14: Combine fx00 with $d missing year of death in base
-  // Test 15: Combine fx00 with $d missing year of death in source
-  // Test 16: Combine fx00 with $d missing year of death in base
 
-  /*
-  100/110/111/130 -kenttiä käsitellään ryhmänä niin, että ryhmä otetaan basesta.
-  Jos basessa ei ole 1xx-kenttää, mitään 1xx-kenttää ei myöskään tuoda siihen,
-  tässä tapauksessa sourcen 1xx-kenttä tuodaan baseen
-  vastaavaksi 7xx-sarjan kentäksi. (100→700, 110→710, 111→711, 130→730).
-  Samoin jos sourcessa on 'eri' 1xx-kenttä kuin basessa,
-  sourcen 1xx-kenttä tuodaan baseen vastaavaksi 7xx-sarjan kentäksi.
-  Näissä vielä toki sitten se, että jos basessa on jo 'sama' 7xx-kenttä, kentät pitää yhdistää.
+  // 100/110/111/130 -kenttiä käsitellään ryhmänä niin, että ryhmä otetaan basesta.
+  // Jos basessa ei ole 1xx-kenttää, mitään 1xx-kenttää ei myöskään tuoda siihen,
+  // tässä tapauksessa sourcen 1xx-kenttä tuodaan baseen
+  // vastaavaksi 7xx-sarjan kentäksi. (100→700, 110→710, 111→711, 130→730).
+  // Samoin jos sourcessa on 'eri' 1xx-kenttä kuin basessa,
+  // sourcen 1xx-kenttä tuodaan baseen vastaavaksi 7xx-sarjan kentäksi.
+  // Näissä vielä toki sitten se, että jos basessa on jo 'sama' 7xx-kenttä, kentät pitää yhdistää.
 
-  100/110/111/130 ovat toisensa poissulkevia, eli tietueessa voi olla vain yksi näistä kerrallaan
-  Tietueessa voi olla 700/710/711/730-kenttiä silloinkin, jos siinä EI ole mitään 100/110/111/130-kenttiä
-  */
+  // 100/110/111/130 ovat toisensa poissulkevia, eli tietueessa voi olla vain yksi näistä kerrallaan
+  // Tietueessa voi olla 700/710/711/730-kenttiä silloinkin, jos siinä EI ole mitään 100/110/111/130-kenttiä
 
-  // Get non-identical 1XX field to process: there can be only one
-  const nonId1XX = getFieldSubset(nonIdenticalFields, field1XX);
-  debug(`### nonId1XX: ${JSON.stringify(nonId1XX, undefined, 2)}`);
-
-
-  // Get non-identical 7XX field(s) to process: there can be one or more
-  const nonId7XX = getFieldSubset(nonIdenticalFields, field7XX);
-  debug(`### nonId7XX: ${JSON.stringify(nonId7XX, undefined, 2)}`);
-
-  // Case 1: Base has no 1XX/7XX fields
-  if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === false) {
-    debug(`Base record has no 1XX or 7XX fields`);
-    // If source has 1XX, it is copied to base as 7XX
-    // Test 04
-    if(nonId1XX.length === 1) { // Only one 1XX field is allowed
-      const new7XX = nonId1XX
-      return;
-    }
-
-
-
-
-
-
-
-
-
-    if (checkTagGroup(sourceTags, field1XX) === true) {
-      debug(`Source record has 1XX fields: ${sourceTags.filter(tag => tag)}`);
-      makeNew7XXField(nonIdenticalFields);
-
-      function makeNew7XXField(fields) {
-        // returns new 7XX field to add to base
-        const new7XXtag = fields.map(fields.filter(tag => field.tag));
-        debug(`new7XXtag: ${new7XXtag}`);
-        return;
-        }
-      return;
-    }
-    // If source has 7XX, it is copied to base as is
-    // ### 7XX kentät menee nyt perus-copyllä
-    if (checkTagGroup(sourceTags, field7XX) === true) {
-      debug(`Source record has 7XX fields: ${sourceTags.filter(tag => tag)}`);
-      return;
-
-    }
-    debug(`Case 1`);
-  }
-
-  // Case 2: Base has 1XX fields but not 7XX fields
-  if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === false) {
-    // If source has 1XX, it is copied to base as 7XX
-    if (checkTagGroup(sourceTags, field1XX) === true) {
-      return;
-    }
-    // If source has 7XX, it is copied to base as is
-    // ### 7XX kentät menee nyt perus-copyllä
-    if (checkTagGroup(sourceTags, field7XX) === true) {
-      return;
-    }
-    debug(`Case 2`);
-  }
 
   // Case 3: Base has 7XX fields but not 1XX fields
   // ### Onko tämä edes mahdollista?
@@ -186,17 +185,40 @@ export default () => (base, source) => {
     return true;
   }
 
-  // Returns a subset of fields belonging to the chosen tag group (here, field1XX or field7XX)
-  // If there are no fields belonging to the group, returns an empty array
-  function getFieldSubset(fields, group) {
-    const empty = [];
-    if (checkTagGroup(getTags(fields), group) === true) {
-      return fields.filter(field => group.indexOf(field.tag) !== -1);
-    }
-    return empty;
+  return base;
+}
+*/
+
+function mergeMainAndAddedEntries(record) {
+  // Postprocess record here.
+
+  // Step 1: Process 7XX fields against 1XX field (if any). If match, enrich 1XX and remove 7XX
+
+  // Step 2: Process 1XX fields agains each other
+}
+
+function processMainEntryFields(record, existingFields, candidateFields) {
+  //debug("pmef("+existingFields.length+") in...");
+  //existingFields.forEach(function(field) { debug(fieldToString(field)); });
+  //debug("pmef("+existingFields.length+") wp1...");
+  const existingFieldsAsStrings = existingFields.length === 0 ? [] : existingFields.map(field => fieldToString(field));
+  candidateFields.forEach(candField => handleCandidateField(record, existingFieldsAsStrings, candField));
+  return mergeMainAndAddedEntries(record);
+}
+
+export default () => (base, source) => {
+  const baseFields = base.get(fieldTag); // Get array of base fields
+  //debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
+  const sourceFields = source.get(fieldTag); // Get array of source fields
+  //debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+
+  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  //debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
+
+  if (nonIdenticalFields.length === 0) {
+    debug(`Identical fields in source and base`);
+    return base;
   }
+  return processMainEntryFields(base, baseFields, nonIdenticalFields);
 
-
-
-  return base; // ### final return
-}; // ### export default end
+};

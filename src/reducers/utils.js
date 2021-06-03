@@ -3,16 +3,9 @@ import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-// Get field tags for use in other functions
+// Get array of field tags for use in other functions
 export function getTags(fields) {
   const tags = fields.map(field => field.tag);
-  // If there is only one field = one tag in the array, it is returned as string
-  // ### This is a problem in mainEntry.js, removed for now
-  /*if (tags.length === 1) {
-    const [tagString] = tags;
-    return tagString;
-  }*/
-  // If there are several fields, return an array of tags
   return tags;
 }
 
@@ -53,18 +46,42 @@ export function getNonIdenticalFields(baseFields, sourceFields) {
   }
 }
 
+function localFieldToString(f) {
+  if ('subfields' in f) {
+    return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
+  }
+  return `${f.tag}    ${f.value}`;
+  function formatSubfields(field) {
+    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
+  }
+}
+export function fieldToString(f) { // copied aped from marc-record-js
+  return localFieldToString(f);
+}
+
 // NV: This function should be renamed to copyFields(base, fields) even if it is used by nonIdenticalFields
 // SS: renamed from copyNonIdenticalFields(base, nonIdenticalFields) 1.6.2021
 // Copy fields from source to base
 // Used for non-identical fields
-export function copyFields(base, fields) {
+/*export function copyFields(base, fields) {
   fields.forEach(f => base.insertField(f));
   const tags = fields.map(field => field.tag);
   tags.forEach(tag => debug(`Field ${tag} copied from source to base`));
-  return base;
+  return base;*/
+
+// Copy all (typically non-identical in our context) fields from source to base
+export function copyFields(record, fields) {
+  fields.forEach(f => {
+    debug(`Field ${fieldToString(f)} copied from source to base`);
+    record.insertField(f);
+  });
+  // const tags = fields.map(field => field.tag);
+  // tags.forEach(tag => debug('Field '+ mapDataField(copied from source to base`));
+  return record;
 }
 
 // Get field specs from melindaCustomMergeFields.json
+// This is not currently used, but keep it here in case field specs are needed
 /*export function getFieldSpecs(tag) {
   const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
   const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tag);
@@ -380,10 +397,3 @@ export function recordReplaceField(record, originalField, newField) {
   */
 }
 
-export function mapDatafield(f) { // copied aped from marc-record-js
-  return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
-
-  function formatSubfields(field) {
-    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
-  }
-}

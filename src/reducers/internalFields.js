@@ -3,11 +3,12 @@ import {getNonIdenticalFields, copyFields} from './utils.js';
 
 // Test 01: Identical LOW, CAT, SID (2x each) --> keep base
 // Test 02: Some identical, some different --> copy different from source to base
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const fieldTag = /^(?:LOW|CAT|SID)$/u;
 
 export default () => (base, source) => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(/(?:LOW|CAT|SID)$/u); // <- NV: does regexp miss initial ^
-  const sourceFields = source.get(/^(?:LOW|CAT|SID)$/u); // <- NV: if it does, same regexp can be used in these two statements
+  const baseFields = base.get(fieldTag);
+  const sourceFields = source.get(fieldTag);
 
   const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
 
