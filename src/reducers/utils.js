@@ -7,16 +7,18 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 export function getTags(fields) {
   const tags = fields.map(field => field.tag);
   // If there is only one field = one tag in the array, it is returned as string
-  if (tags.length === 1) {
+  // ### This is a problem in mainEntry.js, removed for now
+  /*if (tags.length === 1) {
     const [tagString] = tags;
     return tagString;
-  }
+  }*/
   // If there are several fields, return an array of tags
   return tags;
 }
 
 // Modified from copy functionality in marc-record-merge
-export function checkIdenticalness(baseFields, sourceFields) {
+// Changed function name from checkIdenticalness to getNonIdenticalFields / SS 28.5.2021
+export function getNonIdenticalFields(baseFields, sourceFields) {
   // Return array of non-identical fields (source fields not present in base)
   return sourceFields.filter(filterNonIdentical);
 
@@ -52,10 +54,12 @@ export function checkIdenticalness(baseFields, sourceFields) {
 }
 
 // NV: This function should be renamed to copyFields(base, fields) even if it is used by nonIdenticalFields
-// Copy all non-identical fields from source to base
-export function copyNonIdenticalFields(base, nonIdenticalFields) {
-  nonIdenticalFields.forEach(f => base.insertField(f));
-  const tags = nonIdenticalFields.map(field => field.tag);
+// SS: renamed from copyNonIdenticalFields(base, nonIdenticalFields) 1.6.2021
+// Copy fields from source to base
+// Used for non-identical fields
+export function copyFields(base, fields) {
+  fields.forEach(f => base.insertField(f));
+  const tags = fields.map(field => field.tag);
   tags.forEach(tag => debug(`Field ${tag} copied from source to base`));
   return base;
 }

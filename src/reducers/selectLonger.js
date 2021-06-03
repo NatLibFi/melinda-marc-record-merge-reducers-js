@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {
-  checkIdenticalness,
+  getNonIdenticalFields,
   selectLongerField
 } from './utils.js';
 
@@ -25,7 +25,7 @@ export default ({tagPattern}) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(tagPattern);
   const sourceFields = source.get(tagPattern);
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
 
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);

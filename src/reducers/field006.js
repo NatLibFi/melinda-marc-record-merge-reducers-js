@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {checkIdenticalness, copyNonIdenticalFields} from './utils.js';
+import {getNonIdenticalFields, copyFields} from './utils.js';
 
 // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field (2x)
 // Test 03: If Leader 000/06 is something else, do nothing
@@ -17,12 +17,12 @@ export default () => (base, source) => {
 
   const baseFields = base.get(regexp006);
   const sourceFields = source.get(regexp006);
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
 
   if (nonIdenticalFields.length === 0) {
     debug('Identical fields in source and base');
     return base;
   }
 
-  return copyNonIdenticalFields(base, nonIdenticalFields);
+  return copyFields(base, nonIdenticalFields);
 };

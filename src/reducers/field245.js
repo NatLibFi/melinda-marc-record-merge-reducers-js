@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 
 import {
-  checkIdenticalness, recordReplaceField
+  getNonIdenticalFields, recordReplaceField
 } from './utils.js';
 
 // Test 31: Identical fields in source and base => keep base
@@ -16,7 +16,7 @@ export default () => (base, source) => {
   const sourceFields = source.get(fieldTag); // Get array of source fields
 
   // Test 31
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
 
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);
@@ -44,7 +44,7 @@ export default () => (base, source) => {
       newBaseField.ind2 = baseField.ind2;
       //base.removeField(baseField); // remove old baseField
       //base.insertField(newBaseField); // insert newBaseField
-      
+
       /* eslint-enable */
       return recordReplaceField(base, baseField, newBaseField);
       // return base;

@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 
 import {
-  checkIdenticalness,
+  getNonIdenticalFields,
   compareAllSubfields,
   getRepSubs,
   getNonRepSubs,
@@ -68,7 +68,7 @@ export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
 
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
 
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);

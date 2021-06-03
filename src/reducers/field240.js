@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 
 import {
-  checkIdenticalness, copyNonIdenticalFields, selectLongerField
+  getNonIdenticalFields, copyFields, selectLongerField
 } from './utils.js';
 
 //### 240-kenttä tuodaan ei-preferoitavasta tietueesta vain, jos preferoitavassa tietueessa ei ole 240-kenttää tai 130-kenttää.
@@ -18,7 +18,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const fieldTag = /^240$/u; // Tag "name" must be a regexp in MarcRecord.get()
 
 function mergeField240(base, baseFields, sourceFields) {
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
   debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
   if (nonIdenticalFields.length === 0) {
@@ -46,7 +46,7 @@ export default () => (base, source) => {
   if (baseFields.length === 0) {
     // NB! We could use simpler function to copy fields.
     // NB! We should explicitly copy just one source field.
-    return copyNonIdenticalFields(base, sourceFields);
+    return copyFields(base, sourceFields);
   }
 
   // Run the function to get the base record to return

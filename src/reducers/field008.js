@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {checkIdenticalness, recordReplaceField} from './utils.js';
+import {getNonIdenticalFields, recordReplaceField} from './utils.js';
 
 // base record level codes from highest (1) to lowest (10)
 // levelValue = value of 000/17
@@ -58,7 +58,7 @@ function requiresModification(originalRecord, alternativeRecord) {
   const baseFields = originalRecord.get(regexp008);
   const sourceFields = alternativeRecord.get(regexp008);
 
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
 
   if (nonIdenticalFields.length === 0 || sourceFields.length === 0) {
     // debug('Identical fields in source and base');

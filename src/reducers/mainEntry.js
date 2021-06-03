@@ -3,7 +3,8 @@ import createDebugLogger from 'debug';
 
 import {
   getTags,
-  checkIdenticalness
+  getNonIdenticalFields,
+  copyFields
 } from './utils.js';
 
 export default () => (base, source) => {
@@ -11,27 +12,40 @@ export default () => (base, source) => {
   // All fields used for main entry, all non-repeatable
   const fieldTag = /^(?:100|110|111|130|240|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
   const baseFields = base.get(fieldTag); // Get array of base fields
-  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
+  debug(`### baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   const sourceFields = source.get(fieldTag); // Get array of source fields
-  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-  const tagString = getTags(baseFields, sourceFields);
-  debug(`tagString: ${tagString}`);
+  debug(`### sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+//  const tagString = getTags(baseFields, sourceFields);
+//  debug(`tagString: ${tagString}`);
+  const copyFromSourceToBase = []; // Array for collecting fields to finally copy from source to base
+  const field1XX = ['100', '110', '111', '130']; // 1XX fields are non-repeatable and mutually exclusive
+  const field7XX = ['700', '710', '711', '730']; // 7XX fields are repeatable
 
   const baseTags = getTags(baseFields);
-  debug(`baseTags: ${JSON.stringify(baseTags, undefined, 2)}`);
+  debug(`### baseTags: ${JSON.stringify(baseTags, undefined, 2)}`);
   const sourceTags = getTags(sourceFields);
-  debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
+  debug(`### sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
 
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
   debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
 
+  // Test 01: If source and base are identical, return original base
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);
     return base;
   }
 
+  // Test 00: If source has more than one 1XX field, stop the merge process here and return original base
+  // ### Basea ei kai tarvitse tarkistaa, koska sitä ei ruveta tässä muokkaamaan muuten kuin lisäämällä tarvittaessa kenttiä sourcesta
+  if(getFieldSubset(sourceFields, field1XX).length > 1) {
+    debug(`Invalid source record, more than one 1XX field present`);
+    return base;
+  }
+
+
   // ### Keskeneräinen
 
+  // Test 00: More than one 1XX field in source => return base
   // Test 01: Same 100 in both source and base => do not copy
   // Test 02: Base has 100, source has 100 with more subfields => copy additional subfields to base 100
   // Test 03: Base has 100, source has 110 => copy source 110 as 710 to base
@@ -63,47 +77,80 @@ export default () => (base, source) => {
   Tietueessa voi olla 700/710/711/730-kenttiä silloinkin, jos siinä EI ole mitään 100/110/111/130-kenttiä
   */
 
-  const copyFromSourceToBase = []; // Array for collecting fields to finally copy from source to base
-  const field1XX = ['100', '110', '111', '130']; // 1XX fields are non-repeatable and mutually exclusive
-  const field7XX = ['700', '710', '711', '730']; // 7XX fields are repeatable
+  // Get non-identical 1XX field to process: there can be only one
+  const nonId1XX = getFieldSubset(nonIdenticalFields, field1XX);
+  debug(`### nonId1XX: ${JSON.stringify(nonId1XX, undefined, 2)}`);
 
-  // Case 1: Base (base) has no 1XX/7XX fields
+
+  // Get non-identical 7XX field(s) to process: there can be one or more
+  const nonId7XX = getFieldSubset(nonIdenticalFields, field7XX);
+  debug(`### nonId7XX: ${JSON.stringify(nonId7XX, undefined, 2)}`);
+
+  // Case 1: Base has no 1XX/7XX fields
   if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === false) {
+    debug(`Base record has no 1XX or 7XX fields`);
     // If source has 1XX, it is copied to base as 7XX
-    if (checkTagGroup(sourceTags, field1XX) === true) {
+    // Test 04
+    if(nonId1XX.length === 1) { // Only one 1XX field is allowed
+      const new7XX = nonId1XX
+      return;
+    }
 
+
+
+
+
+
+
+
+
+    if (checkTagGroup(sourceTags, field1XX) === true) {
+      debug(`Source record has 1XX fields: ${sourceTags.filter(tag => tag)}`);
+      makeNew7XXField(nonIdenticalFields);
+
+      function makeNew7XXField(fields) {
+        // returns new 7XX field to add to base
+        const new7XXtag = fields.map(fields.filter(tag => field.tag));
+        debug(`new7XXtag: ${new7XXtag}`);
+        return;
+        }
+      return;
     }
     // If source has 7XX, it is copied to base as is
     // ### 7XX kentät menee nyt perus-copyllä
     if (checkTagGroup(sourceTags, field7XX) === true) {
+      debug(`Source record has 7XX fields: ${sourceTags.filter(tag => tag)}`);
+      return;
 
     }
     debug(`Case 1`);
   }
 
-  // Case 2: Base (base) has 1XX fields but not 7XX fields
+  // Case 2: Base has 1XX fields but not 7XX fields
   if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === false) {
     // If source has 1XX, it is copied to base as 7XX
     if (checkTagGroup(sourceTags, field1XX) === true) {
-
+      return;
     }
     // If source has 7XX, it is copied to base as is
     // ### 7XX kentät menee nyt perus-copyllä
     if (checkTagGroup(sourceTags, field7XX) === true) {
-
+      return;
     }
     debug(`Case 2`);
   }
 
-  // Case 3: Base (base) has 7XX fields but not 1XX fields
+  // Case 3: Base has 7XX fields but not 1XX fields
   // ### Onko tämä edes mahdollista?
   if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === true) {
     debug(`Case 3`);
+    return;
   }
 
   // Case 4: Base (base) has both 1XX and 7XX fields
   if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === true) {
     debug(`Case 4`);
+    return;
   }
 
   copy240(source, sourceTags, baseTags);
@@ -125,14 +172,31 @@ export default () => (base, source) => {
 
   }
 
+  // Checks whether a set of tags contains tags belonging to the chosen group (here, field1XX or field7XX)
+  // Returns true or false
   function checkTagGroup(tags, group) {
+    debug(`### tags: ${tags}`);
+    const tagsByGroup = tags.filter(tag => group.indexOf(tag));
+    debug(`### tagsByGroup: ${tagsByGroup}`); // ### tarkista tämä, pitäisi olla 2 tagia test 00:ssa
     if (tags.every(tag => group.indexOf(tag) === -1)) {
-      debug(`Record does not contain fields: ${group}`);
+      debug(`Fields not in record: ${group}`);
       return false;
     }
-    debug(`Record contains one or more fields: ${group}`);
+    debug(`Fields in record: ${tagsByGroup}`);
     return true;
   }
 
-  return base;
-};
+  // Returns a subset of fields belonging to the chosen tag group (here, field1XX or field7XX)
+  // If there are no fields belonging to the group, returns an empty array
+  function getFieldSubset(fields, group) {
+    const empty = [];
+    if (checkTagGroup(getTags(fields), group) === true) {
+      return fields.filter(field => group.indexOf(field.tag) !== -1);
+    }
+    return empty;
+  }
+
+
+
+  return base; // ### final return
+}; // ### export default end

@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {
-  checkIdenticalness, mapDatafield // , recordReplaceField
+  getNonIdenticalFields, mapDatafield // , recordReplaceField
 } from './utils.js';
 
 // Test 22: Base has no 830, source has 830 with $x => copy source 830 to base (2x)
@@ -38,6 +38,6 @@ export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
   // Test 27 (identical) and 29 (2x identical fields in different order)
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
+  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
   return conditionallyCopyFields(base, nonIdenticalFields);
 };
