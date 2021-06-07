@@ -2,61 +2,30 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
-  getTags,
-  checkIdenticalness,
-  fieldToString
+  fieldToString,
+  normalizeStringValue
 } from './utils.js';
+
+// Specs: https://workgroups.helsinki.fi/x/K1ohCw
+// Field 240 is handled independently before this.
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // All fields used for main entry, 1XX and 240 are unrepeatable
-const fieldTag = /^(?:100|110|111|130|240|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
+const fieldTag = /^(?:100|110|111|130|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
 
-/*
-function has1XX(record) {
-  const fields = record.get(/^1..$/u);
-  return fields.length !== 0;
-}
-*/
+const counterpartRegexps = {'100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
+  '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u};
 
-function is1XXOr7XX(str) {
-  const c = str.charAt(0);
-  return c === '1' || c === '7';
-}
-
-function is7XX(str) {
-  const c = str.charAt(0);
-  return c === '7';
-}
-
-function is1XX(str) {
-  const c = str.charAt(0);
-  return c === '1';
-}
-
-function fieldAlreadyExists(existingFieldsAsStrings, candFieldAsString) {
-  const candIs1Or7 = is1XXOr7XX(candFieldAsString);
-  return existingFieldsAsStrings.some((existingFieldAsString) => {
-    if (candIs1Or7 && is1XXOr7XX(existingFieldAsString)) {
-      return existingFieldAsString.substring(1) === candFieldAsString.substring(1);
-    }
-    return existingFieldAsString === candFieldAsString;
-  });
-}
-
-
-function insertField7XX(record, field) {
-  const newField = JSON.parse(JSON.stringify(field));
-  // The source field is copied to base as 7XX even if it is 1XX.
-  if (newField.tag.charAt(0) === '7') {
-    record.insertField(newField);
-    debug(`case 1: add ${fieldToString(newField)}`);
-    return record;
+function tagToRegexp(tag) {
+  if (tag in counterpartRegexps) {
+    const regexp = counterpartRegexps[tag];
+    debug(`regexp for ${tag} found: ${regexp}`);
+    return regexp;
   }
-  newField.tag = `7${newField.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
-  record.insertField(newField);
-  debug(`case 1: add "${fieldToString(newField)}" (source was 1XX)`);
-  return record;
+  debug(`WARNING: TagToRegexp(${tag}): no precompiled regexp found.`);
+  return new RegExp(`^${tag}$`, 'u');
 }
+
 
 // Test 01: Same 100 in both source and base => do not copy
 // Test 02: Base has 100, source has 100 with more subfields => copy additional subfields to base 100
@@ -76,53 +45,8 @@ function insertField7XX(record, field) {
 // Test 15: Combine fx00 with $d missing year of death in source
 // Test 16: Combine fx00 with $d missing year of death in base
 
-function isMainOrAddedEntryAndConditionsApply(existingFieldsAsStrings, candFieldAsString) {
-  // field must be a main entry (1XX) or added entry (7XX)
-  if (!is1XXOr7XX(candFieldAsString)) {
-    return false;
-  }
-  return true; // simplify, hopefully we will merge 1XX and 7XX fields later on...
-  /*
-  // Case 1: Base (base) has no 1XX/7XX fields
-  if (!existingFieldsAsStrings.some((str) => is1XXOr7XX(str))) {
-      return true;
-  }
-  // Case 2: Base (base) has 1XX fields but not 7XX fields
-  if (existingFieldsAsStrings.some((str) => is1XX(str)) && !existingFieldsAsStrings.some((str) => is7XX(str))) {
-    return true;
-  }
-  return false;
-  */
-}
-
-function handleCandidateField(record, existingFieldsAsStrings, candField) {
-  const candFieldAsString = fieldToString(candField);
-  if (fieldAlreadyExists(existingFieldsAsStrings, candFieldAsString)) {
-    // No action required
-    debug(`No need to add ${candFieldAsString}`);
-    return record;
-  }
-
-  // Case 1: Base (base) has no 1XX/7XX fields
-  if (isMainOrAddedEntryAndConditionsApply(existingFieldsAsStrings, candFieldAsString)) {
-    return insertField7XX(record, candField);
-  }
-  debug(`TODO: handle ${fieldToString(candFieldAsString)}`);
-
-  return record;
-}
-
 /*
-  const copyFromSourceToBase = []; // Array for collecting fields to finally copy from source to base
-  const field1XX = ['100', '110', '111', '130']; // 1XX fields are non-repeatable and mutually exclusive
-  const field7XX = ['700', '710', '711', '730']; // 7XX fields are repeatable
 
-  //const tagString = getTags(baseFields, sourceFields);
-  //debug(`tagString: ${tagString}`);
-  //const baseTags = getTags(baseFields);
-  //debug(`baseTags: ${JSON.stringify(baseTags, undefined, 2)}`);
-  //const sourceTags = getTags(sourceFields);
-  //debug(`sourceTags: ${JSON.stringify(sourceTags, undefined, 2)}`);
 
   // ### Keskeneräinen
 
@@ -139,49 +63,24 @@ function handleCandidateField(record, existingFieldsAsStrings, candField) {
   // Tietueessa voi olla 700/710/711/730-kenttiä silloinkin, jos siinä EI ole mitään 100/110/111/130-kenttiä
 
 
-  // Case 3: Base has 7XX fields but not 1XX fields
+  // Case 3: Base (base) has 7XX fields but not 1XX fields
   // ### Onko tämä edes mahdollista?
   if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === true) {
     debug(`Case 3`);
-    return;
   }
 
   // Case 4: Base (base) has both 1XX and 7XX fields
   if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === true) {
     debug(`Case 4`);
-    return;
   }
 
-  copy240(source, sourceTags, baseTags);
-  debug(`copyFromSourceToBase: ${JSON.stringify(copyFromSourceToBase, undefined, 2)}`);
 
-  // Field 240 is copied from source only if base does not contain 240 or 130
-  function copy240(source, sourceTags, baseTags) {
-    if (sourceTags.indexOf('240') !== -1 && baseTags.indexOf('240') === -1 && baseTags.indexOf('130') === -1) {
-      // Get an array containing field 240 from the source MarcRecord object
-      const source240 = source.get(/^240$/);
-      // Field 240 is non-repeatable so the source240 array can be destructured into obj240
-      const [obj240] = source240;
-      // Push obj240 into the array of fields to be copied at the end
-      copyFromSourceToBase.push(obj240);
-      debug(`Field 240 copied from source to base`);
-
-    }
-    // If the conditions are not fulfilled, nothing happens
-
-  }
-
-  // Checks whether a set of tags contains tags belonging to the chosen group (here, field1XX or field7XX)
-  // Returns true or false
   function checkTagGroup(tags, group) {
-    debug(`### tags: ${tags}`);
-    const tagsByGroup = tags.filter(tag => group.indexOf(tag));
-    debug(`### tagsByGroup: ${tagsByGroup}`); // ### tarkista tämä, pitäisi olla 2 tagia test 00:ssa
     if (tags.every(tag => group.indexOf(tag) === -1)) {
-      debug(`Fields not in record: ${group}`);
+      debug(`Record does not contain fields: ${group}`);
       return false;
     }
-    debug(`Fields in record: ${tagsByGroup}`);
+    debug(`Record contains one or more fields: ${group}`);
     return true;
   }
 
@@ -189,36 +88,303 @@ function handleCandidateField(record, existingFieldsAsStrings, candField) {
 }
 */
 
-function mergeMainAndAddedEntries(record) {
-  // Postprocess record here.
-
-  // Step 1: Process 7XX fields against 1XX field (if any). If match, enrich 1XX and remove 7XX
-
-  // Step 2: Process 1XX fields agains each other
+function subfieldsAreEqualish(sf1, sf2) {
+  return sf1.code === sf2.code && normalizeStringValue(sf1.value) === normalizeStringValue(sf2.value);
 }
 
-function processMainEntryFields(record, existingFields, candidateFields) {
-  //debug("pmef("+existingFields.length+") in...");
-  //existingFields.forEach(function(field) { debug(fieldToString(field)); });
-  //debug("pmef("+existingFields.length+") wp1...");
-  const existingFieldsAsStrings = existingFields.length === 0 ? [] : existingFields.map(field => fieldToString(field));
-  candidateFields.forEach(candField => handleCandidateField(record, existingFieldsAsStrings, candField));
-  return mergeMainAndAddedEntries(record);
+function equalishSubfieldExists(field, candSubfield) {
+  return field.subfields.some(sf => subfieldsAreEqualish(sf, candSubfield));
 }
 
-export default () => (base, source) => {
-  const baseFields = base.get(fieldTag); // Get array of base fields
-  //debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
-  const sourceFields = source.get(fieldTag); // Get array of source fields
-  //debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
 
-  const nonIdenticalFields = checkIdenticalness(baseFields, sourceFields);
-  //debug(`### nonIdenticalFields: ${JSON.stringify(nonIdenticalFields, undefined, 2)}`);
-
-  if (nonIdenticalFields.length === 0) {
-    debug(`Identical fields in source and base`);
-    return base;
+function acceptEntrySubfieldA(field, candSubfield) {
+  if (equalishSubfieldExists(field, candSubfield)) {
+    return true;
   }
-  return processMainEntryFields(base, baseFields, nonIdenticalFields);
+  debug(`Subfield ‡a check failed: '${candSubfield.value}' vs '${fieldToString(field)}'.`);
+  return false;
+}
 
+const birthYearRegexp = /^(?<by>[1-9][0-9]*)-(?:[1-9][0-9]*)?(?:[^0-9]*)$/u;
+function subfieldDToBirthYear(content) {
+  const min = 1000;
+  const max = 2021;
+  const result = birthYearRegexp.exec(content);
+  if (result && min <= result.groups.by && result.groups.by <= max) {
+    return result.groups.by;
+  }
+  return -1;
+}
+
+const deathYearRegexp = /^(?:[1-9][0-9]*)-(?<dy>[1-9][0-9]*)(?:[^0-9]*)$/u;
+function subfieldDToDeathYear(content) {
+  const min = 1000;
+  const max = 2029; // This should be dynamic value. Current year etc.
+  const result = deathYearRegexp.exec(content);
+  if (result && min <= result.groups.dy && result.groups.dy <= max) {
+    return result.groups.dy;
+  }
+  return -1;
+}
+
+function birthYearsAgree(sf1, sf2) {
+  const b1 = subfieldDToBirthYear(sf1.value);
+  const b2 = subfieldDToBirthYear(sf2.value);
+  return b1 !== -1 && b1 === b2; // We want a proper birth year. Period. Everything else is too noisy to handle.
+}
+
+function deathYearsAgree(sf1, sf2) {
+  const b1 = subfieldDToDeathYear(sf1.value);
+  const b2 = subfieldDToDeathYear(sf2.value);
+  if (b1 === -1 || b2 === -1) {
+    return true;
+  }
+  return b1 === b2;
+}
+
+const legalX00d = /^[1-9][0-9]*-(?:[1-9][0-9]*)?[,.]?$/u;
+
+function acceptEntrySubfieldD(field, candSubfield) {
+  if (field.tag !== '100' && field.tag !== '700') {
+    debug(`NB! Subfield f is currently only checked for X00 fields.`);
+    return true; // We are currently interested only in X00
+  }
+  const relevantSubfields = field.subfields.filter(subfield => subfield.code === 'd');
+
+  if (relevantSubfields.length > 1) {
+    return false;
+  } // Cannot accept as field is crappy
+  if (relevantSubfields.length === 0 || subfieldsAreEqualish(relevantSubfields[0], candSubfield)) {
+    return true;
+  }
+  if ( !legalX00d.test(candSubfield.value)) { debug(`D-FAIL ${candSubfield.value}`); return false; }
+  return legalX00d.test(candSubfield.value) && legalX00d.test(relevantSubfields[0].value) &&
+    birthYearsAgree(relevantSubfields[0], candSubfield) && deathYearsAgree(relevantSubfields[0], candSubfield);
+}
+
+function acceptEntrySubfield0(field, candSubfield) {
+  if (equalishSubfieldExists(field, candSubfield) || !fieldHasSubfield(field, '0')) {
+    return true;
+  }
+  //if ( field.subfields.forEach(sf => { })
+
+  debug(`TODO: Implement proper ‡0 check.`);
+  return false;
+}
+
+function acceptEntrySubfield(field, candSubfield, index) { // Accept X00 and X10 equality
+  // semantic check
+  switch (candSubfield.code) {
+  case 'a':
+    return acceptEntrySubfieldA(field, candSubfield);
+  case 'd':
+    return acceptEntrySubfieldD(field, candSubfield);
+  case '0':
+    return acceptEntrySubfield0(field, candSubfield);
+  default:
+    debug(`Accepted entry subfield ‡${candSubfield.code} without checking it.`);
+    return true;
+  }
+
+
+}
+
+
+//// Everything below this point should be fine...
+function fieldHasSubfield(field, subfieldCode) {
+  return field.subfields.some(sf => sf.code === subfieldCode);
+}
+
+
+function mergablePairA(field1, field2) {
+  if (!fieldHasSubfield(field1, 'a') || !fieldHasSubfield(field2, 'a')) {
+    return false;
+  }
+  return true;
+}
+
+function mergablePairT(field1, field2) {
+
+  // Both fields must either contain or not contain ‡t
+  if (fieldHasSubfield(field1, 't')) {
+    if (!fieldHasSubfield(field2, 't')) {
+
+      debug('‡t issues. Won\'t try to merge.');
+      return false;
+    }
+    return true;
+  }
+
+  if (fieldHasSubfield(field2, 't')) {
+    return false;
+  }
+  return true;
+}
+
+
+function mergablePair9(field1, field2) {
+  if (fieldHasSubfield(field1, '9') || fieldHasSubfield(field2, '9')) {
+    // Should we merge anything with <KEEP>/<DROP>? At least they should be in balance...
+    debug('TODO: implement FOO<KEEP> and BAR<DROP> matcher');
+    return false;
+  }
+
+  return true;
+}
+
+function mergablePair(field1, field2) {
+  // Indicators *must* be equal:
+  if (field1.ind1 !== field2.ind1 || field1.ind2 !== field2.ind2) {
+    debug('indicator check failed');
+    return false;
+  }
+  // field vs field -level checks (mostly syntactic stuff)
+  if (!mergablePairA(field1, field2) || // eg. both fields must contain subfield a.
+      !mergablePairT(field1, field2) || // both field must either have 't' or not have it
+      !mergablePair9(field1, field2)) {
+    return false;
+  }
+
+  // check that individual subfields from source/field2 are acceptable:
+  if (field2.subfields.every((subfield, index) => acceptEntrySubfield(field1, subfield, index))) {
+    debug('MERGABLE :-)');
+    return true;
+  }
+
+  // Compare $a, $d ja $0
+  debug(`mergablePair(f1, f2) not fully implemented yet!`);
+  return false;
+}
+
+
+function mergeSubfieldNotRequired(targetField, candSubfield) {
+  const targetSubfieldsAsStrings = targetField.subfields.map(sf => sf.code + normalizeStringValue(sf.value)); // a bit iffy regarding [0]
+  const cand = candSubfield.code + normalizeStringValue(candSubfield.value);
+  if (targetSubfieldsAsStrings.some(existingValue => cand === existingValue)) {
+    // Subfield exists. Do nothing
+    return true;
+  }
+  return false;
+}
+
+function insertSubfieldAllowed(targetField, candSubfield) {
+  // subfield missing from the original:
+  if (!targetField.subfields.some(sf => sf.code === candSubfield.code)) {
+    return true;
+  }
+
+  // TODO: HOW TO IMPLEMENT REPLACE
+  /*
+  if ( /00$/u.test(candSubfield.tag) && /^[0-9]+\-[0-9]+/u.test() candSubfield.code === 'd') {
+    return true;
+  }
+  */
+  if ( /[10]0$/u.test(candSubfield.tag) && candSubfield.code === 'e') {
+    return true;
+  }
+  debug(`No rule to add '‡${candSubfield.code} ${candSubfield.value}' to '${fieldToString(targetField)}'`)
+  return false;
+}
+
+const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
+const birthYearAndDeathYear = /^[1-9][0-9]*-[1-9][0-9]*[,.]?$/u;
+
+function replaceSubfield(targetField, candSubfield) {
+  const relevantSubfields = targetField.subfields.filter(subfield => subfield.code === candSubfield.code);
+  debug(`Got ${relevantSubfields.length} sf-cands for field ${targetField.tag}`);
+  if ( candSubfield.code === 'd' && /* debug("WP000") && */ /00$/u.test(targetField.tag) && relevantSubfields.length === 1 &&
+    onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) ) {
+      relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+
+    return true;
+  }
+  return false;
+}
+
+function mergeSubfield(record, targetField, candSubfield) {
+  const str = `${candSubfield.code} ${candSubfield.value}`;
+  if (mergeSubfieldNotRequired(targetField, candSubfield)) {
+    debug(`    No need to add '‡${candSubfield.code} ${candSubfield.value}'`)
+    return;
+  }
+
+  if (insertSubfieldAllowed(targetField, candSubfield)) {
+    debug(` Added subfield ‡'${str}' to field`);
+    // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
+    targetField.subfields.push(JSON.parse(JSON.stringify(candSubfield))); // eslint-disable-line functional/immutable-data
+    return;
+  }
+  if(replaceSubfield(targetField, candSubfield)) {
+    return;
+  }
+  debug(`TODO: Handle merging/adding subfield '‡${str}' to field`);
+}
+
+
+function mergeField(record, targetField, sourceField) {
+  sourceField.subfields.forEach(candSubfield => {
+    debug(`  CAND4ADDING '‡${candSubfield.code} ${candSubfield.value}'`);
+    mergeSubfield(record, targetField, candSubfield);
+
+    // { code: x, value: foo }
+
+  });
+
+  return record;
+}
+
+
+function getCounterpart(record, field) {
+  // Get tag-wise relevant 1XX and 7XX fields:
+  //const regexp = tagToRegexp(field.tag);
+  const counterpartCands = record.get(tagToRegexp(field.tag));
+  // debug(counterpartCands);
+
+  if (!counterpartCands || counterpartCands.length === 0) {
+    return null;
+  }
+  const fieldStr = fieldToString(field);
+  debug(`Compare incoming '${fieldStr}' with (up to) ${counterpartCands.length + 1} existing field(s)`);
+  const index = counterpartCands.findIndex((currCand) => {
+    const currCandStr = fieldToString(currCand);
+    debug(`  CAND: '${currCandStr}'`);
+    if (mergablePair(currCand, field)) {
+      debug(`  OK pair found: '${currCandStr}'. Returning it!`);
+      return true;
+    }
+    return false;
+  });
+  if (index > -1) {
+    return counterpartCands[index];
+  }
+  debug(' No counterpart found!');
+  return null;
+}
+
+function insertField7XX(record, field) {
+  const newField = JSON.parse(JSON.stringify(field));
+  // Convert 1XX field to 7XX field (7XX field stays the same):
+  newField.tag = `7${newField.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
+  record.insertField(newField);
+  debug(`case 1: add "${fieldToString(newField)}" (source was 1XX)`);
+  return record;
+}
+
+function mergeOrAddField(record, field) {
+  const counterpartField = getCounterpart(record, field);
+  if (counterpartField) {
+    debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
+    mergeField(record, counterpartField, field);
+    return record;
+  }
+  // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
+  debug(`No counterpart found for '${fieldToString(field)}'. Adding it to 7XX.`);
+  return insertField7XX(record, field);
+}
+
+
+export default () => (record, record2) => {
+  const candidateFields = record2.get(fieldTag); // Get array of source fields
+  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  return record;
 };
