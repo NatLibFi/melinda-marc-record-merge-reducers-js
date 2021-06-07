@@ -1,5 +1,6 @@
 import createDebugLogger from 'debug';
 import {
+  fieldToString,
   getNonIdenticalFields, mapDatafield // , recordReplaceField
 } from './utils.js';
 
@@ -16,7 +17,7 @@ const fieldTag = /^830$/u; // Tag in regexp format (for use in MarcRecord functi
 
 function conditionallyCopyField(record, field) {
   // If base has no 830, source 830 is copied if it has $x (Test 22)
-  debug(` inspect "${mapDatafield(field)}"`);
+  debug(` inspect "${fieldToString(field)}"`);
   if (field.subfields.map(sub => sub.code).indexOf('x') !== -1) {
     debug(' Source 830 has subfield x (ISSN), copying source 830 to base');
     record.insertField(field);
