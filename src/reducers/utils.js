@@ -3,6 +3,9 @@ import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
 import { isEqual } from 'lodash';
 
+import fs from 'fs';
+import path from 'path';
+
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // Get array of field tags for use in other functions
@@ -84,21 +87,32 @@ export function copyFields(record, fields) {
 
 // Get field specs from melindaCustomMergeFields.json
 // This is not currently used, but keep it here in case field specs are needed
-/*export function getFieldSpecs(tag) {
-  const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
+const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
+export function getFieldSpecs(tag) {
   const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tag);
   return fieldSpecs;
 }
 export function getRepCodes(tag) {
   return getFieldSpecs(tag).subfields
-    .filter(sub => sub.repeatable === 'true')
+    .filter(sub => sub.repeatable === true)
     .map(sub => sub.code);
 }
 export function getNonRepCodes(tag) {
   return getFieldSpecs(tag).subfields
-    .filter(sub => sub.repeatable === 'false')
+    .filter(sub => sub.repeatable === false)
     .map(sub => sub.code);
-}*/
+}
+export function fieldIsRepeatable(tag, code = null) {
+  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  if ( fieldSpecs.length !== 1 ) {
+      debug(" OOPS! Getting field data failed!");
+      return false;
+    }
+  if ( !code ) { return fieldSpecs[0].repeatable; }
+  const subfieldSpecs = fieldSpecs[0].subfields.filter(subfield => subfield.code === code);
+  if ( subfieldSpecs.length !== 1 ) { return false; }
+  return subfieldSpecs[0].repeatable;
+}
 
 // Normalize subfield values for comparison, returns array of normalized subfields
 export function normalizeSubfields(field) {
@@ -357,13 +371,10 @@ export function selectLongerField(base, baseField, sourceField) {
 
 // NVOLK's marc record modifications
 function internalFieldHasSubfield(field, subfieldCode, subfieldValue) {
-  if ( field.subfields.some(sf => sf.code === subfieldCode) ) {
-    if ( subfieldValue === null ) {
-      return true;
-    }
-    return sf.value === subfieldValue;
+  if ( subfieldValue === null ) {
+      return field.subfields.some(sf => sf.code === subfieldCode);
   }
-  return false;
+  return field.subfields.some(sf => sf.code === subfieldCode && subfieldValue === sf.value);
 }
 
 export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
@@ -388,24 +399,60 @@ export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
 
 // NVOLK's merge permitters:
 
+
 function controlSubfield0PermitsMerge(field1, field2) {
   if ( !internalFieldHasSubfield(field1, '0', null) || !internalFieldHasSubfield(field2, '0', null) ) { return true; }
   return field1.subfields.every(sf => {
     if ( sf.code !== '0' ) { return true; }
-    if ( internalFieldHasSubfield(field2, field1.code, field1.data) ) {
+    // NB! Here we assume that value have been normalized.
+    // Eg. (isni) 0000 1234 5678 0000 vs https://isni.org/isni/0000123456780000
+    // Eg. FIN11 vs FI-ASTERI-N vs kanton uri
+
+    debug(`Compare ‡0 '${sf.value}' with '${fieldToString(field2)}'.`);
+    if ( internalFieldHasSubfield(field2, field1.code, field1.value) ) {
       return true;
     }
-    debug(`isni and FIN11 normalizations not implemented yet. FAIL on '${sf.value}'`);
+
+
+    if ( prefixIsOK(sf, field2) ) { return true; }
+
+    function prefixIsOK(currSubfield, otherField) {
+      if ( currSubfield.value.match(/^\([^\)]+\)[0-9]+$/u) ) {
+        // UNTESTED
+        const prefix = currSubfield.value.substr(0, currSubfield.value.indexOf(')')+1);
+        const hits = otherField.subfields.filter(sf2 => sf2.code === '0' && currSubfield.value !== sf2.value && sf2.value.indexOf(prefix) === 0 );
+        if ( hits.length > 0 ) {
+          const badCompany = hits[0]; 
+          debug(`Subfield ‡0 check FAILED: ‡0 '${currSubfield.value}' vs ‡0 '${badCompany.value}'.`);
+          return false;
+        }
+        debug(`Subfield ‡0 check OK: ${prefix} not found on ${fieldToString(otherField)}`);
+        return true; 
+      }
+      return true;
+    }
+
+
+    // TODO: normalisoi jossain aiemmin...
+    // FIN11/FI-ASTERI-N/kanton uri
+    // isni: (isni)numero / välilyönnit / url (normalize to url)
+    // Other relevant data sources besides fin11 and isni? Geneerinen (source)ID -tarkistus...
+    debug(`NB! FIN11 normalizations not implemented yet. FAIL on '${sf.value}'`);
     return false;
   });
 }
 
 function controlSubfield1PermitsMerge(field1, field2) {
+  if ( !internalFieldHasSubfield(field1, '1', null) && !internalFieldHasSubfield(field2, '1', null) ) {
+    return true;
+  }
+  // Same result, but log:
   debug(`NB: controlSubfield1PermitsMerge() not implemented yet. Always succeeds!`);
   return true;
 }
 
 function controlSubfield3PermitsMerge(field1, field2) {
+  // TODO: tarkista...
   return !internalFieldHasSubfield(field1, '3', null) && !internalFieldHasSubfield(field2, '3', null);
 }
 
@@ -423,7 +470,7 @@ function controlSubfield5PermitsMerge(field1, field2) {
 }
 
 function controlSubfield6PermitsMerge(field1, field2) {
-  if ( !internalFieldHasSubfield(field1, '6', null) && !internalFieldHasSubfield(field2, '6', null) ) {
+  if ( !internalFieldHasSubfield(field1, '6') && !internalFieldHasSubfield(field2, '6') ) {
     return true;
   }
   debug("controlSubfield6PermitsMerge() not properly implemented.");
@@ -431,7 +478,7 @@ function controlSubfield6PermitsMerge(field1, field2) {
 }
 
 function controlSubfield8PermitsMerge(field1, field2) {
-  return !internalFieldHasSubfield(field1, '8', null) && !internalFieldHasSubfield(field2, '8', null);
+  return !internalFieldHasSubfield(field1, '8') && !internalFieldHasSubfield(field2, '8');
 }
 
 function controlSubfield9PermitsMerge(field1, field2) {
@@ -442,10 +489,7 @@ function controlSubfield9PermitsMerge(field1, field2) {
 }
 
 export function controlSubfieldsPermitMerge(field1, field2) {
-  if ( !controlSubfield0PermitsMerge(field1, field2) ) {
-    debug(" csf0 failed");
-    return false;
-  }
+  if ( !controlSubfield0PermitsMerge(field1, field2) ) { debug(" csf0 failed"); return false; }
   if ( !controlSubfield1PermitsMerge(field1, field2) ) { debug(" csf1 failed"); return false; }
   if ( !controlSubfield3PermitsMerge(field1, field2) ) { debug(" csf3 failed"); return false; }
   if ( !controlSubfield5PermitsMerge(field1, field2) ) { debug(" csf5 failed"); return false; }
