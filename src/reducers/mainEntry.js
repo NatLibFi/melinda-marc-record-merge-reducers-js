@@ -4,6 +4,7 @@ import createDebugLogger from 'debug';
 import {
   controlSubfieldsPermitMerge,
   fieldHasSubfield,
+  fieldIsRepeatable,
   fieldToString,
   normalizeStringValue
 } from './utils.js';
@@ -21,7 +22,7 @@ const counterpartRegexps = {'100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17
 function tagToRegexp(tag) {
   if (tag in counterpartRegexps) {
     const regexp = counterpartRegexps[tag];
-    debug(`regexp for ${tag} found: ${regexp}`);
+    //debug(`regexp for ${tag} found: ${regexp}`);
     return regexp;
   }
   debug(`WARNING: TagToRegexp(${tag}): no precompiled regexp found.`);
@@ -258,21 +259,22 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
   return false;
 }
 
+
+
 function insertSubfieldAllowed(targetField, candSubfield) {
-  // subfield missing from the original:
-  if (!targetField.subfields.some(sf => sf.code === candSubfield.code)) {
+  // NB! If insert is not allowed, the candicate subfield can still replace the original. (Not handled by this function though.)
+
+  // Subfields missing from the original can be added:
+  if (!fieldHasSubfield(targetField, candSubfield.code) ) { // 
     return true;
   }
 
-  // TODO: HOW TO IMPLEMENT REPLACE
-  /*
-  if ( /00$/u.test(candSubfield.tag) && /^[0-9]+\-[0-9]+/u.test() candSubfield.code === 'd') {
+  // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
+  if ( fieldIsRepeatable(targetField.tag, candSubfield.code) ) {
     return true;
   }
-  */
-  if ( /[10]0$/u.test(candSubfield.tag) && candSubfield.code === 'e') {
-    return true;
-  }
+
+
   debug(`No rule to add '‡${candSubfield.code} ${candSubfield.value}' to '${fieldToString(targetField)}'`)
   return false;
 }
@@ -316,7 +318,8 @@ function mergeField(record, targetField, sourceField) {
   sourceField.subfields.forEach(candSubfield => {
     debug(`  CAND4ADDING '‡${candSubfield.code} ${candSubfield.value}'`);
     mergeSubfield(record, targetField, candSubfield);
-
+    debug(`  NOW '${fieldToString(targetField)}`);
+    debug(`  TODO: sort subfields, handle punctuation...`)
     // { code: x, value: foo }
 
   });
