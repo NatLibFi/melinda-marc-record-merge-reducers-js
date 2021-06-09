@@ -2,6 +2,8 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
+  controlSubfieldsPermitMerge,
+  fieldHasSubfield,
   fieldToString,
   normalizeStringValue
 } from './utils.js';
@@ -191,10 +193,6 @@ function acceptEntrySubfield(field, candSubfield, index) { // Accept X00 and X10
 
 
 //// Everything below this point should be fine...
-function fieldHasSubfield(field, subfieldCode) {
-  return field.subfields.some(sf => sf.code === subfieldCode);
-}
-
 
 function mergablePairA(field1, field2) {
   if (!fieldHasSubfield(field1, 'a') || !fieldHasSubfield(field2, 'a')) {
@@ -222,26 +220,19 @@ function mergablePairT(field1, field2) {
 }
 
 
-function mergablePair9(field1, field2) {
-  if (fieldHasSubfield(field1, '9') || fieldHasSubfield(field2, '9')) {
-    // Should we merge anything with <KEEP>/<DROP>? At least they should be in balance...
-    debug('TODO: implement FOO<KEEP> and BAR<DROP> matcher');
-    return false;
-  }
-
-  return true;
-}
-
 function mergablePair(field1, field2) {
   // Indicators *must* be equal:
   if (field1.ind1 !== field2.ind1 || field1.ind2 !== field2.ind2) {
     debug('indicator check failed');
     return false;
   }
+  if ( !controlSubfieldsPermitMerge(field1, field2) ) {
+    debug('control subfield check failed');
+    return false;
+  }
   // field vs field -level checks (mostly syntactic stuff)
   if (!mergablePairA(field1, field2) || // eg. both fields must contain subfield a.
-      !mergablePairT(field1, field2) || // both field must either have 't' or not have it
-      !mergablePair9(field1, field2)) {
+      !mergablePairT(field1, field2) ) { // both field must either have 't' or not have it
     return false;
   }
 
@@ -336,7 +327,6 @@ function mergeField(record, targetField, sourceField) {
 
 function getCounterpart(record, field) {
   // Get tag-wise relevant 1XX and 7XX fields:
-  //const regexp = tagToRegexp(field.tag);
   const counterpartCands = record.get(tagToRegexp(field.tag));
   // debug(counterpartCands);
 
