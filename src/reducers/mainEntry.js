@@ -9,6 +9,10 @@ import {
   normalizeStringValue
 } from './utils.js';
 
+import {
+  mergablePair
+} from './utils2.js';
+
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw
 // Field 240 is handled independently before this.
 
@@ -51,8 +55,6 @@ function tagToRegexp(tag) {
 // Test 16: Combine fx00 with $d missing year of death in base
 
 /*
-
-
   // ### Keskeneräinen
 
 
@@ -66,31 +68,6 @@ function tagToRegexp(tag) {
 
   // 100/110/111/130 ovat toisensa poissulkevia, eli tietueessa voi olla vain yksi näistä kerrallaan
   // Tietueessa voi olla 700/710/711/730-kenttiä silloinkin, jos siinä EI ole mitään 100/110/111/130-kenttiä
-
-
-  // Case 3: Base (base) has 7XX fields but not 1XX fields
-  // ### Onko tämä edes mahdollista?
-  if (checkTagGroup(baseTags, field1XX) === false && checkTagGroup(baseTags, field7XX) === true) {
-    debug(`Case 3`);
-  }
-
-  // Case 4: Base (base) has both 1XX and 7XX fields
-  if (checkTagGroup(baseTags, field1XX) === true && checkTagGroup(baseTags, field7XX) === true) {
-    debug(`Case 4`);
-  }
-
-
-  function checkTagGroup(tags, group) {
-    if (tags.every(tag => group.indexOf(tag) === -1)) {
-      debug(`Record does not contain fields: ${group}`);
-      return false;
-    }
-    debug(`Record contains one or more fields: ${group}`);
-    return true;
-  }
-
-  return base;
-}
 */
 
 function subfieldsAreEqualish(sf1, sf2) {
@@ -151,7 +128,7 @@ const legalX00d = /^[1-9][0-9]*-(?:[1-9][0-9]*)?[,.]?$/u;
 
 function acceptEntrySubfieldD(field, candSubfield) {
   if (field.tag !== '100' && field.tag !== '700') {
-    debug(`NB! Subfield f is currently only checked for X00 fields.`);
+    debug(`NB! Subfield ‡d is currently only checked for X00 fields.`);
     return true; // We are currently interested only in X00
   }
   const relevantSubfields = field.subfields.filter(subfield => subfield.code === 'd');
@@ -170,17 +147,7 @@ function acceptEntrySubfieldD(field, candSubfield) {
     birthYearsAgree(relevantSubfields[0], candSubfield) && deathYearsAgree(relevantSubfields[0], candSubfield);
 }
 
-function acceptEntrySubfield0(field, candSubfield) {
-  if (equalishSubfieldExists(field, candSubfield) || !fieldHasSubfield(field, '0')) {
-    return true;
-  }
-  //if ( field.subfields.forEach(sf => { })
-
-  debug(`TODO: Implement proper ‡0 check.`);
-  return false;
-}
-
-function acceptEntrySubfield(field, candSubfield) { // Accept X00 and X10 equality
+function acceptEntrySubfield(field, candSubfield, index) { // Accept X00 and X10 equality
   // semantic check
   if (candSubfield.code === 'a') {
     return acceptEntrySubfieldA(field, candSubfield);
@@ -190,69 +157,11 @@ function acceptEntrySubfield(field, candSubfield) { // Accept X00 and X10 equali
     return acceptEntrySubfieldD(field, candSubfield);
   }
 
-  if (candSubfield.code === '0') {
-    return acceptEntrySubfield0(field, candSubfield);
-  }
-
   debug(`Accepted entry subfield ‡${candSubfield.code} without checking it.`);
   return true;
 }
 
-
 //// Everything below this point should be fine...
-
-function mergablePairA(field1, field2) {
-  if (!fieldHasSubfield(field1, 'a') || !fieldHasSubfield(field2, 'a')) {
-    return false;
-  }
-  return true;
-}
-
-function mergablePairT(field1, field2) {
-
-  // Both fields must either contain or not contain ‡t
-  if (fieldHasSubfield(field1, 't')) {
-    if (!fieldHasSubfield(field2, 't')) {
-
-      debug('‡t issues. Won\'t try to merge.');
-      return false;
-    }
-    return true;
-  }
-
-  if (fieldHasSubfield(field2, 't')) {
-    return false;
-  }
-  return true;
-}
-
-
-function mergablePair(field1, field2) {
-  // Indicators *must* be equal:
-  if (field1.ind1 !== field2.ind1 || field1.ind2 !== field2.ind2) {
-    debug('indicator check failed');
-    return false;
-  }
-  if (!controlSubfieldsPermitMerge(field1, field2)) {
-    debug('control subfield check failed');
-    return false;
-  }
-  // field vs field -level checks (mostly syntactic stuff)
-  if (!mergablePairA(field1, field2) || // eg. both fields must contain subfield a.
-    !mergablePairT(field1, field2)) { // both field must either have 't' or not have it
-    return false;
-  }
-
-  // check that individual subfields from source/field2 are acceptable:
-  if (field2.subfields.every((subfield, index) => acceptEntrySubfield(field1, subfield, index))) {
-    debug('MERGABLE :-)');
-    return true;
-  }
-
-  // Compare $a, $d ja $0
-  debug(`mergablePair(f1, f2) not fully implemented yet!`);
-  return false;
-}
 
 
 function mergeSubfieldNotRequired(targetField, candSubfield) {
@@ -342,7 +251,7 @@ function getCounterpart(record, field) {
     return null;
   }
   const fieldStr = fieldToString(field);
-  debug(`Compare incoming '${fieldStr}' with (up to) ${counterpartCands.length + 1} existing field(s)`);
+  debug(`Compare incoming '${fieldStr}' with (up to) ${counterpartCands.length} existing field(s)`);
   const index = counterpartCands.findIndex((currCand) => {
     const currCandStr = fieldToString(currCand);
     debug(`  CAND: '${currCandStr}'`);
@@ -350,6 +259,7 @@ function getCounterpart(record, field) {
       debug(`  OK pair found: '${currCandStr}'. Returning it!`);
       return true;
     }
+    debug(`  FAILED TO PAIR: '${currCandStr}'. Skipping it!`);
     return false;
   });
   if (index > -1) {
