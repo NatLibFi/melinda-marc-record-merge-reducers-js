@@ -1,8 +1,22 @@
-import {copy} from '@natlibfi/marc-record-merge';
-import * as localReducers from './reducers';
+import copy from './copy';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-export * from './reducers';
+import internalFields from './internalFields';
+import leader from './leader';
+import mainEntry from './mainEntry';
+import selectLonger from './selectLonger';
+import field006 from './field006';
+import field007 from './field007';
+import field008 from './field008';
+import field020 from './field020';
+import field022 from './field022';
+import field024 from './field024';
+import field040 from './field040';
+import field042 from './field042';
+import field240 from './field240';
+import field245 from './field245';
+import field830 from './field830';
+import field995 from './field995';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -12,12 +26,12 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // Copy duplicate instance of non-identical field from source to base
 // Added field 995 to the list / 25.5.2021
 /* eslint-disable require-unicode-regexp */
-const copyIfDifferent = new RegExp(String((/^(?<tags>013|015|016|017|028|035|050|052|055|060|070|080|082|083|084|210|242|246|250|255|258|321)$/u).source) +
-  (/^(?<tags>336|337|338|340|341|342|343|344|346|347|348|351|352|355|362|363|365|366|370|377)$/u).source +
-  (/^(?<tags>380|381|382|383|385|386|388|490|500|501|502|504|505|506|508|509|510|511|513|515|518)$/u).source +
-  (/^(?<tags>520|521|522|524|525|530|534|535|536|538|540|541|542|544|545|546|547|550|552|555)$/u).source +
-  (/^(?<tags>556|561|562|563|565|567|580|581|584|585|586|720|740|751|752|753|754|758|760)$/u).source +
-  (/^(?<tags>762|765|767|770|772|775|776|777|780|785|786|787|856|883|886|887|900|910|911|940|995)$/u).source);
+const copyIfDifferent = new RegExp(String((/^(?<tags1>013|015|016|017|028|035|050|052|055|060|070|080|082|083|084|210|242|246|250|255|258|321)$/u).source) +
+  (/^(?<tags2>336|337|338|340|341|342|343|344|346|347|348|351|352|355|362|363|365|366|370|377)$/u).source +
+  (/^(?<tags3>380|381|382|383|385|386|388|490|500|501|502|504|505|506|508|509|510|511|513|515|518)$/u).source +
+  (/^(?<tags4>520|521|522|524|525|530|534|535|536|538|540|541|542|544|545|546|547|550|552|555)$/u).source +
+  (/^(?<tags5>556|561|562|563|565|567|580|581|584|585|586|720|740|751|752|753|754|758|760)$/u).source +
+  (/^(?<tags6>762|765|767|770|772|775|776|777|780|785|786|787|856|883|886|887|900|910|911|940|995)$/u).source);
 
 // Copy field from source only if missing from base (compareTagsOnly = true)
 const copyIfMissing = /^(?<tags>010|018|027|030|031|043|044|049|085|088|222|243|247|260|263|264|306|310|357|384|507|514)$/u;
@@ -35,6 +49,7 @@ const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude s
 
 // Huom. tarkistettava missä järjestyksessä reducerit ajetaan
 // Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
+// eslint-disable-next-line
 const allReducers = [
   copy({tagPattern: copyIfDifferent}),
   copy({tagPattern: copyIfMissing, compareTagsOnly: true}),
@@ -42,28 +57,45 @@ const allReducers = [
   copy({tagPattern: copySpecial2, excludeSubfields: ['9']}),
   copy({tagPattern: copySpecial3, dropSubfields: ['4']}),
   copy({tagPattern: copySpecial4, excludeSubfields: ['9'], dropSubfields: ['4']}),
-  localReducers.internalFields(), // LOW, CAT, SID
-  localReducers.leader(), // Test 01
-  localReducers.mainEntry(), // Main entry fields
-  localReducers.selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
-  localReducers.field006(), // Tests 02 and 03
-  localReducers.field007(), // Tests 04 and 05
-  localReducers.field008(), // Tests 06, 07, and 08
-  localReducers.field020(), // Tests 09, 10 and 11
-  localReducers.field022(), // Tests 12, 13 and 14
-  localReducers.field024(), // Tests 15, 16 and 17
-  localReducers.field040(), // Tests 18 and 19
-  localReducers.field042(), // Tests 20 and 21
-  localReducers.field240(), // Tests 34, 35
-  localReducers.field245(), // Tests 31, 32 and 33
-  localReducers.field830() // Tests 22-29
+  internalFields(), // LOW, CAT, SID
+  leader(), // Test 01
+  mainEntry(), // Main entry fields
+  selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
+  field006(), // Tests 02 and 03
+  field007(), // Tests 04 and 05
+  field008(), // Tests 06, 07, and 08
+  field020(), // Tests 09, 10 and 11
+  field022(), // Tests 12, 13 and 14
+  field024(), // Tests 15, 16 and 17
+  field040(), // Tests 18 and 19
+  field042(), // Tests 20 and 21
+  field240(), // Tests 34, 35
+  field245(), // Tests 31, 32 and 33
+  field830() // Tests 22-29
 //  localReducers.field995() // Tests 30, 31 and 32
+];
+
+export const localReducers = [
+  internalFields(), // LOW, CAT, SID
+  leader(), // Test 01
+  mainEntry(), // Main entry fields
+  selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
+  field006(), // Tests 02 and 03
+  field007(), // Tests 04 and 05
+  field008(), // Tests 06, 07, and 08
+  field020(), // Tests 09, 10 and 11
+  field022(), // Tests 12, 13 and 14
+  field024(), // Tests 15, 16 and 17
+  field040(), // Tests 18 and 19
+  field042(), // Tests 20 and 21
+  field240(), // Tests 34, 35
+  field245(), // Tests 31, 32 and 33
+  field830(), // Tests 22-29
+  field995()
 ];
 
 // ### Miten tästä rakennetaan kokonaisuus jossa tutkitaan tietueen kaikki kentät?
 // Eli kaikki ne joissa käytetään vain copya sekä ne, joille on erikseen kustomoitu omat säännöt.
-
-export {localReducers};
 export default ({base, source, allReducers}) => {
   debug(`inside export default`);
   const sourceRecord = MarcRecord.clone(source);

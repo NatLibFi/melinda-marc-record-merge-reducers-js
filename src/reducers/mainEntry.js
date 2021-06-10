@@ -1,4 +1,4 @@
-import {MarcRecord} from '@natlibfi/marc-record';
+// import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 import {
@@ -16,8 +16,10 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // All fields used for main entry, 1XX and 240 are unrepeatable
 const fieldTag = /^(?:100|110|111|130|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
 
-const counterpartRegexps = {'100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
-  '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u};
+const counterpartRegexps = {
+  '100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
+  '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
+};
 
 function tagToRegexp(tag) {
   if (tag in counterpartRegexps) {
@@ -160,7 +162,10 @@ function acceptEntrySubfieldD(field, candSubfield) {
   if (relevantSubfields.length === 0 || subfieldsAreEqualish(relevantSubfields[0], candSubfield)) {
     return true;
   }
-  if ( !legalX00d.test(candSubfield.value)) { debug(`D-FAIL ${candSubfield.value}`); return false; }
+  if (!legalX00d.test(candSubfield.value)) {
+    debug(`D-FAIL ${candSubfield.value}`);
+    return false;
+  }
   return legalX00d.test(candSubfield.value) && legalX00d.test(relevantSubfields[0].value) &&
     birthYearsAgree(relevantSubfields[0], candSubfield) && deathYearsAgree(relevantSubfields[0], candSubfield);
 }
@@ -175,21 +180,22 @@ function acceptEntrySubfield0(field, candSubfield) {
   return false;
 }
 
-function acceptEntrySubfield(field, candSubfield, index) { // Accept X00 and X10 equality
+function acceptEntrySubfield(field, candSubfield) { // Accept X00 and X10 equality
   // semantic check
-  switch (candSubfield.code) {
-  case 'a':
+  if (candSubfield.code === 'a') {
     return acceptEntrySubfieldA(field, candSubfield);
-  case 'd':
-    return acceptEntrySubfieldD(field, candSubfield);
-  case '0':
-    return acceptEntrySubfield0(field, candSubfield);
-  default:
-    debug(`Accepted entry subfield ‡${candSubfield.code} without checking it.`);
-    return true;
   }
 
+  if (candSubfield.code === 'd') {
+    return acceptEntrySubfieldD(field, candSubfield);
+  }
 
+  if (candSubfield.code === '0') {
+    return acceptEntrySubfield0(field, candSubfield);
+  }
+
+  debug(`Accepted entry subfield ‡${candSubfield.code} without checking it.`);
+  return true;
 }
 
 
@@ -227,13 +233,13 @@ function mergablePair(field1, field2) {
     debug('indicator check failed');
     return false;
   }
-  if ( !controlSubfieldsPermitMerge(field1, field2) ) {
+  if (!controlSubfieldsPermitMerge(field1, field2)) {
     debug('control subfield check failed');
     return false;
   }
   // field vs field -level checks (mostly syntactic stuff)
   if (!mergablePairA(field1, field2) || // eg. both fields must contain subfield a.
-      !mergablePairT(field1, field2) ) { // both field must either have 't' or not have it
+    !mergablePairT(field1, field2)) { // both field must either have 't' or not have it
     return false;
   }
 
@@ -260,22 +266,21 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
 }
 
 
-
 function insertSubfieldAllowed(targetField, candSubfield) {
   // NB! If insert is not allowed, the candicate subfield can still replace the original. (Not handled by this function though.)
 
   // Subfields missing from the original can be added:
-  if (!fieldHasSubfield(targetField, candSubfield.code) ) { // 
+  if (!fieldHasSubfield(targetField, candSubfield.code)) { //
     return true;
   }
 
   // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
-  if ( fieldIsRepeatable(targetField.tag, candSubfield.code) ) {
+  if (fieldIsRepeatable(targetField.tag, candSubfield.code)) {
     return true;
   }
 
 
-  debug(`No rule to add '‡${candSubfield.code} ${candSubfield.value}' to '${fieldToString(targetField)}'`)
+  debug(`No rule to add '‡${candSubfield.code} ${candSubfield.value}' to '${fieldToString(targetField)}'`);
   return false;
 }
 
@@ -285,9 +290,9 @@ const birthYearAndDeathYear = /^[1-9][0-9]*-[1-9][0-9]*[,.]?$/u;
 function replaceSubfield(targetField, candSubfield) {
   const relevantSubfields = targetField.subfields.filter(subfield => subfield.code === candSubfield.code);
   debug(`Got ${relevantSubfields.length} sf-cands for field ${targetField.tag}`);
-  if ( candSubfield.code === 'd' && /* debug("WP000") && */ /00$/u.test(targetField.tag) && relevantSubfields.length === 1 &&
-    onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) ) {
-      relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+  if (candSubfield.code === 'd' && /* debug("WP000") && */ (/00$/u).test(targetField.tag) && relevantSubfields.length === 1 &&
+    onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value)) {
+    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
 
     return true;
   }
@@ -297,7 +302,7 @@ function replaceSubfield(targetField, candSubfield) {
 function mergeSubfield(record, targetField, candSubfield) {
   const str = `${candSubfield.code} ${candSubfield.value}`;
   if (mergeSubfieldNotRequired(targetField, candSubfield)) {
-    debug(`    No need to add '‡${candSubfield.code} ${candSubfield.value}'`)
+    debug(`    No need to add '‡${candSubfield.code} ${candSubfield.value}'`);
     return;
   }
 
@@ -307,7 +312,7 @@ function mergeSubfield(record, targetField, candSubfield) {
     targetField.subfields.push(JSON.parse(JSON.stringify(candSubfield))); // eslint-disable-line functional/immutable-data
     return;
   }
-  if(replaceSubfield(targetField, candSubfield)) {
+  if (replaceSubfield(targetField, candSubfield)) {
     return;
   }
   debug(`TODO: Handle merging/adding subfield '‡${str}' to field`);
@@ -319,7 +324,7 @@ function mergeField(record, targetField, sourceField) {
     debug(`  CAND4ADDING '‡${candSubfield.code} ${candSubfield.value}'`);
     mergeSubfield(record, targetField, candSubfield);
     debug(`  NOW '${fieldToString(targetField)}`);
-    debug(`  TODO: sort subfields, handle punctuation...`)
+    debug(`  TODO: sort subfields, handle punctuation...`);
     // { code: x, value: foo }
 
   });

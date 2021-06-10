@@ -66,6 +66,7 @@ export default () => (base, source) => {
 
 
     //sourceField = fieldRenameSubfieldCodes(sourceField, 'a', 'd');
+    // eslint-disable-next-line functional/immutable-data
     sourceField.subfields = sortSubfields(sourceField.subfields, sortOrder040);
     // NV: Just my opinion, but I think sortSubfields should be passed a field, not an array of it's subfields...
 

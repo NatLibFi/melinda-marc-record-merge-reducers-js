@@ -29,13 +29,13 @@
 /* eslint-disable new-cap */
 import validateFactory from '@natlibfi/marc-record-validate';
 import {
-//	FieldExclusion,
-//	FieldStructure,
-	FieldsPresent,
-//	EmptyFields,
-	EndingPunctuation
-//	IsbnIssn,
-//	SubfieldExclusion
+  //FieldExclusion,
+  //FieldStructure,
+  FieldsPresent,
+  //EmptyFields,
+  EndingPunctuation
+  //IsbnIssn,
+  //SubfieldExclusion
 } from '@natlibfi/marc-record-validators-melinda';
 //import createDebugLogger from 'debug';
 
@@ -44,32 +44,33 @@ import {
 export default async () => {
   //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   //debug(`### Miksi tämä ei tule näkyviin?`);
-	const validate = validateFactory([
-    await FieldsPresent([/^(100)$/]),
+  const validate = validateFactory([
+    await FieldsPresent([/^100$/u]),
     await EndingPunctuation()
-//		await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]),
-//		await FieldsPresent([/^336$/, /^337$/, /^338$/]),
-/*		await FieldExclusion([
-			/^(001|091|092|093|094|095|256|533|574|575|576|577|578|599)$/,
-			{tag: /^264$/, subfields: [{code: /^a$/, value: /^\[.*\]$/}]},
-			{tag: /^650$/, subfields: [{code: /^a$/, value: /^overdrive$/i}]},
-			{tag: /^(648|650|651|655)$/, subfields: [{code: /^2$/, value: /^(ysa|musa|allars|cilla)$/}]},
-			{tag: /^041$/, dependencies: [{leader: /^.{6}[g|i]/}]}
-		]),
-		await EmptyFields(),
-		await IsbnIssn({hyphenateISBN: true}),
-		await SubfieldExclusion([{tag: /^041$/, subfields: [{code: /a|d/, value: /^zxx$/}]}]),
-		await FieldStructure([{tag: /^007$/, dependencies: [{leader: /^.{6}[^at]/}]}]),
-		await EndingPunctuation() */
-	]);
+    //await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]),
+    //await FieldsPresent([/^336$/, /^337$/, /^338$/]),
+    /*
+    await FieldExclusion([
+    /^(001|091|092|093|094|095|256|533|574|575|576|577|578|599)$/,
+    {tag: /^264$/, subfields: [{code: /^a$/, value: /^\[.*\]$/}]},
+    {tag: /^650$/, subfields: [{code: /^a$/, value: /^overdrive$/i}]},
+    {tag: /^(648|650|651|655)$/, subfields: [{code: /^2$/, value: /^(ysa|musa|allars|cilla)$/}]},
+    {tag: /^041$/, dependencies: [{leader: /^.{6}[g|i]/}]}
+    ]),
+    await EmptyFields(),
+    await IsbnIssn({hyphenateISBN: true}),
+    await SubfieldExclusion([{tag: /^041$/, subfields: [{code: /a|d/, value: /^zxx$/}]}]),
+    await FieldStructure([{tag: /^007$/, dependencies: [{leader: /^.{6}[^at]/}]}]),
+    await EndingPunctuation() */
+  ]);
 
-	return async (record, fix, validateFixes) => {
-		const opts = fix ? {fix, validateFixes} : {fix};
-		const result = await validate(record, opts);
+  return async (record, fix, validateFixes) => {
+    const opts = fix ? {fix, validateFixes} : {fix};
+    const result = await validate(record, opts);
     return {
-			record: result.record,
-			failed: result.valid === false,
-			messages: result.report
-		};
-	};
+      record: result.record,
+      failed: result.valid === false,
+      messages: result.report
+    };
+  };
 };

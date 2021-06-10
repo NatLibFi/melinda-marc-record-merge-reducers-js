@@ -21,7 +21,7 @@ import {
  * Test 06: Same as 05 but fields in different order => keep base
  *  */
 
-export default ({tagPattern}) => (base, source) => {
+export default (tagPattern) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const baseFields = base.get(tagPattern);
   const sourceFields = source.get(tagPattern);
