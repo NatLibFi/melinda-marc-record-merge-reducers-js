@@ -402,7 +402,6 @@ export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
 
 // NVOLK's merge permitters:
 
-
 function controlSubfield0PermitsMerge(field1, field2) {
   if (!internalFieldHasSubfield(field1, '0', null) || !internalFieldHasSubfield(field2, '0', null)) {
     return true;
@@ -411,7 +410,7 @@ function controlSubfield0PermitsMerge(field1, field2) {
     if (sf.code !== '0') {
       return true;
     }
-    // NB! Here we assume that value have been normalized.
+    // NB! Here we assume that value have been normalized beforehand.
     // Eg. (isni) 0000 1234 5678 0000 vs https://isni.org/isni/0000123456780000
     // Eg. FIN11 vs FI-ASTERI-N vs kanton uri
 
@@ -420,35 +419,33 @@ function controlSubfield0PermitsMerge(field1, field2) {
       return true;
     }
 
+    return prefixIsOK(sf, field2);
 
-    if (prefixIsOK(sf, field2)) {
-      return true;
+    function getPrefix(currSubfield) {
+      if (currSubfield.value.match(/^\([^)]+\)[0-9]+$/u)) {
+        return currSubfield.value.substr(0, currSubfield.value.indexOf(')') + 1);
+      }
+      if (currSubfield.value.match(/^https?:/u)) {
+        return currSubfield.value.substr(0, currSubfield.value.lastindexOf('/') + 1);
+      }
+      return null;
     }
 
     function prefixIsOK(currSubfield, otherField) {
-      // eslint-disable-next-line
-      if (currSubfield.value.match(/^\([^\)]+\)[0-9]+$/u)) {
-        // UNTESTED
-        const prefix = currSubfield.value.substr(0, currSubfield.value.indexOf(')') + 1);
-        const hits = otherField.subfields.filter(sf2 => sf2.code === '0' && currSubfield.value !== sf2.value && sf2.value.indexOf(prefix) === 0);
-        if (hits.length > 0) {
-          const [badCompany] = hits;
-          debug(`Subfield ‡0 check FAILED: ‡0 '${currSubfield.value}' vs ‡0 '${badCompany.value}'.`);
-          return false;
-        }
-        debug(`Subfield ‡0 check OK: ${prefix} not found on ${fieldToString(otherField)}`);
-        return true;
+      const prefix = getPrefix(currSubfield);
+      if (prefix === null) {
+        return false;
       }
+      // Look for same prefix + different identifier
+      const hits = otherField.subfields.filter(sf2 => sf2.code === '0' && currSubfield.value !== sf2.value && sf2.value.indexOf(prefix) === 0);
+      if (hits.length > 0) {
+        debug(`Subfield ‡0 check FAILED: ‡0 '${currSubfield.value}' vs ‡0 '${hits[0].value}'.`);
+        return false;
+      }
+      debug(`Subfield ‡0 check OK: ${prefix} not found on ${fieldToString(otherField)}`);
       return true;
     }
 
-    // eslint-disable-next-line
-    // TODO: normalisoi jossain aiemmin...
-    // FIN11/FI-ASTERI-N/kanton uri
-    // isni: (isni)numero / välilyönnit / url (normalize to url)
-    // Other relevant data sources besides fin11 and isni? Geneerinen (source)ID -tarkistus...
-    debug(`NB! FIN11 normalizations not implemented yet. FAIL on '${sf.value}'`);
-    return false;
   });
 }
 
@@ -462,9 +459,18 @@ function controlSubfield1PermitsMerge(field1, field2) {
 }
 
 function controlSubfield3PermitsMerge(field1, field2) {
-  // eslint-disable-next-line
-  // TODO: tarkista...
-  return !internalFieldHasSubfield(field1, '3', null) && !internalFieldHasSubfield(field2, '3', null);
+  // Check OK if neither one has $3.
+  // Check fails if one field has $3 and the other one does not
+  if (!internalFieldHasSubfield(field1, '3')) {
+    return !internalFieldHasSubfield(field2, '3');
+  }
+  if (!internalFieldHasSubfield(field2, '3')) {
+    return false;
+  }
+  // Compare $3 subfields. If everything matches, OK, else FAIL:
+  const sf3Field1 = field1.subfields.filter(subfield => subfield.code === '3');
+  const sf3Field2 = field2.subfields.filter(subfield => subfield.code === '3');
+  return MarcRecord.isEqual(sf3Field1, sf3Field2);
 }
 
 function controlSubfield5PermitsMerge(field1, field2) {
