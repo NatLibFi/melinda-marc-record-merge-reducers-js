@@ -1,7 +1,7 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
-import { isEqual } from 'lodash';
+// import {isEqual} from 'lodash';
 
 import fs from 'fs';
 import path from 'path';
@@ -39,9 +39,9 @@ export function getNonIdenticalFields(baseFields, sourceFields) {
     }
     function isIdenticalDataField(baseField) {
       if (sourceField.tag === baseField.tag &&
-          sourceField.ind1 === baseField.ind1 &&
-          sourceField.ind2 === baseField.ind2 &&
-          sourceField.subfields.length === baseField.subfields.length) {
+        sourceField.ind1 === baseField.ind1 &&
+        sourceField.ind2 === baseField.ind2 &&
+        sourceField.subfields.length === baseField.subfields.length) {
         return baseField.subfields.every(isIdenticalSubfield);
       }
       function isIdenticalSubfield(baseSub) {
@@ -104,13 +104,17 @@ export function getNonRepCodes(tag) {
 }
 export function fieldIsRepeatable(tag, code = null) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
-  if ( fieldSpecs.length !== 1 ) {
-      debug(" OOPS! Getting field data failed!");
-      return false;
-    }
-  if ( !code ) { return fieldSpecs[0].repeatable; }
+  if (fieldSpecs.length !== 1) {
+    debug(' OOPS! Getting field data failed!');
+    return false;
+  }
+  if (!code) {
+    return fieldSpecs[0].repeatable;
+  }
   const subfieldSpecs = fieldSpecs[0].subfields.filter(subfield => subfield.code === code);
-  if ( subfieldSpecs.length !== 1 ) { return false; }
+  if (subfieldSpecs.length !== 1) {
+    return false;
+  }
   return subfieldSpecs[0].repeatable;
 }
 
@@ -130,7 +134,7 @@ export function normalizeStringValue(value) {
 
 export function strictEquality(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code &&
-  subfieldA.value === subfieldB.value;
+    subfieldA.value === subfieldB.value;
 }
 
 // Compare base and source subfield arrays defined by the given array of subfield codes
@@ -157,8 +161,8 @@ export function compareAllSubfields(baseField, sourceField, codes) {
 
   // If the same number of matches is found both ways, all compared subfields are equal
   if (baseSubsNorm.length === equalSubfieldsBase.length &&
-      sourceSubsNorm.length === equalSubfieldsSource.length &&
-      equalSubfieldsBase.length === equalSubfieldsSource.length) {
+    sourceSubsNorm.length === equalSubfieldsSource.length &&
+    equalSubfieldsBase.length === equalSubfieldsSource.length) {
     codes.forEach(code => debug(`Subfield (${code}): all equal in source and base`));
     return true;
   }
@@ -196,7 +200,7 @@ export function getRepSubs(baseField, sourceField, repCodes, dropCodes = [], idC
 
     function strictEquality(subfieldA, subfieldB) {
       return subfieldA.code === subfieldB.code &&
-      subfieldA.value === subfieldB.value;
+        subfieldA.value === subfieldB.value;
     }
 
     // Get source subfields for which a matching base subfield is found
@@ -280,7 +284,7 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
     if (typeof filter === 'string') {
       return sub.code !== filter;
     }
-  /* eslint-enable */
+    /* eslint-enable */
   });
   if (filtered.length > 0) {
     return sortSubfields(restSubfields, rest, [...orderedSubfields, ...filtered]);
@@ -357,7 +361,7 @@ export function selectLongerField(base, baseField, sourceField) {
   // Subset equality function from marc-record-merge select.js
   function subsetEquality(subfieldA, subfieldB) {
     return subfieldA.code === subfieldB.code &&
-    (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
+      (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
   }
   function replaceBasefieldWithSourcefield(base) {
     const index = base.fields.findIndex(field => field === baseField);
@@ -368,11 +372,10 @@ export function selectLongerField(base, baseField, sourceField) {
 }
 
 
-
 // NVOLK's marc record modifications
 function internalFieldHasSubfield(field, subfieldCode, subfieldValue) {
-  if ( subfieldValue === null ) {
-      return field.subfields.some(sf => sf.code === subfieldCode);
+  if (subfieldValue === null) {
+    return field.subfields.some(sf => sf.code === subfieldCode);
   }
   return field.subfields.some(sf => sf.code === subfieldCode && subfieldValue === sf.value);
 }
@@ -385,8 +388,8 @@ export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
  * renameSubfieldCodes
  *
  * */
- export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
-   // should we clone this?
+export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
+  // should we clone this?
   field.subfields.map(currSub => {
     if (currSub.code === origCode) {
       currSub.code = targetCode; // eslint-disable-line functional/immutable-data
@@ -401,38 +404,45 @@ export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
 
 
 function controlSubfield0PermitsMerge(field1, field2) {
-  if ( !internalFieldHasSubfield(field1, '0', null) || !internalFieldHasSubfield(field2, '0', null) ) { return true; }
+  if (!internalFieldHasSubfield(field1, '0', null) || !internalFieldHasSubfield(field2, '0', null)) {
+    return true;
+  }
   return field1.subfields.every(sf => {
-    if ( sf.code !== '0' ) { return true; }
+    if (sf.code !== '0') {
+      return true;
+    }
     // NB! Here we assume that value have been normalized.
     // Eg. (isni) 0000 1234 5678 0000 vs https://isni.org/isni/0000123456780000
     // Eg. FIN11 vs FI-ASTERI-N vs kanton uri
 
     debug(`Compare ‡0 '${sf.value}' with '${fieldToString(field2)}'.`);
-    if ( internalFieldHasSubfield(field2, field1.code, field1.value) ) {
+    if (internalFieldHasSubfield(field2, field1.code, field1.value)) {
       return true;
     }
 
 
-    if ( prefixIsOK(sf, field2) ) { return true; }
+    if (prefixIsOK(sf, field2)) {
+      return true;
+    }
 
     function prefixIsOK(currSubfield, otherField) {
-      if ( currSubfield.value.match(/^\([^\)]+\)[0-9]+$/u) ) {
+      // eslint-disable-next-line
+      if (currSubfield.value.match(/^\([^\)]+\)[0-9]+$/u)) {
         // UNTESTED
-        const prefix = currSubfield.value.substr(0, currSubfield.value.indexOf(')')+1);
-        const hits = otherField.subfields.filter(sf2 => sf2.code === '0' && currSubfield.value !== sf2.value && sf2.value.indexOf(prefix) === 0 );
-        if ( hits.length > 0 ) {
-          const badCompany = hits[0]; 
+        const prefix = currSubfield.value.substr(0, currSubfield.value.indexOf(')') + 1);
+        const hits = otherField.subfields.filter(sf2 => sf2.code === '0' && currSubfield.value !== sf2.value && sf2.value.indexOf(prefix) === 0);
+        if (hits.length > 0) {
+          const [badCompany] = hits;
           debug(`Subfield ‡0 check FAILED: ‡0 '${currSubfield.value}' vs ‡0 '${badCompany.value}'.`);
           return false;
         }
         debug(`Subfield ‡0 check OK: ${prefix} not found on ${fieldToString(otherField)}`);
-        return true; 
+        return true;
       }
       return true;
     }
 
-
+    // eslint-disable-next-line
     // TODO: normalisoi jossain aiemmin...
     // FIN11/FI-ASTERI-N/kanton uri
     // isni: (isni)numero / välilyönnit / url (normalize to url)
@@ -443,7 +453,7 @@ function controlSubfield0PermitsMerge(field1, field2) {
 }
 
 function controlSubfield1PermitsMerge(field1, field2) {
-  if ( !internalFieldHasSubfield(field1, '1', null) && !internalFieldHasSubfield(field2, '1', null) ) {
+  if (!internalFieldHasSubfield(field1, '1', null) && !internalFieldHasSubfield(field2, '1', null)) {
     return true;
   }
   // Same result, but log:
@@ -452,6 +462,7 @@ function controlSubfield1PermitsMerge(field1, field2) {
 }
 
 function controlSubfield3PermitsMerge(field1, field2) {
+  // eslint-disable-next-line
   // TODO: tarkista...
   return !internalFieldHasSubfield(field1, '3', null) && !internalFieldHasSubfield(field2, '3', null);
 }
@@ -459,10 +470,12 @@ function controlSubfield3PermitsMerge(field1, field2) {
 function controlSubfield5PermitsMerge(field1, field2) {
   // Check OK if neither one has $5.
   // Check fails if one field has $5 and the other one does not
-  if ( !fieldHasSubfield(field1, '5') ) {
+  if (!fieldHasSubfield(field1, '5')) {
     return !fieldHasSubfield(field2, '5');
   }
-  if ( !fieldHasSubfield(field2, '5') ) { return false; }
+  if (!fieldHasSubfield(field2, '5')) {
+    return false;
+  }
   // Strip $5 subfields. If everything else matches, OK, else FAIL:
   const sf5lessField1 = field1.subfields.filter(subfield => subfield.code !== '5');
   const sf5lessField2 = field2.subfields.filter(subfield => subfield.code !== '5');
@@ -470,10 +483,10 @@ function controlSubfield5PermitsMerge(field1, field2) {
 }
 
 function controlSubfield6PermitsMerge(field1, field2) {
-  if ( !internalFieldHasSubfield(field1, '6') && !internalFieldHasSubfield(field2, '6') ) {
+  if (!internalFieldHasSubfield(field1, '6') && !internalFieldHasSubfield(field2, '6')) {
     return true;
   }
-  debug("controlSubfield6PermitsMerge() not properly implemented.");
+  debug('controlSubfield6PermitsMerge() not properly implemented.');
   return false;
 }
 
@@ -482,20 +495,44 @@ function controlSubfield8PermitsMerge(field1, field2) {
 }
 
 function controlSubfield9PermitsMerge(field1, field2) {
-  if ( !fieldHasSubfield(field1, '9') && !fieldHasSubfield(field2, '9') ) { return true; }
-  const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || ! /(?:<KEEP>|<DROP>)/u.test(subfield.value));
-  const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || ! /(?:<KEEP>|<DROP>)/u.test(subfield.value));
+  if (!fieldHasSubfield(field1, '9') && !fieldHasSubfield(field2, '9')) {
+    return true;
+  }
+  const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
+  const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   return MarcRecord.isEqual(sf9lessField1, sf9lessField2);
 }
 
 export function controlSubfieldsPermitMerge(field1, field2) {
-  if ( !controlSubfield0PermitsMerge(field1, field2) ) { debug(" csf0 failed"); return false; }
-  if ( !controlSubfield1PermitsMerge(field1, field2) ) { debug(" csf1 failed"); return false; }
-  if ( !controlSubfield3PermitsMerge(field1, field2) ) { debug(" csf3 failed"); return false; }
-  if ( !controlSubfield5PermitsMerge(field1, field2) ) { debug(" csf5 failed"); return false; }
-  if ( !controlSubfield6PermitsMerge(field1, field2) ) { debug(" csf6 failed"); return false; }
-  if ( !controlSubfield8PermitsMerge(field1, field2) ) { debug(" csf8 failed"); return false; }
-  if ( !controlSubfield9PermitsMerge(field1, field2) ) { debug(" csf9 failed"); return false; }
+  if (!controlSubfield0PermitsMerge(field1, field2)) {
+    debug(' csf0 failed');
+    return false;
+  }
+  if (!controlSubfield1PermitsMerge(field1, field2)) {
+    debug(' csf1 failed');
+    return false;
+  }
+  if (!controlSubfield3PermitsMerge(field1, field2)) {
+    debug(' csf3 failed');
+    return false;
+  }
+  if (!controlSubfield5PermitsMerge(field1, field2)) {
+    debug(' csf5 failed');
+    return false;
+  }
+  if (!controlSubfield6PermitsMerge(field1, field2)) {
+    debug(' csf6 failed');
+    return false;
+  }
+  if (!controlSubfield8PermitsMerge(field1, field2)) {
+    debug(' csf8 failed');
+    return false;
+  }
+  if (!controlSubfield9PermitsMerge(field1, field2)) {
+    debug(' csf9 failed');
+    return false;
+  }
+
   return true;
 }
 

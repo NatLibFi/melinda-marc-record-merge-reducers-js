@@ -1,4 +1,16 @@
 {
+  "failed": false,
+  "messages": [
+    {
+      "description": "Checks whether the configured fields are present in the record",
+      "messages": [],
+      "state": "valid"
+    },
+    {
+      "description": "Handles invalid ending punctuation",
+      "state": "valid"
+    }
+  ],
   "record": {
     "leader": "01331cam a22003494i 4500",
     "fields": [

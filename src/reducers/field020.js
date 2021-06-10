@@ -53,7 +53,7 @@ function mergeField020(base, baseField, sourceField) {
   // Also "All" is misleading,
   if (compareAllSubfields(baseField, sourceField, idCodes) === false) {
     base.insertField(sourceField);
-    debug('One or more mismatch in subfield(s) (‡'+idCodes.join("/‡")+"). Source field copied as new field to base");
+    debug(`One or more mismatch in subfield(s) (‡${idCodes.join('/‡')}). Source field copied as new field to base`);
     // NV: The original debug message here was not right. If there are multiple codes in idCodes one mismatch is enough to cause failure.
     //     idCodes.forEach(code => debug('One of the subfields (${code}) not matching, source field copied as new field to base`));
     return base; // Base returned in case 1
