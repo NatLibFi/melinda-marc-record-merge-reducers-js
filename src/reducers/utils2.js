@@ -1,9 +1,8 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {
-  // controlSubfieldsPermitMerge,
   fieldHasSubfield,
-  fieldIsRepeatable,
+  // fieldIsRepeatable,
   fieldToString,
   normalizeStringValue
   //normalizeStringValue
@@ -128,14 +127,18 @@ function arePairedSubfieldsInBalance(field1, field2) {
 function namePartThreshold(field) {
   const t = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
   const u = field.subfields.findIndex(currSubfield => currSubfield.code === 'u');
-  if ( t == -1 ) { return u; }
-  if ( u == -1 ) { return t; }
-  return ( t > u ? u : t );
+  if (t === -1) {
+    return u;
+  }
+  if (u === -1) {
+    return t;
+  }
+  return t > u ? u : t;
 }
 
 function fieldToNamePart(field) {
   const index = namePartThreshold(field);
-  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i < index || index == -1 )};
+  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i < index || index === -1)};
   debug(`Name subset: ${fieldToString(subsetField)}`);
   return subsetField;
 }
@@ -180,15 +183,18 @@ function compareNameAndTitle(field1, field2) {
   return false;
 }
 
-export function mergablePair(field1, field2) {
-  // Indicators *must* be equal:
+function indicatorsMatch(field1, field2) {
   if (field1.ind1 !== field2.ind1 || field1.ind2 !== field2.ind2) {
     debug('indicator check failed');
     return false;
   }
+  return true;
+}
 
-  if (!controlSubfieldsPermitMerge(field1, field2)) {
-    debug('control subfield check failed');
+export function mergablePair(field1, field2) {
+  // Indicators *must* be equal:
+  if (!indicatorsMatch(field1, field2) ||
+      !controlSubfieldsPermitMerge(field1, field2)) {
     return false;
   }
 
@@ -223,36 +229,6 @@ function subfieldsAreEqual(field1, field2, subfieldCode) {
   return MarcRecord.isEqual(sfSet1, sfSet2);
 }
 
-function controlSubfield3PermitsMerge(field1, field2) {
-  // Check OK if neither one has $3.
-  // Check fails if one field has $3 and the other one does not
-  if (!fieldHasSubfield(field1, '3')) {
-    return !fieldHasSubfield(field2, '3');
-  }
-  if (!fieldHasSubfield(field2, '3')) {
-    return false;
-  }
-  // Compare $3 subfields. If everything matches, OK, else FAIL:
-  const sf3Field1 = field1.subfields.filter(subfield => subfield.code === '3');
-  const sf3Field2 = field2.subfields.filter(subfield => subfield.code === '3');
-  return MarcRecord.isEqual(sf3Field1, sf3Field2);
-}
-
-function controlSubfield5PermitsMerge(field1, field2) {
-  // Check OK if neither one has $5.
-  // Check fails if one field has $5 and the other one does not
-  if (!fieldHasSubfield(field1, '5')) {
-    return !fieldHasSubfield(field2, '5');
-  }
-  if (!fieldHasSubfield(field2, '5')) {
-    return false;
-  }
-  // Strip $5 subfields. If everything else matches, OK, else FAIL:
-  const sf5lessField1 = field1.subfields.filter(subfield => subfield.code !== '5');
-  const sf5lessField2 = field2.subfields.filter(subfield => subfield.code !== '5');
-  return MarcRecord.isEqual(sf5lessField1, sf5lessField2);
-}
-
 function subfieldsAreEmpty(field1, field2, subfieldCode) {
   if (!fieldHasSubfield(field1, subfieldCode) && !fieldHasSubfield(field2, subfieldCode)) {
     return true;
@@ -261,23 +237,27 @@ function subfieldsAreEmpty(field1, field2, subfieldCode) {
 }
 
 
-
 function controlSubfield6PermitsMerge(field1, field2) {
-  if ( subfieldsAreEmpty(field1, field2, '6') ) {
-      return true;
+  if (subfieldsAreEmpty(field1, field2, '6')) {
+    return true;
   }
-  debug('controlSubfield6PermitsMerge() not properly implemented.');
+  debug(`controlSubfield6PermitsMerge() not properly implemented. FAIL`);
   return false;
 }
 
 
 function controlSubfield9PermitsMerge(field1, field2) {
-  if ( subfieldsAreEmpty(field1, field2, '9') ) {
+  if (subfieldsAreEmpty(field1, field2, '9')) {
     return true;
   }
   const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
-  return MarcRecord.isEqual(sf9lessField1, sf9lessField2);
+  const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2);
+  if (!result) {
+    debug(` control subfield 9 disallows merge`);
+    return false;
+  }
+  return true;
 }
 
 function getPrefix(currSubfield) {
@@ -305,8 +285,6 @@ function prefixIsOK(currSubfield, otherField, subfieldCode) {
   return true;
 }
 
-
-
 function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode) {
   if (!fieldHasSubfield(field1, subfieldCode, null) || !fieldHasSubfield(field2, subfieldCode, null)) {
     return true;
@@ -330,30 +308,25 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
 }
 
 
-
-const controlSubfieldsContainingIdentifier = [ 'w', '0', '1' ];
+const controlSubfieldsContainingIdentifier = ['w', '0', '1'];
 export function controlSubfieldsPermitMerge(field1, field2) {
-  if (!controlSubfieldsContainingIdentifier.every(subfieldCode => { return controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode);}) ) {
+  if (!controlSubfieldsContainingIdentifier.every(subfieldCode => controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode))) {
     debug(' control subfields with identifiers failed');
     return false;
   }
 
-  if ( !subfieldsAreEqual(field1, field2, '3') || !subfieldsAreEqual(field1, field2, '5') ) {
+  if (!subfieldsAreEqual(field1, field2, '3') || !subfieldsAreEqual(field1, field2, '5')) {
     debug(' similar control subfield failes');
     return false;
   }
 
-  if (!controlSubfield6PermitsMerge(field1, field2)) {
-    debug(' csf6 failed');
+  if (!controlSubfield6PermitsMerge(field1, field2) ||
+      !controlSubfield9PermitsMerge(field1, field2)) {
     return false;
   }
   // We don't handle $8 subfields here at all, as they affect multiple fields!
   if (!subfieldsAreEmpty(field1, field2, '8')) {
     debug(' csf8 failed');
-    return false;
-  }
-  if (!controlSubfield9PermitsMerge(field1, field2)) {
-    debug(' csf9 failed');
     return false;
   }
 
