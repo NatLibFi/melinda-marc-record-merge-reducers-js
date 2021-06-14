@@ -8,25 +8,6 @@
       "subfields": [
         {
           "code": "a",
-          "value": "1455-8905"
-        },
-        {
-          "code": "m",
-          "value": "022_m1_source"
-        },
-        {
-          "code": "m",
-          "value": "022_m2_source"
-        }
-      ]
-    },
-    {
-      "tag": "022",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
           "value": "1455-8904"
         },
         {
@@ -44,6 +25,25 @@
         {
           "code": "m",
           "value": "Joku TestiArvo &!Tähän"
+        }
+      ]
+    },
+    {
+      "tag": "022",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "1455-8905"
+        },
+        {
+          "code": "m",
+          "value": "022_m1_source"
+        },
+        {
+          "code": "m",
+          "value": "022_m2_source"
         }
       ]
     },
