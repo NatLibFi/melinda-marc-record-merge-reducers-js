@@ -4,7 +4,8 @@ import {
   fieldHasSubfield,
   fieldIsRepeatable, // SHOULD WE USE THIS FOR SOMETHING?
   fieldToString,
-  normalizeStringValue
+  normalizeStringValue,
+  recordHasField
   //normalizeStringValue
 } from './utils.js';
 
@@ -38,6 +39,7 @@ const mergeRestrictions = [
   {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', 'paired': '', 'key': 'adfhklmnoprsxvg'},
+  {'tag': '240', 'required': 'a', 'key': 'anp'}, // Is 'key' complete? Probably not...
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
@@ -113,7 +115,7 @@ function tagToRegexp(tag) {
     //debug(`regexp for ${tag} found: ${regexp}`);
     return regexp;
   }
-  debug(`WARNING: TagToRegexp(${tag}): no precompiled regexp found.`);
+  // debug(`WARNING: TagToRegexp(${tag}): no precompiled regexp found.`);
   return new RegExp(`^${tag}$`, 'u');
 }
 
@@ -314,16 +316,17 @@ export function mergeField(record, targetField, sourceField) {
   return record;
 }
 
+
+
 function fieldCanBeAdded(record, newField) {
-    // Repeatable fields cause no problems:
-    if ( fieldIsRepeatable(newField.tag) ) {
-        return true;
+    // Non-repeatable field cannot be added, if same tag already exists
+    if ( !fieldIsRepeatable(newField.tag) && recordHasField(record, newField.tag) ) {
+        return false;
     }
-    // If 1st field in record return true (so that it can be added),
-    // otherwise false;
-    const re = new RegExp(`^${newField.tag}$`, 'u');
-    const yeOldeFields = record.get(re);
-    return yeOldeFields.length === 0;
+    if (newField.tag === '240' && recordHasField(record, '130')) {
+        return false;
+    }
+    return true;
 }
 
 function addField(record, field) {
