@@ -413,7 +413,11 @@ export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
   return field;
 }
 
-
+export function recordHasField(record, tag) {
+  const re = new RegExp(`^${tag}$`, 'u');
+  const yeOldeFields = record.get(re);
+  return yeOldeFields.length > 0;
+}
 
 
 
