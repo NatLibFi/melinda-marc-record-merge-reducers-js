@@ -1,20 +1,9 @@
 import createDebugLogger from 'debug';
 
-import {
-  // getNonIdenticalFields,
-  // compareAllSubfields,
-  fieldToString
-  //getRepSubs,
-  //getNonRepSubs,
-  //sortSubfields
-  //makeNewBaseField
-} from './utils.js';
-
 // TODO: test where subfield order neeeds to be reset.
 import {
-  getCounterpart,
-  mergeField
-  //mergablePair
+
+  mergeOrAddField
 } from './mergeField.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -76,19 +65,6 @@ function mergeField020(base, baseField, sourceField) {
   return mergeField020Step2(base, baseField, sourceField);
 }
 */
-
-function mergeOrAddField(record, field) {
-  const counterpartField = getCounterpart(record, field);
-  if (counterpartField) {
-    debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
-    mergeField(record, counterpartField, field);
-    return record;
-  }
-  // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  debug(`No counterpart found for '${fieldToString(field)}'.`);
-  return record.insertField(field);
-}
-
 
 export default () => (record, record2) => {
   const candidateFields = record2.get(fieldTag); // Get array of source fields
