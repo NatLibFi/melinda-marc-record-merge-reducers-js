@@ -10,7 +10,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const excludeSubfieldsFromMerge = [
   {'tag': '020', 'subfields': 'c'},
-  {'tag': '022', 'subfields': 'c'},
+  {'tag': '022' },
   {'tag': '024', 'subfields': 'c'}
 ];
 
@@ -52,12 +52,17 @@ function insertSubfieldAllowed(targetField, candSubfield) {
 
 function listDroppableSubfields(field) {
   const entry = excludeSubfieldsFromMerge.filter(currEntry => field.tag === currEntry.tag);
-  if (entry.length > 0) {
+  if (entry.length > 0 && 'subfields' in entry[0]) {
     debug(`droppables: ${entry[0].subfields}`);
     return entry[0].subfields;
   }
   debug(`NO DROPPABLES FOUND FOR ${field.tag}.`);
   return '';
+}
+
+export function isDroppableSubfield(field, subfieldCode) {
+  const droppings = listDroppableSubfields(field);
+  return droppings.indexOf(subfieldCode) > -1;
 }
 
 // Rename function?
