@@ -1,15 +1,16 @@
 import createDebugLogger from 'debug';
 
 import {
-  getNonIdenticalFields,
-  compareAllSubfields,
-  fieldToString,
-  getRepSubs,
-  getNonRepSubs,
-  sortSubfields,
-  makeNewBaseField
+  // getNonIdenticalFields,
+  // compareAllSubfields,
+  fieldToString
+  //getRepSubs,
+  //getNonRepSubs,
+  //sortSubfields
+  //makeNewBaseField
 } from './utils.js';
 
+// TODO: test where subfield order neeeds to be reset.
 import {
   getCounterpart,
   mergeField
@@ -25,6 +26,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const fieldTag = /^020$/u; // Tag in regexp format (for use in MarcRecord functions)
 
+/*
 // Define repeatable and non-repeatable subfield codes
 const repCodes = ['q', 'z', '8'];
 const nonRepCodes = ['a', 'c', '6'];
@@ -35,7 +37,8 @@ const dropCodes = ['c'];
 
 // These subfield must be equal (after normalization?):
 const idCodes = ['a'];
-
+*/
+/*
 function mergeField020Step2(base, baseField, sourceField) {
   // Copy other subfields from source field to base field.
   // For non-repeatable subfields, the value existing in base is preferred.
@@ -51,7 +54,8 @@ function mergeField020Step2(base, baseField, sourceField) {
   const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], orderFromSource);
   return makeNewBaseField(base, baseField, sortedSubfields);
 }
-
+*/
+/*
 function mergeField020(base, baseField, sourceField) {
   debug(`Working on field 020`);
   // First check whether the values of identifying subfields are equal
@@ -71,6 +75,7 @@ function mergeField020(base, baseField, sourceField) {
 
   return mergeField020Step2(base, baseField, sourceField);
 }
+*/
 
 function mergeOrAddField(record, field) {
   const counterpartField = getCounterpart(record, field);
