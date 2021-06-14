@@ -2,7 +2,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
-  // fieldIsRepeatable,
+  fieldIsRepeatable, // SHOULD WE USE THIS FOR SOMETHING?
   fieldToString,
   normalizeStringValue
   //normalizeStringValue
@@ -13,6 +13,7 @@ import {
 } from './controlSubfields.js';
 
 import {
+  isDroppableSubfield,
   mergeSubfield
 } from './mergeSubfield.js';
 
@@ -306,4 +307,46 @@ export function mergeField(record, targetField, sourceField) {
   });
 
   return record;
+}
+
+function fieldCanBeAdded(record, newField) {
+    // Repeatable fields cause no problems:
+    if ( fieldIsRepeatable(newField.tag) ) {
+        return true;
+    }
+    // If 1st field in record return true (so that it can be added),
+    // otherwise false;
+    const re = new RegExp(`^${field.tag}$`, 'u');
+    const yeOldeFields = record.get(re);
+    return yeOldeFields.length === 0;
+}
+
+function addField(record, field) {
+    if ( !fieldCanBeAdded(record, field) ) {
+        debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
+        return record;
+    }
+
+    const newSubfields = field.subfields.filter(sf => { return !isDroppableSubfield(field, sf.code); });
+    if ( newSubfields.length === 0 ) {
+        return record;
+    }
+    const newField = { 'tag': field.tag,
+        'ind1': field.ind1,
+        'ind2': field.ind2,
+        'subfields': newSubfields };
+    return record.insertField(newField);
+
+}
+
+export function mergeOrAddField(record, field) {
+    const counterpartField = getCounterpart(record, field);
+    if (counterpartField) {
+      debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
+      mergeField(record, counterpartField, field);
+      return record;
+    }
+    // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
+    debug(`No counterpart found for '${fieldToString(field)}'.`);
+    return addField(record, field);
 }
