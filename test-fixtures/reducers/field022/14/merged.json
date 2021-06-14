@@ -17,10 +17,6 @@
         {
           "code": "m",
           "value": "022_m2_source"
-        },
-        {
-          "code": "6",
-          "value": "022_6b_source"
         }
       ]
     },
@@ -48,10 +44,6 @@
         {
           "code": "m",
           "value": "Joku TestiArvo &!Tähän"
-        },
-        {
-          "code": "6",
-          "value": "022_6_source"
         }
       ]
     },
