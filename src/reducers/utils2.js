@@ -168,18 +168,17 @@ function compareTitle(field1, field2) {
 
 function compareNameAndTitle(field1, field2) {
   // Both name and title parts exist:
-  if (fieldHasSubfield(field1, 't') && field1.tag in ['100', '110', '111', '700', '710', '711']) {
-    if (compareName(field1, field2) && compareTitle(field1, field2)) {
-      return true;
-    }
+  if (fieldHasSubfield(field1, 't') && field1.tag in ['100', '110', '111', '700', '710', '711'] && !compareTitle(field1, field2)) {
+    debug(' Unmergable: Title part mismatch.');
     return false;
   }
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
-  if (uniqueKeyMatches(field1, field2)) {
+  if (compareName(field1, field2)) {
     debug('Unique key matches. We are MERGABLE :-)');
     return true;
   }
+  debug('Unmergable: Name part mismatch');
   return false;
 }
 
@@ -188,10 +187,12 @@ function indicatorsMatch(field1, field2) {
     debug('indicator check failed');
     return false;
   }
+  // NB! There are cases where indicator values are, says # and 1, and the define value (here 1) should be used.
+  // However, we do not let them pass yet.
   return true;
 }
 
-export function mergablePair(field1, field2) {
+export function mergablePair(field1, field2, fieldSpecificCallback = null) {
   // Indicators *must* be equal:
   if (!indicatorsMatch(field1, field2) ||
       !controlSubfieldsPermitMerge(field1, field2)) {
@@ -211,7 +212,10 @@ export function mergablePair(field1, field2) {
     return false;
   }
 
-  return compareNameAndTitle(field1, field2);
+  if (!compareNameAndTitle(field1, field2)) {
+    return false;
+  }
+  return fieldSpecificCallback === null || fieldSpecificCallback(field1, field2);
 }
 
 function subfieldsAreEqual(field1, field2, subfieldCode) {
@@ -289,7 +293,7 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
   if (!fieldHasSubfield(field1, subfieldCode, null) || !fieldHasSubfield(field2, subfieldCode, null)) {
     return true;
   }
-  return field1.subfields.every(subfield => {
+  const result = field1.subfields.every(subfield => {
     if (subfield.code !== subfieldCode) {
       return true;
     }
@@ -305,10 +309,15 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
     return prefixIsOK(subfield, field2, subfieldCode);
 
   });
+  if (!result) {
+    debug(`Control subfield '${subfieldCode}' check failed.`);
+    return false;
+  }
+  return true;
 }
 
-
 const controlSubfieldsContainingIdentifier = ['w', '0', '1'];
+
 export function controlSubfieldsPermitMerge(field1, field2) {
   if (!controlSubfieldsContainingIdentifier.every(subfieldCode => controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode))) {
     debug(' control subfields with identifiers failed');
