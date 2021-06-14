@@ -30,6 +30,7 @@ const mergeRestrictions = [
   {'tag': '020', 'required': 'a', 'key': 'a'},
   {'tag': '022', 'required': 'a', 'key': 'a'},
   {'tag': '024', 'required': 'a', 'key': 'a'},
+  {'tag': '042', 'required': 'a'},
 
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
   {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcj'},
@@ -51,6 +52,10 @@ function getUniqueKeyFields2(tag) {
   if (activeTags.length === 0) {
     debug(`Warning\tNo key found for ${tag}`);
     return '';
+  }
+  if (!('key' in activeTags[0])) {
+      debug(`Field ${tag} is missing unique key. Return ''.`);
+      return '';
   }
   if (activeTags.length > 1) {
     debug(`Warning\tMultiple keys (N=${activeTags.length}) found for ${tag}`);
@@ -316,7 +321,7 @@ function fieldCanBeAdded(record, newField) {
     }
     // If 1st field in record return true (so that it can be added),
     // otherwise false;
-    const re = new RegExp(`^${field.tag}$`, 'u');
+    const re = new RegExp(`^${newField.tag}$`, 'u');
     const yeOldeFields = record.get(re);
     return yeOldeFields.length === 0;
 }
