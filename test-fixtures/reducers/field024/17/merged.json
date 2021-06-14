@@ -8,29 +8,6 @@
       "subfields": [
         {
           "code": "a",
-          "value": "FILNM9500118"
-        },
-        {
-          "code": "q",
-          "value": "024_q1_source"
-        },
-        {
-          "code": "q",
-          "value": "024_q2_source"
-        },
-        {
-          "code": "c",
-          "value": "024_cb_source"
-        }
-      ]
-    },
-    {
-      "tag": "024",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
           "value": "FILNM9500119"
         },
         {
@@ -52,6 +29,29 @@
         {
           "code": "c",
           "value": "024_c_source"
+        }
+      ]
+    },
+    {
+      "tag": "024",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "FILNM9500118"
+        },
+        {
+          "code": "q",
+          "value": "024_q1_source"
+        },
+        {
+          "code": "q",
+          "value": "024_q2_source"
+        },
+        {
+          "code": "c",
+          "value": "024_cb_source"
         }
       ]
     },
