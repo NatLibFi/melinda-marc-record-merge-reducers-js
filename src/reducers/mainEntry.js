@@ -2,9 +2,6 @@
 import createDebugLogger from 'debug';
 
 import {
-  controlSubfieldsPermitMerge,
-  fieldHasSubfield,
-  fieldIsRepeatable,
   fieldToString,
   normalizeStringValue
 } from './utils.js';
@@ -13,10 +10,6 @@ import {
   getCounterpart,
   mergeField
 } from './mergeField.js';
-
-import {
-  mergeSubfield
-} from './mergeSubfield.js';
 
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw
