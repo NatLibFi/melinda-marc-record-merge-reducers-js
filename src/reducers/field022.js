@@ -6,8 +6,9 @@ import {
 
 // TODO: test where subfield order neeeds to be reset.
 import {
-  getCounterpart,
-  mergeField
+  // getCounterpart,
+  // mergeField,
+  mergeOrAddField
 } from './mergeField.js';
 /*
 import {
@@ -67,17 +68,7 @@ function mergeField022(base, baseField, sourceField) {
   return mergeField022Step2(base, baseField, sourceField);
 }
 */
-function mergeOrAddField(record, field) {
-  const counterpartField = getCounterpart(record, field);
-  if (counterpartField) {
-    debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
-    mergeField(record, counterpartField, field);
-    return record;
-  }
-  // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  debug(`No counterpart found for '${fieldToString(field)}'.`);
-  return record.insertField(field);
-}
+
 
 
 export default () => (record, record2) => {
