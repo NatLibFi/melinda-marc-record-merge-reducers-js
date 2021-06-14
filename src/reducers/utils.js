@@ -1,4 +1,3 @@
-import {MarcRecord} from '@natlibfi/marc-record';
 import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
 // import {isEqual} from 'lodash';
@@ -102,20 +101,34 @@ export function getNonRepCodes(tag) {
     .filter(sub => sub.repeatable === false)
     .map(sub => sub.code);
 }
+
+function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
+  // These we know or "know":
+  if ("09".indexOf(subfieldCode) > -1 ) {
+    // Uh, can $0 appear on any field?
+    return true;
+  }
+  if ("56".indexOf(subfieldCode) > -1 ) {
+    return false;
+  }
+  
+  const subfieldSpecs = currFieldSpecs.subfields.filter(subfield => subfield.code === subfieldCode);
+  if (subfieldSpecs.length !== 1) {
+    return false; // repeatable if not specified?
+  }
+  return subfieldSpecs[0].repeatable;
+}
+
 export function fieldIsRepeatable(tag, code = null) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
     debug(' OOPS! Getting field data failed!');
     return false;
   }
-  if (!code) {
+  if (!code) { // Field is repeatable:
     return fieldSpecs[0].repeatable;
   }
-  const subfieldSpecs = fieldSpecs[0].subfields.filter(subfield => subfield.code === code);
-  if (subfieldSpecs.length !== 1) {
-    return false;
-  }
-  return subfieldSpecs[0].repeatable;
+  return subfieldIsRepeatable(fieldSpecs[0], code);
 }
 
 // Normalize subfield values for comparison, returns array of normalized subfields
@@ -400,147 +413,9 @@ export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
   return field;
 }
 
-// NVOLK's merge permitters:
 
-function controlSubfield0PermitsMerge(field1, field2) {
-  if (!internalFieldHasSubfield(field1, '0', null) || !internalFieldHasSubfield(field2, '0', null)) {
-    return true;
-  }
-  return field1.subfields.every(sf => {
-    if (sf.code !== '0') {
-      return true;
-    }
-    // NB! Here we assume that value have been normalized beforehand.
-    // Eg. (isni) 0000 1234 5678 0000 vs https://isni.org/isni/0000123456780000
-    // Eg. FIN11 vs FI-ASTERI-N vs kanton uri
 
-    debug(`Compare ‡0 '${sf.value}' with '${fieldToString(field2)}'.`);
-    if (internalFieldHasSubfield(field2, field1.code, field1.value)) {
-      return true;
-    }
 
-    return prefixIsOK(sf, field2);
-
-    function getPrefix(currSubfield) {
-      if (currSubfield.value.match(/^\([^)]+\)[0-9]+$/u)) {
-        return currSubfield.value.substr(0, currSubfield.value.indexOf(')') + 1);
-      }
-      if (currSubfield.value.match(/^https?:/u)) {
-        return currSubfield.value.substr(0, currSubfield.value.lastindexOf('/') + 1);
-      }
-      return null;
-    }
-
-    function prefixIsOK(currSubfield, otherField) {
-      const prefix = getPrefix(currSubfield);
-      if (prefix === null) {
-        return false;
-      }
-      // Look for same prefix + different identifier
-      const hits = otherField.subfields.filter(sf2 => sf2.code === '0' && currSubfield.value !== sf2.value && sf2.value.indexOf(prefix) === 0);
-      if (hits.length > 0) {
-        debug(`Subfield ‡0 check FAILED: ‡0 '${currSubfield.value}' vs ‡0 '${hits[0].value}'.`);
-        return false;
-      }
-      debug(`Subfield ‡0 check OK: ${prefix} not found on ${fieldToString(otherField)}`);
-      return true;
-    }
-
-  });
-}
-
-function controlSubfield1PermitsMerge(field1, field2) {
-  if (!internalFieldHasSubfield(field1, '1', null) && !internalFieldHasSubfield(field2, '1', null)) {
-    return true;
-  }
-  // Same result, but log:
-  debug(`NB: controlSubfield1PermitsMerge() not implemented yet. Always succeeds!`);
-  return true;
-}
-
-function controlSubfield3PermitsMerge(field1, field2) {
-  // Check OK if neither one has $3.
-  // Check fails if one field has $3 and the other one does not
-  if (!internalFieldHasSubfield(field1, '3')) {
-    return !internalFieldHasSubfield(field2, '3');
-  }
-  if (!internalFieldHasSubfield(field2, '3')) {
-    return false;
-  }
-  // Compare $3 subfields. If everything matches, OK, else FAIL:
-  const sf3Field1 = field1.subfields.filter(subfield => subfield.code === '3');
-  const sf3Field2 = field2.subfields.filter(subfield => subfield.code === '3');
-  return MarcRecord.isEqual(sf3Field1, sf3Field2);
-}
-
-function controlSubfield5PermitsMerge(field1, field2) {
-  // Check OK if neither one has $5.
-  // Check fails if one field has $5 and the other one does not
-  if (!fieldHasSubfield(field1, '5')) {
-    return !fieldHasSubfield(field2, '5');
-  }
-  if (!fieldHasSubfield(field2, '5')) {
-    return false;
-  }
-  // Strip $5 subfields. If everything else matches, OK, else FAIL:
-  const sf5lessField1 = field1.subfields.filter(subfield => subfield.code !== '5');
-  const sf5lessField2 = field2.subfields.filter(subfield => subfield.code !== '5');
-  return MarcRecord.isEqual(sf5lessField1, sf5lessField2);
-}
-
-function controlSubfield6PermitsMerge(field1, field2) {
-  if (!internalFieldHasSubfield(field1, '6') && !internalFieldHasSubfield(field2, '6')) {
-    return true;
-  }
-  debug('controlSubfield6PermitsMerge() not properly implemented.');
-  return false;
-}
-
-function controlSubfield8PermitsMerge(field1, field2) {
-  return !internalFieldHasSubfield(field1, '8') && !internalFieldHasSubfield(field2, '8');
-}
-
-function controlSubfield9PermitsMerge(field1, field2) {
-  if (!fieldHasSubfield(field1, '9') && !fieldHasSubfield(field2, '9')) {
-    return true;
-  }
-  const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
-  const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
-  return MarcRecord.isEqual(sf9lessField1, sf9lessField2);
-}
-
-export function controlSubfieldsPermitMerge(field1, field2) {
-  if (!controlSubfield0PermitsMerge(field1, field2)) {
-    debug(' csf0 failed');
-    return false;
-  }
-  if (!controlSubfield1PermitsMerge(field1, field2)) {
-    debug(' csf1 failed');
-    return false;
-  }
-  if (!controlSubfield3PermitsMerge(field1, field2)) {
-    debug(' csf3 failed');
-    return false;
-  }
-  if (!controlSubfield5PermitsMerge(field1, field2)) {
-    debug(' csf5 failed');
-    return false;
-  }
-  if (!controlSubfield6PermitsMerge(field1, field2)) {
-    debug(' csf6 failed');
-    return false;
-  }
-  if (!controlSubfield8PermitsMerge(field1, field2)) {
-    debug(' csf8 failed');
-    return false;
-  }
-  if (!controlSubfield9PermitsMerge(field1, field2)) {
-    debug(' csf9 failed');
-    return false;
-  }
-
-  return true;
-}
 
 // should this go to marc_record
 export function recordReplaceField(record, originalField, newField) {
