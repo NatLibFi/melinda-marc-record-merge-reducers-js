@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-
+import { mergeOrAddField } from './mergeField.js';
 import {
   getNonIdenticalFields,
   getRepSubs,
@@ -16,6 +16,13 @@ const fieldTag = /^042$/u; // Tag in regexp format (for use in MarcRecord functi
 // 042 has only one subfield, $a, which is repeatable
 const repCodes = ['a'];
 
+export default () => (record, record2) => {
+  const candidateFields = record2.get(fieldTag); // Get array of source fields
+  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  return record;
+};
+
+/*
 export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
@@ -52,3 +59,4 @@ export default () => (base, source) => {
     return makeNewBaseField(base, baseField, sortedSubfields);
   }
 };
+*/
