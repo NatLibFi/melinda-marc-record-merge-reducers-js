@@ -9,11 +9,11 @@ import {
 } from './utils.js';
 
 import {
-    controlSubfieldsPermitMerge
+  controlSubfieldsPermitMerge
 } from './controlSubfields.js';
 
 import {
-    mergeSubfield
+  mergeSubfield
 } from './mergeSubfield.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -26,10 +26,10 @@ const counterpartRegexps = {
 
 // "paired" refers to a field that must either exist in both or be absent in both. Typically it's an empty string.
 const mergeRestrictions = [
-    {'tag': '020', 'required': 'a', 'key': 'a'},
-    {'tag': '022', 'required': 'a', 'key': 'a'},
-    {'tag': '024', 'required': 'a', 'key': 'a'},
-    
+  {'tag': '020', 'required': 'a', 'key': 'a'},
+  {'tag': '022', 'required': 'a', 'key': 'a'},
+  {'tag': '024', 'required': 'a', 'key': 'a'},
+
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
   {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
@@ -89,9 +89,9 @@ function uniqueKeyMatches(field1, field2, forcedKeyString = null) {
       const normSubfieldValue = normalizeStringValue(sf.value);
       return subfields2.some(sf2 => {
         const normSubfieldValue2 = normalizeStringValue(sf2.value);
-        if ( normSubfieldValue === normSubfieldValue2 ) {
-            debug(`paired ${normSubfieldValue}`);
-            return true;
+        if (normSubfieldValue === normSubfieldValue2) {
+          debug(`paired ${normSubfieldValue}`);
+          return true;
         }
         debug(`failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
         return false;
@@ -123,7 +123,7 @@ function mergeGetRequiredSubfieldCodes(tag) {
     debug(`Warning\tNo merge subfield rules found for ${tag}`);
     return '';
   }
-  if ( !('required' in activeTags[0]) ) {
+  if (!('required' in activeTags[0])) {
     return '';
   }
   if (activeTags.length > 1) {
@@ -140,7 +140,7 @@ function mergeGetPairedSubfieldCodes(tag) {
     debug(`Warning\tNo merge subfield rules found for ${tag}`);
     return '';
   }
-  if ( !('paired' in activeTags[0]) ) {
+  if (!('paired' in activeTags[0])) {
     return '';
   }
   if (activeTags.length > 1) {
@@ -229,8 +229,8 @@ function compareNameAndTitle(field1, field2) {
 
 function namePartThreshold(field) {
   // Threshold is only applicaple to some tags..
-  if ( !(/[10]0$/u).test(field.tag) ) {
-      return -1;
+  if (!(/[10]0$/u).test(field.tag)) {
+    return -1;
   }
   const t = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
   const u = field.subfields.findIndex(currSubfield => currSubfield.code === 'u');
@@ -246,7 +246,7 @@ function namePartThreshold(field) {
 function fieldToNamePart(field) {
   const index = namePartThreshold(field);
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i < index || index === -1)};
- 
+
   debug(`Name subset: ${fieldToString(subsetField)}`);
   return subsetField;
 }
@@ -295,7 +295,7 @@ export function getCounterpart(record, field) {
   return null;
 }
 
-export function mergeField(record, targetField, sourceField) {  
+export function mergeField(record, targetField, sourceField) {
   sourceField.subfields.forEach(candSubfield => {
     debug(`  CAND4ADDING '‡${candSubfield.code} ${candSubfield.value}'`);
     mergeSubfield(record, targetField, candSubfield);

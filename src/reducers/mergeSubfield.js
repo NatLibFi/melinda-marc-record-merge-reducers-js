@@ -51,12 +51,12 @@ function insertSubfieldAllowed(targetField, candSubfield) {
 }
 
 function listDroppableSubfields(field) {
-  const entry = excludeSubfieldsFromMerge.filter(currEntry => field.tag === currEntry.tag );
-  if ( entry.length > 0 ) {
-    debug(`droppables: ${entry[0].subfields}`)
+  const entry = excludeSubfieldsFromMerge.filter(currEntry => field.tag === currEntry.tag);
+  if (entry.length > 0) {
+    debug(`droppables: ${entry[0].subfields}`);
     return entry[0].subfields;
   }
-  debug(`NO DROPPABLES FOUND FOR ${field.tag}.`)
+  debug(`NO DROPPABLES FOUND FOR ${field.tag}.`);
   return '';
 }
 
@@ -70,10 +70,10 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
   }
   // Hey! We don't want this subfield:
   const droppableSubfieldsAsString = listDroppableSubfields(targetField);
-  if ( droppableSubfieldsAsString.includes(candSubfield.code) ) {
+  if (droppableSubfieldsAsString.includes(candSubfield.code)) {
     return true;
   }
-  
+
   return false;
 }
 
