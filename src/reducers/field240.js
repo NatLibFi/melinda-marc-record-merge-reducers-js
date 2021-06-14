@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
-
+import { mergeOrAddField } from './mergeField.js';
 import {
-  getNonIdenticalFields, copyFields, selectLongerField
+  getNonIdenticalFields, copyFields, selectLongerField, sortSubfields
 } from './utils.js';
 
 //### 240-kenttä tuodaan ei-preferoitavasta tietueesta vain, jos preferoitavassa tietueessa ei ole 240-kenttää tai 130-kenttää.
@@ -29,6 +29,25 @@ function mergeField240(base, baseFields, sourceFields) {
   return base;
 }
 
+const sortOrder = [ 'a', 'm', 'n', 'p', 's', 'l', '2', '0', '1' ];
+export default () => (record, record2) => {
+  const candidateFields = record2.get(fieldTag); // Get array of source fields
+  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+
+  record.fields.forEach((sf, index) => {
+    if ( sf.tag === '240' ) {
+      // Can be simplified (I guess):
+      // Should this be relocated and done to every (merged) field?
+      const sortedSubfields = sortSubfields(sf.subfields, sortOrder);
+      debug("TRY TO SORT 240...");
+      record.fields[index].subfields = sortedSubfields;
+      return;
+    }
+  });
+  return record;
+};
+
+/*
 export default () => (base, source) => {
   // Test 34: If base contains field 130, keep base 240 (no need to even look at source)
   // NV: moved this up for faster processing
@@ -53,3 +72,4 @@ export default () => (base, source) => {
   return mergeField240(base, baseFields, sourceFields);
 
 };
+*/
