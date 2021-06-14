@@ -17,10 +17,6 @@
         {
           "code": "q",
           "value": "020_q2_source"
-        },
-        {
-          "code": "6",
-          "value": "020_6b_source"
         }
       ]
     },
@@ -48,10 +44,6 @@
         {
           "code": "c",
           "value": "10 €"
-        },
-        {
-          "code": "6",
-          "value": "020_6_source"
         }
       ]
     },
