@@ -28,25 +28,28 @@
 
 /* eslint-disable new-cap */
 import validateFactory from '@natlibfi/marc-record-validate';
+//import validateFactoryPunctuation from '@natlibfi/marc-record-validators-melinda/src/punctuation/';
 import {
   //FieldExclusion,
   //FieldStructure,
   FieldsPresent,
+  Punctuation
   //EmptyFields,
-  EndingPunctuation
+  //EndingPunctuation
   //IsbnIssn,
   //SubfieldExclusion
 } from '@natlibfi/marc-record-validators-melinda';
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 
 // ### Kopioitu täältä: https://github.com/NatLibFi/melinda-record-import-transformer-helmet
 // ### Muokkaa vielä oikeat validaattorit mergeä varten
 export default async () => {
-  //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  //debug(`### Miksi tämä ei tule näkyviin?`);
+  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+  debug(`### testing`);
   const validate = validateFactory([
     await FieldsPresent([/^100$/u]),
-    await EndingPunctuation()
+    await Punctuation()
+    //await EndingPunctuation()
     //await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]),
     //await FieldsPresent([/^336$/, /^337$/, /^338$/]),
     /*
@@ -63,10 +66,12 @@ export default async () => {
     await FieldStructure([{tag: /^007$/, dependencies: [{leader: /^.{6}[^at]/}]}]),
     await EndingPunctuation() */
   ]);
+//  const validatePunctuation = await validateFactoryPunctuation();
 
   return async (record, fix, validateFixes) => {
     const opts = fix ? {fix, validateFixes} : {fix};
     const result = await validate(record, opts);
+    //const result = await validatePunctuation(prevalidated.record, opts);
     return {
       record: result.record,
       failed: result.valid === false,

@@ -7,8 +7,8 @@
       "state": "valid"
     },
     {
-      "description": "Handles invalid ending punctuation",
-      "state": "valid"
+      "description": "Fixes punctuation of fields",
+      "state": "fixed"
     }
   ],
   "record": {
