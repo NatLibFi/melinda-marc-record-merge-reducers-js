@@ -10,8 +10,17 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const excludeSubfieldsFromMerge = [
   {'tag': '020', 'subfields': 'c'},
-  {'tag': '022' },
+  {'tag': '022'},
   {'tag': '024', 'subfields': 'c'}
+];
+
+// Used by our very own hacky bottomUpSortSubfields(). Features:
+// - Swap only sort adjacent pairs.
+// - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of $t...
+const subfieldSortOrder = [
+  {'tag': '040', 'sortOrder': 'abced'},
+  {'tag': '100', 'sortOrder': 'abcde059'},
+  {'tag': '240', 'sortOrder': 'amnpsl20159'}
 ];
 
 const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
@@ -56,7 +65,7 @@ function listDroppableSubfields(field) {
     debug(`droppables: ${entry[0].subfields}`);
     return entry[0].subfields;
   }
-  debug(`NO DROPPABLES FOUND FOR ${field.tag}.`);
+  //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${field.tag}.`);
   return '';
 }
 
@@ -82,6 +91,50 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
   return false;
 }
 
+function getSubfieldSortOrder(field) {
+  const entry = subfieldSortOrder.filter(currEntry => field.tag === currEntry.tag);
+  if (entry.length > 0 && 'sortOrder' in entry[0]) {
+    debug(`sort order for ${field.tag}: ${entry[0].sortOrder}`);
+    return entry[0].sortOrder;
+  }
+  //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${field.tag}.`);
+  return '';
+}
+
+// Now this gets ugly here lintwise...
+function swapSubfields(field, sortOrder) {
+  return field.subfields.some((sf, index) => {
+    if (index === 0) {
+      return false;
+    }
+    const currPos = sortOrder.indexOf(sf.code);
+    const prevPos = sortOrder.indexOf(field.subfields[index - 1].code);
+    if (currPos === -1 || prevPos === -1 || currPos >= prevPos) {
+      return false;
+    }
+    // Swap:
+    const tmp = field.subfields[index - 1];
+    field.subfields[index - 1] = sf; // eslint-disable-line functional/immutable-data
+    field.subfields[index] = tmp; // eslint-disable-line functional/immutable-data
+    return true;
+  });
+}
+
+function bottomUpSortSubfields(field) {
+  // Features:
+  // - Swap only sort adjacent pairs.
+  // - No sorting over unlisted subfield codes
+  const sortOrder = getSubfieldSortOrder(field);
+  if (sortOrder === null) {
+    return field;
+  }
+  // I just love my own ugly {} hacks...
+  while (swapSubfields(field, sortOrder)) {} // eslint-disable-line functional/no-loop-statement
+
+  return field;
+}
+
+
 export function mergeSubfield(record, targetField, candSubfield) {
   const str = `${candSubfield.code} ${candSubfield.value}`;
   if (mergeSubfieldNotRequired(targetField, candSubfield)) {
@@ -93,6 +146,8 @@ export function mergeSubfield(record, targetField, candSubfield) {
     debug(` Added subfield ‡'${str}' to field`);
     // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
     targetField.subfields.push(JSON.parse(JSON.stringify(candSubfield))); // eslint-disable-line functional/immutable-data
+
+    bottomUpSortSubfields(targetField);
     return;
   }
   if (replaceSubfield(targetField, candSubfield)) {
