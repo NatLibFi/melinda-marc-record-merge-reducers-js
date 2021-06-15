@@ -3,6 +3,7 @@ import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
   fieldIsRepeatable, // SHOULD WE USE THIS FOR SOMETHING?
+  fieldRenameSubfieldCodes,
   fieldToString,
   normalizeStringValue,
   recordHasField
@@ -12,6 +13,7 @@ import {
 import { controlSubfieldsPermitMerge } from './controlSubfields.js';
 
 import {
+  bottomUpSortSubfields,
   isDroppableSubfield,
   mergeSubfield
 } from './mergeSubfield.js';
@@ -28,14 +30,16 @@ const mergeRestrictions = [
   {'tag': '020', 'required': 'a', 'key': 'a'},
   {'tag': '022', 'required': 'a', 'key': 'a'},
   {'tag': '024', 'required': 'a', 'key': 'a'},
+  {'tag': '040', 'required': '', 'key': ''},
   {'tag': '042', 'required': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
   {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
   {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
   // NB! 130 has no name part, key is used for title part
-  {'tag': '130', 'required': 'a', 'paired': '', 'key': 'adfhklmnoprsxvg'},
+  {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '240', 'required': 'a', 'key': 'anp'}, // Is 'key' complete? Probably not...
+  {'tag': '245', 'required': 'a' }, // 'paired': 'abnp', 'key': 'abnp'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
@@ -171,8 +175,14 @@ function arePairedSubfieldsInBalance(field1, field2) {
 
 
 function indicatorsMatch(field1, field2) {
-  if (field1.ind1 !== field2.ind1 || field1.ind2 !== field2.ind2) {
-    debug('indicator check failed');
+  // The value of 245 IND1 depends on other fields, and those field might diffent from Melinda and incoming record:
+  if (field1.ind1 !== field2.ind1 && !['245'].includes(field1.tag)) {
+    debug('indicator 1 check failed');
+    return false;
+  }
+  // "ohitusindikaattori" difference does not trigger failure:
+  if ( field1.ind2 !== field2.ind2 && !['240', '243', '245'].includes(field1.tag)) {
+    debug('indicator 1 check failed');
     return false;
   }
   // NB! There are cases where indicator values are, says # and 1, and the define value (here 1) should be used.
@@ -319,12 +329,17 @@ function fieldCanBeAdded(record, newField) {
     return false;
   }
   // Hacky hacks:
+  if (newField.tag === '040') {
+    fieldRenameSubfieldCodes(newField, 'a', 'd');
+    return true;
+  }
   if (newField.tag === '240' && recordHasField(record, '130')) {
     return false;
   }
   if (newField.tag === '830' && !fieldHasSubfield(newField, 'x')) {
     return false;
   }
+
   return true;
 }
 
@@ -342,7 +357,7 @@ function addField(record, field) {
     'ind1': field.ind1,
     'ind2': field.ind2,
     'subfields': newSubfields};
-  return record.insertField(newField);
+  return record.insertField(bottomUpSortSubfields(newField));
 }
 
 export function mergeOrAddField(record, field) {
