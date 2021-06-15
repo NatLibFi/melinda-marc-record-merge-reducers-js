@@ -1,8 +1,12 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
+/*
 import {
-  fieldToString,
-  getNonIdenticalFields //, mapDatafield, recordReplaceField
+  fieldToString //, getNonIdenticalFields, mapDatafield, recordReplaceField
 } from './utils.js';
+*/
+import {
+  mergeOrAddField
+} from './mergeField.js';
 
 // Test 22: Base has no 830, source has 830 with $x => copy source 830 to base (2x)
 // Test 23: Base does not have source, append source to base + keep existing.
@@ -12,9 +16,10 @@ import {
 // Test 27: Identical 830 in base and source => keep base
 // Test 28: Source has longer 830 but no $x => keep base
 // Test 29: 2x identical 830 fields in source and base in different order => keep both base fields
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const fieldTag = /^830$/u; // Tag in regexp format (for use in MarcRecord functions)
 
+/*
 function conditionallyCopyField(record, field) {
   // If base has no 830, source 830 is copied if it has $x (Test 22)
   debug(` inspect "${fieldToString(field)}"`);
@@ -33,7 +38,14 @@ function conditionallyCopyFields(record, candFields) {
   candFields.forEach(field => conditionallyCopyField(record, field));
   return record;
 }
+*/
+export default () => (record, record2) => {
+  const candidateFields = record2.get(fieldTag); // Get array of source fields
+  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  return record;
+};
 
+/*
 export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
@@ -41,3 +53,4 @@ export default () => (base, source) => {
   const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
   return conditionallyCopyFields(base, nonIdenticalFields);
 };
+*/
