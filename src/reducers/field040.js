@@ -1,4 +1,5 @@
 import createDebugLogger from 'debug';
+import {mergeOrAddField} from './mergeField.js';
 
 import {
   getNonIdenticalFields,
@@ -17,11 +18,20 @@ const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 
 // Test 18: Copy new field from source to base record (case 1)
 // Note: Test 18 base has a dummy 010 field because if fields=[], it is not a valid MarcRecord
-// Test 19: Copy subfields from source field to base field (case 2)
-
+// Test 19: Copy subfields from source field to base field (case 2), NB! has noisy $x field. Should we take or drop it?
+// Test 19b: 040 "$a FOO $d BAR" vs 040 "$a BAR $d FOO":
+// Test 19c: Transfer source's 040$a to 040$d
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const fieldTag = /^040$/u; // Tag in regexp format (for use in MarcRecord functions)
 
+
+export default () => (record, record2) => {
+  const candidateFields = record2.get(fieldTag); // Get array of source fields
+  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  return record;
+};
+
+/*
 export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
@@ -83,3 +93,5 @@ export default () => (base, source) => {
 
   }
 };
+
+*/
