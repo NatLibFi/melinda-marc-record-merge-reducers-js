@@ -131,7 +131,7 @@ function acceptEntrySubfieldD(field, candSubfield) {
     birthYearsAgree(relevantSubfields[0], candSubfield) && deathYearsAgree(relevantSubfields[0], candSubfield);
 }
 
-function acceptEntrySubfield(field, candSubfield, index) { // Accept X00 and X10 equality
+function acceptEntrySubfield(field, candSubfield/*, index*/) { // Accept X00 and X10 equality
   // semantic check
   if (candSubfield.code === 'a') {
     return acceptEntrySubfieldA(field, candSubfield);
@@ -156,7 +156,7 @@ function insertField7XX(record, field) {
   return record;
 }
 
-function mergeOrAddField(record, field) {
+function localMergeOrAddField(record, field) {
   const counterpartField = getCounterpart(record, field);
   if (counterpartField) {
     debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
@@ -171,6 +171,6 @@ function mergeOrAddField(record, field) {
 
 export default () => (record, record2) => {
   const candidateFields = record2.get(fieldTag); // Get array of source fields
-  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  candidateFields.forEach(candField => localMergeOrAddField(record, candField));
   return record;
 };
