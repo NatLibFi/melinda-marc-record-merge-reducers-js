@@ -11,6 +11,17 @@
           "value": "Tuisku, Sara."
         }
       ]
+    },
+    {
+      "tag": "710",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Helsingin yliopisto."
+        }
+      ]
     }
   ]
 }

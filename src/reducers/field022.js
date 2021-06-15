@@ -1,6 +1,17 @@
 import createDebugLogger from 'debug';
 
 import {
+  fieldToString
+} from './utils.js';
+
+// TODO: test where subfield order neeeds to be reset.
+import {
+  // getCounterpart,
+  // mergeField,
+  mergeOrAddField
+} from './mergeField.js';
+/*
+import {
   getNonIdenticalFields,
   compareAllSubfields,
   getRepSubs,
@@ -8,14 +19,17 @@ import {
   sortSubfields,
   makeNewBaseField
 } from './utils.js';
+*/
 
 // Test 12: Copy new field from source to base record (case 1) (2x)
 // Test 13: Copy subfields from source field to base field (case 2)
 // Test 14: Both cases in the same record: copy a new field (case 1) and add subfields to an existing field (case 2)
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-const fieldTag = /^022$/u; // Tag in regexp format (for use in MarcRecord functions)
 
+
+const fieldTag = /^022$/u; // Tag in regexp format (for use in MarcRecord functions)
+/*
 // Define repeatable and non-repeatable subfield codes
 const repCodes = ['m', 'y', 'z', '8'];
 const nonRepCodes = ['a', 'l', '2', '6'];
@@ -53,7 +67,17 @@ function mergeField022(base, baseField, sourceField) {
 
   return mergeField022Step2(base, baseField, sourceField);
 }
+*/
 
+
+
+export default () => (record, record2) => {
+  const candidateFields = record2.get(fieldTag); // Get array of source fields
+  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  return record;
+};
+
+/*
 export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
@@ -70,3 +94,4 @@ export default () => (base, source) => {
     return base;
   }
 };
+*/

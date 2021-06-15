@@ -1,13 +1,12 @@
 import createDebugLogger from 'debug';
 
+// TODO: test where subfield order neeeds to be reset.
 import {
-  getNonIdenticalFields,
-  compareAllSubfields,
-  getRepSubs,
-  getNonRepSubs,
-  sortSubfields,
-  makeNewBaseField
-} from './utils.js';
+
+  mergeOrAddField
+} from './mergeField.js';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // Test 09: Copy new field from source to base record (case 1) (2x)
 // Test 10: Copy subfields from source field to base field (case 2)
@@ -15,8 +14,8 @@ import {
 // Test 11: Both cases in the same record: copy a new field (case 1) and add subfields to an existing field (case 2)
 
 const fieldTag = /^020$/u; // Tag in regexp format (for use in MarcRecord functions)
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
+/*
 // Define repeatable and non-repeatable subfield codes
 const repCodes = ['q', 'z', '8'];
 const nonRepCodes = ['a', 'c', '6'];
@@ -27,7 +26,8 @@ const dropCodes = ['c'];
 
 // These subfield must be equal (after normalization?):
 const idCodes = ['a'];
-
+*/
+/*
 function mergeField020Step2(base, baseField, sourceField) {
   // Copy other subfields from source field to base field.
   // For non-repeatable subfields, the value existing in base is preferred.
@@ -43,7 +43,8 @@ function mergeField020Step2(base, baseField, sourceField) {
   const sortedSubfields = sortSubfields([...baseField.subfields, ...nonRepSubsToCopy, ...repSubsToCopy], orderFromSource);
   return makeNewBaseField(base, baseField, sortedSubfields);
 }
-
+*/
+/*
 function mergeField020(base, baseField, sourceField) {
   debug(`Working on field 020`);
   // First check whether the values of identifying subfields are equal
@@ -63,7 +64,15 @@ function mergeField020(base, baseField, sourceField) {
 
   return mergeField020Step2(base, baseField, sourceField);
 }
+*/
 
+export default () => (record, record2) => {
+  const candidateFields = record2.get(fieldTag); // Get array of source fields
+  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  return record;
+};
+
+/*
 export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
@@ -81,3 +90,4 @@ export default () => (base, source) => {
   return base;
 
 };
+*/

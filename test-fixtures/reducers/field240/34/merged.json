@@ -22,6 +22,10 @@
           "value": "Seitsemän veljestä"
         },
         {
+          "code": "s",
+          "value": "Lastenversio"
+        },
+        {
           "code": "l",
           "value": "ruotsi"
         }
