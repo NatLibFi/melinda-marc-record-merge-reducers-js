@@ -1,4 +1,4 @@
-import { mergeOrAddField } from './mergeField.js';
+import {mergeOrAddField} from './mergeField.js';
 
 // Test 15: Copy new field from source to base record (case 1) (2x)
 // Test 16: Copy subfields from source field to base field (case 2)
@@ -53,6 +53,7 @@ export default () => (record, record2) => {
   candidateFields.forEach(candField => mergeOrAddField(record, candField));
   return record;
 };
+
 /*
 export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
