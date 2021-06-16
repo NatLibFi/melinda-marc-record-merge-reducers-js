@@ -2,18 +2,22 @@ import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
   fieldIsRepeatable,
-  fieldToString,
-  normalizeStringValue,
+  normalizeStringValue
 } from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const excludeSubfieldsFromMerge = [
   {'tag': '020', 'subfields': 'c'},
-  {'tag': '022'},
+  // {'tag': '022'},
   {'tag': '024', 'subfields': 'c'}
 ];
 
+const includeSubfields = [
+  {'tag' : '040', 'subfields': 'abcde68' }
+];
+
+//
 // Used by our very own hacky bottomUpSortSubfields(). Features:
 // - Swap only sort adjacent pairs.
 // - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of $t...
@@ -33,20 +37,25 @@ function replaceSubfield(targetField, candSubfield) {
   // Thus, typically this function fails...
   const relevantSubfields = targetField.subfields.filter(subfield => subfield.code === candSubfield.code);
   debug(`Got ${relevantSubfields.length} sf-cands for field ${targetField.tag}`);
+  if (relevantSubfields.length === 0) { // Can't replace anything, can I...
+    return false;
+  }
 
   // Handle X100$d: add death year, if original value only contains birth year:
-  if (candSubfield.code === 'd' && /* debug("WP000") && */ (/00$/u).test(targetField.tag) && relevantSubfields.length === 1 &&
-    onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value)) {
+  if (candSubfield.code === 'd' && /* debug("WP000") && */ (/00$/u).test(targetField.tag) &&
+      onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) &&
+      // *Rather hackily* compare the start of the string to determinen that start years are identical(-ish)
+      relevantSubfields[0].value.substring(0, 4) === candSubfield.value.substring(0, 4)) {
     relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
-
     return true;
   }
   return false;
 }
 
-function OkToInsertTagCode(tag, code) {
-  if ( tag === '040' && code === 'a') {
+function okToInsertTagCode(tag, code) {
+  if (tag === '040' && code === 'a') {
     // This is not allowed as such. It should be 040$d by now...
+    // NB: check this...
     return false;
   }
   return true;
@@ -56,7 +65,7 @@ function insertSubfieldAllowed(targetField, candSubfield) {
   // NB! If insert is not allowed, the candicate subfield can still replace the original. (Not handled by this function though.)
 
   // Subfield codes missing from the original record can be added by defautl:
-  if (!fieldHasSubfield(targetField, candSubfield.code) && OkToInsertTagCode(targetField.tag, candSubfield.code)) { 
+  if (!fieldHasSubfield(targetField, candSubfield.code) && okToInsertTagCode(targetField.tag, candSubfield.code)) {
     return true;
   }
 
@@ -65,46 +74,79 @@ function insertSubfieldAllowed(targetField, candSubfield) {
     return true;
   }
 
-  debug(`No rule to add '‡${candSubfield.code} ${candSubfield.value}' to '${fieldToString(targetField)}'`);
+
   return false;
 }
 
-function listDroppableSubfields(field) {
-  const entry = excludeSubfieldsFromMerge.filter(currEntry => field.tag === currEntry.tag);
+
+
+function listSubfieldsWorthKeeping(tag) {
+  const entry = includeSubfields.filter(currEntry => tag === currEntry.tag);
+  if (entry.length > 0 && 'subfields' in entry[0]) {
+    debug(`keptables: ${entry[0].subfields}`);
+    return entry[0].subfields;
+  }
+  //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${tag}.`);
+  return '';
+}
+
+function isKeptableSubfield(tag, subfieldCode) {
+  const listOfSubfieldsAsString = listSubfieldsWorthKeeping(tag);
+  // If nothing is listed, evertything is good:
+  if ( listOfSubfieldsAsString === '' ) {
+    return true;
+  }
+  return listOfSubfieldsAsString.indexOf(subfieldCode) > -1;
+}
+
+function listDroppableSubfields(tag) {
+  const entry = excludeSubfieldsFromMerge.filter(currEntry => tag === currEntry.tag);
   if (entry.length > 0 && 'subfields' in entry[0]) {
     debug(`droppables: ${entry[0].subfields}`);
     return entry[0].subfields;
   }
-  //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${field.tag}.`);
+  //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${tag}.`);
   return '';
 }
 
-export function isDroppableSubfield(field, subfieldCode) {
-  const droppings = listDroppableSubfields(field);
+function isDroppableSubfield(tag, subfieldCode) {
+  const droppings = listDroppableSubfields(tag);
   return droppings.indexOf(subfieldCode) > -1;
 }
 
-// Rename function?
+function isSubfieldGood(tag, subfieldCode) {
+  if ( isDroppableSubfield(tag, subfieldCode) ) {
+    debug(`BAD SF: ${tag}\$${subfieldCode} is droppable.`);
+    return false;
+  }
+  if ( !isKeptableSubfield(tag, subfieldCode) ) {
+    debug(`BAD SF: ${tag}\$${subfieldCode} is unkeptable.`);
+    return false;
+  }
+  return true;
+}
+
+export function isSubfieldGoodForMerge(tag, subfieldCode) {
+  return isSubfieldGood(tag, subfieldCode);
+}
+
+// Rename function? Should this function be moved to mergeSubfield.js?
 function mergeSubfieldNotRequired(targetField, candSubfield) {
   const targetSubfieldsAsStrings = targetField.subfields.map(sf => sf.code + normalizeStringValue(sf.value));
   const cand = candSubfield.code + normalizeStringValue(candSubfield.value);
   if (targetSubfieldsAsStrings.some(existingValue => cand === existingValue)) {
-    // Subfield exists. Do nothing
+    // Subfield with identical normalized valueexists. Do nothing
     return true;
   }
   if (targetField.tag === '040' && candSubfield.code === 'd' &&
-    targetSubfieldsAsStrings.some(existingValue => ('a'+ cand.substring(1)) === existingValue) ) {
-      debug("040$d matched 040$a");
-      return true;
-  }
-
-  // Hey! We don't want this subfield:
-  const droppableSubfieldsAsString = listDroppableSubfields(targetField);
-  if (droppableSubfieldsAsString.includes(candSubfield.code)) {
+    targetSubfieldsAsStrings.some(existingValue => `a${cand.substring(1)}` === existingValue)) {
+    debug('040$d matched 040$a');
     return true;
   }
 
-  return false;
+  // Check whether we really want this subfield:
+  return !isSubfieldGood(targetField.tag, candSubfield.code);
+
 }
 
 function getSubfieldSortOrder(field) {
@@ -167,10 +209,6 @@ export function mergeSubfield(record, targetField, originalCandSubfield) {
   if (mergeSubfieldNotRequired(targetField, candSubfield)) {
     debug(`    No need to add '‡${candSubfield.code} ${candSubfield.value}'`);
     return;
-  }
-
-  if ( targetField.tag === '040' && candSubfield.code === 'a' ) {
-
   }
 
   const str = `${candSubfield.code} ${candSubfield.value}`;
