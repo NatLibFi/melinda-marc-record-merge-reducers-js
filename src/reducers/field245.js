@@ -1,4 +1,6 @@
 import {mergeOrAddField} from './mergeField.js';
+
+/*
 import createDebugLogger from 'debug';
 
 import {
@@ -10,6 +12,7 @@ import {
 // Test 33: Same number of subfields (but different content) => keep base
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+*/
 const fieldTag = /^245$/u; // Tag in regexp format (for use in MarcRecord functions)
 
 export default () => (record, record2) => {
