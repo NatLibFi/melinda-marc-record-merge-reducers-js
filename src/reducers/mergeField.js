@@ -2,7 +2,7 @@
 import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
-  fieldIsRepeatable, // SHOULD WE USE THIS FOR SOMETHING?
+  fieldIsRepeatable,
   fieldRenameSubfieldCodes,
   fieldToString,
   normalizeStringValue,
@@ -17,6 +17,7 @@ import {
   isDroppableSubfield,
   mergeSubfield
 } from './mergeSubfield.js';
+
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -93,7 +94,7 @@ function uniqueKeyMatches(field1, field2, forcedKeyString = null) {
       return subfields2.some(sf2 => {
         const normSubfieldValue2 = normalizeStringValue(sf2.value);
         if (normSubfieldValue === normSubfieldValue2) {
-          debug(`paired ${normSubfieldValue}`);
+          debug(`pairing succeed for normalized '${normSubfieldValue}'`);
           return true;
         }
         debug(`failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
@@ -318,7 +319,7 @@ export function mergeField(record, targetField, sourceField) {
     // { code: x, value: foo }
 
   });
-
+  postprocessField(targetField);
   return record;
 }
 
@@ -357,13 +358,92 @@ function addField(record, field) {
     'ind1': field.ind1,
     'ind2': field.ind2,
     'subfields': newSubfields};
+    // Do we need to sort unmerged fields?
   return record.insertField(bottomUpSortSubfields(newField));
 }
 
+
+function postprocessX00a(field) {
+  if (!field.tag.match(/^[1678]00$/u)) {
+    return field;
+  }
+  debug(`postprocessX00a(${fieldToString(field)})`);
+  field.subfields.forEach((sf, index) => {
+    if (sf.code !== 'a' || index+1 === field.subfields.length) {
+      return;
+    }
+    if ( "de".indexOf(field.subfields[index+1].code) > -1  ) {
+      if (sf.value.match(/[aeiouyäö][a-zåäö]$/u)) {
+        debug(`ADD ',' TO '${f.value}'`);
+        sf.value += ',';
+        return;
+      }
+      // Final '.' => ','
+      if (sf.value.match(/[aeiouyäö][a-zåäö]\.$/u)) {
+        sf.value = sf.value.slice(0, -1) + ",";
+        return;
+      }
+    }
+  });
+}
+
+function postprocessXX0e_function(field) {
+  if (!field.tag.match(/^[1678][01]0$/u)) {
+    return field;
+  }
+  debug(`postprocessXX0e(${fieldToString(field)})`);
+  field.subfields.forEach((sf, index) => {
+    if (sf.code !== 'e' || index+1 === field.subfields.length) {
+      return;
+    }
+    if ( "e".indexOf(field.subfields[index+1].code) > -1  ) {
+      // Final '.' => ',' if followed by $e (and if '.' follows an MTS term)
+      if (sf.value.match(/(esittäjä|kirjoittaja|sanoittaja|sovittaja|säveltäjä|toimittaja)\.$/u)) {
+        sf.value = sf.value.slice(0, -1) + ",";
+        return;
+      }
+    }
+  });
+}
+
+function postprocessLifespan(field) {
+  if (!field.tag.match(/^[1678]00$/u)) {
+    return field;
+  }
+  debug(`postprocessLifespan(${fieldToString(field)})`);
+  field.subfields.forEach((sf, index) => {
+    if (sf.code !== 'd' || index+1 === field.subfields.length) {
+      return;
+    }
+    if ( field.subfields[index+1].code === 'e' ) {
+      if (sf.value.match(/^[0-9]+-[0-9]+$/u)) {
+        debug(`ADD ',' TO '${f.value}'`);
+        sf.value += ',';
+        return;
+      }
+      // Final '.' => ','
+      if (sf.value.match(/^[0-9]+-([0-9]+)?\.$/u)) {
+        sf.value = sf.value.slice(0, -1) + ",";
+        return;
+      }
+    }
+  });
+}
+
+function postprocessField(field) {
+  // Placeholder for proper
+  postprocessX00a(field);
+  postprocessXX0e_function(field); // X00$e and X10$e 
+  postprocessLifespan(field); // X00$d
+  return field;
+}
+
 export function mergeOrAddField(record, field) {
-  const counterpartField = getCounterpart(record, field);
+  // Should we clone record and field here?
+  const newField = JSON.parse(JSON.stringify(field));
+  const counterpartField = getCounterpart(record, newField);
   if (counterpartField) {
-    debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
+    debug(`mergeOrAddField: Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
     mergeField(record, counterpartField, field);
     return record;
   }
@@ -371,3 +451,4 @@ export function mergeOrAddField(record, field) {
   debug(`No counterpart found for '${fieldToString(field)}'.`);
   return addField(record, field);
 }
+
