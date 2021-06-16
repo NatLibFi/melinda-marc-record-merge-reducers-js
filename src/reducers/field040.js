@@ -1,6 +1,7 @@
-import createDebugLogger from 'debug';
+// import createDebugLogger from 'debug';
 import {mergeOrAddField} from './mergeField.js';
 
+/*
 import {
   getNonIdenticalFields,
   getRepSubs,
@@ -22,6 +23,7 @@ const sortOrder040 = ['8', '6', 'a', 'b', 'c', 'e', 'd'];
 // Test 19b: 040 "$a FOO $d BAR" vs 040 "$a BAR $d FOO":
 // Test 19c: Transfer source's 040$a to 040$d
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+*/
 const fieldTag = /^040$/u; // Tag in regexp format (for use in MarcRecord functions)
 
 
