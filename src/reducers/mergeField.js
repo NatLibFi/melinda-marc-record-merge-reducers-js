@@ -10,11 +10,11 @@ import {
   //normalizeStringValue
 } from './utils.js';
 
-import { controlSubfieldsPermitMerge } from './controlSubfields.js';
+import {controlSubfieldsPermitMerge} from './controlSubfields.js';
 
 import {
   bottomUpSortSubfields,
-  isDroppableSubfield,
+  isSubfieldGoodForMerge,
   mergeSubfield
 } from './mergeSubfield.js';
 
@@ -40,7 +40,7 @@ const mergeRestrictions = [
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '240', 'required': 'a', 'key': 'anp'}, // Is 'key' complete? Probably not...
-  {'tag': '245', 'required': 'a' }, // 'paired': 'abnp', 'key': 'abnp'},
+  {'tag': '245', 'required': 'a'}, // 'paired': 'abnp', 'key': 'abnp'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
@@ -182,7 +182,7 @@ function indicatorsMatch(field1, field2) {
     return false;
   }
   // "ohitusindikaattori" difference does not trigger failure:
-  if ( field1.ind2 !== field2.ind2 && !['240', '243', '245'].includes(field1.tag)) {
+  if (field1.ind2 !== field2.ind2 && !['240', '243', '245'].includes(field1.tag)) {
     debug('indicator 1 check failed');
     return false;
   }
@@ -350,7 +350,7 @@ function addField(record, field) {
     return record;
   }
 
-  const newSubfields = field.subfields.filter(sf => !isDroppableSubfield(field, sf.code));
+  const newSubfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code) );
   if (newSubfields.length === 0) {
     return record;
   }
@@ -369,38 +369,38 @@ function postprocessX00a(field) {
   }
   debug(`postprocessX00a(${fieldToString(field)})`);
   field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'a' || index+1 === field.subfields.length) {
+    if (sf.code !== 'a' || index + 1 === field.subfields.length) {
       return;
     }
-    if ( "de".indexOf(field.subfields[index+1].code) > -1  ) {
+    if ('de'.indexOf(field.subfields[index + 1].code) > -1) {
       if (sf.value.match(/[aeiouyäö][a-zåäö]$/u)) {
-        debug(`ADD ',' TO '${f.value}'`);
-        sf.value += ',';
+        debug(`ADD ',' TO '${sf.value}'`);
+        sf.value += ','; // eslint-disable-line functional/immutable-data
         return;
       }
       // Final '.' => ','
       if (sf.value.match(/[aeiouyäö][a-zåäö]\.$/u)) {
-        sf.value = sf.value.slice(0, -1) + ",";
-        return;
+        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
+
       }
     }
   });
 }
 
-function postprocessXX0e_function(field) {
+function postprocessXX0eFunction(field) {
   if (!field.tag.match(/^[1678][01]0$/u)) {
     return field;
   }
   debug(`postprocessXX0e(${fieldToString(field)})`);
   field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'e' || index+1 === field.subfields.length) {
+    if (sf.code !== 'e' || index + 1 === field.subfields.length) {
       return;
     }
-    if ( "e".indexOf(field.subfields[index+1].code) > -1  ) {
+    if ('e'.indexOf(field.subfields[index + 1].code) > -1) {
       // Final '.' => ',' if followed by $e (and if '.' follows an MTS term)
-      if (sf.value.match(/(esittäjä|kirjoittaja|sanoittaja|sovittaja|säveltäjä|toimittaja)\.$/u)) {
-        sf.value = sf.value.slice(0, -1) + ",";
-        return;
+      if (sf.value.match(/(?:esittäjä|kirjoittaja|sanoittaja|sovittaja|säveltäjä|toimittaja)\.$/u)) {
+        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
+
       }
     }
   });
@@ -412,19 +412,19 @@ function postprocessLifespan(field) {
   }
   debug(`postprocessLifespan(${fieldToString(field)})`);
   field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'd' || index+1 === field.subfields.length) {
+    if (sf.code !== 'd' || index + 1 === field.subfields.length) {
       return;
     }
-    if ( field.subfields[index+1].code === 'e' ) {
+    if (field.subfields[index + 1].code === 'e') {
       if (sf.value.match(/^[0-9]+-[0-9]+$/u)) {
-        debug(`ADD ',' TO '${f.value}'`);
-        sf.value += ',';
+        debug(`ADD ',' TO '${sf.value}'`);
+        sf.value += ','; // eslint-disable-line functional/immutable-data
         return;
       }
       // Final '.' => ','
-      if (sf.value.match(/^[0-9]+-([0-9]+)?\.$/u)) {
-        sf.value = sf.value.slice(0, -1) + ",";
-        return;
+      if (sf.value.match(/^[0-9]+-(?:[0-9]+)?\.$/u)) {
+        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
+
       }
     }
   });
@@ -433,7 +433,7 @@ function postprocessLifespan(field) {
 function postprocessField(field) {
   // Placeholder for proper
   postprocessX00a(field);
-  postprocessXX0e_function(field); // X00$e and X10$e 
+  postprocessXX0eFunction(field); // X00$e and X10$e
   postprocessLifespan(field); // X00$d
   return field;
 }
