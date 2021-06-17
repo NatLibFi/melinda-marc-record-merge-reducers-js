@@ -8,23 +8,19 @@
       "subfields": [
         {
           "code": "a",
-          "value": "FI-Hc"
+          "value": "FI-A"
         },
         {
           "code": "b",
           "value": "fin"
-        },
+        },	  
         {
           "code": "e",
-          "value": "jotain"
+          "value": "rda"
         },
         {
           "code": "d",
-          "value": "FI-Hhant"
-        },
-        {
-          "code": "x",
-          "value": "noise"
+          "value": "FI-B"
         }
       ]
     }

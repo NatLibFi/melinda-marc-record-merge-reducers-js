@@ -46,7 +46,7 @@ function controlSubfield9PermitsMerge(field1, field2) {
   }
   const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
-  const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2);
+  const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2); // NB! Do we need to sort these?
   if (!result) {
     debug(` control subfield 9 disallows merge`);
     return false;
@@ -70,19 +70,24 @@ function prefixIsOK(currSubfield, otherField, subfieldCode) {
     return false;
   }
   // Look for same prefix + different identifier
-  const hits = otherField.subfields.filter(sf2 => sf2.code === subfieldCode && currSubfield.value !== sf2.value && sf2.value.indexOf(prefix) === 0);
-  if (hits.length > 0) {
-    debug(`Subfield ‡${subfieldCode} check FAILED: ‡${subfieldCode} '${currSubfield.value}' vs ‡${subfieldCode} '${hits[0].value}'.`);
-    return false;
+  const hits = otherField.subfields.filter(sf2 => sf2.code === subfieldCode /* && currSubfield.value !== sf2.value */ && sf2.value.indexOf(prefix) === 0);
+  if ( hits.length === 0 ) {
+    //debug(`Subfield ‡${subfieldCode} check OK: ${prefix} not found on Melinda base field '${fieldToString(otherField)}'.`);
+    return true;
   }
-  debug(`Subfield ‡${subfieldCode} check OK: ${prefix} not found on ${fieldToString(otherField)}`);
-  return true;
+  if ( hits.every(sf2 => currSubfield.value === sf2.value) ) {
+    //debug(`Identical subfield ‡${subfieldCode} found on Melinda base field '${fieldToString(otherField)}'.`);
+    return true;
+  }
+  debug(`Subfield ‡${subfieldCode} check FAILED: ‡${subfieldCode} '${currSubfield.value}' vs ‡${subfieldCode} '${hits[0].value}'.`);
+  return false;
 }
 
 function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode) {
   if (!fieldHasSubfield(field1, subfieldCode, null) || !fieldHasSubfield(field2, subfieldCode, null)) {
     return true;
   }
+
   const result = field1.subfields.every(subfield => {
     if (subfield.code !== subfieldCode) {
       return true;
@@ -90,6 +95,7 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
     // NB! Here we assume that value have been normalized beforehand.
     // Eg. (isni) 0000 1234 5678 0000 vs https://isni.org/isni/0000123456780000
     // Eg. FIN11 vs FI-ASTERI-N vs kanton uri
+
 
     debug(`Compare ‡${subfieldCode} '${subfield.value}' with '${fieldToString(field2)}'.`);
     if (fieldHasSubfield(field2, field1.code, field1.value)) {
@@ -114,8 +120,8 @@ export function controlSubfieldsPermitMerge(field1, field2) {
     return false;
   }
 
-  if (!subfieldsAreEqual(field1, field2, '3') || !subfieldsAreEqual(field1, field2, '5')) {
-    debug(' similar control subfield failes');
+  if (!subfieldsAreEqual(field1, field2, '2') || !subfieldsAreEqual(field1, field2, '3') || !subfieldsAreEqual(field1, field2, '5')) {
+    debug(' similar control subfield fails');
     return false;
   }
 

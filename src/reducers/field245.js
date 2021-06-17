@@ -1,3 +1,6 @@
+import {mergeOrAddField} from './mergeField.js';
+
+/*
 import createDebugLogger from 'debug';
 
 import {
@@ -9,8 +12,17 @@ import {
 // Test 33: Same number of subfields (but different content) => keep base
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+*/
 const fieldTag = /^245$/u; // Tag in regexp format (for use in MarcRecord functions)
 
+export default () => (record, record2) => {
+  const candidateFields = record2.get(fieldTag); // Get array of source fields
+  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  return record;
+};
+
+
+/*
 export default () => (base, source) => {
   const baseFields = base.get(fieldTag); // Get array of base fields
   const sourceFields = source.get(fieldTag); // Get array of source fields
@@ -40,12 +52,11 @@ export default () => (base, source) => {
       debug(`Source 245 is longer, replacing base field with source field`);
       const newBaseField = JSON.parse(JSON.stringify(sourceField));
       // But indicator 2 is always taken from the base record
-      /* eslint-disable */
       newBaseField.ind2 = baseField.ind2;
       //base.removeField(baseField); // remove old baseField
       //base.insertField(newBaseField); // insert newBaseField
 
-      /* eslint-enable */
+
       return recordReplaceField(base, baseField, newBaseField);
       // return base;
     }
@@ -54,3 +65,4 @@ export default () => (base, source) => {
     return base;
   }
 };
+*/

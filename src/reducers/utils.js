@@ -104,14 +104,14 @@ export function getNonRepCodes(tag) {
 
 function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
   // These we know or "know":
-  if ("09".indexOf(subfieldCode) > -1 ) {
+  if ('09'.indexOf(subfieldCode) > -1) {
     // Uh, can $0 appear on any field?
     return true;
   }
-  if ("56".indexOf(subfieldCode) > -1 ) {
+  if ('56'.indexOf(subfieldCode) > -1) {
     return false;
   }
-  
+
   const subfieldSpecs = currFieldSpecs.subfields.filter(subfield => subfield.code === subfieldCode);
   if (subfieldSpecs.length !== 1) {
     return false; // repeatable if not specified?
@@ -418,7 +418,6 @@ export function recordHasField(record, tag) {
   const yeOldeFields = record.get(re);
   return yeOldeFields.length > 0;
 }
-
 
 
 // should this go to marc_record

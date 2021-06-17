@@ -1,20 +1,23 @@
-import createDebugLogger from 'debug';
-import { mergeOrAddField } from './mergeField.js';
+//import createDebugLogger from 'debug';
+import {mergeOrAddField} from './mergeField.js';
+
+/*
 import {
   getNonIdenticalFields,
   getRepSubs,
   makeNewBaseField,
   sortSubfields
 } from './utils.js';
+*/
 
 // Test 20: Copy new field from source to base record (case 1)
 // Test 21: Copy subfields from source field to base field (case 2)
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const fieldTag = /^042$/u; // Tag in regexp format (for use in MarcRecord functions)
 
 // 042 has only one subfield, $a, which is repeatable
-const repCodes = ['a'];
+//const repCodes = ['a'];
 
 export default () => (record, record2) => {
   const candidateFields = record2.get(fieldTag); // Get array of source fields

@@ -1,12 +1,11 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 
-// TODO: test where subfield order neeeds to be reset.
 import {
 
   mergeOrAddField
 } from './mergeField.js';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+// const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // Test 09: Copy new field from source to base record (case 1) (2x)
 // Test 10: Copy subfields from source field to base field (case 2)

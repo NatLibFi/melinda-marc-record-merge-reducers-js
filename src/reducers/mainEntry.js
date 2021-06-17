@@ -71,80 +71,6 @@ function acceptEntrySubfieldA(field, candSubfield) {
   return false;
 }
 
-const birthYearRegexp = /^(?<by>[1-9][0-9]*)-(?:[1-9][0-9]*)?(?:[^0-9]*)$/u;
-function subfieldDToBirthYear(content) {
-  const min = 1000;
-  const max = 2021;
-  const result = birthYearRegexp.exec(content);
-  if (result && min <= result.groups.by && result.groups.by <= max) {
-    return result.groups.by;
-  }
-  return -1;
-}
-
-const deathYearRegexp = /^(?:[1-9][0-9]*)-(?<dy>[1-9][0-9]*)(?:[^0-9]*)$/u;
-function subfieldDToDeathYear(content) {
-  const min = 1000;
-  const max = 2029; // This should be dynamic value. Current year etc.
-  const result = deathYearRegexp.exec(content);
-  if (result && min <= result.groups.dy && result.groups.dy <= max) {
-    return result.groups.dy;
-  }
-  return -1;
-}
-
-function birthYearsAgree(sf1, sf2) {
-  const b1 = subfieldDToBirthYear(sf1.value);
-  const b2 = subfieldDToBirthYear(sf2.value);
-  return b1 !== -1 && b1 === b2; // We want a proper birth year. Period. Everything else is too noisy to handle.
-}
-
-function deathYearsAgree(sf1, sf2) {
-  const b1 = subfieldDToDeathYear(sf1.value);
-  const b2 = subfieldDToDeathYear(sf2.value);
-  if (b1 === -1 || b2 === -1) {
-    return true;
-  }
-  return b1 === b2;
-}
-
-const legalX00d = /^[1-9][0-9]*-(?:[1-9][0-9]*)?[,.]?$/u;
-
-function acceptEntrySubfieldD(field, candSubfield) {
-  if (field.tag !== '100' && field.tag !== '700') {
-    debug(`NB! Subfield ‡d is currently only checked for X00 fields.`);
-    return true; // We are currently interested only in X00
-  }
-  const relevantSubfields = field.subfields.filter(subfield => subfield.code === 'd');
-
-  if (relevantSubfields.length > 1) {
-    return false;
-  } // Cannot accept as field is crappy
-  if (relevantSubfields.length === 0 || subfieldsAreEqualish(relevantSubfields[0], candSubfield)) {
-    return true;
-  }
-  if (!legalX00d.test(candSubfield.value)) {
-    debug(`D-FAIL ${candSubfield.value}`);
-    return false;
-  }
-  return legalX00d.test(candSubfield.value) && legalX00d.test(relevantSubfields[0].value) &&
-    birthYearsAgree(relevantSubfields[0], candSubfield) && deathYearsAgree(relevantSubfields[0], candSubfield);
-}
-
-function acceptEntrySubfield(field, candSubfield, index) { // Accept X00 and X10 equality
-  // semantic check
-  if (candSubfield.code === 'a') {
-    return acceptEntrySubfieldA(field, candSubfield);
-  }
-
-  if (candSubfield.code === 'd') {
-    return acceptEntrySubfieldD(field, candSubfield);
-  }
-
-  debug(`Accepted entry subfield ‡${candSubfield.code} without checking it.`);
-  return true;
-}
-
 //// Everything below this point should be fine...
 
 function insertField7XX(record, field) {
@@ -156,7 +82,7 @@ function insertField7XX(record, field) {
   return record;
 }
 
-function mergeOrAddField(record, field) {
+function localMergeOrAddField(record, field) {
   const counterpartField = getCounterpart(record, field);
   if (counterpartField) {
     debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
@@ -171,6 +97,6 @@ function mergeOrAddField(record, field) {
 
 export default () => (record, record2) => {
   const candidateFields = record2.get(fieldTag); // Get array of source fields
-  candidateFields.forEach(candField => mergeOrAddField(record, candField));
+  candidateFields.forEach(candField => localMergeOrAddField(record, candField));
   return record;
 };

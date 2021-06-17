@@ -1,22 +1,23 @@
-import {MarcRecord} from '@natlibfi/marc-record';
+//import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
-  fieldIsRepeatable, // SHOULD WE USE THIS FOR SOMETHING?
+  fieldIsRepeatable,
+  fieldRenameSubfieldCodes,
   fieldToString,
   normalizeStringValue,
   recordHasField
   //normalizeStringValue
 } from './utils.js';
 
-import {
-  controlSubfieldsPermitMerge
-} from './controlSubfields.js';
+import {controlSubfieldsPermitMerge} from './controlSubfields.js';
 
 import {
-  isDroppableSubfield,
+  bottomUpSortSubfields,
+  isSubfieldGoodForMerge,
   mergeSubfield
 } from './mergeSubfield.js';
+
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -25,29 +26,29 @@ const counterpartRegexps = {
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
 };
 
-
 // "paired" refers to a field that must either exist in both or be absent in both. Typically it's an empty string.
 const mergeRestrictions = [
   {'tag': '020', 'required': 'a', 'key': 'a'},
   {'tag': '022', 'required': 'a', 'key': 'a'},
   {'tag': '024', 'required': 'a', 'key': 'a'},
+  {'tag': '040', 'required': '', 'key': ''},
   {'tag': '042', 'required': 'a'},
-
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
   {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
   {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
   // NB! 130 has no name part, key is used for title part
-  {'tag': '130', 'required': 'a', 'paired': '', 'key': 'adfhklmnoprsxvg'},
+  {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '240', 'required': 'a', 'key': 'anp'}, // Is 'key' complete? Probably not...
+  {'tag': '245', 'required': 'a'}, // 'paired': 'abnp', 'key': 'abnp'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
   // NB! 730 has no name part, key is used for title part
-  {'tag': '730', 'required': 'a', 'paired': '', 'key': 'adfhklmnoprsxvg'}
+  {'tag': '730', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
+  {'tag': '830', 'required': 'ax', 'key': 'apx'}
 ];
-
 
 function getUniqueKeyFields2(tag) {
   const activeTags = mergeRestrictions.filter(entry => tag === entry.tag);
@@ -56,8 +57,8 @@ function getUniqueKeyFields2(tag) {
     return '';
   }
   if (!('key' in activeTags[0])) {
-      debug(`Field ${tag} is missing unique key. Return ''.`);
-      return '';
+    debug(`Field ${tag} is missing unique key. Return ''.`);
+    return '';
   }
   if (activeTags.length > 1) {
     debug(`Warning\tMultiple keys (N=${activeTags.length}) found for ${tag}`);
@@ -70,12 +71,7 @@ function getUniqueKeyFields2(tag) {
 function getUniqueKeyFields(field) {
   const keys = getUniqueKeyFields2(field.tag);
   debug(`Unique key for ${field.tag}: '${keys}'`);
-  // NB! We should add exceptions here, eg 710$a$t tekijänimekkeet...
-  /*
-      if ( field.tag === '100' && fieldHasSubfield(field, 't') ) {
-
-      }*/
-
+  // Um... 700$t stuff (sort of 2nd unique key)
   return keys;
 }
 
@@ -98,7 +94,7 @@ function uniqueKeyMatches(field1, field2, forcedKeyString = null) {
       return subfields2.some(sf2 => {
         const normSubfieldValue2 = normalizeStringValue(sf2.value);
         if (normSubfieldValue === normSubfieldValue2) {
-          debug(`paired ${normSubfieldValue}`);
+          debug(`pairing succeed for normalized '${normSubfieldValue}'`);
           return true;
         }
         debug(`failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
@@ -122,7 +118,14 @@ function tagToRegexp(tag) {
 function areRequiredSubfieldsPresent(field) {
   const subfieldString = mergeGetRequiredSubfieldCodes(field.tag);
   const subfieldArray = subfieldString.split('');
-  return subfieldArray.every(sfcode => fieldHasSubfield(field, sfcode));
+  return subfieldArray.every(sfcode => {
+    const result = fieldHasSubfield(field, sfcode);
+    if (!result) {
+      debug(`Required subfield ‡${sfcode} not found in '${fieldToString(field)}'!`);
+      return false;
+    }
+    return true;
+  });
 }
 
 function mergeGetRequiredSubfieldCodes(tag) {
@@ -173,8 +176,14 @@ function arePairedSubfieldsInBalance(field1, field2) {
 
 
 function indicatorsMatch(field1, field2) {
-  if (field1.ind1 !== field2.ind1 || field1.ind2 !== field2.ind2) {
-    debug('indicator check failed');
+  // The value of 245 IND1 depends on other fields, and those field might diffent from Melinda and incoming record:
+  if (field1.ind1 !== field2.ind1 && !['245'].includes(field1.tag)) {
+    debug('indicator 1 check failed');
+    return false;
+  }
+  // "ohitusindikaattori" difference does not trigger failure:
+  if (field1.ind2 !== field2.ind2 && !['240', '243', '245'].includes(field1.tag)) {
+    debug('indicator 1 check failed');
     return false;
   }
   // NB! There are cases where indicator values are, says # and 1, and the define value (here 1) should be used.
@@ -192,7 +201,6 @@ function mergablePair(field1, field2, fieldSpecificCallback = null) {
 
   // NB! field1.tag and field2.tag might differ. Therefore required subfields might theoretically differ as well. (1XX vs 7XX)
   if (!areRequiredSubfieldsPresent(field1) || !areRequiredSubfieldsPresent(field2)) {
-    debug('required subfield presence check failed.');
     return false;
   }
 
@@ -299,7 +307,6 @@ export function getCounterpart(record, field) {
   if (index > -1) {
     return counterpartCands[index];
   }
-  debug(' No counterpart found!');
   return null;
 }
 
@@ -312,49 +319,136 @@ export function mergeField(record, targetField, sourceField) {
     // { code: x, value: foo }
 
   });
-
+  postprocessField(targetField);
   return record;
 }
 
 
-
 function fieldCanBeAdded(record, newField) {
-    // Non-repeatable field cannot be added, if same tag already exists
-    if ( !fieldIsRepeatable(newField.tag) && recordHasField(record, newField.tag) ) {
-        return false;
-    }
-    if (newField.tag === '240' && recordHasField(record, '130')) {
-        return false;
-    }
+  // Non-repeatable field cannot be added, if same tag already exists
+  if (!fieldIsRepeatable(newField.tag) && recordHasField(record, newField.tag)) {
+    return false;
+  }
+  // Hacky hacks:
+  if (newField.tag === '040') {
+    fieldRenameSubfieldCodes(newField, 'a', 'd');
     return true;
+  }
+  if (newField.tag === '240' && recordHasField(record, '130')) {
+    return false;
+  }
+  if (newField.tag === '830' && !fieldHasSubfield(newField, 'x')) {
+    return false;
+  }
+
+  return true;
 }
 
 function addField(record, field) {
-    if ( !fieldCanBeAdded(record, field) ) {
-        debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
-        return record;
-    }
+  if (!fieldCanBeAdded(record, field)) {
+    debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
+    return record;
+  }
 
-    const newSubfields = field.subfields.filter(sf => { return !isDroppableSubfield(field, sf.code); });
-    if ( newSubfields.length === 0 ) {
-        return record;
-    }
-    const newField = { 'tag': field.tag,
-        'ind1': field.ind1,
-        'ind2': field.ind2,
-        'subfields': newSubfields };
-    return record.insertField(newField);
+  const newSubfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code) );
+  if (newSubfields.length === 0) {
+    return record;
+  }
+  const newField = {'tag': field.tag,
+    'ind1': field.ind1,
+    'ind2': field.ind2,
+    'subfields': newSubfields};
+    // Do we need to sort unmerged fields?
+  return record.insertField(bottomUpSortSubfields(newField));
+}
 
+
+function postprocessX00a(field) {
+  if (!field.tag.match(/^[1678]00$/u)) {
+    return field;
+  }
+  debug(`postprocessX00a(${fieldToString(field)})`);
+  field.subfields.forEach((sf, index) => {
+    if (sf.code !== 'a' || index + 1 === field.subfields.length) {
+      return;
+    }
+    if ('de'.indexOf(field.subfields[index + 1].code) > -1) {
+      if (sf.value.match(/[aeiouyäö][a-zåäö]$/u)) {
+        debug(`ADD ',' TO '${sf.value}'`);
+        sf.value += ','; // eslint-disable-line functional/immutable-data
+        return;
+      }
+      // Final '.' => ','
+      if (sf.value.match(/[aeiouyäö][a-zåäö]\.$/u)) {
+        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
+
+      }
+    }
+  });
+}
+
+function postprocessXX0eFunction(field) {
+  if (!field.tag.match(/^[1678][01]0$/u)) {
+    return field;
+  }
+  debug(`postprocessXX0e(${fieldToString(field)})`);
+  field.subfields.forEach((sf, index) => {
+    if (sf.code !== 'e' || index + 1 === field.subfields.length) {
+      return;
+    }
+    if ('e'.indexOf(field.subfields[index + 1].code) > -1) {
+      // Final '.' => ',' if followed by $e (and if '.' follows an MTS term)
+      if (sf.value.match(/(?:esittäjä|kirjoittaja|sanoittaja|sovittaja|säveltäjä|toimittaja)\.$/u)) {
+        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
+
+      }
+    }
+  });
+}
+
+function postprocessLifespan(field) {
+  if (!field.tag.match(/^[1678]00$/u)) {
+    return field;
+  }
+  debug(`postprocessLifespan(${fieldToString(field)})`);
+  field.subfields.forEach((sf, index) => {
+    if (sf.code !== 'd' || index + 1 === field.subfields.length) {
+      return;
+    }
+    if (field.subfields[index + 1].code === 'e') {
+      if (sf.value.match(/^[0-9]+-[0-9]+$/u)) {
+        debug(`ADD ',' TO '${sf.value}'`);
+        sf.value += ','; // eslint-disable-line functional/immutable-data
+        return;
+      }
+      // Final '.' => ','
+      if (sf.value.match(/^[0-9]+-(?:[0-9]+)?\.$/u)) {
+        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
+
+      }
+    }
+  });
+}
+
+function postprocessField(field) {
+  // Placeholder for proper
+  postprocessX00a(field);
+  postprocessXX0eFunction(field); // X00$e and X10$e
+  postprocessLifespan(field); // X00$d
+  return field;
 }
 
 export function mergeOrAddField(record, field) {
-    const counterpartField = getCounterpart(record, field);
-    if (counterpartField) {
-      debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
-      mergeField(record, counterpartField, field);
-      return record;
-    }
-    // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-    debug(`No counterpart found for '${fieldToString(field)}'.`);
-    return addField(record, field);
+  // Should we clone record and field here?
+  const newField = JSON.parse(JSON.stringify(field));
+  const counterpartField = getCounterpart(record, newField);
+  if (counterpartField) {
+    debug(`mergeOrAddField: Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
+    mergeField(record, counterpartField, field);
+    return record;
+  }
+  // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
+  debug(`No counterpart found for '${fieldToString(field)}'.`);
+  return addField(record, field);
 }
+
