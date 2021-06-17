@@ -13,19 +13,17 @@ const excludeSubfieldsFromMerge = [
   {'tag': '024', 'subfields': 'c'}
 ];
 
-const includeSubfields = [
-  {'tag' : '040', 'subfields': 'abcde68' }
-];
+const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}];
 
 //
 // Used by our very own hacky bottomUpSortSubfields(). Features:
 // - Swap only sort adjacent pairs.
 // - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of $t...
 const subfieldSortOrder = [
-  {'tag': '040', 'sortOrder': '86abcedx'},
-  {'tag': '100', 'sortOrder': 'abcde059'},
-  {'tag': '240', 'sortOrder': 'amnpsl20159'},
-  {'tag': '245', 'sortOrder': 'abnpc'}
+  {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
+  {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
+  {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']}
 ];
 
 const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
@@ -43,9 +41,9 @@ function replaceSubfield(targetField, candSubfield) {
 
   // Handle X100$d: add death year, if original value only contains birth year:
   if (candSubfield.code === 'd' && /* debug("WP000") && */ (/00$/u).test(targetField.tag) &&
-      onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) &&
-      // *Rather hackily* compare the start of the string to determinen that start years are identical(-ish)
-      relevantSubfields[0].value.substring(0, 4) === candSubfield.value.substring(0, 4)) {
+    onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) &&
+    // *Rather hackily* compare the start of the string to determinen that start years are identical(-ish)
+    relevantSubfields[0].value.substring(0, 4) === candSubfield.value.substring(0, 4)) {
     relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
     return true;
   }
@@ -78,8 +76,6 @@ function insertSubfieldAllowed(targetField, candSubfield) {
   return false;
 }
 
-
-
 function listSubfieldsWorthKeeping(tag) {
   const entry = includeSubfields.filter(currEntry => tag === currEntry.tag);
   if (entry.length > 0 && 'subfields' in entry[0]) {
@@ -93,7 +89,7 @@ function listSubfieldsWorthKeeping(tag) {
 function isKeptableSubfield(tag, subfieldCode) {
   const listOfSubfieldsAsString = listSubfieldsWorthKeeping(tag);
   // If nothing is listed, evertything is good:
-  if ( listOfSubfieldsAsString === '' ) {
+  if (listOfSubfieldsAsString === '') {
     return true;
   }
   return listOfSubfieldsAsString.indexOf(subfieldCode) > -1;
@@ -115,12 +111,12 @@ function isDroppableSubfield(tag, subfieldCode) {
 }
 
 function isSubfieldGood(tag, subfieldCode) {
-  if ( isDroppableSubfield(tag, subfieldCode) ) {
-    debug(`BAD SF: ${tag}\$${subfieldCode} is droppable.`);
+  if (isDroppableSubfield(tag, subfieldCode)) {
+    debug(`BAD SF: ${tag}$${subfieldCode} is droppable.`);
     return false;
   }
-  if ( !isKeptableSubfield(tag, subfieldCode) ) {
-    debug(`BAD SF: ${tag}\$${subfieldCode} is unkeptable.`);
+  if (!isKeptableSubfield(tag, subfieldCode)) {
+    debug(`BAD SF: ${tag}$${subfieldCode} is unkeptable.`);
     return false;
   }
   return true;
@@ -146,7 +142,6 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
 
   // Check whether we really want this subfield:
   return !isSubfieldGood(targetField.tag, candSubfield.code);
-
 }
 
 function getSubfieldSortOrder(field) {
@@ -161,7 +156,7 @@ function getSubfieldSortOrder(field) {
 
 // Now this gets ugly here lintwise...
 function swapSubfields(field, sortOrder) {
-  return field.subfields.some((sf, index) => {
+  const loopAgain = field.subfields.some((sf, index) => {
     if (index === 0) {
       return false;
     }
@@ -176,6 +171,12 @@ function swapSubfields(field, sortOrder) {
     field.subfields[index] = tmp; // eslint-disable-line functional/immutable-data
     return true;
   });
+
+  if (loopAgain) {
+    return swapSubfields(field, sortOrder);
+  }
+
+  return;
 }
 
 export function bottomUpSortSubfields(field) {
@@ -186,8 +187,8 @@ export function bottomUpSortSubfields(field) {
   if (sortOrder === null) {
     return field;
   }
-  // I just love my own ugly {} hacks...
-  while (swapSubfields(field, sortOrder)) {} // eslint-disable-line functional/no-loop-statement
+
+  swapSubfields(field, sortOrder);
 
   return field;
 }

@@ -1,16 +1,7 @@
 // import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-
-import {
-  fieldToString,
-  normalizeStringValue
-} from './utils.js';
-
-import {
-  getCounterpart,
-  mergeField
-} from './mergeField.js';
-
+import {fieldToString} from './utils.js';
+import {getCounterpart, mergeField} from './mergeField.js';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw
 // Field 240 is handled independently before this.
@@ -18,7 +9,6 @@ import {
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // All fields used for main entry, 1XX and 240 are unrepeatable
 const fieldTag = /^(?:100|110|111|130|700|710|711|730)$/u; // Tag in regexp format (for use in MarcRecord functions)
-
 
 // Test 01: Same 100 in both source and base => do not copy
 // Test 02: Base has 100, source has 100 with more subfields => copy additional subfields to base 100
@@ -54,15 +44,19 @@ const fieldTag = /^(?:100|110|111|130|700|710|711|730)$/u; // Tag in regexp form
   // Tietueessa voi olla 700/710/711/730-kenttiä silloinkin, jos siinä EI ole mitään 100/110/111/130-kenttiä
 */
 
+/*
 function subfieldsAreEqualish(sf1, sf2) {
   return sf1.code === sf2.code && normalizeStringValue(sf1.value) === normalizeStringValue(sf2.value);
 }
+/*
 
+/*
 function equalishSubfieldExists(field, candSubfield) {
   return field.subfields.some(sf => subfieldsAreEqualish(sf, candSubfield));
 }
+/*
 
-
+/*
 function acceptEntrySubfieldA(field, candSubfield) {
   if (equalishSubfieldExists(field, candSubfield)) {
     return true;
@@ -70,6 +64,7 @@ function acceptEntrySubfieldA(field, candSubfield) {
   debug(`Subfield ‡a check failed: '${candSubfield.value}' vs '${fieldToString(field)}'.`);
   return false;
 }
+*/
 
 //// Everything below this point should be fine...
 

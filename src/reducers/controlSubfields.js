@@ -9,7 +9,7 @@ import {
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 function subfieldsAreEqual(field1, field2, subfieldCode) {
-// Check OK if neither one has given subfield.
+  // Check OK if neither one has given subfield.
   // Check fails if one field has given subfield and the other one does not
   if (!fieldHasSubfield(field1, subfieldCode)) {
     return !fieldHasSubfield(field2, subfieldCode);
@@ -71,11 +71,11 @@ function prefixIsOK(currSubfield, otherField, subfieldCode) {
   }
   // Look for same prefix + different identifier
   const hits = otherField.subfields.filter(sf2 => sf2.code === subfieldCode /* && currSubfield.value !== sf2.value */ && sf2.value.indexOf(prefix) === 0);
-  if ( hits.length === 0 ) {
+  if (hits.length === 0) {
     //debug(`Subfield ‡${subfieldCode} check OK: ${prefix} not found on Melinda base field '${fieldToString(otherField)}'.`);
     return true;
   }
-  if ( hits.every(sf2 => currSubfield.value === sf2.value) ) {
+  if (hits.every(sf2 => currSubfield.value === sf2.value)) {
     //debug(`Identical subfield ‡${subfieldCode} found on Melinda base field '${fieldToString(otherField)}'.`);
     return true;
   }
@@ -126,7 +126,7 @@ export function controlSubfieldsPermitMerge(field1, field2) {
   }
 
   if (!controlSubfield6PermitsMerge(field1, field2) ||
-      !controlSubfield9PermitsMerge(field1, field2)) {
+    !controlSubfield9PermitsMerge(field1, field2)) {
     return false;
   }
   // We don't handle $8 subfields here at all, as they affect multiple fields!
