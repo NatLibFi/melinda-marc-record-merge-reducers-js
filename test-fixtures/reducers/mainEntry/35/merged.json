@@ -8,19 +8,19 @@
       "subfields": [
         {
           "code": "a",
-          "value": "Benedictus"
-        },
-        {
-          "code": "b",
-          "value": "XVI,"
-        },
-        {
-          "code": "c",
-          "value": "paavi,"
+          "value": "Wuolijoki, Hella,"
         },
         {
           "code": "d",
-          "value": "1927-"
+          "value": "1886-1954."
+        },
+        {
+          "code": "t",
+          "value": "Heta Niskavuori."
+        },
+        {
+          "code": "0",
+          "value": "(FIN11)000063570"
         }
       ]
     },
@@ -31,11 +31,15 @@
       "subfields": [
         {
           "code": "a",
-          "value": "Benedictus"
+          "value": "Wuolijoki, Hella,"
         },
         {
-          "code": "b",
-          "value": "XVI."
+          "code": "d",
+          "value": "1886-1954."
+        },
+        {
+          "code": "0",
+          "value": "(FIN11)000063570"
         }
       ]
     }
