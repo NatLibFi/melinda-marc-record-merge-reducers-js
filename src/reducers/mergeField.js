@@ -18,7 +18,6 @@ import {
   mergeSubfield
 } from './mergeSubfield.js';
 
-
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const counterpartRegexps = {
@@ -195,7 +194,7 @@ function indicatorsMatch(field1, field2) {
 function mergablePair(field1, field2, fieldSpecificCallback = null) {
   // Indicators *must* be equal:
   if (!indicatorsMatch(field1, field2) ||
-        !controlSubfieldsPermitMerge(field1, field2)) {
+    !controlSubfieldsPermitMerge(field1, field2)) {
     return false;
   }
 
@@ -350,15 +349,17 @@ function addField(record, field) {
     return record;
   }
 
-  const newSubfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code) );
+  const newSubfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code));
   if (newSubfields.length === 0) {
     return record;
   }
-  const newField = {'tag': field.tag,
+  const newField = {
+    'tag': field.tag,
     'ind1': field.ind1,
     'ind2': field.ind2,
-    'subfields': newSubfields};
-    // Do we need to sort unmerged fields?
+    'subfields': newSubfields
+  };
+  // Do we need to sort unmerged fields?
   return record.insertField(bottomUpSortSubfields(newField));
 }
 
@@ -381,7 +382,7 @@ function postprocessX00a(field) {
       // Final '.' => ','
       if (sf.value.match(/[aeiouyäö][a-zåäö]\.$/u)) {
         sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-
+        return; // KESKEN
       }
     }
   });
@@ -400,7 +401,7 @@ function postprocessXX0eFunction(field) {
       // Final '.' => ',' if followed by $e (and if '.' follows an MTS term)
       if (sf.value.match(/(?:esittäjä|kirjoittaja|sanoittaja|sovittaja|säveltäjä|toimittaja)\.$/u)) {
         sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-
+        return; // KESKEN
       }
     }
   });
@@ -424,7 +425,7 @@ function postprocessLifespan(field) {
       // Final '.' => ','
       if (sf.value.match(/^[0-9]+-(?:[0-9]+)?\.$/u)) {
         sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-
+        return; // KESKEN
       }
     }
   });
@@ -451,4 +452,3 @@ export function mergeOrAddField(record, field) {
   debug(`No counterpart found for '${fieldToString(field)}'.`);
   return addField(record, field);
 }
-

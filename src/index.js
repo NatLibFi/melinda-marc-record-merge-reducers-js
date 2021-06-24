@@ -25,11 +25,7 @@
 * for the JavaScript code in this file.
 *
 */
-import {MarcRecord} from '@natlibfi/marc-record';
-import * as Reducers from './reducers';
 
-export {Reducers};
-export default ({base, source, reducers}) => {
-  const sourceRecord = MarcRecord.clone(source);
-  return reducers.reduce((baseRecord, reducer) => reducer(baseRecord, sourceRecord), MarcRecord.clone(base));
-};
+import {localReducers as MelindaReducers, localCopyReducerConfigs as MelindaCopyReducerConfigs} from './reducers';
+
+export {MelindaReducers, MelindaCopyReducerConfigs};

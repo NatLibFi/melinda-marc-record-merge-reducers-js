@@ -1,5 +1,3 @@
-import copy from './copy';
-import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import internalFields from './internalFields';
 import leader from './leader';
@@ -18,7 +16,7 @@ import field245 from './field245';
 import field830 from './field830';
 import field995 from './field995';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+// const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // ### Keskeneräinen
 
@@ -51,12 +49,6 @@ const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude s
 // Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
 // eslint-disable-next-line
 const allReducers = [
-  copy({tagPattern: copyIfDifferent}),
-  copy({tagPattern: copyIfMissing, compareTagsOnly: true}),
-  copy({tagPattern: copySpecial1, excludeSubfields: ['b', '6', '8']}),
-  copy({tagPattern: copySpecial2, excludeSubfields: ['9']}),
-  copy({tagPattern: copySpecial3, dropSubfields: ['4']}),
-  copy({tagPattern: copySpecial4, excludeSubfields: ['9'], dropSubfields: ['4']}),
   internalFields(), // LOW, CAT, SID
   leader(), // Test 01
   mainEntry(), // Main entry fields
@@ -73,6 +65,15 @@ const allReducers = [
   field245(), // Tests 31, 32 and 33
   field830() // Tests 22-29
 //  localReducers.field995() // Tests 30, 31 and 32
+];
+
+export const localCopyReducerConfigs = [
+  {tagPattern: copyIfDifferent},
+  {tagPattern: copyIfMissing, compareTagsOnly: true},
+  {tagPattern: copySpecial1, excludeSubfields: ['b', '6', '8']},
+  {tagPattern: copySpecial2, excludeSubfields: ['9']},
+  {tagPattern: copySpecial3, dropSubfields: ['4']},
+  {tagPattern: copySpecial4, excludeSubfields: ['9'], dropSubfields: ['4']}
 ];
 
 export const localReducers = [
@@ -93,11 +94,3 @@ export const localReducers = [
   field830(), // Tests 22-29
   field995()
 ];
-
-// ### Miten tästä rakennetaan kokonaisuus jossa tutkitaan tietueen kaikki kentät?
-// Eli kaikki ne joissa käytetään vain copya sekä ne, joille on erikseen kustomoitu omat säännöt.
-export default ({base, source, allReducers}) => {
-  debug(`inside export default`);
-  const sourceRecord = MarcRecord.clone(source);
-  return allReducers.reduce((baseRecord, reducer) => reducer(baseRecord, sourceRecord), MarcRecord.clone(base));
-};

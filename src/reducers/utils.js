@@ -1,6 +1,5 @@
 import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
-// import {isEqual} from 'lodash';
 
 import fs from 'fs';
 import path from 'path';

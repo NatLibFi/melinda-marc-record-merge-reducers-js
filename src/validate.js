@@ -66,7 +66,7 @@ export default async () => {
     await FieldStructure([{tag: /^007$/, dependencies: [{leader: /^.{6}[^at]/}]}]),
     await EndingPunctuation() */
   ]);
-//  const validatePunctuation = await validateFactoryPunctuation();
+  //  const validatePunctuation = await validateFactoryPunctuation();
 
   return async (record, fix, validateFixes) => {
     const opts = fix ? {fix, validateFixes} : {fix};
