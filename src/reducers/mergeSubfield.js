@@ -88,7 +88,7 @@ function listSubfieldsWorthKeeping(tag) {
 
 function isKeptableSubfield(tag, subfieldCode) {
   const listOfSubfieldsAsString = listSubfieldsWorthKeeping(tag);
-  // If nothing is listed, evertything is good:
+  // If nothing is listed, everything is good:
   if (listOfSubfieldsAsString === '') {
     return true;
   }
