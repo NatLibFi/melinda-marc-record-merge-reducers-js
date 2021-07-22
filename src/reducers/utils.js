@@ -12,13 +12,44 @@ export function getTags(fields) {
   return tags;
 }
 
+function fieldsAreIdentical(field1, field2) {
+  // NB! We are skipping normalizations here on purpose! They should be done beforehand...
+  debug(`Compare '${localFieldToString(field1)}' vs '${localFieldToString(field2)}'...`);
+  if ( field1.tag !== field2.tag ) {
+    return false;
+  }
+  if ('value' in field1) {
+    return localFieldToString(field1) === localFieldToString(field2);
+  }
+  if ('subfields' in field1) {
+    if (field1.tag === field2.tag &&
+        field1.ind1 === field2.ind1 &&
+        field1.ind2 === field2.ind2 &&
+        field1.subfields.length === field2.subfields.length) {
+      // NB! This does not check order of subfields, which might or might nor be a bad idea.
+      // NV would just do localFieldToString() and compare them strings...
+      return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value)); 
+    }
+    return false;
+  }
+  return false;
+}
+
 // Modified from copy functionality in marc-record-merge
 // Changed function name from checkIdenticalness to getNonIdenticalFields / SS 28.5.2021
 export function getNonIdenticalFields(baseFields, sourceFields) {
+  debug(`gNIF() in... ${baseFields.length} vs ${sourceFields.length}`);
+  /*
+  const baseFieldsAsString = baseFields.map(field => localFieldToString(field));
+  return sourceFields.filter(sourceField => baseFieldsAsString.some(fieldAsString => fieldAsString === localFieldToString(sourceField)));
+*/
   // Return array of non-identical fields (source fields not present in base)
   return sourceFields.filter(filterNonIdentical);
 
   function filterNonIdentical(sourceField) {
+    return baseFields.some(baseField => fieldsAreIdentical(sourceField,baseField)) === false;
+    /*   //const sourceAsString = localFieldToString(sourceField);
+    //return baseFields.some(baseField => localField)
     if ('value' in sourceField) {
       debug(`Checking control field ${sourceField.tag} for identicalness`);
       return baseFields.some(isIdenticalControlField) === false;
@@ -30,10 +61,14 @@ export function getNonIdenticalFields(baseFields, sourceFields) {
 
     // Used to normalize both control fields and subfields
     function normalizeItem(item) {
-      return item.value.toLowerCase().replace(/\s+/u, '');
+      // NV 2021-07-22: We shouldn't normalize control fields this way!
+      //return item.value.toLowerCase().replace(/\s+/u, '');
+      // NV 2021-07-22: Also, the above version would err with "ab c" vs "a bc"...
+      return item.value.toLowerCase().replace(/\s+/u, ' ');
     }
     function isIdenticalControlField(baseField) {
-      return normalizeItem(sourceField) === normalizeItem(baseField);
+      //return normalizeItem(sourceField) === normalizeItem(baseField);
+      return sourceField.value === baseField.value;
     }
     function isIdenticalDataField(baseField) {
       if (sourceField.tag === baseField.tag &&
@@ -46,6 +81,7 @@ export function getNonIdenticalFields(baseFields, sourceFields) {
         return sourceField.subfields.some(sourceSub => normalizeItem(sourceSub) === normalizeItem(baseSub));
       }
     }
+    */
   }
 }
 
@@ -58,6 +94,7 @@ function localFieldToString(f) {
     return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
   }
 }
+
 export function fieldToString(f) { // copied aped from marc-record-js
   return localFieldToString(f);
 }
@@ -324,8 +361,8 @@ export function makeNewBaseField(base, baseField, sortedSubfields) {
  * */
 export function selectLongerField(base, baseField, sourceField) {
   debug(`Comparing field ${baseField.tag}`);
-  const baseSubs = baseField.subfields;
-  const sourceSubs = sourceField.subfields;
+  const baseSubs = 'subfields' in baseField ? baseField.subfields : [];
+  const sourceSubs = 'subfields' in sourceField ? sourceField.subfields : [];
 
   const baseSubsNormalized = baseSubs
     .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
@@ -351,7 +388,11 @@ export function selectLongerField(base, baseField, sourceField) {
     return base;
   }
 
-  if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length) {
+  if (baseSubs.length > 0 && baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length &&
+    localFieldToString(baseField).length < localFieldToString(sourceField).length ) {
+    debug(`Checking subfield equality: equal number of subfields, but source has longer contents`);
+    return replaceBasefieldWithSourcefield(base);
+    /*  
     debug(`Checking subfield equality`);
     const totalSubfieldLengthBase = baseSubsNormalized
       .map(({value}) => value.length)
@@ -363,6 +404,7 @@ export function selectLongerField(base, baseField, sourceField) {
     if (totalSubfieldLengthSource > totalSubfieldLengthBase) {
       return replaceBasefieldWithSourcefield(base);
     }
+    */
   }
   if (sourceSubs.length > baseSubs.length && equalSubfieldsBase.length === baseSubs.length) {
     return replaceBasefieldWithSourcefield(base);
