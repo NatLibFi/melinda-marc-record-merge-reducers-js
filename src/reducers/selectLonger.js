@@ -23,8 +23,8 @@ import {
 
 export default (tagPattern) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(tagPattern.tagPattern);
-  const sourceFields = source.get(tagPattern.tagPattern);
+  const baseFields = base.get(tagPattern);
+  const sourceFields = source.get(tagPattern);
   debug(`selectLonger(${JSON.stringify(tagPattern)}), b:${baseFields.length} vs s:${sourceFields.length}`);
   const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
   

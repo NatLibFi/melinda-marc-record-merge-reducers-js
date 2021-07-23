@@ -18,7 +18,7 @@ describe('reducers/selectLonger', () => {
       const source = new MarcRecord(getFixture('source.json'));
       const tagPattern = new RegExp(getFixture({components: ['pattern.txt'], reader: READERS.TEXT}), 'u');
       const expectedRecord = getFixture('merged.json');
-      const mergedRecord = createReducer({tagPattern})(base, source);
+      const mergedRecord = createReducer(tagPattern)(base, source); // NV 20210723: removed brackets from {tagPattern}
       expect(mergedRecord.toObject()).to.eql(expectedRecord);
     });
   });
