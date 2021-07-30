@@ -6,15 +6,8 @@ import selectLonger from './selectLonger';
 import field006 from './field006';
 import field007 from './field007';
 import field008 from './field008';
-import field020 from './field020';
-import field022 from './field022';
-import field024 from './field024';
-import field040 from './field040';
-import field042 from './field042';
-import field240 from './field240';
-import field245 from './field245';
-import field830 from './field830';
 import field995 from './field995';
+import genericDatafield from './genericDatafield';
 
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -56,6 +49,8 @@ const allReducers = [
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
+  genericDatafield() // Import tests?
+  /*
   field020(), // Tests 09, 10 and 11
   field022(), // Tests 12, 13 and 14
   field024(), // Tests 15, 16 and 17
@@ -64,6 +59,7 @@ const allReducers = [
   field240(), // Tests 34, 35
   field245(), // Tests 31, 32 and 33
   field830() // Tests 22-29
+*/
 //  localReducers.field995() // Tests 30, 31 and 32
 ];
 
