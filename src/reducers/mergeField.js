@@ -30,6 +30,7 @@ const mergeRestrictions = [
   {'tag': '020', 'required': 'a', 'key': 'a'},
   {'tag': '022', 'required': 'a', 'key': 'a'},
   {'tag': '024', 'required': 'a', 'key': 'a'},
+  {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
   {'tag': '042', 'required': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
@@ -104,14 +105,19 @@ function uniqueKeyMatches(field1, field2, forcedKeyString = null) {
   });
 }
 
-function tagToRegexp(tag) {
+
+function localTagToRegexp(tag) {
   if (tag in counterpartRegexps) {
     const regexp = counterpartRegexps[tag];
     //debug(`regexp for ${tag} found: ${regexp}`);
     return regexp;
   }
-  // debug(`WARNING: TagToRegexp(${tag}): no precompiled regexp found.`);
+  // debug(`WARNING: locallocalTagToRegexp(${tag}): no precompiled regexp found.`);
   return new RegExp(`^${tag}$`, 'u');
+}
+
+export function tagToRegexp(tag) {
+  return localTagToRegexp(tag);
 }
 
 function areRequiredSubfieldsPresent(field) {
@@ -198,7 +204,7 @@ function mergablePair(field1, field2, fieldSpecificCallback = null) {
     return false;
   }
 
-  // NB! field1.tag and field2.tag might differ. Therefore required subfields might theoretically differ as well. (1XX vs 7XX)
+  // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well. Thus check both:
   if (!areRequiredSubfieldsPresent(field1) || !areRequiredSubfieldsPresent(field2)) {
     return false;
   }
@@ -285,7 +291,7 @@ function compareTitle(field1, field2) {
 
 export function getCounterpart(record, field) {
   // Get tag-wise relevant 1XX and 7XX fields:
-  const counterpartCands = record.get(tagToRegexp(field.tag));
+  const counterpartCands = record.get(localTagToRegexp(field.tag));
   // debug(counterpartCands);
 
   if (!counterpartCands || counterpartCands.length === 0) {
