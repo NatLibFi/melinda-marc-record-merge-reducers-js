@@ -192,13 +192,7 @@ function indicatorsMatch(field1, field2) {
   return true;
 }
 
-export function mergablePair(field1, field2, fieldSpecificCallback = null) {
-  // Indicators *must* be equal:
-  if (!indicatorsMatch(field1, field2) ||
-      !controlSubfieldsPermitMerge(field1, field2)) {
-    return false;
-  }
-
+function subfieldsPermitMerge(field1, field2) {
   // NB! field1.tag and field2.tag might differ. Therefore required subfields might theoretically differ as well. (1XX vs 7XX)
   if (!areRequiredSubfieldsPresent(field1) || !areRequiredSubfieldsPresent(field2)) {
     debug('required subfield presence check failed.');
@@ -209,6 +203,16 @@ export function mergablePair(field1, field2, fieldSpecificCallback = null) {
   if (!arePairedSubfieldsInBalance(field1, field2)) {
     // Eg. require that both fields either have or have not X00$t:
     debug('required subfield pair check failed.');
+    return false;
+  }
+  return true;
+}
+
+export function mergablePair(field1, field2, fieldSpecificCallback = null) {
+  // Indicators *must* be equal:
+  if (!indicatorsMatch(field1, field2) ||
+      !subfieldsPermitMerge(field1, field2) ||
+      !controlSubfieldsPermitMerge(field1, field2)) {
     return false;
   }
 
