@@ -1,4 +1,4 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import internalFields from './internalFields';
 import leader from './leader';
 import mainEntry from './mainEntry';
@@ -80,6 +80,9 @@ export const localReducers = [
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
+  genericDatafield(),
+
+  /*
   field020(), // Tests 09, 10 and 11
   field022(), // Tests 12, 13 and 14
   field024(), // Tests 15, 16 and 17
@@ -88,5 +91,6 @@ export const localReducers = [
   field240(), // Tests 34, 35
   field245(), // Tests 31, 32 and 33
   field830(), // Tests 22-29
+  */
   field995()
 ];
