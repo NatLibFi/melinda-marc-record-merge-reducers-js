@@ -27,7 +27,7 @@ export default (tagPattern) => (base, source) => {
   const sourceFields = source.get(tagPattern);
   debug(`selectLonger(${JSON.stringify(tagPattern)}), b:${baseFields.length} vs s:${sourceFields.length}`);
   const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
-  
+
   if (nonIdenticalFields.length === 0) {
     debug(`Identical fields in source and base`);
     return base;
@@ -37,8 +37,14 @@ export default (tagPattern) => (base, source) => {
   return mergeLongerField();
 
   function mergeLongerField() {
+
+    /*
+    // NV20210723: This can't be right... This might copy one to many, eg. the longest sourceField over all baseFields...
     if (sourceFields.every(sourceField => baseFields.every(baseField => selectLongerField(base, baseField, sourceField)))) {
       return base;
     }
+    // Thus disable it altogether for now,
+    */
+    return base;
   }
 };
