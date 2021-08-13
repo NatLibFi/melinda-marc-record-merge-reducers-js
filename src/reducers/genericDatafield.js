@@ -36,6 +36,7 @@ const datafields = [
   '082',
   '083',
   '084',
+  // 100, 110, 111 and 130 are handled by mainEntry.js
   '210',
   '240',
   '242',
@@ -119,6 +120,7 @@ const datafields = [
   '585',
   '586',
   '588',
+  // 700, 710, 711 and 730 are handled by mainEntry.js
   '720',
   '740',
   '751',
