@@ -7,7 +7,6 @@ import {
   fieldToString,
   normalizeStringValue,
   recordHasField
-  //normalizeStringValue
 } from './utils.js';
 
 import {controlSubfieldsPermitMerge} from './controlSubfields.js';
@@ -191,7 +190,7 @@ function indicatorsMatch(field1, field2) {
     debug('indicator 1 check failed');
     return false;
   }
-  // NB! There are cases where indicator values are, says # and 1, and the define value (here 1) should be used.
+  // NB! There are cases where indicator values are, says # and 1, and the define value (here 1) should be used. (Eg. field 100.)
   // However, we do not let them pass yet.
   return true;
 }
