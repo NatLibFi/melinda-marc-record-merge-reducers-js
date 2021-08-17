@@ -14,16 +14,18 @@ export function getTags(fields) {
 
 function fieldsAreIdentical(field1, field2) {
   // NB! We are skipping normalizations here on purpose! They should be done beforehand...
-  debug(`Compare '${localFieldToString(field1)}' vs '${localFieldToString(field2)}'...`);
   if (field1.tag !== field2.tag) {
     return false;
   }
-  if ('value' in field1) {
+
+  debug(`Compare '${localFieldToString(field1)}' vs '${localFieldToString(field2)}'...`);
+
+  if ('value' in field1) { // 001-009
     return localFieldToString(field1) === localFieldToString(field2);
   }
+
   if ('subfields' in field1) {
-    if (field1.tag === field2.tag &&
-        field1.ind1 === field2.ind1 &&
+    if ( field1.ind1 === field2.ind1 &&
         field1.ind2 === field2.ind2 &&
         field1.subfields.length === field2.subfields.length) {
       // NB! This does not check order of subfields, which might or might nor be a bad idea.
@@ -32,6 +34,7 @@ function fieldsAreIdentical(field1, field2) {
     }
     return false;
   }
+  
   return false;
 }
 
@@ -123,7 +126,6 @@ export function copyFields(record, fields) {
 }
 
 // Get field specs from melindaCustomMergeFields.json
-// This is not currently used, but keep it here in case field specs are needed
 const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
 export function getFieldSpecs(tag) {
   const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tag);
@@ -363,7 +365,7 @@ export function makeNewBaseField(base, baseField, sortedSubfields) {
  *   b) Subfield values in source are supersets of subfield values in base
  * */
 export function selectLongerField(base, baseField, sourceField) {
-  debug(`Comparing field ${baseField.tag}`);
+  debug(`selectLongerField(): Comparing field ${baseField.tag}`);
   const baseSubs = 'subfields' in baseField ? baseField.subfields : [];
   const sourceSubs = 'subfields' in sourceField ? sourceField.subfields : [];
 
