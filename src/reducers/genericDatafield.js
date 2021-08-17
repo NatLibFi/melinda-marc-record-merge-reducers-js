@@ -10,23 +10,31 @@ import {
 // List of datafields *that are handled by the generic code*!
 // NB! 100/110/111/130-700/710/711/730 stuff is in mainEntry.js
 // Hmm... This list is incomplete. How to handle 6XX etc?
-
+// 384|507|514
 const datafields = [
+  '010', // non-repeatable
   '013',
   '015',
   '016',
   '017',
+  '018', // non-repeatable
   '020',
   '022',
   '024',
+  '027', // is repeatable but listed in copyIfMissing. Why?
   '028',
+  '030', // is repeatable but listed in copyIfMissing. Why?
+  '031', // is repeatable but listed in copyIfMissing. Why?
   '033',
   '034',
   '028',
   '035',
   '040',
   '042',
+  '043', // is repeatable but listed in copyIfMissing. Why?
+  '044', // non-repeatable
   '046',
+  '049', // non-repeatable
   '050',
   '052',
   '055',
@@ -36,15 +44,26 @@ const datafields = [
   '082',
   '083',
   '084',
+  '085', // is repeatable but listed in copyIfMissing. Why?
+  '088', // is repeatable but listed in copyIfMissing. Why?
   // 100, 110, 111 and 130 are handled by mainEntry.js
   '210',
+  '222', // is repeatable but listed in copyIfMissing. Why?
   '240',
   '242',
+  '243', // non-repeatable
   '245',
   '246',
+  '247', // is repeatable but listed in copyIfMissing. Why?
   '250',
   '255',
   '258',
+  '260', // non-repeatable (also 260 and 264 shouldn't co-exist, but don't worry about it here)
+  '263', // non-repeatable
+  '264', // non-repeatable (also 260 and 264 shouldn't co-exist, but don't worry about it here)
+  // 300 needs thinking... technically repeatable, but we don't want to repeat it...
+  '306', // non-repeatable
+  '310', // is repeatable but listed in copyIfMissing. Why?
   '321',
   '336',
   '337',
@@ -60,6 +79,7 @@ const datafields = [
   '351',
   '352',
   '355',
+  '357', // non-repeatable
   '362',
   '363',
   '365',
@@ -70,6 +90,7 @@ const datafields = [
   '381',
   '382',
   '383',
+  '384', // is repeatable but listed in copyIfMissing. Why?
   '385',
   '386',
   '388',
@@ -81,11 +102,13 @@ const datafields = [
   '505',
   '505',
   '506',
+  '507', // non-repeatable
   '508',
   '509',
   '510',
   '511',
   '513',
+  '514', // non-repeatable
   '515',
   '518',
   '520',
