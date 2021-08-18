@@ -25,7 +25,7 @@ function fieldsAreIdentical(field1, field2) {
   }
 
   if ('subfields' in field1) {
-    if ( field1.ind1 === field2.ind1 &&
+    if (field1.ind1 === field2.ind1 &&
         field1.ind2 === field2.ind2 &&
         field1.subfields.length === field2.subfields.length) {
       // NB! This does not check order of subfields, which might or might nor be a bad idea.
@@ -34,7 +34,7 @@ function fieldsAreIdentical(field1, field2) {
     }
     return false;
   }
-  
+
   return false;
 }
 
@@ -185,7 +185,7 @@ export function normalizeStringValue(value) {
   return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
 }
 
-export function strictEquality(subfieldA, subfieldB) {
+function strictEquality(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code &&
     subfieldA.value === subfieldB.value;
 }
@@ -232,51 +232,6 @@ export function getNonRepSubs(sourceField, nonRepCodes, dropCodes = [], idCodes 
   return nonRepSubs;
 }
 
-// Get repeatable subfields to copy from source to base
-export function getRepSubs(baseField, sourceField, repCodes, dropCodes = [], idCodes = []) {
-  // First get all repeatable subfields and filter out dropped and identifying subfields, if given
-  const allRepSubs = sourceField.subfields
-    .filter(subfield => repCodes
-      .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
-
-  // Add temporary index property to array elements (subfields) to identify them even when values are normalized
-  const allIndexedRepSubs = allRepSubs
-    .map(sub => ({...sub, index: allRepSubs.indexOf(sub)}));
-
-  // Then filter out duplicates already existing in base
-  const nonDupRepSubsNorm = filterDuplicates(baseField, allIndexedRepSubs);
-
-  function filterDuplicates(baseField, allIndexedRepSubs) {
-    // Normalize subfield values for comparison
-    const allIndexedRepSubsNorm = allIndexedRepSubs
-      .map(({code, value, index}) => ({code, value: normalizeStringValue(value), index}));
-
-    function strictEquality(subfieldA, subfieldB) {
-      return subfieldA.code === subfieldB.code &&
-        subfieldA.value === subfieldB.value;
-    }
-
-    // Get source subfields for which a matching base subfield is found
-    const dupRepSubsSource = allIndexedRepSubsNorm
-      .filter(sourceSub => normalizeSubfields(baseField)
-        .some(baseSub => strictEquality(sourceSub, baseSub)));
-
-    // Returns an array of non-duplicate repeatable subfields from source
-    // Subfields still include the temporary index property and values are normalized
-    const result = allIndexedRepSubsNorm
-      .filter(sub => dupRepSubsSource
-        .map(sub => sub.value).indexOf(sub.value) === -1);
-    return result;
-  }
-
-  // Get the non-normalized versions of non-duplicate repeatable subfields
-  // Drop the temporary index property
-  const nonDupRepSubsToCopy = allIndexedRepSubs
-    .filter(sub => nonDupRepSubsNorm
-      .map(sub => sub.index).indexOf(sub.index) !== -1)
-    .map(({code, value, index}) => ({code, value})); // eslint-disable-line no-unused-vars
-  return nonDupRepSubsToCopy;
-}
 
 // Default subfield sort order if no custom order is given
 const sortDefault = [
