@@ -2,11 +2,11 @@
 import internalFields from './internalFields';
 import leader from './leader';
 import mainEntry from './mainEntry';
-import selectLonger from './selectLonger';
+//import selectLonger from './selectLonger';
 import field006 from './field006';
 import field007 from './field007';
 import field008 from './field008';
-import field995 from './field995';
+//import field995 from './field995';
 import genericDatafield from './genericDatafield';
 
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -93,5 +93,5 @@ export const localReducers = [
   field245(), // Tests 31, 32 and 33
   field830(), // Tests 22-29
   */
-  field995()
+  //field995()
 ];
