@@ -9,6 +9,13 @@ import {
   recordHasField
 } from './utils.js';
 
+// Possible modifications:
+// Move 040 back to a separate file, as it differs from everything else.
+// We might be able to simplify things after that.
+// Special treatments needed for:
+// - punctuation between fields..
+// - X00$d 
+// - indicator for article length (eg. 245)
 import {controlSubfieldsPermitMerge} from './controlSubfields.js';
 
 import {
@@ -24,61 +31,81 @@ const counterpartRegexps = {
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
 };
 
-// "paired" refers to a field that must either exist in both or be absent in both. Typically it's an empty string.
+// "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined.
+// "key" is an unique key that must match (be absent or exist+be identical) in both.
+// TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical. 
+// TODO: lifespan for X00$d-fields
 const mergeRestrictions = [
   {'tag': '020', 'required': 'a', 'key': 'a'},
   {'tag': '022', 'required': 'a', 'key': 'a'},
   {'tag': '024', 'required': 'a', 'key': 'a'},
   {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
-  {'tag': '042', 'required': 'a'},
+  {'tag': '042', 'required': 'a', 'key': ''},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
-  {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcj'},
-  {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
-  {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
+  {'tag': '100', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'abcj'},
+  {'tag': '110', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'abcdgn'},
+  {'tag': '111', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'acdgn'},
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '240', 'required': 'a', 'key': 'anp'}, // Is 'key' complete? Probably not...
-  {'tag': '245', 'required': 'a'}, // 'paired': 'abnp', 'key': 'abnp'},
+  {'tag': '245', 'required': 'a', 'key': 'a', 'key2':'bcnp'}, // 'paired': 'abnp', 'key': 'abnp'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
-  {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
-  {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
-  {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
+  {'tag': '700', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'abcj'},
+  {'tag': '710', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'abcdgn'},
+  {'tag': '711', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'acdgn'},
   // NB! 730 has no name part, key is used for title part
   {'tag': '730', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '830', 'required': 'ax', 'key': 'apx'}
 ];
 
-function getUniqueKeyFields2(tag) {
+function getMergeRestrictionsForTag(tag, restriction) {
   const activeTags = mergeRestrictions.filter(entry => tag === entry.tag);
   if (activeTags.length === 0) {
-    debug(`Warning\tNo key found for ${tag}`);
-    return '';
+    debug(`WARNING\tNo key found for ${tag}. Returning NULL!`);
+    return null;
   }
-  if (!('key' in activeTags[0])) {
-    debug(`Field ${tag} is missing unique key. Return ''.`);
-    return '';
+  if (!(restriction in activeTags[0])) {
+    debug(`WARNING\tField ${tag} is missing '${restriction}'. Return NULL.`);
+    return null;
   }
   if (activeTags.length > 1) {
-    debug(`Warning\tMultiple keys (N=${activeTags.length}) found for ${tag}`);
-    return activeTags[0].key;
+    debug(`WARNING\tMultiple values for '${restriction}' (N=${activeTags.length}) found in ${tag}`);
+    return activeTags[0][restriction];
   }
+  // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
+  // Thus we return string and not array. We might have think this further later on...
 
-  return activeTags[0].key;
+  return activeTags[0][restriction];
 }
 
-function getUniqueKeyFields(field) {
-  const keys = getUniqueKeyFields2(field.tag);
-  debug(`Unique key for ${field.tag}: '${keys}'`);
-  // Um... 700$t stuff (sort of 2nd unique key)
-  return keys;
+function equalishFields(field1, field2) {
+  const s1 = fieldToString(field1);
+  const s2 = fieldToString(field2);
+  if ( s1 === s2 ) { return true; }
+  // TODO; strip at least $9's keeps (and drops)
+  return false;
 }
 
 function uniqueKeyMatches(field1, field2, forcedKeyString = null) {
   // NB! Assume that field1 and field2 have same relevant subfields.
   // We might have 100 vs 700 fields. I haven't check whether their specs are identical.
-  const keySubfieldsAsString = forcedKeyString || getUniqueKeyFields(field1);
+  // const keySubfieldsAsString = forcedKeyString || getUniqueKeyFields(field1);
+  const keySubfieldsAsString = forcedKeyString || getMergeRestrictionsForTag(field1.tag, 'key');
+  return mandatorySubfieldComparison(field1, field2, keySubfieldsAsString);
+}
+
+function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
+  if ( keySubfieldsAsString === null ) {
+    // If keySubfieldsAsString is undefined, (practically) everything is the string.
+    // When everything is the string, the strings need to be (practically) identical.
+    // (NB! Here order matters. We should probably make it matter everywhere.)
+    // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
+    return equalishFields(field1, field2);
+  }
+    
   const subfieldArray = keySubfieldsAsString.split('');
+
   return subfieldArray.every(subfieldCode => {
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
@@ -104,9 +131,38 @@ function uniqueKeyMatches(field1, field2, forcedKeyString = null) {
   });
 }
 
+function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
+  if ( keySubfieldsAsString === null ) { return true; }
+  const subfieldArray = keySubfieldsAsString.split('');
+
+  return subfieldArray.every(subfieldCode => {
+    const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
+    const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
+    // Assume that at least 1 instance must exist and that all instances must match
+    if (subfields1.length !== subfields2.length) {
+      debug(`Unique key: subfield ${subfieldCode} issues...`);
+      return false;
+    }
+
+    return subfields1.every(sf => {
+      const normSubfieldValue = normalizeStringValue(sf.value);
+      return subfields2.some(sf2 => {
+        const normSubfieldValue2 = normalizeStringValue(sf2.value);
+        if (normSubfieldValue === normSubfieldValue2) {
+          debug(`pairing succeed for normalized '${normSubfieldValue}'`);
+          return true;
+        }
+        debug(`failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
+        return false;
+      });
+    });
+
+  });
+}
 
 function localTagToRegexp(tag) {
   if (tag in counterpartRegexps) {
+    // Are the hard-coded hacks actually used? Check...
     const regexp = counterpartRegexps[tag];
     //debug(`regexp for ${tag} found: ${regexp}`);
     return regexp;
@@ -120,7 +176,8 @@ export function tagToRegexp(tag) {
 }
 
 function areRequiredSubfieldsPresent(field) {
-  const subfieldString = mergeGetRequiredSubfieldCodes(field.tag);
+  const subfieldString = getMergeRestrictionsForTag(field.tag, 'required');
+  if ( subfieldString === null ) { return true; } // nothing is required
   const subfieldArray = subfieldString.split('');
   return subfieldArray.every(sfcode => {
     const result = fieldHasSubfield(field, sfcode);
@@ -132,42 +189,11 @@ function areRequiredSubfieldsPresent(field) {
   });
 }
 
-function mergeGetRequiredSubfieldCodes(tag) {
-  const activeTags = mergeRestrictions.filter(entry => tag === entry.tag);
-  if (activeTags.length === 0) {
-    debug(`Warning\tNo merge subfield rules found for ${tag}`);
-    return '';
-  }
-  if (!('required' in activeTags[0])) {
-    return '';
-  }
-  if (activeTags.length > 1) {
-    debug(`Warning\tMultiple merge subfield rules found for ${tag}`);
-    return activeTags[0].required;
-  }
-
-  return activeTags[0].required;
-}
-
-function mergeGetPairedSubfieldCodes(tag) {
-  const activeTags = mergeRestrictions.filter(entry => tag === entry.tag);
-  if (activeTags.length === 0) {
-    debug(`Warning\tNo merge subfield rules found for ${tag}`);
-    return '';
-  }
-  if (!('paired' in activeTags[0])) {
-    return '';
-  }
-  if (activeTags.length > 1) {
-    debug(`Warning\tMultiple merge subfield rules (N=${activeTags.length}) found for ${tag}`);
-    return activeTags[0].paired;
-  }
-  return activeTags[0].paired;
-}
-
 function arePairedSubfieldsInBalance(field1, field2) {
-  const subfieldString = mergeGetPairedSubfieldCodes(field1.tag);
+  const subfieldString = getMergeRestrictionsForTag(field1.tag, 'paired');
+  if ( subfieldString === null ) { return true; }
   const subfieldArray = subfieldString.split('');
+
   return subfieldArray.every(sfcode => {
     if (fieldHasSubfield(field1, sfcode)) {
       // Return true if present in f1 and f1. Return false if present in f1 but missing in f2:
@@ -202,20 +228,19 @@ function mergablePair(field1, field2, fieldSpecificCallback = null) {
     !controlSubfieldsPermitMerge(field1, field2)) {
     return false;
   }
-
+  debug("mergablePair()... wp2");
   // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well. Thus check both:
   if (!areRequiredSubfieldsPresent(field1) || !areRequiredSubfieldsPresent(field2)) {
     return false;
   }
-
-  // NB! field1.tag and field2.tag might differ. Therefore required subfields may differ as well.
+  debug("mergablePair()... wp3");
+  // Stuff of Hacks! Eg. require that both fields either have or have not X00$t:
   if (!arePairedSubfieldsInBalance(field1, field2)) {
-    // Eg. require that both fields either have or have not X00$t:
     debug('required subfield pair check failed.');
     return false;
   }
-
-  if (!compareNameAndTitle(field1, field2)) {
+  debug("Test semanrics...");
+  if (!semanticallyMergablePair(field1, field2)) {
     return false;
   }
   return fieldSpecificCallback === null || fieldSpecificCallback(field1, field2);
@@ -223,27 +248,33 @@ function mergablePair(field1, field2, fieldSpecificCallback = null) {
 
 function compareName(field1, field2) {
   // 100$a$t: remove $t and everything after that
-  const subset1 = fieldToNamePart(field1);
-  const subset2 = fieldToNamePart(field2);
+  const reducedField1 = fieldToNamePart(field1);
+  const reducedField2 = fieldToNamePart(field2);
+  
   // compare the remaining subsets:
-  return uniqueKeyMatches(subset1, subset2);
+  return uniqueKeyMatches(reducedField1, reducedField2);
 }
 
 
-function compareNameAndTitle(field1, field2) {
-  // Both name and title parts exist:
-  if (fieldHasSubfield(field1, 't') && field1.tag in ['100', '110', '111', '700', '710', '711'] && !compareTitle(field1, field2)) {
-    debug(' Unmergable: Title part mismatch.');
+function semanticallyMergablePair(field1, field2) {
+  // On rare occasions a field contains a title part and partial checks are required:
+  if ( !compareTitle(field1, field2)) {
+    debug(' ${field1.tag} is unmergable: Title part mismatch.');
     return false;
-  }
+  } 
+
+
+  // TODO: we should check lifespan here
+  // TODO: we should check "optional" fields (such as possibly 245$b) here
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
-  if (compareName(field1, field2)) {
-    debug('Unique key matches. We are MERGABLE :-)');
-    return true;
+  if (!compareName(field1, field2)) {
+    debug('Unmergable: Name part mismatch');
+    return false;
   }
-  debug('Unmergable: Name part mismatch');
-  return false;
+  debug(' Semantic checks passed! We are MERGABLE!');
+  
+  return true;
 }
 
 
@@ -272,6 +303,7 @@ function fieldToNamePart(field) {
 }
 
 function fieldToTitlePart(field) {
+  // Take everything after 1st subfield $t...
   const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i >= index)};
   debug(`Title subset: ${fieldToString(subsetField)}`);
@@ -280,11 +312,15 @@ function fieldToTitlePart(field) {
 
 
 function compareTitle(field1, field2) {
-  // 100$a$t: remove $t and everything after that
-  const subset1 = fieldToTitlePart(field1);
-  const subset2 = fieldToTitlePart(field2);
-  // "dfhklmnoprstxvg" is ok for 100, 110, 111, 700, 710 and 711. 130/730 is not handled here!
-  return uniqueKeyMatches(subset1, subset2, 'dfhklmnoprstxvg');
+  // HACK ALERT! Tags, ‡t and ‡dfhklmnoprstxvg should typically be parametrized.
+  // If it is just this one case, I'll leave this as it is.  
+  if (fieldHasSubfield(field1, 't') && field1.tag in ['100', '110', '111', '700', '710', '711']) {
+    // 100$a$t: remove $t and everything after that
+    const subset1 = fieldToTitlePart(field1);
+    const subset2 = fieldToTitlePart(field2);
+    return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
+  }
+  return true;
 }
 
 
