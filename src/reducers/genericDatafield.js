@@ -7,7 +7,7 @@ import {
 
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-// List of datafields *that are handled by the generic code*!
+// Array of datafields *that are handled by the generic code*!
 // NB! 100/110/111/130-700/710/711/730 stuff is in mainEntry.js
 // Hmm... This list is incomplete. How to handle 6XX etc?
 // 384|507|514
@@ -143,6 +143,22 @@ const datafields = [
   '585',
   '586',
   '588',
+  '600',
+  '610',
+  '611',
+  '630',
+  '647',
+  '648',
+  '650',
+  '651',
+  '653',
+  '654',
+  '655',
+  '656',
+  '657',
+  '658',
+  '662',
+  '688',
   // 700, 710, 711 and 730 are handled by mainEntry.js
   '720',
   '740',
@@ -164,6 +180,10 @@ const datafields = [
   '785',
   '786',
   '787',
+  '800',
+  '810',
+  '811',
+  '830',
   '856',
   '883',
   '886',
