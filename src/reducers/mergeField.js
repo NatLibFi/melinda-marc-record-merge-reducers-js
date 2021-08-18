@@ -43,17 +43,17 @@ const mergeRestrictions = [
   {'tag': '040', 'required': '', 'key': ''},
   {'tag': '042', 'required': 'a', 'key': ''},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
-  {'tag': '100', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'abcj'},
-  {'tag': '110', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'abcdgn'},
-  {'tag': '111', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'acdgn'},
+  {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcj'},
+  {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
+  {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '240', 'required': 'a', 'key': 'anp'}, // Is 'key' complete? Probably not...
   {'tag': '245', 'required': 'a', 'key': 'a', 'key2':'bcnp'}, // 'paired': 'abnp', 'key': 'abnp'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
-  {'tag': '700', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'abcj'},
-  {'tag': '710', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'abcdgn'},
-  {'tag': '711', 'required': 'a', 'paired': 't', 'title_subfield':'t', 'key': 'acdgn'},
+  {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
+  {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
+  {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
   // NB! 730 has no name part, key is used for title part
   {'tag': '730', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '830', 'required': 'ax', 'key': 'apx'}
