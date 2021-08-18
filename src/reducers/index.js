@@ -26,6 +26,7 @@ const copyIfDifferent = new RegExp(String((/^(?<tags1>013|015|016|017|028|035|05
 
 // Copy field from source only if missing from base (compareTagsOnly = true)
 const copyIfMissing = /^(?<tags>010|018|027|030|031|043|044|049|085|088|222|243|247|260|263|264|306|310|357|384|507|514)$/u;
+// TODO: 027?
 
 // Special rules defined for certain sets of fields
 // Exclude subfields from identicalness comparison and/or drop subfields from source before copying
@@ -45,7 +46,7 @@ const allReducers = [
   internalFields(), // LOW, CAT, SID
   leader(), // Test 01
   mainEntry(), // Main entry fields
-  selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
+  //selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
@@ -76,7 +77,7 @@ export const localReducers = [
   internalFields(), // LOW, CAT, SID
   leader(), // Test 01
   mainEntry(), // Main entry fields
-  selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
+  //selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
