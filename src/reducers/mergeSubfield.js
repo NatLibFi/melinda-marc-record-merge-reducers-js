@@ -13,7 +13,7 @@ const excludeSubfieldsFromMerge = [
   {'tag': '024', 'subfields': 'c'}
 ];
 
-const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}];
+const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
 
 //
 // Used by our very own hacky bottomUpSortSubfields(). Features:
@@ -26,6 +26,7 @@ const subfieldSortOrder = [
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']}
 ];
 
+// NB! These are X00 specific. Should we somehow parametrize them?
 const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
 const birthYearAndDeathYear = /^[1-9][0-9]*-[1-9][0-9]*[,.]?$/u;
 
@@ -47,7 +48,7 @@ function replaceSubfield(targetField, candSubfield) {
     relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
     return true;
   }
-  return false;
+  return false; // default to failure
 }
 
 function okToInsertTagCode(tag, code) {
@@ -98,7 +99,7 @@ function isKeptableSubfield(tag, subfieldCode) {
 function listDroppableSubfields(tag) {
   const entry = excludeSubfieldsFromMerge.filter(currEntry => tag === currEntry.tag);
   if (entry.length > 0 && 'subfields' in entry[0]) {
-    debug(`droppables: ${entry[0].subfields}`);
+    debug(`droppables: ${tag}‡${entry[0].subfields}`);
     return entry[0].subfields;
   }
   //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${tag}.`);
