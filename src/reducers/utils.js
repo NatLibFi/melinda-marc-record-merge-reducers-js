@@ -30,6 +30,7 @@ function fieldsAreIdentical(field1, field2) {
         field1.subfields.length === field2.subfields.length) {
       // NB! This does not check order of subfields, which might or might nor be a bad idea.
       // NV would just do localFieldToString() and compare them strings...
+      // This is the original (Artturi?) way...
       return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
     }
     return false;
@@ -52,41 +53,6 @@ export function getNonIdenticalFields(baseFields, sourceFields) {
 
   function filterNonIdentical(sourceField) {
     return baseFields.some(baseField => fieldsAreIdentical(sourceField, baseField)) === false;
-
-    /*   //const sourceAsString = localFieldToString(sourceField);
-    //return baseFields.some(baseField => localField)
-    if ('value' in sourceField) {
-      debug(`Checking control field ${sourceField.tag} for identicalness`);
-      return baseFields.some(isIdenticalControlField) === false;
-    }
-    if ('subfields' in sourceField) {
-      debug(`Checking data field ${sourceField.tag} for identicalness`);
-      return baseFields.some(isIdenticalDataField) === false;
-    }
-
-    // Used to normalize both control fields and subfields
-    function normalizeItem(item) {
-      // NV 2021-07-22: We shouldn't normalize control fields this way!
-      //return item.value.toLowerCase().replace(/\s+/u, '');
-      // NV 2021-07-22: Also, the above version would err with "ab c" vs "a bc"...
-      return item.value.toLowerCase().replace(/\s+/u, ' ');
-    }
-    function isIdenticalControlField(baseField) {
-      //return normalizeItem(sourceField) === normalizeItem(baseField);
-      return sourceField.value === baseField.value;
-    }
-    function isIdenticalDataField(baseField) {
-      if (sourceField.tag === baseField.tag &&
-        sourceField.ind1 === baseField.ind1 &&
-        sourceField.ind2 === baseField.ind2 &&
-        sourceField.subfields.length === baseField.subfields.length) {
-        return baseField.subfields.every(isIdenticalSubfield);
-      }
-      function isIdenticalSubfield(baseSub) {
-        return sourceField.subfields.some(sourceSub => normalizeItem(sourceSub) === normalizeItem(baseSub));
-      }
-    }
-    */
   }
 }
 
