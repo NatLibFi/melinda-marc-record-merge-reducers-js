@@ -81,7 +81,7 @@ export const localReducers = [
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
-  genericDatafield(),
+  genericDatafield()
 
   /*
   field020(), // Tests 09, 10 and 11
