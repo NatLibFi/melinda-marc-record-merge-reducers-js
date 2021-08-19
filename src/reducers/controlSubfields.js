@@ -58,8 +58,8 @@ function getPrefix(currSubfield) {
   if (currSubfield.value.match(/^\([^)]+\)[0-9]+$/u)) {
     return currSubfield.value.substr(0, currSubfield.value.indexOf(')') + 1);
   }
-  if (currSubfield.value.match(/^https?:/u)) {
-    return currSubfield.value.substr(0, currSubfield.value.lastindexOf('/') + 1);
+  if (currSubfield.value.match(/^https?:\/\//u)) {
+    return currSubfield.value.substr(0, currSubfield.value.lastIndexOf('/') + 1);
   }
   return null;
 }
