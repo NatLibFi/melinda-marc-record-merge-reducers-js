@@ -77,7 +77,7 @@ function insertField7XX(record, field) {
   return record;
 }
 
-function localMergeOrAddField(record, field) {
+function mergeOrAddMainEntryField(record, field) {
   const counterpartField = getCounterpart(record, field);
   if (counterpartField) {
     debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
@@ -92,6 +92,6 @@ function localMergeOrAddField(record, field) {
 
 export default () => (record, record2) => {
   const candidateFields = record2.get(fieldTag); // Get array of source fields
-  candidateFields.forEach(candField => localMergeOrAddField(record, candField));
+  candidateFields.forEach(candField => mergeOrAddMainEntryField(record, candField));
   return record;
 };
