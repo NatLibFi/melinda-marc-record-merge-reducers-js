@@ -14,7 +14,7 @@ import {
 // We might be able to simplify things after that.
 // Special treatments needed for:
 // - punctuation between fields..
-// - X00$d 
+// - X00$d
 // - indicator for article length (eg. 245)
 import {controlSubfieldsPermitMerge} from './controlSubfields.js';
 
@@ -33,12 +33,14 @@ const counterpartRegexps = {
 
 // "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined.
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
-// TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical. 
+// 'solitary':'y' is used when field is not copied, if tag is already present, even if specs say it's repeatable
+// TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical.
 // TODO: lifespan for X00$d-fields
 const mergeRestrictions = [
-  {'tag': '020', 'required': 'a', 'key': 'a'},
+  {'tag': '020', 'required': 'a', 'key': 'a'}, // how to handle $z?
   {'tag': '022', 'required': 'a', 'key': 'a'},
   {'tag': '024', 'required': 'a', 'key': 'a'},
+  {'tag': '028', 'required': 'a', 'key': 'ab'},
   {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
   {'tag': '042', 'required': 'a', 'key': ''},
@@ -49,7 +51,8 @@ const mergeRestrictions = [
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '240', 'required': 'a', 'key': 'anp'}, // Is 'key' complete? Probably not...
-  {'tag': '245', 'required': 'a', 'key': 'a', 'key2':'bcnp'}, // 'paired': 'abnp', 'key': 'abnp'},
+  {'tag': '245', 'required': 'a', 'key': 'a', 'key2': 'bcnp'}, // 'paired': 'abnp', 'key': 'abnp'},
+  {'tag': '260', 'required': '', 'key': '', 'key2': 'abcdefg'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
@@ -82,7 +85,9 @@ function getMergeRestrictionsForTag(tag, restriction) {
 function equalishFields(field1, field2) {
   const s1 = fieldToString(field1);
   const s2 = fieldToString(field2);
-  if ( s1 === s2 ) { return true; }
+  if (s1 === s2) {
+    return true;
+  }
   // TODO; strip at least $9's keeps (and drops)
   return false;
 }
@@ -96,14 +101,14 @@ function uniqueKeyMatches(field1, field2, forcedKeyString = null) {
 }
 
 function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
-  if ( keySubfieldsAsString === null ) {
+  if (keySubfieldsAsString === null) {
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
     // (NB! Here order matters. We should probably make it matter everywhere.)
     // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
     return equalishFields(field1, field2);
   }
-    
+
   const subfieldArray = keySubfieldsAsString.split('');
 
   return subfieldArray.every(subfieldCode => {
@@ -132,7 +137,9 @@ function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
 }
 
 function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
-  if ( keySubfieldsAsString === null ) { return true; }
+  if (keySubfieldsAsString === null) {
+    return true;
+  }
   const subfieldArray = keySubfieldsAsString.split('');
 
   return subfieldArray.every(subfieldCode => {
@@ -177,7 +184,9 @@ export function tagToRegexp(tag) {
 
 function areRequiredSubfieldsPresent(field) {
   const subfieldString = getMergeRestrictionsForTag(field.tag, 'required');
-  if ( subfieldString === null ) { return true; } // nothing is required
+  if (subfieldString === null) {
+    return true;
+  } // nothing is required
   const subfieldArray = subfieldString.split('');
   return subfieldArray.every(sfcode => {
     const result = fieldHasSubfield(field, sfcode);
@@ -191,7 +200,9 @@ function areRequiredSubfieldsPresent(field) {
 
 function arePairedSubfieldsInBalance(field1, field2) {
   const subfieldString = getMergeRestrictionsForTag(field1.tag, 'paired');
-  if ( subfieldString === null ) { return true; }
+  if (subfieldString === null) {
+    return true;
+  }
   const subfieldArray = subfieldString.split('');
 
   return subfieldArray.every(sfcode => {
@@ -228,18 +239,18 @@ function mergablePair(field1, field2, fieldSpecificCallback = null) {
     !controlSubfieldsPermitMerge(field1, field2)) {
     return false;
   }
-  debug("mergablePair()... wp2");
+  debug('mergablePair()... wp2');
   // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well. Thus check both:
   if (!areRequiredSubfieldsPresent(field1) || !areRequiredSubfieldsPresent(field2)) {
     return false;
   }
-  debug("mergablePair()... wp3");
+  debug('mergablePair()... wp3');
   // Stuff of Hacks! Eg. require that both fields either have or have not X00$t:
   if (!arePairedSubfieldsInBalance(field1, field2)) {
     debug('required subfield pair check failed.');
     return false;
   }
-  debug("Test semanrics...");
+  debug('Test semanrics...');
   if (!semanticallyMergablePair(field1, field2)) {
     return false;
   }
@@ -250,7 +261,7 @@ function compareName(field1, field2) {
   // 100$a$t: remove $t and everything after that
   const reducedField1 = fieldToNamePart(field1);
   const reducedField2 = fieldToNamePart(field2);
-  
+
   // compare the remaining subsets:
   return uniqueKeyMatches(reducedField1, reducedField2);
 }
@@ -258,10 +269,10 @@ function compareName(field1, field2) {
 
 function semanticallyMergablePair(field1, field2) {
   // On rare occasions a field contains a title part and partial checks are required:
-  if ( !compareTitle(field1, field2)) {
+  if (!compareTitle(field1, field2)) {
     debug(' ${field1.tag} is unmergable: Title part mismatch.');
     return false;
-  } 
+  }
 
 
   // TODO: we should check lifespan here
@@ -273,7 +284,7 @@ function semanticallyMergablePair(field1, field2) {
     return false;
   }
   debug(' Semantic checks passed! We are MERGABLE!');
-  
+
   return true;
 }
 
@@ -313,7 +324,7 @@ function fieldToTitlePart(field) {
 
 function compareTitle(field1, field2) {
   // HACK ALERT! Tags, ‡t and ‡dfhklmnoprstxvg should typically be parametrized.
-  // If it is just this one case, I'll leave this as it is.  
+  // If it is just this one case, I'll leave this as it is.
   if (fieldHasSubfield(field1, 't') && field1.tag in ['100', '110', '111', '700', '710', '711']) {
     // 100$a$t: remove $t and everything after that
     const subset1 = fieldToTitlePart(field1);
@@ -363,30 +374,44 @@ export function mergeField(record, targetField, sourceField) {
   return record;
 }
 
+function repetitionBlocksAdding(record, tag) {
+  // It's not a repetition:
+  if (!recordHasField(record, tag)) {
+    return false;
+  }
+  // It's a repetition:
+  if (!fieldIsRepeatable(tag)) {
+    return true; // blocked
+  }
+  // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
+  // These are listed in https://workgroups.helsinki.fi/x/K1ohCw . (However, we do not always agree with specs.)
+  const solitary = getMergeRestrictionsForTag(tag, 'solitary');
+  if (solitary) {
+    return true; // Blocked by our cataloguers.
+  }
+  // No reason to block:
+  return false;
+}
 
-function fieldCanBeAdded(record, newField) {
-  // Non-repeatable field cannot be added, if same tag already exists
-  if (!fieldIsRepeatable(newField.tag) && recordHasField(record, newField.tag)) {
+function fieldCanBeAdded(record, field) {
+  if (repetitionBlocksAdding(record, field.tag)) {
+    debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
     return false;
   }
-  // Hacky hacks:
-  if (newField.tag === '040') {
-    fieldRenameSubfieldCodes(newField, 'a', 'd');
-    return true;
-  }
-  if (newField.tag === '240' && recordHasField(record, '130')) {
+
+  if (field.tag === '240' && recordHasField(record, '130')) {
     return false;
   }
-  if (newField.tag === '830' && !fieldHasSubfield(newField, 'x')) {
+  if (field.tag === '830' && !fieldHasSubfield(field, 'x')) {
     return false;
   }
+  // We could block 260/264 pairs here.
 
   return true;
 }
 
 function addField(record, field) {
   if (!fieldCanBeAdded(record, field)) {
-    debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
     return record;
   }
 
@@ -394,13 +419,22 @@ function addField(record, field) {
   if (newSubfields.length === 0) {
     return record;
   }
+
   const newField = {
     'tag': field.tag,
     'ind1': field.ind1,
     'ind2': field.ind2,
     'subfields': newSubfields
   };
-  // Do we need to sort unmerged fields?
+
+  // Hacky hacks.
+  if (newField.tag === '040') {
+    // This is ugly, and it probably should not be done here...
+    fieldRenameSubfieldCodes(newField, 'a', 'd');
+    return true;
+  }
+
+  // Do we need to sort unmerged subfields?
   return record.insertField(bottomUpSortSubfields(newField));
 }
 
