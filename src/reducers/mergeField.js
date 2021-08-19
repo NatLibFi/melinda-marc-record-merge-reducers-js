@@ -54,6 +54,9 @@ const mergeRestrictions = [
   {'tag': '245', 'required': 'a', 'key': 'a', 'key2': 'bcnp'}, // 'paired': 'abnp', 'key': 'abnp'},
   {'tag': '260', 'required': '', 'key': '', 'key2': 'abcdefg'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
+  {'tag': '650', 'required': 'a', 'key':'a', 'key2':'axyz20'},
+  {'tag': '653', 'required': 'a', 'key':'a' }, // this is interesting as a can be repeated
+  {'tag': '655', 'required': 'a', 'key':'a', 'key2':'axyz20'},
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
@@ -125,7 +128,7 @@ function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
       return subfields2.some(sf2 => {
         const normSubfieldValue2 = normalizeStringValue(sf2.value);
         if (normSubfieldValue === normSubfieldValue2) {
-          debug(`pairing succeed for normalized '${normSubfieldValue}'`);
+          debug(` mandatory pairing succeeded for normalized subfield ‡${sf.code} '${normSubfieldValue}'`);
           return true;
         }
         debug(`failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
@@ -239,18 +242,18 @@ function mergablePair(field1, field2, fieldSpecificCallback = null) {
     !controlSubfieldsPermitMerge(field1, field2)) {
     return false;
   }
-  debug('mergablePair()... wp2');
+  //debug('mergablePair()... wp2');
   // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well. Thus check both:
   if (!areRequiredSubfieldsPresent(field1) || !areRequiredSubfieldsPresent(field2)) {
     return false;
   }
-  debug('mergablePair()... wp3');
+  //debug('mergablePair()... wp3');
   // Stuff of Hacks! Eg. require that both fields either have or have not X00$t:
   if (!arePairedSubfieldsInBalance(field1, field2)) {
     debug('required subfield pair check failed.');
     return false;
   }
-  debug('Test semanrics...');
+  debug('Test semantics...');
   if (!semanticallyMergablePair(field1, field2)) {
     return false;
   }
@@ -363,10 +366,10 @@ export function getCounterpart(record, field) {
 
 export function mergeField(record, targetField, sourceField) {
   sourceField.subfields.forEach(candSubfield => {
-    debug(`  CAND4ADDING '‡${candSubfield.code} ${candSubfield.value}'`);
+    debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${fieldToString(targetField)}'`);
     mergeSubfield(record, targetField, candSubfield);
-    debug(`  NOW '${fieldToString(targetField)}`);
-    debug(`  TODO: sort subfields, handle punctuation...`);
+    debug(`   RESULT: '${fieldToString(targetField)}'`);
+    debug(`   TODO: sort subfields, handle punctuation...`);
     // { code: x, value: foo }
 
   });
@@ -427,12 +430,11 @@ function addField(record, field) {
     'subfields': newSubfields
   };
 
-  // Hacky hacks.
+  // Hacky hacks. This should only be applied if source record is not from Melinda.
   if (newField.tag === '040') {
-    // This is ugly, and it probably should not be done here...
     fieldRenameSubfieldCodes(newField, 'a', 'd');
-    return true;
   }
+
 
   // Do we need to sort unmerged subfields?
   return record.insertField(bottomUpSortSubfields(newField));
@@ -524,6 +526,6 @@ export function mergeOrAddField(record, field) {
     return record;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  debug(`No counterpart found for '${fieldToString(field)}'.`);
+  debug(`No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`);
   return addField(record, field);
 }
