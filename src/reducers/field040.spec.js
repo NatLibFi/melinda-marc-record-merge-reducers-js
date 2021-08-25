@@ -7,6 +7,14 @@ import createReducer from './genericDatafield';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 //import createDebugLogger from 'debug';
 
+/**
+  * Test 18: base: no 040, format: has 040
+  *
+  * Test 19:     $a FI-Hhu38 $e rda $d FI-Em
+  *          vs: $a FI-Hc $b fin $e jotain $d FI-Hhant $x noise
+  *           =  $a FI-Hhu38 $b fin $e rda $e jotain $d FI-Em $d FI-Hc $FI-Hhant
+  *
+  */
 MarcRecord.setValidationOptions({subfieldValues: false});
 
 describe('reducers/field040', () => {
