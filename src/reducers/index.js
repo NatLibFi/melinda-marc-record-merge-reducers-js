@@ -45,7 +45,7 @@ const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude s
 const allReducers = [
   internalFields(), // LOW, CAT, SID
   leader(), // Test 01
-  mainEntry(), // Main entry fields
+  //mainEntry(), // Main entry fields
   //selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
@@ -76,7 +76,7 @@ export const localCopyReducerConfigs = [
 export const localReducers = [
   internalFields(), // LOW, CAT, SID
   leader(), // Test 01
-  mainEntry(), // Main entry fields
+  //mainEntry(), // Main entry fields
   //selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
