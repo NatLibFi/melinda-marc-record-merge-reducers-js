@@ -3,7 +3,6 @@ import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
   fieldIsRepeatable,
-  fieldRenameSubfieldCodes,
   fieldToString,
   normalizeStringValue,
   recordHasField
@@ -14,10 +13,8 @@ import {
   postprocessField
 } from './mergePreAndPostprocess.js';
 
-
-// Possible modifications:
-// Move 040 back to a separate file, as it differs from everything else.
-// We might be able to simplify things after that.
+// Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
+//
 // Special treatments needed for:
 // - punctuation between fields..
 // - X00$d
@@ -60,15 +57,16 @@ const mergeRestrictions = [
   {'tag': '245', 'required': 'a', 'key': 'a', 'key2': 'bcnp'}, // 'paired': 'abnp', 'key': 'abnp'},
   {'tag': '260', 'required': '', 'key': '', 'key2': 'abcdefg'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
-  {'tag': '650', 'required': 'a', 'key':'a', 'key2':'axyz20'},
-  {'tag': '653', 'required': 'a', 'key':'a' }, // this is interesting as a can be repeated
-  {'tag': '655', 'required': 'a', 'key':'a', 'key2':'axyz20'},
+  {'tag': '650', 'required': 'a', 'key': 'a', 'key2': 'axyz20'},
+  {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
+  {'tag': '655', 'required': 'a', 'key': 'a', 'key2': 'axyz20'},
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
   // NB! 730 has no name part, key is used for title part
   {'tag': '730', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
-  {'tag': '830', 'required': 'ax', 'key': 'apx'}
+  {'tag': '830', 'required': 'ax', 'key': 'apx'},
+  {'tag': '880', 'required': ''}
 ];
 
 function getMergeRestrictionsForTag(tag, restriction) {
@@ -440,20 +438,16 @@ function addField(record, field) {
   return record.insertField(bottomUpSortSubfields(newField));
 }
 
-
-
-
-
 export function mergeOrAddField(record, field) {
   const newField = cloneAndPreprocessField(field, record);
-
   const counterpartField = getCounterpart(record, newField);
+
   if (counterpartField) {
     debug(`mergeOrAddField: Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
-    mergeField(record, counterpartField, field);
+    mergeField(record, counterpartField, newField);
     return record;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
   debug(`No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`);
-  return addField(record, field);
+  return addField(record, newField);
 }
