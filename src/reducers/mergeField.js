@@ -422,26 +422,17 @@ function addField(record, field) {
     return record;
   }
 
-  const newSubfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code));
-  if (newSubfields.length === 0) {
-    return record;
-  }
+  field.subfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code));
 
-  const newField = {
-    'tag': field.tag,
-    'ind1': field.ind1,
-    'ind2': field.ind2,
-    'subfields': newSubfields
-  };
-
+  debug(`Add as ${fieldToString(field)}`);
   // Do we need to sort unmerged subfields?
-  return record.insertField(bottomUpSortSubfields(newField));
+  return record.insertField(bottomUpSortSubfields(field));
 }
 
 export function mergeOrAddField(record, field) {
   const newField = cloneAndPreprocessField(field, record);
   const counterpartField = getCounterpart(record, newField);
-
+  debug(`INCOMING FIELD: ${fieldToString(field)}`);
   if (counterpartField) {
     debug(`mergeOrAddField: Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
     mergeField(record, counterpartField, newField);
