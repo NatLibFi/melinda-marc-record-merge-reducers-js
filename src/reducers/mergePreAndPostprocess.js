@@ -119,10 +119,26 @@ function fieldSubfield6Index(field) {
 }
   
 function getMaxSubfield6(record) {
+    // Should we cache the value here?
     return Math.max(record.fields.map(field => fieldSubfield6Index(field)));
 }
+/*
+function updateSubfield6(field, index) {
+    dfddsd_explode();
+}
+*/
   
-export function cloneAndPreprocessField(field, record) {
+function cloneField(field) {
+    return JSON.parse(JSON.stringify(field));
+}
+
+export function cloneAndPreprocessField(originalField, record) {
+    const field = cloneField(originalField);
+    // TODO: 040$a=>$d conversion should be done here!
+    if (field.tag === '040') {
+        fieldRenameSubfieldCodes(field, 'a', 'd');
+    }
+
     if ( record && fieldHasSubfield(field, '6') ) {
         const index = getMaxSubfield6(record);
         // This is done for every subfield $6... Could be optimized esp. if this includes the fields added by this script...
@@ -134,6 +150,5 @@ export function cloneAndPreprocessField(field, record) {
             };
         }
     }
-    // Just close it
-    return JSON.parse(JSON.stringify(field));
+    return field;
 }

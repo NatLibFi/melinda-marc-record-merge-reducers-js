@@ -436,12 +436,6 @@ function addField(record, field) {
     'subfields': newSubfields
   };
 
-  // Hacky hacks. This should only be applied if source record is not from Melinda.
-  if (newField.tag === '040') {
-    fieldRenameSubfieldCodes(newField, 'a', 'd');
-  }
-
-
   // Do we need to sort unmerged subfields?
   return record.insertField(bottomUpSortSubfields(newField));
 }
