@@ -128,8 +128,12 @@ function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
 export function fieldIsRepeatable(tag, code = null) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
-    debug(' OOPS! Getting field data failed!');
-    return false;
+    if ( !code ) {
+      debug(` WARNING! Getting field ${tag} data failed! Default to unrepeatable field.`);
+      return false;
+    }
+    debug(` WARNING! Getting field ${tag}\$${code} data failed! Default to repeatable subfield.`);
+    return true;
   }
   if (!code) { // Field is repeatable:
     return fieldSpecs[0].repeatable;
