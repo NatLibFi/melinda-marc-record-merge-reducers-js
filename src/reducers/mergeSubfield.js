@@ -194,7 +194,7 @@ export function bottomUpSortSubfields(field) {
   return field;
 }
 
-
+/*
 export function prepareSubfieldForMerge(tag, originalSubfield) {
   const subfield = JSON.parse(JSON.stringify(originalSubfield));
   if (tag === '040' && subfield.code === 'a') {
@@ -203,10 +203,9 @@ export function prepareSubfieldForMerge(tag, originalSubfield) {
   }
   return subfield;
 }
+*/
 
-export function mergeSubfield(record, targetField, originalCandSubfield) {
-  // Create a copy (and possibly modify a bit):
-  const candSubfield = preprocessSubfield(targetField.tag, originalCandSubfield);
+export function mergeSubfield(record, targetField, candSubfield) {
 
   if (mergeSubfieldNotRequired(targetField, candSubfield)) {
     debug(`    No need to add '‡${candSubfield.code} ${candSubfield.value}'`);
