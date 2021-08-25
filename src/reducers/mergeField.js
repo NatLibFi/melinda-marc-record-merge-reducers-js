@@ -9,6 +9,12 @@ import {
   recordHasField
 } from './utils.js';
 
+import {
+  cloneAndPreprocessField,
+  postprocessField
+} from './mergePreAndPostprocess.js';
+
+
 // Possible modifications:
 // Move 040 back to a separate file, as it differs from everything else.
 // We might be able to simplify things after that.
@@ -441,84 +447,12 @@ function addField(record, field) {
 }
 
 
-function postprocessX00a(field) {
-  if (!field.tag.match(/^[1678]00$/u)) {
-    return field;
-  }
-  debug(`postprocessX00a(${fieldToString(field)})`);
-  field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'a' || index + 1 === field.subfields.length) {
-      return;
-    }
-    if ('de'.indexOf(field.subfields[index + 1].code) > -1) {
-      if (sf.value.match(/[aeiouyäö][a-zåäö]$/u)) {
-        debug(`ADD ',' TO '${sf.value}'`);
-        sf.value += ','; // eslint-disable-line functional/immutable-data
-        return;
-      }
-      // Final '.' => ','
-      if (sf.value.match(/[aeiouyäö][a-zåäö]\.$/u)) {
-        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-        return; // KESKEN
-      }
-    }
-  });
-}
 
-function postprocessXX0eFunction(field) {
-  if (!field.tag.match(/^[1678][01]0$/u)) {
-    return field;
-  }
-  debug(`postprocessXX0e(${fieldToString(field)})`);
-  field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'e' || index + 1 === field.subfields.length) {
-      return;
-    }
-    if ('e'.indexOf(field.subfields[index + 1].code) > -1) {
-      // Final '.' => ',' if followed by $e (and if '.' follows an MTS term)
-      if (sf.value.match(/(?:esittäjä|kirjoittaja|sanoittaja|sovittaja|säveltäjä|toimittaja)\.$/u)) {
-        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-        return; // KESKEN
-      }
-    }
-  });
-}
 
-function postprocessLifespan(field) {
-  if (!field.tag.match(/^[1678]00$/u)) {
-    return field;
-  }
-  debug(`postprocessLifespan(${fieldToString(field)})`);
-  field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'd' || index + 1 === field.subfields.length) {
-      return;
-    }
-    if (field.subfields[index + 1].code === 'e') {
-      if (sf.value.match(/^[0-9]+-[0-9]+$/u)) {
-        debug(`ADD ',' TO '${sf.value}'`);
-        sf.value += ','; // eslint-disable-line functional/immutable-data
-        return;
-      }
-      // Final '.' => ','
-      if (sf.value.match(/^[0-9]+-(?:[0-9]+)?\.$/u)) {
-        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-        return; // KESKEN
-      }
-    }
-  });
-}
-
-function postprocessField(field) {
-  // Placeholder for proper
-  postprocessX00a(field);
-  postprocessXX0eFunction(field); // X00$e and X10$e
-  postprocessLifespan(field); // X00$d
-  return field;
-}
 
 export function mergeOrAddField(record, field) {
-  // Should we clone record and field here?
-  const newField = JSON.parse(JSON.stringify(field));
+  const newField = cloneAndPreprocessField(field, record);
+
   const counterpartField = getCounterpart(record, newField);
   if (counterpartField) {
     debug(`mergeOrAddField: Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
