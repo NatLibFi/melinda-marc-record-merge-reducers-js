@@ -1,6 +1,6 @@
 // import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldToString} from './utils.js';
+import {fieldHasSubfield, fieldToString} from './utils.js';
 import {getCounterpart, mergeField} from './mergeField.js';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw
@@ -78,15 +78,16 @@ function insertField7XX(record, field) {
 }
 
 function mergeOrAddMainEntryField(record, field) {
-  const counterpartField = getCounterpart(record, field);
+  const newField = cloneAndPreprocessField(field, record);
+  const counterpartField = getCounterpart(record, newField);
   if (counterpartField) {
     debug(`Got counterpart: '${fieldToString(counterpartField)}'`);
-    mergeField(record, counterpartField, field);
+    mergeField(record, counterpartField, newField);
     return record;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  debug(`No counterpart found for '${fieldToString(field)}'. Adding it to 7XX.`);
-  return insertField7XX(record, field);
+  debug(`No counterpart found for '${fieldToString(newField)}'. Adding it to 7XX.`);
+  return insertField7XX(record, newFqield);
 }
 
 
