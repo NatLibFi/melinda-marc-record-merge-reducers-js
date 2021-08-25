@@ -195,7 +195,7 @@ export function bottomUpSortSubfields(field) {
 }
 
 
-function prepareSubfieldForMerge(tag, originalSubfield) {
+export function prepareSubfieldForMerge(tag, originalSubfield) {
   const subfield = JSON.parse(JSON.stringify(originalSubfield));
   if (tag === '040' && subfield.code === 'a') {
     subfield.code = 'd'; // eslint-disable-line functional/immutable-data
@@ -206,7 +206,7 @@ function prepareSubfieldForMerge(tag, originalSubfield) {
 
 export function mergeSubfield(record, targetField, originalCandSubfield) {
   // Create a copy (and possibly modify a bit):
-  const candSubfield = prepareSubfieldForMerge(targetField.tag, originalCandSubfield);
+  const candSubfield = preprocessSubfield(targetField.tag, originalCandSubfield);
 
   if (mergeSubfieldNotRequired(targetField, candSubfield)) {
     debug(`    No need to add '‡${candSubfield.code} ${candSubfield.value}'`);
