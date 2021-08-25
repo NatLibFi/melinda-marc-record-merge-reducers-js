@@ -47,6 +47,7 @@ const datafields = [
   '085', // is repeatable but listed in copyIfMissing. Why?
   '088', // is repeatable but listed in copyIfMissing. Why?
   // 100, 110, 111 and 130 are handled by mainEntry.js
+  '100', '110', '111', '130',
   '210',
   '222', // is repeatable but listed in copyIfMissing. Why?
   '240',
@@ -160,6 +161,7 @@ const datafields = [
   '662',
   '688',
   // 700, 710, 711 and 730 are handled by mainEntry.js
+  '700', '710', '711', '730',
   '720',
   '740',
   '751',
@@ -185,6 +187,7 @@ const datafields = [
   '811',
   '830',
   '856',
+  '880',
   '883',
   '886',
   '887',
