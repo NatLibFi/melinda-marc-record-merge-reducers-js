@@ -35,7 +35,9 @@ function controlSubfield6PermitsMerge(field1, field2) {
   if (subfieldsAreEmpty(field1, field2, '6')) {
     return true;
   }
-  debug(`controlSubfield6PermitsMerge() not properly implemented. FAIL`);
+  // There are two (plus) fields involved (Field XXX (one) and field 880 (one plus).
+  // Thus this generic solution can't handle them. Use postprocess instead.
+  debug(`  controlSubfield6PermitsMerge() fails always on generic part (feature).`);
   return false;
 }
 
