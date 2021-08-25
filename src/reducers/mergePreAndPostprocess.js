@@ -93,12 +93,16 @@ export function postprocessField(field) {
   return field;
 }
 
-const sf6Regexp = /^[0-9][0-9][0-9]-[0-9]+$/u;
+const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
+
 function subfield6Index(subfield) {
   if (!subfield.value.match(sf6Regexp)) {
     return 0;
   }
-  return parseInt(subfield.value.substring(subfield.value.indexOf('-') + 1), 10);
+  const tailPart = subfield.value.substring(4, 6); // 4 is for "TAG-"
+  const result = parseInt(tailPart, 10);
+  debug(`SF6: ${subfield.value} => ${tailPart} => ${result}`);
+  return result;
 }
 
 function fieldSubfield6Index(field) {
@@ -107,23 +111,35 @@ function fieldSubfield6Index(field) {
     return 0;
   }
   // There's supposed to be just instance of subfield 6:
-  return parseInt(subfield6Index(sf6s[0], 10));
+  return subfield6Index(sf6s[0]);
 }
 
 function getMaxSubfield6(record) {
   // Should we cache the value here?
-  return Math.max(record.fields.map(field => fieldSubfield6Index(field)));
+  const vals = record.fields.map(function(field) {
+    if ( field.sourced ) { return 0; } // field already added from source
+    return fieldSubfield6Index(field); }
+  );
+  return Math.max(...vals);
 }
 
 function updateSubfield6(field, index) {
-  dfddsd_explode();
+  const sf6s = field.subfields.filter(subfield => subfield.code === '6');
+  const strindex = ( index < 10 ? "0"+index : ""+index);
+  sf6s[0].value.replace(sf6s[0].substring(4,6),strindex);
 }
 
 
 function cloneField(field) {
+  field.sourced = 1; // mark it as coming from source
   return JSON.parse(JSON.stringify(field));
 }
 
+export function postprocessRecordAfterMerge(record) {
+  record.fields.forEach(field => {
+    delete field.sourced; // remove merge-specific information }
+  });
+}
 export function cloneAndPreprocessField(originalField, record) {
   const field = cloneField(originalField);
   // Convert source record's 040$a 040$d, since it can not be an $a of the base record.
@@ -138,13 +154,25 @@ export function cloneAndPreprocessField(originalField, record) {
   }
 
   if (record && fieldHasSubfield(field, '6')) {
-    const index = getMaxSubfield6(record);
+    const baseMax = getMaxSubfield6(record);
+    debug(`MAX SF6 is ${baseMax}`);
     // This is done for every subfield $6... Could be optimized esp. if this includes the fields added by this script...
-    if (index) {
+    if (baseMax) {
+      
       return {'tag': field.tag,
         'ind1': field.ind1,
         'ind2': field.ind2,
-        'subfields': field.subfields.map(sf => updateSubfield6(sf, index))};
+        'sourced': 1, 
+        'subfields': field.subfields.map(function(sf) {
+          if ( sf.code === '6' ) {
+            const index = subfield6Index(sf) + baseMax;
+            const strindex = ( index < 10 ? "0"+index : ""+index );
+            sf.value = sf.value.substring(0, 4)+strindex+sf.value.substring(6);
+            debug(`SF6 is now ${sf.value}`);
+          }
+          return sf;
+        })
+      }
     }
   }
   return field;
