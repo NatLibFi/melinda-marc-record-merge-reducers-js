@@ -5,10 +5,17 @@ import {
   mergeOrAddField
 } from './mergeField.js';
 
-// const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+
+import {
+  postprocessRecordAfterMerge
+} from './mergePreAndPostprocess.js'
+
+import { fieldToString } from './utils.js';
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // Array of datafields *that are handled by the generic code*!
-// NB! 100/110/111/130-700/710/711/730 stuff is in mainEntry.js
 // Hmm... This list is incomplete. How to handle 6XX etc?
 // 384|507|514
 const datafields = [
@@ -160,8 +167,7 @@ const datafields = [
   '658',
   '662',
   '688',
-  // 700, 710, 711 and 730 are handled by mainEntry.js
-  '700', '710', '711', '730',
+  // 700, 710, 711 and 730 are handled by corresponding 1XX. It's semi-magic.
   '720',
   '740',
   '751',
@@ -202,8 +208,12 @@ export default () => (record, record2) => {
   datafields.forEach(tag => {
     const tagAsRegexp = tagToRegexp(tag);
     const candidateFields = record2.get(tagAsRegexp); // Get array of source fields
-    candidateFields.forEach(candField => mergeOrAddField(record, candField));
+    candidateFields.forEach(candField => {
+      debug(`Now processing ${fieldToString(candField)}`);
+      mergeOrAddField(record, candField);
+    });
   });
+  postprocessRecordAfterMerge(record);
   return record;
 };
 
