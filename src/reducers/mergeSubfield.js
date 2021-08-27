@@ -15,10 +15,9 @@ const excludeSubfieldsFromMerge = [
 
 const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
 
-//
-// Used by our very own hacky bottomUpSortSubfields(). Features:
-// - Swap only sort adjacent pairs.
-// - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of $t...
+
+
+// List only exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
   {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
@@ -97,6 +96,7 @@ function isKeptableSubfield(tag, subfieldCode) {
 }
 
 function listDroppableSubfields(tag) {
+  // NB! Should we drop the here, or already on the preprocessor?
   const entry = excludeSubfieldsFromMerge.filter(currEntry => tag === currEntry.tag);
   if (entry.length > 0 && 'subfields' in entry[0]) {
     debug(`droppables: ${tag}‡${entry[0].subfields}`);
@@ -180,16 +180,23 @@ function swapSubfields(field, sortOrder) {
   return;
 }
 
+const defaultSortOderString = '8673abcdefghijklmnopqrstuvwxyz420159';
 export function bottomUpSortSubfields(field) {
   // Features:
   // - Swap only sort adjacent pairs.
-  // - No sorting over unlisted subfield codes
+  // - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of 700$t...
+
   const sortOrder = getSubfieldSortOrder(field);
+
+
+  /*
+  // Currently always sort:
   if (sortOrder === null) {
     return field;
   }
+  */
 
-  swapSubfields(field, sortOrder);
+  swapSubfields(field, sortOrder || defaultSortOderString);
 
   return field;
 }
