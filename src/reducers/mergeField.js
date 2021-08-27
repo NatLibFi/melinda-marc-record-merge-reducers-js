@@ -34,9 +34,11 @@ const counterpartRegexps = {
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
 };
 
-// "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined.
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
-// 'solitary':'y' is used when field is not copied, if tag is already present, even if specs say it's repeatable
+// "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined. 
+// NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
+
+// 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable
 // TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical.
 // TODO: lifespan for X00$d-fields
 const mergeRestrictions = [
@@ -46,9 +48,9 @@ const mergeRestrictions = [
   {'tag': '016', 'required': 'a', 'key': 'a2' },
   {'tag': '017', 'required': 'a', 'key': 'a'},
   {'tag': '018', 'required': 'a', 'key': 'a'},
-  {'tag': '020', 'required': 'a', 'key': 'a'}, // NB! how to handle $z-only cases? 'required-fallback'='z'?
-  {'tag': '022', 'required': 'a', 'key': 'a'},
-  {'tag': '024', 'required': 'a', 'key': 'ad'},
+  {'tag': '020', 'required': '', 'pair': 'a', 'key': 'a'}, // NB! how to handle $z-only cases? 'required-fallback'='z'?
+  {'tag': '022', 'required': '', 'pair': 'a', 'key': 'alz'},
+  {'tag': '024', 'required': '', 'pair': 'a', 'key': 'ad'},
   {'tag': '025', 'required': 'a', 'key': 'a'},
   {'tag': '026', 'required': 'a', 'key': 'a'},
   {'tag': '027', 'required': 'a', 'key': 'a'}, // on tuolla pari $z:ää
@@ -58,25 +60,68 @@ const mergeRestrictions = [
   {'tag': '032', 'required': 'a', 'key': 'ab'},
   {'tag': '033', 'required': 'a', 'key': 'abcp0123'}, // 0,1% are without $a. Ignore them for now.
   {'tag': '034', 'required': 'ab', 'key': 'abcdefghjkmnprstxyz0123'},
-  {'tag': '035', 'required': '', 'key': 'a'},
+  {'tag': '035', 'required': '', 'key': 'az'},
   {'tag': '036', 'required': 'a', 'key': 'a'},
   {'tag': '037', 'required': 'b', 'key': 'ab'},
   {'tag': '039', 'required': 'a'},
-  {'tag': '040', 'required': '', 'key': ''},
-  {'tag': '042', 'required': 'a', 'key': ''},
+  {'tag': '040', 'required': '', 'key': '' },
+  {'tag': '041', 'required': '', 'key': '', 'solitary': true },
+  {'tag': '042', 'required': 'a', 'key': ''}, // NB: preprocessor hacks applied
+  {'tag': '043', 'required': 'a', 'key': 'abc'},
+  {'tag': '044', 'required': '', 'key': 'abc', 'paired': 'abc'},
+  {'tag': '045', 'required': '', 'key': 'abc', 'paired': 'abc'}, // (ET) // 045 is problematic either-$a or $b or $c...
+  {'tag': '046', 'required': 'a', 'key': 'abcdejklmnop', 'paired': 'abcdejklmnop'},
+  {'tag': '047', 'required': 'a', 'key': 'a2' },
+  {'tag': '048', 'required': 'a', 'key': 'ba' }, // TODO: check multiple instances of $a vs key
+  {'tag': '049', 'required': '', 'key': 'abcd' }, 
+  {'tag': '050', 'required': 'a', 'key': 'ab13' },
+  {'tag': '051', 'required': 'a', 'key': 'abc'}, // 2021-08-27: only one field in the whole Melinda
+  {'tag': '052', 'required': 'a', 'key': 'abd'},
+  {'tag': '055', 'required': 'a', 'key': 'ab'},
+  {'tag': '060', 'required': 'a', 'key': 'ab'},
+  {'tag': '061', 'required': 'a', 'paired':'b', 'key': 'abc'} ,
+  {'tag': '066', 'skip': true, 'required': 'c' },
+  {'tag': '070', 'required': 'a', 'key': 'ab'},
+  {'tag': '071', 'required': 'a', 'paired': 'abc', 'key': 'abc'}, // N=3
+  {'tag': '072', 'required': 'a', 'key': 'ax'},
+  {'tag': '074', 'required': '', 'paired': 'a', 'key': 'az'},
+  {'tag': '080', 'required': 'a', 'paired': 'bx', 'key': 'abx'},
+  {'tag': '082', 'required': 'a', 'paired': 'b', 'key': 'abmq2'},
+  {'tag': '083', 'required': 'a', 'paired': 'b', 'key': 'abmqy'},
+  {'tag': '084', 'required': 'a', 'paired': 'b', 'key': 'abq'},
+  {'tag': '085', 'required': '', 'paired': 'abcfrstuvwyz', 'key': 'abcfrstuvwxyz'},
+  {'tag': '086', 'required': '', 'paired': 'a', 'key': 'a'},
+  {'tag': '088', 'required': '', 'paired': 'a', 'key': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
   {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
   {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
-  {'tag': '240', 'required': 'a', 'key': 'anp'}, // Is 'key' complete? Probably not...
-  {'tag': '245', 'required': 'a', 'key': 'a', 'key2': 'bcnp'}, // 'paired': 'abnp', 'key': 'abnp'},
-  {'tag': '260', 'required': '', 'key': '', 'key2': 'abcdefg'},
+  {'tag': '210', 'required': 'a', 'key': 'ab'},
+  {'tag': '222', 'required': 'a', 'key': 'ab'},
+  {'tag': '240', 'required': 'a', 'key': 'adfghklmnoprs'},
+  {'tag': '242', 'required': 'a', 'key': 'abchnpy'},
+  {'tag': '243', 'required': 'a', 'key': 'adfghklmnoprs'},
+  {'tag': '245', 'required': 'a', 'key': 'abcghnps'}, // 'paired': 'abnp', 'key': 'abnp'},
+  {'tag': '246', 'required': 'a', 'key': 'abfnp'},
+  {'tag': '247', 'required': 'a', 'key': 'abfnpx'},
+  {'tag': '250', 'required': 'a', 'key': 'ab'},
+  {'tag': '251', 'required': 'a', 'key': 'a'},
+  {'tag': '254', 'required': 'a', 'key': 'a'},
+  {'tag': '255', 'required': 'a', 'key': 'abcdefg', 'paired':'abcdefg'},
+  {'tag': '256', 'required': 'a', 'key': 'a'},
+  {'tag': '257', 'required': 'a', 'key': 'a'},
+  // CONTINUE HERE
+  {'tag': '260', 'required': '', 'key': 'abcdefg'},
+  {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true },
+  {'tag': '336', 'required': 'b', 'key': 'b', 'solitary': true },
+  {'tag': '337', 'required': 'b', 'key': 'b', 'solitary': true },
+  {'tag': '338', 'required': 'b', 'key': 'b', 'solitary': true },
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
-  {'tag': '650', 'required': 'a', 'key': 'a', 'key2': 'axyz20'},
+  {'tag': '650', 'required': 'a', 'key': 'axyz20' }, // TODO: $g
   {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
-  {'tag': '655', 'required': 'a', 'key': 'a', 'key2': 'axyz20'},
+  {'tag': '655', 'required': 'a', 'key': 'axyz20'},
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
@@ -447,6 +492,11 @@ function addField(record, field) {
 }
 
 export function mergeOrAddField(record, field) {
+  // We are not interested in this field, whatever the case:
+  // (Currently fields: 066)
+  if ( getMergeRestrictionsForTag(field.tag, 'skip') ) {
+    return record;
+  }
   const newField = cloneAndPreprocessField(field, record);
   const counterpartField = getCounterpart(record, newField);
   debug(`INCOMING FIELD: ${fieldToString(field)}`);
