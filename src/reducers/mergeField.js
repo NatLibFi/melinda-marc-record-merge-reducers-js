@@ -40,10 +40,27 @@ const counterpartRegexps = {
 // TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical.
 // TODO: lifespan for X00$d-fields
 const mergeRestrictions = [
-  {'tag': '020', 'required': 'a', 'key': 'a'}, // how to handle $z?
+  {'tag': '010', 'required': 'a', 'key': 'a' },
+  {'tag': '013', 'required': 'a', 'key': 'a'}, // We have 2 instances in Melinda...
+  {'tag': '015', 'required': 'a', 'key': 'a'},
+  {'tag': '016', 'required': 'a', 'key': 'a2' },
+  {'tag': '017', 'required': 'a', 'key': 'a'},
+  {'tag': '018', 'required': 'a', 'key': 'a'},
+  {'tag': '020', 'required': 'a', 'key': 'a'}, // NB! how to handle $z-only cases? 'required-fallback'='z'?
   {'tag': '022', 'required': 'a', 'key': 'a'},
-  {'tag': '024', 'required': 'a', 'key': 'a'},
+  {'tag': '024', 'required': 'a', 'key': 'ad'},
+  {'tag': '025', 'required': 'a', 'key': 'a'},
+  {'tag': '026', 'required': 'a', 'key': 'a'},
+  {'tag': '027', 'required': 'a', 'key': 'a'}, // on tuolla pari $z:ää
   {'tag': '028', 'required': 'a', 'key': 'ab'},
+  {'tag': '030', 'required': 'a', 'key': 'a'},
+  {'tag': '031', 'required': '', 'key': 'abcegmnopr2'}, // mites tämmöisen käytännössä avaimettoman klaarais? TODO: tests
+  {'tag': '032', 'required': 'a', 'key': 'ab'},
+  {'tag': '033', 'required': 'a', 'key': 'abcp0123'}, // 0,1% are without $a. Ignore them for now.
+  {'tag': '034', 'required': 'ab', 'key': 'abcdefghjkmnprstxyz0123'},
+  {'tag': '035', 'required': '', 'key': 'a'},
+  {'tag': '036', 'required': 'a', 'key': 'a'},
+  {'tag': '037', 'required': 'b', 'key': 'ab'},
   {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
   {'tag': '042', 'required': 'a', 'key': ''},
