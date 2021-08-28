@@ -116,39 +116,43 @@ function fieldSubfield6Index(field) {
 
 function getMaxSubfield6(record) {
   // Should we cache the value here?
-  const vals = record.fields.map(function(field) {
-    if ( field.sourced ) { return 0; } // field already added from source
-    return fieldSubfield6Index(field); }
-  );
+  const vals = record.fields.map((field) => {
+    if (field.sourced) {
+      return 0;
+    } // field already added from source
+    return fieldSubfield6Index(field);
+  });
   return Math.max(...vals);
 }
-
+/*
 function updateSubfield6(field, index) {
   const sf6s = field.subfields.filter(subfield => subfield.code === '6');
-  const strindex = ( index < 10 ? "0"+index : ""+index);
-  sf6s[0].value.replace(sf6s[0].substring(4,6),strindex);
+  const strindex = index < 10 ? `0${index}` : `${index}`;
+  sf6s[0].value.replace(sf6s[0].substring(4, 6), strindex);
 }
-
+*/
 
 function cloneField(field) {
-  field.sourced = 1; // mark it as coming from source
+  // mark it as coming from source:
+  field.sourced = 1; // eslint-disable-line functional/immutable-data
   return JSON.parse(JSON.stringify(field));
 }
 
 export function postprocessRecordAfterMerge(record) {
   record.fields.forEach(field => {
-    delete field.sourced; // remove merge-specific information }
+    // remove merge-specific information:
+    delete field.sourced; // eslint-disable-line functional/immutable-data
   });
 }
 export function cloneAndPreprocessField(originalField, record) {
   const field = cloneField(originalField);
   // Convert source record's 040$a 040$d, since it can not be an $a of the base record.
-  if (field.tag === '040') {
+  if (field.tag === '040') { // eslint-disable-line functional/no-conditional-statement
     debug(`  Convert source record's 040$a to $d`);
     fieldRenameSubfieldCodes(field, 'a', 'd');
   }
 
-  if ( field.tag === '100' || field.tag === '110' || field.tag === '111' || field.tag === '130' ) {
+  if (field.tag === '100' || field.tag === '110' || field.tag === '111' || field.tag === '130') { // eslint-disable-line functional/no-conditional-statement
     debug(`  Convert source record's ${field.tag} to 7XX`);
     field.tag = `7${field.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
   }
@@ -158,21 +162,20 @@ export function cloneAndPreprocessField(originalField, record) {
     debug(`MAX SF6 is ${baseMax}`);
     // This is done for every subfield $6... Could be optimized esp. if this includes the fields added by this script...
     if (baseMax) {
-      
+
       return {'tag': field.tag,
         'ind1': field.ind1,
         'ind2': field.ind2,
-        'sourced': 1, 
-        'subfields': field.subfields.map(function(sf) {
-          if ( sf.code === '6' ) {
+        'sourced': 1,
+        'subfields': field.subfields.map((sf) => {
+          if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statement
             const index = subfield6Index(sf) + baseMax;
-            const strindex = ( index < 10 ? "0"+index : ""+index );
-            sf.value = sf.value.substring(0, 4)+strindex+sf.value.substring(6);
+            const strindex = index < 10 ? `0${index}` : `${index}`;
+            sf.value = sf.value.substring(0, 4) + strindex + sf.value.substring(6); // eslint-disable-line functional/no-conditional-statement
             debug(`SF6 is now ${sf.value}`);
           }
           return sf;
-        })
-      }
+        })};
     }
   }
   return field;
