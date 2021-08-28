@@ -39,6 +39,7 @@ const counterpartRegexps = {
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 
 // 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable
+// NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 // TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical.
 // TODO: lifespan for X00$d-fields
 const mergeConstraints = [
@@ -115,12 +116,31 @@ const mergeConstraints = [
   {'tag': '258', 'required': 'a', 'key': 'a'}, // Melinda: N=1
   {'tag': '260', 'required': '', 'paired': 'abc', 'key': 'abcdefg', 'solitary': true},
   {'tag': '263', 'required': 'a', 'key': 'a'},
-  {'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc', 'solitary': true}, // TODO: testi jossa kopsataan kaksi 264-kenttää tietueeseen, jossa ei ole 264-kenttää
-
-  {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true},
-  {'tag': '336', 'required': 'b', 'key': 'b', 'solitary': true},
-  {'tag': '337', 'required': 'b', 'key': 'b', 'solitary': true},
-  {'tag': '338', 'required': 'b', 'key': 'b', 'solitary': true},
+  {'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc', 'solitary': true}, // TODO: more tests. "S.l." normalizations?"
+  // SKIP TAG 270 ON PURPOSE! Melinda's N=43.
+  {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true}, // TODO: tests
+  {'tag': '306', 'required': 'a', 'key': 'a'},
+  // SKIP TAG 307 ON PURPOSE! N=0
+  {'tag': '310', 'required': 'a', 'key': 'ab', 'solitary': true},
+  {'tag': '321', 'required': 'a', 'key': 'ab', 'solitary': true},
+  {'tag': '335', 'required': 'a', 'key': 'ab', 'solitary': true}, // Melinda N=1 (a test field). M might increase?
+  {'tag': '336', 'required': 'b2', 'key': 'b', 'solitary': true},
+  {'tag': '337', 'required': 'b2', 'key': 'b', 'solitary': true},
+  {'tag': '338', 'required': 'b2', 'key': 'b', 'solitary': true},
+  {'tag': '340', 'required': '', 'paired': 'abcdefghijkmnop', 'key': 'abcdefghijkmnop'},
+  {'tag': '341', 'required': '', 'paired': 'abcde', 'key': 'abcde'},// SKIP 341. NOT SEEN!
+  {'tag': '342', 'required': '', 'paired': 'abcdefghijklmnopqrstuvw', 'key': 'abcdefghijklmnopqrstuvw'},// SKIP 342. NOT SEEN!
+  {'tag': '343', 'required': '', 'paired': 'abcdefghi', 'key': 'abcdefghi'},// SKIP 343.
+  {'tag': '344', 'required': '', 'paired': 'abcdefgh', 'key': 'abcdefgh'},
+  {'tag': '345', 'required': '', 'paired': 'abcd', 'key': 'abcd'},
+  {'tag': '346', 'required': '', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '347', 'required': '', 'paired': 'abcdef', 'key': 'abcdef'},
+  {'tag': '348', 'required': '', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '348', 'required': '', 'paired': 'abc', 'key': 'abc'},
+  {'tag': '351', 'required': '', 'paired': 'abc', 'key': 'abc'},
+  {'tag': '352', 'required': '', 'paired': 'abcdefgiq', 'key': 'abcdefgiq'},
+  {'tag': '355', 'required': '', 'paired': 'abcdefghj', 'key': 'abcdefghj'},
+  {'tag': '357', 'required': 'a', 'key': 'abcg'},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '650', 'required': 'a', 'key': 'axyz20'}, // TODO: $g
   {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
