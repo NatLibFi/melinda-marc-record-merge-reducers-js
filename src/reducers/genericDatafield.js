@@ -8,9 +8,9 @@ import {
 
 import {
   postprocessRecordAfterMerge
-} from './mergePreAndPostprocess.js'
+} from './mergePreAndPostprocess.js';
 
-import { fieldToString } from './utils.js';
+import {fieldToString} from './utils.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -25,7 +25,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const datafieldString = '010 013 015 016 017 018 020 022 024 027 028 030 031 033 034 035 040 042 043 044 046 049 ' +
   '050 051 052 055 060 061 066 070 080 082 083 084 085 086 088 ' +
   '100 110 111 130 ' +
-  '210 222 240 242 243 245 246 247 ';
+  '210 222 240 242 243 245 246 247 ' +
   '250 251 254 255 256 257 258 260 263 264 270 ' +
   '300 306 307 310 321 335 336 337 338 340 341 342 343 344 345 346 347 348 351 352 355 357 362 363 365 366 370 377 380 381 382 383 384 385 386 388 ' +
   '490 ' +
@@ -44,6 +44,7 @@ const datafields = datafieldString.split(' ');
 
 export default () => (record, record2) => {
   datafields.forEach(tag => {
+    //debug(`CURR TAG: ${tag}...`);
     const tagAsRegexp = tagToRegexp(tag);
     const candidateFields = record2.get(tagAsRegexp); // Get array of source fields
     candidateFields.forEach(candField => {
