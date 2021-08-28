@@ -129,7 +129,9 @@ const mergeRestrictions = [
   // NB! 730 has no name part, key is used for title part
   {'tag': '730', 'required': 'a', 'key': 'adfhklmnoprsxvg'}, // i/x are missing from 130
   {'tag': '830', 'required': 'ax', 'key': 'apx'},
-  {'tag': '880', 'required': ''}
+  {'tag': '880', 'required': '', 'paired': 'a', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  // 995: paired-ac is there to prevent koha and arto stuff from merging
+  {'tag': '995', 'required': '', 'paired': 'ac', 'key': 'abcdefghijklmnopqrstuvwxyz'} // key: a-z practically means we know nothing of the field
 ];
 
 function getMergeRestrictionsForTag(tag, restriction) {
@@ -432,11 +434,18 @@ export function getCounterpart(record, field) {
 
 export function mergeField(record, targetField, sourceField) {
   sourceField.subfields.forEach(candSubfield => {
-    debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${fieldToString(targetField)}'`);
+    const originalValue = fieldToString(targetField)
     mergeSubfield(record, targetField, candSubfield);
-    debug(`   RESULT: '${fieldToString(targetField)}'`);
-    debug(`   TODO: sort subfields, handle punctuation...`);
-    // { code: x, value: foo }
+    const newValue = fieldToString(targetField);
+    if ( originalValue !== newValue ) {
+      debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${originalValue}'`);
+      debug(`   RESULT: '${newValue}'`);
+      debug(`   TODO: sort subfields, handle punctuation...`);
+      // { code: x, value: foo }
+    }
+    else {
+      debug(`  mergeSubfield() did not add '‡${candSubfield.code} ${candSubfield.value}' to '${originalValue}'`);
+    }
 
   });
   postprocessField(targetField);
