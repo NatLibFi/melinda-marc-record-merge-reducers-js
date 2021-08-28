@@ -16,13 +16,16 @@ const excludeSubfieldsFromMerge = [
 const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
 
 
-
 // List only exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
   {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
-  {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']}
+  {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']},
+  {'tag': '490', 'sortOrder': ['a', 'n', 'x', 'v' ]}, // INCOMPLETE, SAME AS 830?
+  {'tag': '700', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v' ]}, // INCOMPLETE, SAME AS 490?
+  {'tag': '880', 'sortOrder': ['a']} // Hack, so that default order is not used
 ];
 
 // NB! These are X00 specific. Should we somehow parametrize them?
