@@ -35,17 +35,17 @@ const counterpartRegexps = {
 };
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
-// "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined. 
+// "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined.
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 
 // 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable
 // TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical.
 // TODO: lifespan for X00$d-fields
 const mergeRestrictions = [
-  {'tag': '010', 'required': 'a', 'key': 'a' },
+  {'tag': '010', 'required': 'a', 'key': 'a'},
   {'tag': '013', 'required': 'a', 'key': 'a'}, // We have 2 instances in Melinda...
   {'tag': '015', 'required': 'a', 'key': 'a'},
-  {'tag': '016', 'required': 'a', 'key': 'a2' },
+  {'tag': '016', 'required': 'a', 'key': 'a2'},
   {'tag': '017', 'required': 'a', 'key': 'a'},
   {'tag': '018', 'required': 'a', 'key': 'a'},
   {'tag': '020', 'required': '', 'pair': 'a', 'key': 'a'}, // NB! how to handle $z-only cases? 'required-fallback'='z'?
@@ -64,23 +64,23 @@ const mergeRestrictions = [
   {'tag': '036', 'required': 'a', 'key': 'a'},
   {'tag': '037', 'required': 'b', 'key': 'ab'},
   {'tag': '039', 'required': 'a'},
-  {'tag': '040', 'required': '', 'key': '' },
-  {'tag': '041', 'required': '', 'key': '', 'solitary': true },
+  {'tag': '040', 'required': '', 'key': ''},
+  {'tag': '041', 'required': '', 'key': '', 'solitary': true},
   {'tag': '042', 'required': 'a', 'key': ''}, // NB: preprocessor hacks applied
   {'tag': '043', 'required': 'a', 'key': 'abc'},
   {'tag': '044', 'required': '', 'key': 'abc', 'paired': 'abc'},
   {'tag': '045', 'required': '', 'key': 'abc', 'paired': 'abc'}, // (ET) // 045 is problematic either-$a or $b or $c...
   {'tag': '046', 'required': 'a', 'key': 'abcdejklmnop', 'paired': 'abcdejklmnop'},
-  {'tag': '047', 'required': 'a', 'key': 'a2' },
-  {'tag': '048', 'required': 'a', 'key': 'ba' }, // TODO: check multiple instances of $a vs key
-  {'tag': '049', 'required': '', 'key': 'abcd' }, 
-  {'tag': '050', 'required': 'a', 'key': 'ab13' },
+  {'tag': '047', 'required': 'a', 'key': 'a2'},
+  {'tag': '048', 'required': 'a', 'key': 'ba'}, // TODO: check multiple instances of $a vs key
+  {'tag': '049', 'required': '', 'key': 'abcd'},
+  {'tag': '050', 'required': 'a', 'key': 'ab13'},
   {'tag': '051', 'required': 'a', 'key': 'abc'}, // 2021-08-27: only one field in the whole Melinda
   {'tag': '052', 'required': 'a', 'key': 'abd'},
   {'tag': '055', 'required': 'a', 'key': 'ab'},
   {'tag': '060', 'required': 'a', 'key': 'ab'},
-  {'tag': '061', 'required': 'a', 'paired':'b', 'key': 'abc'} ,
-  {'tag': '066', 'skip': true, 'required': 'c' },
+  {'tag': '061', 'required': 'a', 'paired': 'b', 'key': 'abc'},
+  {'tag': '066', 'skip': true, 'required': 'c'},
   {'tag': '070', 'required': 'a', 'key': 'ab'},
   {'tag': '071', 'required': 'a', 'paired': 'abc', 'key': 'abc'}, // N=3
   {'tag': '072', 'required': 'a', 'key': 'ax'},
@@ -109,24 +109,25 @@ const mergeRestrictions = [
   {'tag': '250', 'required': 'a', 'key': 'ab'},
   {'tag': '251', 'required': 'a', 'key': 'a'},
   {'tag': '254', 'required': 'a', 'key': 'a'},
-  {'tag': '255', 'required': 'a', 'key': 'abcdefg', 'paired':'abcdefg'},
+  {'tag': '255', 'required': 'a', 'key': 'abcdefg', 'paired': 'abcdefg'},
   {'tag': '256', 'required': 'a', 'key': 'a'},
   {'tag': '257', 'required': 'a', 'key': 'a'},
   // CONTINUE HERE
   {'tag': '260', 'required': '', 'key': 'abcdefg'},
-  {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true },
-  {'tag': '336', 'required': 'b', 'key': 'b', 'solitary': true },
-  {'tag': '337', 'required': 'b', 'key': 'b', 'solitary': true },
-  {'tag': '338', 'required': 'b', 'key': 'b', 'solitary': true },
+
+  {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true},
+  {'tag': '336', 'required': 'b', 'key': 'b', 'solitary': true},
+  {'tag': '337', 'required': 'b', 'key': 'b', 'solitary': true},
+  {'tag': '338', 'required': 'b', 'key': 'b', 'solitary': true},
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
-  {'tag': '650', 'required': 'a', 'key': 'axyz20' }, // TODO: $g
+  {'tag': '650', 'required': 'a', 'key': 'axyz20'}, // TODO: $g
   {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
   {'tag': '655', 'required': 'a', 'key': 'axyz20'},
-  {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'},
-  {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
-  {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
+  {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'}, // h/i/m/o/r/s/x are missing from 100
+  {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'}, // h/i/s/x are missing from 711
   // NB! 730 has no name part, key is used for title part
-  {'tag': '730', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
+  {'tag': '730', 'required': 'a', 'key': 'adfhklmnoprsxvg'}, // i/x are missing from 130
   {'tag': '830', 'required': 'ax', 'key': 'apx'},
   {'tag': '880', 'required': ''}
 ];
@@ -138,7 +139,7 @@ function getMergeRestrictionsForTag(tag, restriction) {
     return null;
   }
   if (!(restriction in activeTags[0])) {
-    debug(`WARNING\tField ${tag} is missing '${restriction}'. Return NULL.`);
+    debug(`WARNING\tField ${tag} is missing '${restriction}'. Return NULL instead of a set of restrictions.`);
     return null;
   }
   if (activeTags.length > 1) {
@@ -161,12 +162,13 @@ function equalishFields(field1, field2) {
   return false;
 }
 
-function uniqueKeyMatches(field1, field2, forcedKeyString = null) {
+function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
   // NB! Assume that field1 and field2 have same relevant subfields.
-  // We might have 100 vs 700 fields. I haven't check whether their specs are identical.
+  // What to do if if base
   // const keySubfieldsAsString = forcedKeyString || getUniqueKeyFields(field1);
-  const keySubfieldsAsString = forcedKeyString || getMergeRestrictionsForTag(field1.tag, 'key');
-  return mandatorySubfieldComparison(field1, field2, keySubfieldsAsString);
+  const keySubfieldsAsString = forcedKeyString || getMergeRestrictionsForTag(baseField.tag, 'key');
+  //return mandatorySubfieldComparison(baseField, sourceField, keySubfieldsAsString);
+  return optionalSubfieldComparison(baseField, sourceField, keySubfieldsAsString);
 }
 
 function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
@@ -214,10 +216,8 @@ function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
   return subfieldArray.every(subfieldCode => {
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
-    // Assume that at least 1 instance must exist and that all instances must match
-    if (subfields1.length !== subfields2.length) {
-      debug(`Unique key: subfield ${subfieldCode} issues...`);
-      return false;
+    if (subfields1.length == 0 || subfields2.lenght == 0) {
+      return true;
     }
 
     return subfields1.every(sf => {
@@ -302,43 +302,43 @@ function indicatorsMatch(field1, field2) {
 }
 
 
-function mergablePair(field1, field2, fieldSpecificCallback = null) {
+function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
   // Indicators *must* be equal:
-  if (!indicatorsMatch(field1, field2) ||
-    !controlSubfieldsPermitMerge(field1, field2)) {
+  if (!indicatorsMatch(baseField, sourceField) ||
+    !controlSubfieldsPermitMerge(baseField, sourceField)) {
     return false;
   }
   //debug('mergablePair()... wp2');
   // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well. Thus check both:
-  if (!areRequiredSubfieldsPresent(field1) || !areRequiredSubfieldsPresent(field2)) {
+  if (!areRequiredSubfieldsPresent(baseField) || !areRequiredSubfieldsPresent(sourceField)) {
     return false;
   }
   //debug('mergablePair()... wp3');
   // Stuff of Hacks! Eg. require that both fields either have or have not X00$t:
-  if (!arePairedSubfieldsInBalance(field1, field2)) {
+  if (!arePairedSubfieldsInBalance(baseField, sourceField)) {
     debug('required subfield pair check failed.');
     return false;
   }
   debug('Test semantics...');
-  if (!semanticallyMergablePair(field1, field2)) {
+  if (!semanticallyMergablePair(baseField, sourceField)) {
     return false;
   }
-  return fieldSpecificCallback === null || fieldSpecificCallback(field1, field2);
+  return fieldSpecificCallback === null || fieldSpecificCallback(baseField, sourceField);
 }
 
-function compareName(field1, field2) {
+function compareName(baseField, sourceField) {
   // 100$a$t: remove $t and everything after that
-  const reducedField1 = fieldToNamePart(field1);
-  const reducedField2 = fieldToNamePart(field2);
+  const reducedField1 = fieldToNamePart(baseField);
+  const reducedField2 = fieldToNamePart(sourceField);
 
   // compare the remaining subsets:
   return uniqueKeyMatches(reducedField1, reducedField2);
 }
 
 
-function semanticallyMergablePair(field1, field2) {
+function semanticallyMergablePair(baseField, sourceField) {
   // On rare occasions a field contains a title part and partial checks are required:
-  if (!compareTitle(field1, field2)) {
+  if (!compareTitlePart(baseField, sourceField)) {
     debug(' ${field1.tag} is unmergable: Title part mismatch.');
     return false;
   }
@@ -348,7 +348,7 @@ function semanticallyMergablePair(field1, field2) {
   // TODO: we should check "optional" fields (such as possibly 245$b) here
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
-  if (!compareName(field1, field2)) {
+  if (!compareName(baseField, sourceField)) {
     debug('Unmergable: Name part mismatch');
     return false;
   }
@@ -391,7 +391,7 @@ function fieldToTitlePart(field) {
 }
 
 
-function compareTitle(field1, field2) {
+function compareTitlePart(field1, field2) {
   // HACK ALERT! Tags, ‡t and ‡dfhklmnoprstxvg should typically be parametrized.
   // If it is just this one case, I'll leave this as it is.
   if (fieldHasSubfield(field1, 't') && field1.tag in ['100', '110', '111', '700', '710', '711']) {
@@ -494,7 +494,7 @@ function addField(record, field) {
 export function mergeOrAddField(record, field) {
   // We are not interested in this field, whatever the case:
   // (Currently fields: 066)
-  if ( getMergeRestrictionsForTag(field.tag, 'skip') ) {
+  if (getMergeRestrictionsForTag(field.tag, 'skip')) {
     return record;
   }
   const newField = cloneAndPreprocessField(field, record);
