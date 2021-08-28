@@ -41,7 +41,7 @@ const counterpartRegexps = {
 // 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable
 // TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical.
 // TODO: lifespan for X00$d-fields
-const mergeRestrictions = [
+const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
   {'tag': '013', 'required': 'a', 'key': 'a'}, // We have 2 instances in Melinda...
   {'tag': '015', 'required': 'a', 'key': 'a'},
@@ -134,24 +134,24 @@ const mergeRestrictions = [
   {'tag': '995', 'required': '', 'paired': 'ac', 'key': 'abcdefghijklmnopqrstuvwxyz'} // key: a-z practically means we know nothing of the field
 ];
 
-function getMergeRestrictionsForTag(tag, restriction) {
-  const activeTags = mergeRestrictions.filter(entry => tag === entry.tag);
+function getMergeConstraintsForTag(tag, constraint) {
+  const activeTags = mergeConstraints.filter(entry => tag === entry.tag);
   if (activeTags.length === 0) {
     debug(`WARNING\tNo key found for ${tag}. Returning NULL!`);
     return null;
   }
-  if (!(restriction in activeTags[0])) {
-    debug(`WARNING\tField ${tag} is missing '${restriction}'. Return NULL instead of a set of restrictions.`);
+  if (!(constraint in activeTags[0])) {
+    debug(`WARNING\tField ${tag} is missing '${constraint}'. Return NULL instead of a set of constraints.`);
     return null;
   }
   if (activeTags.length > 1) {
-    debug(`WARNING\tMultiple values for '${restriction}' (N=${activeTags.length}) found in ${tag}`);
-    return activeTags[0][restriction];
+    debug(`WARNING\tMultiple values for '${constraint}' (N=${activeTags.length}) found in ${tag}`);
+    return activeTags[0][constraint];
   }
   // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
   // Thus we return string and not array. We might have think this further later on...
 
-  return activeTags[0][restriction];
+  return activeTags[0][constraint];
 }
 
 function equalishFields(field1, field2) {
@@ -168,7 +168,7 @@ function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
   // NB! Assume that field1 and field2 have same relevant subfields.
   // What to do if if base
   // const keySubfieldsAsString = forcedKeyString || getUniqueKeyFields(field1);
-  const keySubfieldsAsString = forcedKeyString || getMergeRestrictionsForTag(baseField.tag, 'key');
+  const keySubfieldsAsString = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'key');
   //return mandatorySubfieldComparison(baseField, sourceField, keySubfieldsAsString);
   return optionalSubfieldComparison(baseField, sourceField, keySubfieldsAsString);
 }
@@ -254,7 +254,7 @@ export function tagToRegexp(tag) {
 }
 
 function areRequiredSubfieldsPresent(field) {
-  const subfieldString = getMergeRestrictionsForTag(field.tag, 'required');
+  const subfieldString = getMergeConstraintsForTag(field.tag, 'required');
   if (subfieldString === null) {
     return true;
   } // nothing is required
@@ -270,7 +270,7 @@ function areRequiredSubfieldsPresent(field) {
 }
 
 function arePairedSubfieldsInBalance(field1, field2) {
-  const subfieldString = getMergeRestrictionsForTag(field1.tag, 'paired');
+  const subfieldString = getMergeConstraintsForTag(field1.tag, 'paired');
   if (subfieldString === null) {
     return true;
   }
@@ -463,7 +463,7 @@ function repetitionBlocksAdding(record, tag) {
   }
   // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
   // These are listed in https://workgroups.helsinki.fi/x/K1ohCw . (However, we do not always agree with specs.)
-  const solitary = getMergeRestrictionsForTag(tag, 'solitary');
+  const solitary = getMergeConstraintsForTag(tag, 'solitary');
   if (solitary) {
     return true; // Blocked by our cataloguers.
   }
@@ -503,7 +503,7 @@ function addField(record, field) {
 export function mergeOrAddField(record, field) {
   // We are not interested in this field, whatever the case:
   // (Currently fields: 066)
-  if (getMergeRestrictionsForTag(field.tag, 'skip')) {
+  if (getMergeConstraintsForTag(field.tag, 'skip')) {
     return record;
   }
   const newField = cloneAndPreprocessField(field, record);
