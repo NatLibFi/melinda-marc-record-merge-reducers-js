@@ -112,8 +112,10 @@ const mergeConstraints = [
   {'tag': '255', 'required': 'a', 'key': 'abcdefg', 'paired': 'abcdefg'},
   {'tag': '256', 'required': 'a', 'key': 'a'},
   {'tag': '257', 'required': 'a', 'key': 'a'},
-  // CONTINUE HERE
-  {'tag': '260', 'required': '', 'key': 'abcdefg'},
+  {'tag': '258', 'required': 'a', 'key': 'a'}, // Melinda: N=1
+  {'tag': '260', 'required': '', 'paired': 'abc', 'key': 'abcdefg', 'solitary': true},
+  {'tag': '263', 'required': 'a', 'key': 'a'},
+  {'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc', 'solitary': true}, // TODO: testi jossa kopsataan kaksi 264-kenttää tietueeseen, jossa ei ole 264-kenttää
 
   {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true},
   {'tag': '336', 'required': 'b', 'key': 'b', 'solitary': true},
@@ -452,6 +454,22 @@ export function mergeField(record, targetField, sourceField) {
   return record;
 }
 
+function checkSolitariness(record, tag){
+  // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
+  // These are listed in https://workgroups.helsinki.fi/x/K1ohCw . (However, we do not always agree with specs.)
+  const solitary = getMergeConstraintsForTag(tag, 'solitary');
+  if (solitary) {
+    // Blocking is requested by specs for a field with 'solitary':true.
+    // However, we won't block if all existing relevant fields come from source record. 
+    const candidateFields = record.get(tagToRegexp(tag));
+    //return true;
+    return candidateFields.some(field => !field.sourced); 
+
+  }
+  // No reason to block:
+  return false;
+}
+
 function repetitionBlocksAdding(record, tag) {
   // It's not a repetition:
   if (!recordHasField(record, tag)) {
@@ -461,14 +479,8 @@ function repetitionBlocksAdding(record, tag) {
   if (!fieldIsRepeatable(tag)) {
     return true; // blocked
   }
-  // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
-  // These are listed in https://workgroups.helsinki.fi/x/K1ohCw . (However, we do not always agree with specs.)
-  const solitary = getMergeConstraintsForTag(tag, 'solitary');
-  if (solitary) {
-    return true; // Blocked by our cataloguers.
-  }
-  // No reason to block:
-  return false;
+  // Solitariness is a hack, see checkSolitariness() for details.
+  return checkSolitariness(record, tag);
 }
 
 function fieldCanBeAdded(record, field) {
