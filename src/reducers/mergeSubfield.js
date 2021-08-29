@@ -22,9 +22,15 @@ const subfieldSortOrder = [
   {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']},
-  {'tag': '490', 'sortOrder': ['a', 'n', 'x', 'v' ]}, // INCOMPLETE, SAME AS 830?
+  {'tag': '382', 'sortOrder': ['a']}, // TODO: write test for this field.,
+  {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a' ]},
+  {'tag': '386', 'sortOrder': ['8', 'm', 'n', 'a' ]},
+  {'tag': '490', 'sortOrder': ['a', 'x', 'v', 'l' ]}, 
+  {'tag': '505', 'sortOrder': ['a']},
+  {'tag': '526', 'sortOrder': ['i', 'a']}, 
+  {'tag': '600', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']}, 
   {'tag': '700', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
-  {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v' ]}, // INCOMPLETE, SAME AS 490?
+  {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v' ]}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['a']} // Hack, so that default order is not used
 ];
 
