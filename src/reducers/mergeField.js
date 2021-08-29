@@ -42,6 +42,7 @@ const counterpartRegexps = {
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 // TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical.
 // TODO: lifespan for X00$d-fields
+// TODO: Move this array + getMergeConstraintsForTag() to a separate file...
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
   {'tag': '013', 'required': 'a', 'key': 'a'}, // We have 2 instances in Melinda...
@@ -141,9 +142,93 @@ const mergeConstraints = [
   {'tag': '352', 'required': '', 'paired': 'abcdefgiq', 'key': 'abcdefgiq'},
   {'tag': '355', 'required': '', 'paired': 'abcdefghj', 'key': 'abcdefghj'},
   {'tag': '357', 'required': 'a', 'key': 'abcg'},
-  // NB! 700, 710 and 711 may have title parts that are handled elsewhere
-  {'tag': '650', 'required': 'a', 'key': 'axyz20'}, // TODO: $g
+  {'tag': '362', 'required': 'a', 'key': 'az'},
+  {'tag': '363', 'required': '', 'paired': 'abcdefghijklmuv', 'key': 'abcdefghijklmuv' },
+  {'tag': '365', 'required': 'b', 'paired': 'abcdefghijkm', 'key': 'abcdefghijkm' }, // N=0
+  {'tag': '366', 'required': '', 'paired': 'abcdefgjkm', 'key': 'abcdefgjkm'},
+  {'tag': '370', 'required': '', 'paired': 'cfgistuv', 'key': 'cfgistuv'},
+  {'tag': '377', 'required': '', 'paired': 'al', 'key': 'al'},
+  {'tag': '380', 'required': 'a', 'key': 'a' },
+  {'tag': '381', 'required': 'auv', 'key': 'auv' },
+  {'tag': '382', 'required': '', 'paired': 'abdenprst', 'key': 'abdenprst' },
+  {'tag': '383', 'required': 'abcde', 'key': 'abcde' },
+  {'tag': '384', 'required': 'a', 'key': 'a' },
+  {'tag': '385', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
+  {'tag': '386', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
+  {'tag': '388', 'required': 'a', 'key': 'a'},
+  {'tag': '490', 'required': 'a', 'key': 'axvl'},
+  {'tag': '500', 'required': 'a', 'key': 'a'},
+  {'tag': '501', 'required': 'a', 'key': 'a'},
+  {'tag': '502', 'required': 'a', 'key': 'abcdgo'},
+  {'tag': '504', 'required': 'a', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '505', 'required': '', 'paired': 'agrtu', 'key': 'agrtu'},
+  {'tag': '506', 'required': 'a', 'paired': '', 'key': 'abcdefgqu'},
+  {'tag': '507', 'required': 'a', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '508', 'required': 'a', 'key': 'a'},
+  {'tag': '509', 'required': 'a', 'key': 'acd'}, // TODO: add test
+  {'tag': '510', 'required': 'a', 'key': 'abcx'}, 
+  {'tag': '511', 'required': 'a', 'key': 'a'},
+  {'tag': '513', 'required': '', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '514', 'required': '', 'paired': 'abcdefghijkmuz', 'key': 'abcdefghijkmuz'},
+  {'tag': '515', 'required': 'a', 'key': 'a'},
+  {'tag': '518', 'required': '', 'paired': 'adop', 'key': 'adop'},
+  {'tag': '520', 'required': 'a', 'paired': 'abc', 'key': 'abc'},
+  {'tag': '521', 'required': 'a', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '522', 'required': 'a', 'key': 'a'},
+  {'tag': '524', 'required': 'a', 'key': 'a'},
+  {'tag': '525', 'required': 'a', 'key': 'a'},
+  {'tag': '526', 'required': 'a', 'paired': 'abcdi', 'key': 'abcdi'},
+  {'tag': '530', 'required': 'a', 'paired': 'abcd', 'key': 'abcd'},
+  {'tag': '532', 'required': 'a', 'key': 'a'},
+  {'tag': '533', 'required': 'a', 'paired': 'abcdefmn7', 'key': 'abcdefmn7'},
+  {'tag': '534', 'required': 'a', 'paired': 'abcempt', 'key': 'abcempt'},
+  {'tag': '535', 'required': '', 'paired': 'abcdg', 'key': 'abcdg'},
+  {'tag': '536', 'required': '', 'paired': 'abcdefgh', 'key': 'abcdefgh'},
+  {'tag': '538', 'required': 'a', 'paired': 'aiu', 'key': 'aiu'},
+  {'tag': '540', 'required': '', 'paired': 'abcdfgqu', 'key': 'abcdfgqu'},
+  {'tag': '541', 'required': '', 'paired': 'abcdefhno', 'key': 'abcdefhno'},
+  {'tag': '542', 'required': '', 'paired': 'abcdefghijklmnopqrsu', 'key': 'abcdefghijklmnopqrsu'},
+  {'tag': '544', 'required': '', 'paired': 'abcden', 'key': 'abcden'},
+  {'tag': '545', 'required': '', 'paired': 'abu', 'key': 'abu'},
+  {'tag': '546', 'required': '', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '547', 'required': 'a', 'key': 'a'},
+  {'tag': '550', 'required': 'a', 'key': 'a'},
+  {'tag': '552', 'required': '', 'paired': 'abcdefghijklmnopuz', 'key': 'abcdefghijklmnopuz'},
+  {'tag': '555', 'required': 'a', 'paired': 'abcdu', 'key': 'abcdu'},
+  {'tag': '556', 'required': 'a', 'key': 'az'},
+  {'tag': '561', 'required': 'a', 'key': 'au'},
+  {'tag': '562', 'required': '', 'paired': 'abcde', 'key': 'abcde'},
+  {'tag': '563', 'required': 'a', 'key': 'au'},
+  {'tag': '565', 'required': '', 'paired': 'abc', 'key': 'abc'},
+  {'tag': '567', 'required': '', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '580', 'required': 'a', 'key': 'a'},
+  {'tag': '581', 'required': 'a', 'key': 'a'},
+  {'tag': '583', 'required': '', 'paired': 'abcdefhijklnou', 'key': 'abcdefhijklnou'},
+  {'tag': '584', 'required': '', 'paired': 'ab', 'key': 'ab'},
+  {'tag': '585', 'required': 'a', 'key': 'a'},
+  {'tag': '586', 'required': 'a', 'key': 'a'},
+  {'tag': '588', 'required': 'a', 'key': 'a'},
+  {'tag': '590', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '591', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '592', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '593', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '594', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '595', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '596', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '597', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '598', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '599', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  {'tag': '600', 'required': 'a', 'paired': 't', 'key': 'abcj'}, // aped from 700
+  {'tag': '610', 'required': 'a', 'paired': 't', 'key': 'abcdgn'}, // aped from 710
+  {'tag': '611', 'required': 'a', 'paired': 't', 'key': 'acdgn'}, // aped from 711
+  {'tag': '630', 'required': 'a', 'key': 'adfhklmnoprsxvg'}, // aped from 730
+    // NB! 700, 710 and 711 may have title parts that are handled elsewhere
+  {'tag': '647', 'required': 'a', 'key': 'acdgvxyz02'},
+  {'tag': '648', 'required': 'a', 'key': 'avxyz02'},
+  {'tag': '650', 'required': 'a', 'paired': 'abcdegvxyz', 'key': 'abcdegvxyz20'}, // TODO: $g
+  {'tag': '651', 'required': 'a', 'paired': 'aegvxyz', 'key': 'aegvxyz20'}, // TODO: $g
   {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
+  // TODO: carry on from here
   {'tag': '655', 'required': 'a', 'key': 'axyz20'},
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'}, // h/i/m/o/r/s/x are missing from 100
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'}, // h/j/m/o/r/s/x are missing from 110
