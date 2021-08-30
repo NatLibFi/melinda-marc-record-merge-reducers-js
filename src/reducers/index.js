@@ -1,8 +1,6 @@
 //import createDebugLogger from 'debug';
 import internalFields from './internalFields';
 import leader from './leader';
-import mainEntry from './mainEntry';
-//import selectLonger from './selectLonger';
 import field006 from './field006';
 import field007 from './field007';
 import field008 from './field008';
@@ -26,7 +24,6 @@ const copyIfDifferent = new RegExp(String((/^(?<tags1>013|015|016|017|028|035|05
 
 // Copy field from source only if missing from base (compareTagsOnly = true)
 const copyIfMissing = /^(?<tags>010|018|027|030|031|043|044|049|085|088|222|243|247|260|263|264|306|310|357|384|507|514)$/u;
-// TODO: 027?
 
 // Special rules defined for certain sets of fields
 // Exclude subfields from identicalness comparison and/or drop subfields from source before copying
@@ -45,23 +42,11 @@ const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude s
 const allReducers = [
   internalFields(), // LOW, CAT, SID
   leader(), // Test 01
-  //mainEntry(), // Main entry fields
-  //selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
   genericDatafield() // Import tests?
-  /*
-  field020(), // Tests 09, 10 and 11
-  field022(), // Tests 12, 13 and 14
-  field024(), // Tests 15, 16 and 17
-  field040(), // Tests 18 and 19
-  field042(), // Tests 20 and 21
-  field240(), // Tests 34, 35
-  field245(), // Tests 31, 32 and 33
-  field830() // Tests 22-29
-*/
-//  localReducers.field995() // Tests 30, 31 and 32
+
 ];
 
 export const localCopyReducerConfigs = [
@@ -76,22 +61,9 @@ export const localCopyReducerConfigs = [
 export const localReducers = [
   internalFields(), // LOW, CAT, SID
   leader(), // Test 01
-  //mainEntry(), // Main entry fields
-  //selectLonger(), // Used for fields 033, 034, 046, 257, 300 (repeatable) and 039, 045 (non-repeatable)
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
   genericDatafield()
 
-  /*
-  field020(), // Tests 09, 10 and 11
-  field022(), // Tests 12, 13 and 14
-  field024(), // Tests 15, 16 and 17
-  field040(), // Tests 18 and 19
-  field042(), // Tests 20 and 21
-  field240(), // Tests 34, 35
-  field245(), // Tests 31, 32 and 33
-  field830(), // Tests 22-29
-  */
-  //field995()
 ];
