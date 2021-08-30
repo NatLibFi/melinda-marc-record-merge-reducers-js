@@ -224,7 +224,7 @@ export function prepareSubfieldForMerge(tag, originalSubfield) {
 export function mergeSubfield(record, targetField, candSubfield) {
 
   if (mergeSubfieldNotRequired(targetField, candSubfield)) {
-    debug(`    No need to add '‡${candSubfield.code} ${candSubfield.value}'`);
+    debug(`    No need to add subfield '‡${candSubfield.code} ${candSubfield.value}'`);
     return;
   }
 

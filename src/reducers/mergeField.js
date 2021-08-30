@@ -35,8 +35,10 @@ const counterpartRegexps = {
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
 };
 
-// 'mergable' = true/false, if false can't be merged, defaults to true
+
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
+// 'skip': no merge, no add.
+// 'mergable' = if true, no merge, just add. true/false, no if false can't be merged, defaults to true.
 // "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined.
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 
@@ -245,11 +247,17 @@ const mergeConstraints = [
 function getMergeConstraintsForTag(tag, constraint) {
   const activeTags = mergeConstraints.filter(entry => tag === entry.tag);
   if (activeTags.length === 0) {
+    if ( contraint === 'mergable' ) { // missing mergable defaults to true. Don't complain about it either.
+      return true;
+    }
     debug(`WARNING\tNo key found for ${tag}. Returning NULL!`);
+    
     return null;
   }
   if (!(constraint in activeTags[0])) {
-    debug(`WARNING\tField ${tag} is missing '${constraint}'. Return NULL instead of a set of constraints.`);
+    if ( constraint !== 'mergable' && constraint !== 'skip' ) {
+      debug(`WARNING\tField ${tag} is missing '${constraint}'. Return NULL instead of a set of constraints.`);
+    }
     return null;
   }
   if (activeTags.length > 1) {
@@ -487,8 +495,9 @@ function namePartThreshold(field) {
 function fieldToNamePart(field) {
   const index = namePartThreshold(field);
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i < index || index === -1)};
-
-  debug(`Name subset: ${fieldToString(subsetField)}`);
+  if ( index > -1 ) {
+    debug(`Name subset: ${fieldToString(subsetField)}`);
+  }
   return subsetField;
 }
 
@@ -515,6 +524,9 @@ function compareTitlePart(field1, field2) {
 
 
 export function getCounterpart(record, field) {
+  if (getMergeConstraintsForTag(field.tag, 'skip')) {
+    return record;
+  }
   // Get tag-wise relevant 1XX and 7XX fields:
   const counterpartCands = record.get(localTagToRegexp(field.tag));
   // debug(counterpartCands);
@@ -620,7 +632,7 @@ function addField(record, field) {
 
 export function mergeOrAddField(record, field) {
   if ( record.fields.some(baseField => fieldsAreIdentical(field, baseField)) ) {
-      debug(`mergeOrAddField(): field '${field.toString()}' already exists! No action required!`);
+      debug(`mergeOrAddField(): field '${fieldToString(field)}' already exists! No action required!`);
       return record;
   }
   // We are not interested in this field, whatever the case:
@@ -630,13 +642,13 @@ export function mergeOrAddField(record, field) {
   }
   const newField = cloneAndPreprocessField(field, record);
   const counterpartField = getCounterpart(record, newField);
-  debug(`INCOMING FIELD: ${fieldToString(field)}`);
+
   if (counterpartField) {
-    debug(`mergeOrAddField: Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
+    debug(`mergeOrAddfield(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
     mergeField(record, counterpartField, newField);
     return record;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  debug(`No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`);
+  debug(`mergeOrAddField(): No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`);
   return addField(record, newField);
 }
