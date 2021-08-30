@@ -30,6 +30,7 @@ const subfieldSortOrder = [
   {'tag': '526', 'sortOrder': ['i', 'a']}, 
   {'tag': '600', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']}, 
   {'tag': '700', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '776', 'sortOrder': ['i', 'a']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v' ]}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['a']} // Hack, so that default order is not used
 ];
