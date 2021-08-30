@@ -4,6 +4,7 @@ import {
   fieldHasSubfield,
   fieldIsRepeatable,
   fieldToString,
+  fieldsAreIdentical,
   normalizeStringValue,
   recordHasField
 } from './utils.js';
@@ -34,13 +35,13 @@ const counterpartRegexps = {
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
 };
 
+// 'mergable' = true/false, if false can't be merged, defaults to true
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
 // "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined.
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 
 // 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
-// TODO: "key2" (rename?) is an optional, but unique key. If present in both, the value must be identical.
 // TODO: lifespan for X00$d-fields
 // TODO: Move this array + getMergeConstraintsForTag() to a separate file...
 const mergeConstraints = [
@@ -50,9 +51,9 @@ const mergeConstraints = [
   {'tag': '016', 'required': 'a', 'key': 'a2'},
   {'tag': '017', 'required': 'a', 'key': 'a'},
   {'tag': '018', 'required': 'a', 'key': 'a'},
-  {'tag': '020', 'required': '', 'pair': 'a', 'key': 'a'}, // NB! how to handle $z-only cases? 'required-fallback'='z'?
-  {'tag': '022', 'required': '', 'pair': 'a', 'key': 'alz'},
-  {'tag': '024', 'required': '', 'pair': 'a', 'key': 'ad'},
+  {'tag': '020', 'required': '', 'paired': 'a', 'key': 'a'}, // NB! how to handle $z-only cases? 'required-fallback'='z'?
+  {'tag': '022', 'required': '', 'paired': 'a', 'key': 'alz'},
+  {'tag': '024', 'required': '', 'paired': 'a', 'key': 'ad'},
   {'tag': '025', 'required': 'a', 'key': 'a'},
   {'tag': '026', 'required': 'a', 'key': 'a'},
   {'tag': '027', 'required': 'a', 'key': 'a'}, // on tuolla pari $z:ää
@@ -618,6 +619,10 @@ function addField(record, field) {
 }
 
 export function mergeOrAddField(record, field) {
+  if ( record.fields.some(baseField => fieldsAreIdentical(field, baseField)) ) {
+      debug(`mergeOrAddField(): field '${field.toString()}' already exists! No action required!`);
+      return record;
+  }
   // We are not interested in this field, whatever the case:
   // (Currently fields: 066)
   if (getMergeConstraintsForTag(field.tag, 'skip')) {
