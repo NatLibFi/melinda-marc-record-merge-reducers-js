@@ -211,16 +211,17 @@ const mergeConstraints = [
   {'tag': '585', 'required': 'a', 'key': 'a'},
   {'tag': '586', 'required': 'a', 'key': 'a'},
   {'tag': '588', 'required': 'a', 'key': 'a'},
-  {'tag': '590', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '591', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '592', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '593', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '594', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '595', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '596', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '597', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '598', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '599', 'required': '', 'paired': 'abcdefghijklmnopqrstuvwxyz', 'key': 'abcdefghijklmnopqrstuvwxyz'},
+  // We have no specs for 59X fields...
+  {'tag': '590', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '591', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '592', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '593', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '594', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '595', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '596', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '597', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '598', 'mergable': false, 'required': '' }, // always copy, never merge
+  {'tag': '599', 'mergable': false, 'required': '' }, // always copy, never merge
   {'tag': '600', 'required': 'a', 'paired': 't', 'key': 'abcj'}, // aped from 700
   {'tag': '610', 'required': 'a', 'paired': 't', 'key': 'abcdgn'}, // aped from 710
   {'tag': '611', 'required': 'a', 'paired': 't', 'key': 'acdgn'}, // aped from 711
@@ -231,39 +232,104 @@ const mergeConstraints = [
   {'tag': '650', 'required': 'a', 'paired': 'abcdegvxyz', 'key': 'abcdegvxyz20'}, // TODO: $g
   {'tag': '651', 'required': 'a', 'paired': 'aegvxyz', 'key': 'aegvxyz20'}, // TODO: $g
   {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
-  // TODO: carry on from here
-  {'tag': '655', 'required': 'a', 'key': 'axyz20'},
+  {'tag': '654', 'mergable': false, 'required': '' },
+  {'tag': '655', 'required': 'a', 'paired': 'axyz', 'key': 'axyz20'},
+  {'tag': '656', 'mergable': false, 'required': 'a' }, // N=0
+  {'tag': '657', 'mergable': false, 'required': 'a' }, // N=0
+  {'tag': '658', 'mergable': false, 'required': 'a' }, // N=0
+  {'tag': '662', 'mergable': false, 'required': '' }, // N=0
+  {'tag': '668', 'mergable': false, 'required': 'a' }, // N=0
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'}, // h/i/m/o/r/s/x are missing from 100
-  {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdgn'}, // h/j/m/o/r/s/x are missing from 110
-  {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdgn'}, // h/i/s/x are missing from 711
+  {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
+  {'tag': '720', 'required': 'a', 'key': 'a' },
   // NB! 730 has no name part, key is used for title part
-  {'tag': '730', 'required': 'a', 'key': 'adfhklmnoprsxvg'}, // i/x are missing from 130
-  {'tag': '830', 'required': 'ax', 'key': 'apx'},
+  {'tag': '730', 'required': 'a', 'key': 'adfhlnoprstx'}, // TODO: compare subfields with 130...
+  {'tag': '740', 'required': 'a', 'key': 'ahnp'},
+  {'tag': '751', 'required': 'a', 'key': 'a'}, // N=11, kaikissa pelkkä $a
+  {'tag': '752', 'mergable': false, 'required': '', 'key': 'abcdefgh'}, // N=12234
+  {'tag': '753', 'mergable': false, 'required': '', 'key': 'abc'},
+  {'tag': '754', 'mergable': false, 'required': '', 'key': 'acdxz'}, // N=3
+  {'tag': '758', 'mergable': false, 'required': 'a', 'key': 'ai'}, // N=1
+  {'tag': '760', 'mergable': false, 'required': 'tw', key: 'w' },
+  {'tag': '762', 'mergable': false, 'required': 't', key: 'abcdhmstxy' },
+  {'tag': '765', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz' },
+  {'tag': '767', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz' },
+  {'tag': '770', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz' },
+  {'tag': '772', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz' },
+  {'tag': '773', 'required': 'w', key: 'w' }, // Kirjavälitys should not have any component parts. However, this need to be re-thought...
+  // Currently we (appently) drop fields that don't contain 773$w...
+  {'tag': '774', 'mergable': false, 'required': '' },
+  {'tag': '775', 'mergable': false, 'required': '' },
+  {'tag': '776', 'mergable': false, 'required': '' },
+  {'tag': '777', 'mergable': false, 'required': '' },
+  {'tag': '780', 'mergable': false, 'required': '' },
+  {'tag': '785', 'mergable': false, 'required': '' },
+  {'tag': '786', 'mergable': false, 'required': '' },
+  {'tag': '787', 'mergable': false, 'required': '' },
+  {'tag': '800', 'required': 'a', 'paired': 't', 'key': 'abcj'},
+  {'tag': '810', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '811', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
+  {'tag': '830', 'required': 'ax', 'key': 'adfloprtvwxx'},
+  {'tag': '840', 'skip': true, 'required': 'a'},
+  {'tag': '841', 'skip': true, 'required': 'a'},
+  {'tag': '842', 'skip': true, 'required': 'a'},
+  {'tag': '843', 'skip': true, 'required': 'a'},
+  {'tag': '844', 'skip': true, 'required': 'a'},
+  {'tag': '845', 'skip': true, 'required': 'a'},
+  {'tag': '850', 'required': 'a', 'key': 'a'},
+  {'tag': '852', 'skip': true, 'required': 'a'}, // HMM... we might want to reconsider this...
+  {'tag': '853', 'skip': true, 'required': 'a'},
+  {'tag': '854', 'skip': true, 'required': 'a'},
+  {'tag': '855', 'skip': true, 'required': 'a'},
+  {'tag': '856', 'mergable': false, 'required': '' },
+  {'tag': '863', 'skip': true, 'required': 'a'},
+  {'tag': '864', 'skip': true, 'required': 'a'},
+  {'tag': '865', 'skip': true, 'required': 'a'},
+  {'tag': '866', 'skip': true, 'required': 'a'},
+  {'tag': '867', 'skip': true, 'required': 'a'},
+  {'tag': '868', 'skip': true, 'required': 'a'},
+  {'tag': '876', 'skip': true, 'required': 'a'},
+  {'tag': '877', 'skip': true, 'required': 'a'},
+  {'tag': '878', 'skip': true, 'required': 'a'},
   {'tag': '880', 'required': '', 'paired': 'a', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  // 995: paired-ac is there to prevent koha and arto stuff from merging
-  {'tag': '995', 'required': '', 'paired': 'ac', 'key': 'abcdefghijklmnopqrstuvwxyz'} // key: a-z practically means we know nothing of the field
+  {'tag': '881', 'mergable': false, 'required': '' },
+  {'tag': '882', 'mergable': false, 'required': '' },
+  {'tag': '883', 'mergable': false, 'required': '' },
+  {'tag': '884', 'mergable': false, 'required': '' },
+  {'tag': '885', 'mergable': false, 'required': '' },
+  {'tag': '886', 'mergable': false, 'required': '' },
+  {'tag': '887', 'mergable': false, 'required': '' },
+  {'tag': '900', 'mergable': false, 'required': '' },
+  {'tag': '901', 'mergable': false, 'required': '' },
+  {'tag': '910', 'mergable': false, 'required': '' },
+  {'tag': '940', 'mergable': false, 'required': '' },
+  {'tag': '960', 'mergable': false, 'required': '' },
+  {'tag': '995', 'mergable': false, 'required': '' }
 ];
 
 function getMergeConstraintsForTag(tag, constraint) {
   const activeTags = mergeConstraints.filter(entry => tag === entry.tag);
   if (activeTags.length === 0) {
-    if ( contraint === 'mergable' ) { // missing mergable defaults to true. Don't complain about it either.
-      return true;
-    }
     debug(`WARNING\tNo key found for ${tag}. Returning NULL!`);
     
     return null;
   }
+
+  if (activeTags.length > 1) {
+    debug(`WARNING\tMultiple values for '${constraint}' (N=${activeTags.length}) found in ${tag}. Using first values.`);
+  }
+
   if (!(constraint in activeTags[0])) {
-    if ( constraint !== 'mergable' && constraint !== 'skip' ) {
+    if ( constraint === 'mergable' ) { // missing mergable defaults to true. Don't complain about it either.
+      return true;
+    }
+    if ( constraint !== 'skip' ) {
       debug(`WARNING\tField ${tag} is missing '${constraint}'. Return NULL instead of a set of constraints.`);
     }
     return null;
   }
-  if (activeTags.length > 1) {
-    debug(`WARNING\tMultiple values for '${constraint}' (N=${activeTags.length}) found in ${tag}`);
-    return activeTags[0][constraint];
-  }
+
   // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
   // Thus we return string and not array. We might have think this further later on...
 
@@ -525,7 +591,12 @@ function compareTitlePart(field1, field2) {
 
 export function getCounterpart(record, field) {
   if (getMergeConstraintsForTag(field.tag, 'skip')) {
-    return record;
+    return null;
+  }
+  const tmp = getMergeConstraintsForTag(field.tag, 'mergable');
+  if ( tmp === false ) {
+    // debug(`${field.tag}/mergable is ${tmp} `);
+    return false;
   }
   // Get tag-wise relevant 1XX and 7XX fields:
   const counterpartCands = record.get(localTagToRegexp(field.tag));
@@ -631,16 +702,19 @@ function addField(record, field) {
 }
 
 export function mergeOrAddField(record, field) {
-  if ( record.fields.some(baseField => fieldsAreIdentical(field, baseField)) ) {
-      debug(`mergeOrAddField(): field '${fieldToString(field)}' already exists! No action required!`);
-      return record;
-  }
   // We are not interested in this field, whatever the case:
   // (Currently fields: 066)
   if (getMergeConstraintsForTag(field.tag, 'skip')) {
     return record;
   }
+
   const newField = cloneAndPreprocessField(field, record);
+
+  if ( record.fields.some(baseField => fieldsAreIdentical(newField, baseField)) ) {
+      debug(`mergeOrAddField(): field '${fieldToString(newField)}' already exists! No action required!`);
+      return record;
+  }
+
   const counterpartField = getCounterpart(record, newField);
 
   if (counterpartField) {
