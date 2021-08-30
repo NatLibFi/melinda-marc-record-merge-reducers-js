@@ -12,6 +12,7 @@ MarcRecord.setValidationOptions({subfieldValues: false});
 // a: $a is differs, other subfields complement each other (don't merge, don't add)
 // b: empty base
 // c: $a agrees, orher subfields complement each other (merge)
+// d: base and source contain identical field 010.
 describe('reducers/field020', () => {
   //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const {expect} = chai;
