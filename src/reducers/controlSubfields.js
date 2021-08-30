@@ -118,22 +118,21 @@ const controlSubfieldsContainingIdentifier = ['w', '0', '1'];
 
 export function controlSubfieldsPermitMerge(field1, field2) {
   if (!controlSubfieldsContainingIdentifier.every(subfieldCode => controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode))) {
-    debug(' control subfields with identifiers failed');
+    //debug(' control subfields with identifiers failed');
     return false;
   }
 
   if (!subfieldsAreEqual(field1, field2, '2') || !subfieldsAreEqual(field1, field2, '3') || !subfieldsAreEqual(field1, field2, '5')) {
-    debug(' similar control subfield fails');
+    //debug(' similar control subfield fails');
     return false;
   }
 
-  if (!controlSubfield6PermitsMerge(field1, field2) ||
-    !controlSubfield9PermitsMerge(field1, field2)) {
+  if (!controlSubfield6PermitsMerge(field1, field2) || !controlSubfield9PermitsMerge(field1, field2)) {
     return false;
   }
   // We don't handle $8 subfields here at all, as they affect multiple fields!
   if (!subfieldsAreEmpty(field1, field2, '8')) {
-    debug(' csf8 failed');
+    //debug(' csf8 failed');
     return false;
   }
 
