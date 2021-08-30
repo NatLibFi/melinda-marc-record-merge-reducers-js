@@ -42,7 +42,7 @@ const mergeConstraints = [
   {'tag': '045', 'required': '', 'key': 'abc', 'paired': 'abc'}, // (ET) // 045 is problematic either-$a or $b or $c...
   {'tag': '046', 'required': 'a', 'key': 'abcdejklmnop', 'paired': 'abcdejklmnop'},
   {'tag': '047', 'required': 'a', 'key': 'a2'},
-  {'tag': '048', 'required': 'a', 'key': 'ba'}, // TODO: check multiple instances of $a vs key
+  {'tag': '048', 'required': '', 'paired': 'ab', 'key': 'ba'}, // TODO: check multiple instances of $a vs key
   {'tag': '049', 'required': '', 'key': 'abcd'},
   {'tag': '050', 'required': 'a', 'key': 'ab13'},
   {'tag': '051', 'required': 'a', 'key': 'abc'}, // 2021-08-27: only one field in the whole Melinda
