@@ -90,16 +90,47 @@ function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
   });
 }
 
+// TODO: Normalize this:
+function compareSubfields(set1, set2) {
+  return set1.every(sf => {
+    const normSubfieldValue = normalizeStringValue(sf.value);
+    return set2.some(sf2 => {
+      const normSubfieldValue2 = normalizeStringValue(sf2.value);
+      if (normSubfieldValue === normSubfieldValue2) {
+        //debug(`pairing succeed for normalized '${normSubfieldValue}'`);
+        return true;
+      }
+      debug(`cS failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
+      return false;
+    });
+  });
+}
+
+function normalizedSubfieldsMatch(subfields1, subfields2) {
+  if (subfields1.length === 0 || subfields2.length === 0) {
+    return true;
+  }
+  if ( subfields1.length == subfields2.length && compareSubfields(subfields1, subfields2) && compareSubfields(subfields2, subfields1) ) {
+    debug(`pairing succeed for normalized field`);
+    return true;
+  }
+  debug(`failed to pair subfields`);
+  return false;
+}
+
 function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
   if (keySubfieldsAsString === null) {
     return true;
   }
   const subfieldArray = keySubfieldsAsString.split('');
-
+  debug(`  COMPARE SUBS ${keySubfieldsAsString}`);
+  debug(`    LEN b4 filth: ${field1.subfields.length} vs ${field2.subfields.length}`);
   return subfieldArray.every(subfieldCode => {
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
-    if (subfields1.length === 0 || subfields2.lenght === 0) {
+    return normalizedSubfieldsMatch(subfields1, subfields2);
+    /*
+    if (subfields1.length === 0 || subfields2.length === 0) {
       return true;
     }
 
@@ -115,7 +146,7 @@ function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
         return false;
       });
     });
-
+*/
   });
 }
 
