@@ -25,9 +25,7 @@ export function fieldsAreIdentical(field1, field2) {
   }
 
   if ('subfields' in field1) {
-    if (field1.ind1 === field2.ind1 &&
-        field1.ind2 === field2.ind2 &&
-        field1.subfields.length === field2.subfields.length) {
+    if (field1.ind1 === field2.ind1 && field1.ind2 === field2.ind2 && field1.subfields.length === field2.subfields.length) {
       // NB! This does not check order of subfields, which might or might nor be a bad idea.
       // NV would just do localFieldToString() and compare them strings...
       // This is the original (Artturi?) way...
@@ -70,16 +68,8 @@ export function fieldToString(f) { // copied aped from marc-record-js, NB! Overr
   return localFieldToString(f);
 }
 
-// NV: This function should be renamed to copyFields(base, fields) even if it is used by nonIdenticalFields
-// SS: renamed from copyNonIdenticalFields(base, nonIdenticalFields) 1.6.2021
 // Copy fields from source to base
 // Used for non-identical fields
-/*export function copyFields(base, fields) {
-  fields.forEach(f => base.insertField(f));
-  const tags = fields.map(field => field.tag);
-  tags.forEach(tag => debug(`Field ${tag} copied from source to base`));
-  return base;*/
-
 // Copy all (typically non-identical in our context) fields from source to base
 export function copyFields(record, fields) {
   fields.forEach(f => {
@@ -281,82 +271,6 @@ export function makeNewBaseField(base, baseField, sortedSubfields) {
   return base;
 }
 
-
-/**
- * Select longer field
- * Longer means fulfilling either (but not both) of these conditions:
- *   a) Source has more subfields than base
- * Or if source and base have the same number of subfields:
- *   b) Subfield values in source are supersets of subfield values in base
- * */
-export function selectLongerField(base, baseField, sourceField) {
-  debug(`selectLongerField(): Comparing field ${baseField.tag}`);
-  const baseSubs = 'subfields' in baseField ? baseField.subfields : [];
-  const sourceSubs = 'subfields' in sourceField ? sourceField.subfields : [];
-
-  const baseSubsNormalized = baseSubs
-    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
-
-  const sourceSubsNormalized = sourceSubs
-    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
-
-  // Returns the base subfields for which a matching source subfield is found
-  const equalSubfieldsBase = baseSubsNormalized
-    .filter(baseSubfield => sourceSubsNormalized
-      .some(sourceSubfield => subsetEquality(baseSubfield, sourceSubfield)));
-  //debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
-
-  // Returns the source subfields for which a matching base subfield is found
-  const equalSubfieldsSource = sourceSubsNormalized
-    .filter(sourceSubfield => baseSubsNormalized
-      .some(baseSubfield => subsetEquality(sourceSubfield, baseSubfield)));
-  //debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
-
-  // If fields are equally long, keep base
-  if (baseSubs.length === sourceSubs.length && equalSubfieldsBase.length < baseSubs.length) {
-    debug(`No changes to base`);
-    return base;
-  }
-
-  if (baseSubs.length > 0 && baseSubs.length === sourceSubs.length && equalSubfieldsBase.length === equalSubfieldsSource.length &&
-    localFieldToString(baseField).length < localFieldToString(sourceField).length) {
-    debug(`Checking subfield equality: equal number of subfields, but source has longer contents`);
-    return replaceBasefieldWithSourcefield(base);
-
-    /*
-    debug(`Checking subfield equality`);
-    const totalSubfieldLengthBase = baseSubsNormalized
-      .map(({value}) => value.length)
-      .reduce((acc, value) => acc + value);
-    const totalSubfieldLengthSource = sourceSubsNormalized
-      .map(({value}) => value.length)
-      .reduce((acc, value) => acc + value);
-
-    if (totalSubfieldLengthSource > totalSubfieldLengthBase) {
-      return replaceBasefieldWithSourcefield(base);
-    }
-    */
-  }
-  if (sourceSubs.length > baseSubs.length && equalSubfieldsBase.length === baseSubs.length) {
-    return replaceBasefieldWithSourcefield(base);
-  }
-  debug(`No changes to base`);
-  return base;
-
-  // Subset equality function from marc-record-merge select.js
-  function subsetEquality(subfieldA, subfieldB) {
-    return subfieldA.code === subfieldB.code &&
-      (subfieldA.value.indexOf(subfieldB.value) !== -1 || subfieldB.value.indexOf(subfieldA.value) !== -1);
-  }
-  function replaceBasefieldWithSourcefield(base) {
-    const index = base.fields.findIndex(field => field === baseField);
-    base.fields.splice(index, 1, sourceField); // eslint-disable-line functional/immutable-data
-    debug(`Source field ${sourceField.tag} is longer, replacing base field with source field`);
-    return base;
-  }
-}
-
-
 // NVOLK's marc record modifications
 function internalFieldHasSubfield(field, subfieldCode, subfieldValue) {
   if (subfieldValue === null) {
@@ -403,23 +317,5 @@ export function recordReplaceField(record, originalField, newField) {
   record.removeField(originalField);
   record.insertField(newField);
   return record;
-
-  /*
-  //const index = record.fields.findIndex(field => field === originalField);
-  if (index === -1) {
-    debug('WARNING: recordReplaceField: Failed to find the original field');
-    // Should this function return something for success or failure?
-    return record;
-  }
-
-  record.removeField(originalField);
-  record.insertField(newField);
-  //record.insertField(newField, index);
-  return record;
-
-  record.fields.splice(index, 1, clone(newField)); // eslint-disable-line functional/immutable-data
-  debug(`Replacing base field ${originalField.tag} with source ${newField.tag}`);
-  return record;
-  */
 }
 
