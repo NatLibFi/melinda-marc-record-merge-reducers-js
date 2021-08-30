@@ -12,7 +12,7 @@ export function getTags(fields) {
   return tags;
 }
 
-function fieldsAreIdentical(field1, field2) {
+export function fieldsAreIdentical(field1, field2) {
   // NB! We are skipping normalizations here on purpose! They should be done beforehand...
   if (field1.tag !== field2.tag) {
     return false;
