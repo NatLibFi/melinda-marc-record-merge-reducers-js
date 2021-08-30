@@ -16,7 +16,7 @@ import {
 
 import {
   getMergeConstraintsForTag
-} from './mergeContraints.js';
+} from './mergeConstraints.js';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
@@ -110,7 +110,7 @@ function normalizedSubfieldsMatch(subfields1, subfields2) {
   if (subfields1.length === 0 || subfields2.length === 0) {
     return true;
   }
-  if ( subfields1.length == subfields2.length && compareSubfields(subfields1, subfields2) && compareSubfields(subfields2, subfields1) ) {
+  if (subfields1.length == subfields2.length && compareSubfields(subfields1, subfields2) && compareSubfields(subfields2, subfields1)) {
     debug(`pairing succeed for normalized field`);
     return true;
   }
@@ -129,6 +129,7 @@ function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
     return normalizedSubfieldsMatch(subfields1, subfields2);
+
     /*
     if (subfields1.length === 0 || subfields2.length === 0) {
       return true;
