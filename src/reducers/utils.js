@@ -18,7 +18,7 @@ export function fieldsAreIdentical(field1, field2) {
     return false;
   }
 
-  debug(`Compare '${localFieldToString(field1)}' vs '${localFieldToString(field2)}'...`);
+  // debug(`Compare '${localFieldToString(field1)}' vs '${localFieldToString(field2)}'...`);
 
   if ('value' in field1) { // 001-009
     return localFieldToString(field1) === localFieldToString(field2);
