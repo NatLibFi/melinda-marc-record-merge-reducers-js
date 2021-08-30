@@ -13,7 +13,7 @@ MarcRecord.setValidationOptions({subfieldValues: false});
 // b: empty base
 // c: $a agrees, orher subfields complement each other (merge)
 // d: base and source contain identical field 010.
-describe('reducers/field020', () => {
+describe('reducers/field010', () => {
   //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   const {expect} = chai;
   const fixturesPath = path.join(__dirname, '..', '..', 'test-fixtures', 'reducers', 'field010');
