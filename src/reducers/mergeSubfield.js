@@ -19,6 +19,7 @@ const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want
 // List only exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
+  {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']},
