@@ -20,10 +20,11 @@ const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want
 const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
-  {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', 'j', '0', '5', '9']},
+  {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']},
-  {'tag': '382', 'sortOrder': ['a']}, // TODO: write test for this field.,
+  {'tag': '382', 'sortOrder': ['a']},
   {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a']},
   {'tag': '386', 'sortOrder': ['8', 'm', 'n', 'a']},
   {'tag': '490', 'sortOrder': ['a', 'x', 'v', 'l']},
@@ -37,27 +38,61 @@ const subfieldSortOrder = [
 ];
 
 // NB! These are X00 specific. Should we somehow parametrize them?
+const notYear       = /^\([1-9][0-9]*\)[,.]?$/u;
 const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
+const onlyDeathYear = /^-[1-9][0-9]*[,.]?$/u;
 const birthYearAndDeathYear = /^[1-9][0-9]*-[1-9][0-9]*[,.]?$/u;
+
+function anyYear(str) {
+  if (onlyBirthYear.test(str) || onlyDeathYear.test(str) || birthYearAndDeathYear.test(str)) {
+    return true;
+  }
+  return false;
+}
+
+function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) {
+  // Handle X100$d: add death year, if original value only contains birth year:
+  if (candSubfield.code !== 'd' || !/^[1678]00$/u.test(targetField.tag) ) {
+    return false;
+  }
+
+  if ( notYear.test(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
+      relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+      return true;
+  }
+
+  if ( onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) &&
+    // *Rather hackily* compare the start of the string to determinen that start years are identical(-ish)
+    relevantSubfields[0].value.substring(0, 4) === candSubfield.value.substring(0, 4)) {
+    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    return true;
+  }
+
+  if ( onlyDeathYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) &&
+      relevantSubfields[0].value.substring(1, 5) === candSubfield.value.substring(5, 9)) {
+    // *Rather hackily* compare the start of the string to determinen that start years are identical(-ish)
+    //relevantSubfields[0].value.substring(1, 4) === candSubfield.value.substring(5, 4)) {
+    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    return true;
+  }
+
+  return false;
+}
 
 function replaceSubfield(targetField, candSubfield) {
   // Return true, if replace succeeds.
   // However, replacing/succeeding requires a sanity check, that the new value is a better one...
   // Thus, typically this function fails...
   const relevantSubfields = targetField.subfields.filter(subfield => subfield.code === candSubfield.code);
-  debug(`Got ${relevantSubfields.length} sf-cands for field ${targetField.tag}`);
+  debug(`Got ${relevantSubfields.length} sf-cands for field ${targetField.tag}‡${candSubfield.code}`);
   if (relevantSubfields.length === 0) { // Can't replace anything, can I...
     return false;
   }
 
-  // Handle X100$d: add death year, if original value only contains birth year:
-  if (candSubfield.code === 'd' && /* debug("WP000") && */ (/00$/u).test(targetField.tag) &&
-    onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) &&
-    // *Rather hackily* compare the start of the string to determinen that start years are identical(-ish)
-    relevantSubfields[0].value.substring(0, 4) === candSubfield.value.substring(0, 4)) {
-    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+  if ( replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
+
   return false; // default to failure
 }
 
@@ -138,7 +173,7 @@ export function isSubfieldGoodForMerge(tag, subfieldCode) {
   return isSubfieldGood(tag, subfieldCode);
 }
 
-// Rename function? Should this function be moved to mergeSubfield.js?
+
 function mergeSubfieldNotRequired(targetField, candSubfield) {
   const targetSubfieldsAsStrings = targetField.subfields.map(sf => sf.code + normalizeStringValue(sf.value));
   const cand = candSubfield.code + normalizeStringValue(candSubfield.value);
@@ -148,6 +183,12 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
   }
   if (targetField.tag === '040' && candSubfield.code === 'd' &&
     targetSubfieldsAsStrings.some(existingValue => `a${cand.substring(1)}` === existingValue)) {
+    debug('040$d matched 040$a');
+    return true;
+  }
+  if ( candSubfield.code === 'g' && candSubfield.value === 'ENNAKKOTIETO.' ) {
+    // Skip just $g subfield or the whole field?
+    // We decided to skip just this subfield. We want at least $0 and maybe more even from ennakkotieto.
     debug('040$d matched 040$a');
     return true;
   }
@@ -239,6 +280,7 @@ export function mergeSubfield(record, targetField, candSubfield) {
     bottomUpSortSubfields(targetField);
     return;
   }
+
   // Currently only X00$d 1984- => 1984-2000 type of changes
   if (replaceSubfield(targetField, candSubfield)) {
     return;
