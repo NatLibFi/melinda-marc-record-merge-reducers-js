@@ -2,7 +2,6 @@ import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-//import createReducer from './mainEntry';
 import createReducer from './genericDatafield';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 //import createDebugLogger from 'debug';
