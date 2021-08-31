@@ -17,6 +17,10 @@
         {
           "code": "0",
           "value": "(FIN11)000063920"
+        },
+        {
+          "code": "0",
+          "value": "http://urn.fi/URN:NBN:fi:au:finaf:000063920"
         }
       ]
     }
