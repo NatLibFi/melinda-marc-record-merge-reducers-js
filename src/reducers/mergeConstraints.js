@@ -42,7 +42,7 @@ const mergeConstraints = [
   {'tag': '045', 'required': '', 'key': 'abc', 'paired': 'abc'}, // (ET) // 045 is problematic either-$a or $b or $c...
   {'tag': '046', 'required': 'a', 'key': 'abcdejklmnop', 'paired': 'abcdejklmnop'},
   {'tag': '047', 'required': 'a', 'key': 'a2'},
-  {'tag': '048', 'required': '', 'paired': 'ab', 'key': 'ba'}, // TODO: check multiple instances of $a vs key
+  {'tag': '048', 'required': '', 'paired': 'ab', 'key': 'ba'},
   {'tag': '049', 'required': '', 'key': 'abcd'},
   {'tag': '050', 'required': 'a', 'key': 'ab13'},
   {'tag': '051', 'required': 'a', 'key': 'abc'}, // 2021-08-27: only one field in the whole Melinda
@@ -85,9 +85,9 @@ const mergeConstraints = [
   {'tag': '258', 'required': 'a', 'key': 'a'}, // Melinda: N=1
   {'tag': '260', 'required': '', 'paired': 'abc', 'key': 'abcdefg', 'solitary': true},
   {'tag': '263', 'required': 'a', 'key': 'a'},
-  {'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc', 'solitary': true}, // TODO: more tests. "S.l." normalizations?"
+  {'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc', 'solitary': true}, // NB "S.l." normalizations?" not implemented
   // SKIP TAG 270 ON PURPOSE! Melinda's N=43.
-  {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true}, // TODO: tests
+  {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true},
   {'tag': '306', 'required': 'a', 'key': 'a'},
   // SKIP TAG 307 ON PURPOSE! N=0
   {'tag': '310', 'required': 'a', 'key': 'ab', 'solitary': true},
@@ -118,7 +118,7 @@ const mergeConstraints = [
   {'tag': '377', 'required': '', 'paired': 'al', 'key': 'al'},
   {'tag': '380', 'required': 'a', 'key': 'a'},
   {'tag': '381', 'required': 'auv', 'key': 'auv'},
-  {'tag': '382', 'mergable': false, 'required': '' }, // merging would be madness...
+  {'tag': '382', 'mergable': false, 'required': ''}, // merging would be madness...
   {'tag': '383', 'required': 'abcde', 'key': 'abcde'},
   {'tag': '384', 'required': 'a', 'key': 'a'},
   {'tag': '385', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
@@ -133,7 +133,7 @@ const mergeConstraints = [
   {'tag': '506', 'required': 'a', 'paired': '', 'key': 'abcdefgqu'},
   {'tag': '507', 'required': 'a', 'paired': 'ab', 'key': 'ab'},
   {'tag': '508', 'required': 'a', 'key': 'a'},
-  {'tag': '509', 'required': 'a', 'key': 'acd'}, // TODO: add test
+  {'tag': '509', 'required': 'a', 'key': 'acd'},
   {'tag': '510', 'required': 'a', 'key': 'abcx'},
   {'tag': '511', 'required': 'a', 'key': 'a'},
   {'tag': '513', 'required': '', 'paired': 'ab', 'key': 'ab'},
@@ -194,8 +194,8 @@ const mergeConstraints = [
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '647', 'required': 'a', 'key': 'acdgvxyz02'},
   {'tag': '648', 'required': 'a', 'key': 'avxyz02'},
-  {'tag': '650', 'required': 'a', 'paired': 'abcdegvxyz', 'key': 'abcdegvxyz20'}, // TODO: $g
-  {'tag': '651', 'required': 'a', 'paired': 'aegvxyz', 'key': 'aegvxyz20'}, // TODO: $g
+  {'tag': '650', 'required': 'a', 'paired': 'abcdegvxyz', 'key': 'abcdegvxyz20'}, // TODO: test
+  {'tag': '651', 'required': 'a', 'paired': 'aegvxyz', 'key': 'aegvxyz20'},
   {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
   {'tag': '654', 'mergable': false, 'required': ''},
   {'tag': '655', 'required': 'a', 'paired': 'axyz', 'key': 'axyz20'},
@@ -204,7 +204,7 @@ const mergeConstraints = [
   {'tag': '658', 'mergable': false, 'required': 'a'}, // N=0
   {'tag': '662', 'mergable': false, 'required': ''}, // N=0
   {'tag': '668', 'mergable': false, 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcj'}, // h/i/m/o/r/s/x are missing from 100
+  {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcjt'}, // h/i/m/o/r/s/x are missing from 100
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
