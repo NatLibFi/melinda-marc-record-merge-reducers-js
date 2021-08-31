@@ -7,13 +7,14 @@ import {
 } from './utils.js';
 
 
-// Possible modifications:
+// TODO: Possible modifications:
 // Move 040 back to a separate file, as it differs from everything else.
 // We might be able to simplify things after that.
 // Special treatments needed for:
 // - punctuation between fields..
 // - X00$d
 // - indicator for article length (eg. 245)
+
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -124,6 +125,7 @@ function getMaxSubfield6(record) {
   });
   return Math.max(...vals);
 }
+
 /*
 function updateSubfield6(field, index) {
   const sf6s = field.subfields.filter(subfield => subfield.code === '6');
@@ -144,19 +146,23 @@ export function postprocessRecordAfterMerge(record) {
     delete field.sourced; // eslint-disable-line functional/immutable-data
   });
 }
-export function cloneAndPreprocessField(originalField, record) {
-  const field = cloneField(originalField);
+
+function convertOriginalToModifyingAgency(field) {
   // Convert source record's 040$a 040$d, since it can not be an $a of the base record.
   if (field.tag === '040') { // eslint-disable-line functional/no-conditional-statement
     debug(`  Convert source record's 040$a to $d`);
     fieldRenameSubfieldCodes(field, 'a', 'd');
   }
+}
 
+function mainEntryToAddedEntry(field) {
   if (field.tag === '100' || field.tag === '110' || field.tag === '111' || field.tag === '130') { // eslint-disable-line functional/no-conditional-statement
     debug(`  Convert source record's ${field.tag} to 7XX`);
     field.tag = `7${field.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
   }
+}
 
+function reindexSubfield6s(field, record) {
   if (record && fieldHasSubfield(field, '6')) {
     const baseMax = getMaxSubfield6(record);
     debug(`MAX SF6 is ${baseMax}`);
@@ -178,5 +184,32 @@ export function cloneAndPreprocessField(originalField, record) {
         })};
     }
   }
+}
+
+// NB! These are defined also in mergeSubfield.js. Do something...
+const notYear       = /^\([1-9][0-9]*\)[,.]?$/u;
+
+function datesAssociatedWithName(field) {
+  if (!field.tag.match(/^[1678]00$/u)) {
+    return field;
+  }
+
+  if ( field.subfields.some(sf => sf.code === 'd' && notYear.test(sf.value)) ) {
+    field.subfields = field.subfields.filter(sf => sf.code !== 'd' || !notYear.test(sf.value));  // eslint-disable-line functional/immutable-data
+  }
+
+} 
+
+export function cloneAndPreprocessField(originalField, record) {
+  const field = cloneField(originalField);
+
+  convertOriginalToModifyingAgency(field); // 040$a => $040$d
+
+  mainEntryToAddedEntry(field); // 1XX => 7XX
+
+  reindexSubfield6s(field, record); // field's $6 values start from record's max $6 value + 1
+
+  datesAssociatedWithName(field); // remove $d (1)
+
   return field;
 }
