@@ -41,7 +41,7 @@ function equalishFields(field1, field2) {
   if (s1 === s2) {
     return true;
   }
-  // TODO; strip at least $9's keeps (and drops)
+  // TODO: strip at least $9's keeps (and drops)
   return false;
 }
 
@@ -110,7 +110,7 @@ function normalizedSubfieldsMatch(subfields1, subfields2) {
   if (subfields1.length === 0 || subfields2.length === 0) {
     return true;
   }
-  if (subfields1.length == subfields2.length && compareSubfields(subfields1, subfields2) && compareSubfields(subfields2, subfields1)) {
+  if (subfields1.length === subfields2.length && compareSubfields(subfields1, subfields2) && compareSubfields(subfields2, subfields1)) {
     debug(`pairing succeed for normalized field`);
     return true;
   }
@@ -234,7 +234,7 @@ function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
     debug('required subfield pair check failed.');
     return false;
   }
-  debug('Test semantics...');
+  //debug('Test semantics...');
   if (!semanticallyMergablePair(baseField, sourceField)) {
     return false;
   }
@@ -258,9 +258,7 @@ function semanticallyMergablePair(baseField, sourceField) {
     return false;
   }
 
-
   // TODO: we should check lifespan here
-  // TODO: we should check "optional" fields (such as possibly 245$b) here
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
   if (!compareName(baseField, sourceField)) {
@@ -321,13 +319,9 @@ function compareTitlePart(field1, field2) {
 
 
 export function getCounterpart(record, field) {
-  if (getMergeConstraintsForTag(field.tag, 'skip')) {
-    return null;
-  }
-  const tmp = getMergeConstraintsForTag(field.tag, 'mergable');
-  if (tmp === false) {
+  if (getMergeConstraintsForTag(field.tag, 'skip') || getMergeConstraintsForTag(field.tag, 'mergable') === false) {
     // debug(`${field.tag}/mergable is ${tmp} `);
-    return false;
+    return null;
   }
   // Get tag-wise relevant 1XX and 7XX fields:
   const counterpartCands = record.get(localTagToRegexp(field.tag));
@@ -340,7 +334,7 @@ export function getCounterpart(record, field) {
   debug(`Compare incoming '${fieldStr}' with (up to) ${counterpartCands.length} existing field(s)`);
   const index = counterpartCands.findIndex((currCand) => {
     const currCandStr = fieldToString(currCand);
-    debug(`  CAND: '${currCandStr}'`);
+    debug(`  COUNTERPART CAND: '${currCandStr}'`);
     if (mergablePair(currCand, field)) {
       debug(`  OK pair found: '${currCandStr}'. Returning it!`);
       return true;
