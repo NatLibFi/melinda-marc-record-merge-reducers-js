@@ -8,7 +8,11 @@
       "subfields": [
         {
           "code": "a",
-          "value": "100 sivua ;"
+          "value": "100 sivua :"
+        },
+        {
+          "code": "b",
+          "value": "kuvitettu, karttoja ;"
         },
         {
           "code": "c",
