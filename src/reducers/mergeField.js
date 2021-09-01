@@ -106,16 +106,27 @@ function compareSubfields(set1, set2) {
   });
 }
 
-function normalizedSubfieldsMatch(subfields1, subfields2) {
+function normalizedSubfieldsMatch(subfields1, subfields2) { 
   if (subfields1.length === 0 || subfields2.length === 0) {
     return true;
   }
+  const vals1 = subfields1.map(subfield => normalizeStringValue(subfield.value));
+  const vals2 = subfields2.map(subfield => normalizeStringValue(subfield.value));
+  const vals1b  = vals1.filter(value => !vals2.includes(value));
+  const vals2b  = vals2.filter(value => !vals1.includes(value));
+  if ( vals1b.length == 0 || vals2b.length == 0 ) {
+    return true;
+  }
+  return true;
+  /*
+  // TODO: filter identical fields...
   if (subfields1.length === subfields2.length && compareSubfields(subfields1, subfields2) && compareSubfields(subfields2, subfields1)) {
     debug(`pairing succeed for normalized field`);
     return true;
   }
   debug(`failed to pair subfields`);
   return false;
+  */
 }
 
 function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
