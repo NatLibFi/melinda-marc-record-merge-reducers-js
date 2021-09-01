@@ -200,16 +200,43 @@ function datesAssociatedWithName(field) {
 
 } 
 
+function normalizeSubfield0(field) {
+  field.subfields.forEach((subfield) => {
+    const originalValue = subfield.value;
+    if (subfield.code === '0') { // eslint-disable-line functional/no-conditional-statement
+      if (/^\(FI-MELINDA\)[0-9]{9}$/u.test(subfield.value)) {
+        subfield.value = '(FIN01)'+subfield.value.substring(12);   // eslint-disable-line functional/immutable-data
+      }
+      if (/^\(FI-ASTERI-N\)[0-9]{9}$/u.test(subfield.value)) {
+        subfield.value = '(FIN11)'+subfield.value.substring(13); // eslint-disable-line functional/immutable-data
+      }
+      // TODO: isni to https form
+      if ( subfield.value !== originalValue ) { // eslint-disable-line functional/immutable-data
+        debug(`Update ${field.tag}$${subfield.code} : '${originalValue}' => '${subfield.value}'`);
+      }
+    }
+  });
+}
+
+export function preprocessForBaseAndSource(field) {
+  if ( !field.subfields ) {
+    return;
+  }
+  datesAssociatedWithName(field); // remove $d (1)
+  normalizeSubfield0(field);
+}
+
 export function cloneAndPreprocessField(originalField, record) {
+  // source-only preprocessing:
   const field = cloneField(originalField);
 
   convertOriginalToModifyingAgency(field); // 040$a => $040$d
-
   mainEntryToAddedEntry(field); // 1XX => 7XX
-
   reindexSubfield6s(field, record); // field's $6 values start from record's max $6 value + 1
-
-  datesAssociatedWithName(field); // remove $d (1)
+  // shared stuff:
+  preprocessForBaseAndSource(field);
 
   return field;
 }
+
+
