@@ -31,8 +31,11 @@ const subfieldSortOrder = [
   {'tag': '505', 'sortOrder': ['a']},
   {'tag': '526', 'sortOrder': ['i', 'a']},
   {'tag': '600', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '700', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '776', 'sortOrder': ['i', 'a']},
+  {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['a']} // Hack, so that default order is not used
 ];
@@ -43,8 +46,30 @@ const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
 const onlyDeathYear = /^-[1-9][0-9]*[,.]?$/u;
 const birthYearAndDeathYear = /^[1-9][0-9]*-[1-9][0-9]*[,.]?$/u;
 
+
+function getDeathYear(str) {
+  return parseInt(str.substring(str.indexOf('-') + 1));
+}
+
+function isValidBirthYearAndDeathYear(str) {
+  if (!birthYearAndDeathYear.test(str)) {
+    return false;
+  }
+  // We have two years
+  const b = parseInt(str);
+  const d = getDeathYear(str);
+  if ( b > d ) { // died before birth! Rather unlikely.
+    return false;
+  }
+  if ( d - b > 125 ) { // Over 125 years old. Rather unlikely.
+    return false;
+  }
+  // Possible sanity check: Died after current year? 
+  return true;
+}
+
 function anyYear(str) {
-  if (onlyBirthYear.test(str) || onlyDeathYear.test(str) || birthYearAndDeathYear.test(str)) {
+  if (onlyBirthYear.test(str) || onlyDeathYear.test(str) || isValidBirthYearAndDeathYear(str)) {
     return true;
   }
   return false;
@@ -56,24 +81,23 @@ function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfi
     return false;
   }
 
-  if ( notYear.test(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
+  
+  //if ( notYear.test(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
+    if ( !anyYear(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
       relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
       return true;
   }
 
-  if ( onlyBirthYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) &&
-    // *Rather hackily* compare the start of the string to determinen that start years are identical(-ish)
-    relevantSubfields[0].value.substring(0, 4) === candSubfield.value.substring(0, 4)) {
-    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
-    return true;
-  }
+  if (birthYearAndDeathYear.test(candSubfield.value)) {
+    if ( onlyBirthYear.test(relevantSubfields[0].value) && parseInt(relevantSubfields[0].value) === parseInt(candSubfield.value) ) {
+      relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+      return true;
+    }
 
-  if ( onlyDeathYear.test(relevantSubfields[0].value) && birthYearAndDeathYear.test(candSubfield.value) &&
-      relevantSubfields[0].value.substring(1, 5) === candSubfield.value.substring(5, 9)) {
-    // *Rather hackily* compare the start of the string to determinen that start years are identical(-ish)
-    //relevantSubfields[0].value.substring(1, 4) === candSubfield.value.substring(5, 4)) {
-    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
-    return true;
+    if ( onlyDeathYear.test(relevantSubfields[0].value) && getDeathYear(relevantSubfields[0].value) === getDeathYear(candSubfield.value)) {
+      relevantSubfields[0].value = candSubfield.value;
+      return true;
+    }
   }
 
   return false;
@@ -178,7 +202,7 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
   const targetSubfieldsAsStrings = targetField.subfields.map(sf => sf.code + normalizeStringValue(sf.value));
   const cand = candSubfield.code + normalizeStringValue(candSubfield.value);
   if (targetSubfieldsAsStrings.some(existingValue => cand === existingValue)) {
-    // Subfield with identical normalized valueexists. Do nothing
+    // Subfield with identical normalized value exists. Do nothing
     return true;
   }
   if (targetField.tag === '040' && candSubfield.code === 'd' &&
@@ -240,7 +264,6 @@ export function bottomUpSortSubfields(field) {
 
   const sortOrder = getSubfieldSortOrder(field);
 
-
   /*
   // Currently always sort:
   if (sortOrder === null) {
@@ -252,17 +275,6 @@ export function bottomUpSortSubfields(field) {
 
   return field;
 }
-
-/*
-export function prepareSubfieldForMerge(tag, originalSubfield) {
-  const subfield = JSON.parse(JSON.stringify(originalSubfield));
-  if (tag === '040' && subfield.code === 'a') {
-    subfield.code = 'd'; // eslint-disable-line functional/immutable-data
-    return subfield;
-  }
-  return subfield;
-}
-*/
 
 export function mergeSubfield(record, targetField, candSubfield) {
 
