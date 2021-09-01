@@ -6,6 +6,10 @@ import {
   fieldToString
 } from './utils.js';
 
+import {
+  normalizeSubfield0Value
+} from './mergePreAndPostprocess.js';
+
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 function subfieldsAreEqual(field1, field2, subfieldCode) {
@@ -41,6 +45,19 @@ function controlSubfield6PermitsMerge(field1, field2) {
   return false;
 }
 
+function controlSubfield5PermitsMerge(field1, field2) {
+  // field1.$5 XOR field2.$5 means false, NEITHER and BOTH mean true
+  if (!fieldHasSubfield(field1, '5')) {
+    if (!fieldHasSubfield(field2, '5')) {
+      return true; // If neither one has $5, it's ok to merge
+    }
+    return false;
+  }
+  if (!fieldHasSubfield(field2, '5')) {
+    return false;
+  }
+  return true;
+}
 
 function controlSubfield9PermitsMerge(field1, field2) {
   if (subfieldsAreEmpty(field1, field2, '9')) {
@@ -85,6 +102,8 @@ function prefixIsOK(currSubfield, otherField, subfieldCode) {
   return false;
 }
 
+
+
 function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode) {
   if (!fieldHasSubfield(field1, subfieldCode, null) || !fieldHasSubfield(field2, subfieldCode, null)) {
     return true;
@@ -94,10 +113,6 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
     if (subfield.code !== subfieldCode) {
       return true;
     }
-    // NB! Here we assume that value have been normalized beforehand.
-    // Eg. (isni) 0000 1234 5678 0000 vs https://isni.org/isni/0000123456780000
-    // Eg. FIN11 vs FI-ASTERI-N vs kanton uri
-
 
     debug(`Compare ‡${subfieldCode} '${subfield.value}' with '${fieldToString(field2)}'.`);
     if (fieldHasSubfield(field2, field1.code, field1.value)) {
@@ -122,8 +137,12 @@ export function controlSubfieldsPermitMerge(field1, field2) {
     return false;
   }
 
-  if (!subfieldsAreEqual(field1, field2, '2') || !subfieldsAreEqual(field1, field2, '3') || !subfieldsAreEqual(field1, field2, '5')) {
+  if (!subfieldsAreEqual(field1, field2, '2') || !subfieldsAreEqual(field1, field2, '3') ) {
     //debug(' similar control subfield fails');
+    return false;
+  }
+
+  if ( !controlSubfield5PermitsMerge(field1, field2) ) {
     return false;
   }
 
