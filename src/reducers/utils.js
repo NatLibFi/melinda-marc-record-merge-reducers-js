@@ -100,11 +100,12 @@ export function getNonRepCodes(tag) {
 
 function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
   // These we know or "know":
-  if ('09'.indexOf(subfieldCode) > -1) {
+  if ('0159'.indexOf(subfieldCode) > -1) {
     // Uh, can $0 appear on any field?
     return true;
   }
-  if ('56'.indexOf(subfieldCode) > -1) {
+  
+  if ('6'.indexOf(subfieldCode) > -1) {
     return false;
   }
 
