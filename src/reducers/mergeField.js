@@ -70,7 +70,7 @@ function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
     // Assume that at least 1 instance must exist and that all instances must match
     if (subfields1.length !== subfields2.length) {
-      debug(`Unique key: subfield ${subfieldCode} issues...`);
+      debug(`mSC: Unique key: subfield ${subfieldCode} issues...`);
       return false;
     }
 
@@ -107,9 +107,11 @@ function compareSubfields(set1, set2) {
 }
 
 function normalizedSubfieldsMatch(subfields1, subfields2) { 
+  debug(`nSM ${subfields1.length} vs ${subfields2.length}`);
   if (subfields1.length === 0 || subfields2.length === 0) {
     return true;
   }
+  debug(`nSM $${subfields1[0].code} ${subfields1.length} vs ${subfields2.length}`);
   const vals1 = subfields1.map(subfield => normalizeStringValue(subfield.value));
   const vals2 = subfields2.map(subfield => normalizeStringValue(subfield.value));
   const vals1b  = vals1.filter(value => !vals2.includes(value));
@@ -117,7 +119,7 @@ function normalizedSubfieldsMatch(subfields1, subfields2) {
   if ( vals1b.length == 0 || vals2b.length == 0 ) {
     return true;
   }
-  return true;
+  return false;
   /*
   // TODO: filter identical fields...
   if (subfields1.length === subfields2.length && compareSubfields(subfields1, subfields2) && compareSubfields(subfields2, subfields1)) {
@@ -137,6 +139,7 @@ function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
   debug(`  COMPARE SUBS ${keySubfieldsAsString}`);
   debug(`    LEN b4 filth: ${field1.subfields.length} vs ${field2.subfields.length}`);
   return subfieldArray.every(subfieldCode => {
+    debug(`NOW ${subfieldCode}`);
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
     return normalizedSubfieldsMatch(subfields1, subfields2);
@@ -203,10 +206,16 @@ function arePairedSubfieldsInBalance(field1, field2) {
   return subfieldArray.every(sfcode => {
     if (fieldHasSubfield(field1, sfcode)) {
       // Return true if present in f1 and f1. Return false if present in f1 but missing in f2:
-      return fieldHasSubfield(field2, sfcode);
+      if ( fieldHasSubfield(field2, sfcode) ) { return true; }
+      debug(`pairing failed with '${sfcode}'`)
+      return false;
     }
     // subfield is missing in both
-    return !fieldHasSubfield(field2, sfcode);
+    if ( !fieldHasSubfield(field2, sfcode) ) {
+      return true;
+    }
+    debug(`pairing failed with '${sfcode}'`)
+    return false;
   });
 }
 
@@ -258,7 +267,12 @@ function compareName(baseField, sourceField) {
   const reducedField2 = fieldToNamePart(sourceField);
 
   // compare the remaining subsets:
-  return uniqueKeyMatches(reducedField1, reducedField2);
+  if ( uniqueKeyMatches(reducedField1, reducedField2) ) {
+    debug(`    name match: '${fieldToString(reducedField1)}'`);
+    return true;
+  }
+  debug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
+  return false;
 }
 
 
@@ -288,7 +302,7 @@ function namePartThreshold(field) {
     return -1;
   }
   const t = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
-  const u = field.subfields.findIndex(currSubfield => currSubfield.code === 'u');
+  const u = t; // field.subfields.findIndex(currSubfield => currSubfield.code === 'u');
   if (t === -1) {
     return u;
   }
@@ -301,31 +315,44 @@ function namePartThreshold(field) {
 function fieldToNamePart(field) {
   const index = namePartThreshold(field);
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i < index || index === -1)};
+  /*
   if (index > -1) { // eslint-disable-line functional/no-conditional-statement
     debug(`Name subset: ${fieldToString(subsetField)}`);
   }
+  */
   return subsetField;
 }
 
 function fieldToTitlePart(field) {
   // Take everything after 1st subfield $t...
-  const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
+  const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');;
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i >= index)};
   debug(`Title subset: ${fieldToString(subsetField)}`);
   return subsetField;
 }
 
+function fieldCanHaveTitlePart(field) {
+  return ['100', '110', '111', '700', '710', '711'].includes(field.tag);
+}
+
+function containsTitlePart(field) {
+  return fieldCanHaveTitlePart(field) && fieldHasSubfield(field, 't');
+}
 
 function compareTitlePart(field1, field2) {
-  // HACK ALERT! Tags, ‡t and ‡dfhklmnoprstxvg should typically be parametrized.
-  // If it is just this one case, I'll leave this as it is.
-  if (fieldHasSubfield(field1, 't') && field1.tag in ['100', '110', '111', '700', '710', '711']) {
-    // 100$a$t: remove $t and everything after that
-    const subset1 = fieldToTitlePart(field1);
-    const subset2 = fieldToTitlePart(field2);
-    return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
+  if ( !containsTitlePart(field1) ) {
+    return !containsTitlePart(field2);
   }
-  return true;
+  if ( !containsTitlePart(field2) ) {
+    return false;
+  }
+
+  debug(`TITLE PARTS NEED TO BE COMPARED`);
+
+  // 100$a$t: remove $t and everything after that
+  const subset1 = fieldToTitlePart(field1);
+  const subset2 = fieldToTitlePart(field2);
+  return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
 }
 
 
@@ -359,7 +386,19 @@ export function getCounterpart(record, field) {
   return null;
 }
 
+function removeEnnakkotieto(field) {
+  const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
+  if ( tmp.length > 0 ) { // remove only iff something remains
+    field.subfields = tmp; // eslint-disable-line functional/immutable-data
+  }
+}
+
 export function mergeField(record, targetField, sourceField) {
+  // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield: 
+  if ( fieldHasSubfield(targetField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.') ) {
+    removeEnnakkotieto(targetField);
+  }
+
   sourceField.subfields.forEach(candSubfield => {
     const originalValue = fieldToString(targetField);
     mergeSubfield(record, targetField, candSubfield);
@@ -370,7 +409,6 @@ export function mergeField(record, targetField, sourceField) {
       debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${originalValue}'`);
       debug(`   RESULT: '${newValue}'`);
       debug(`   TODO: sort subfields, handle punctuation...`);
-      // { code: x, value: foo }
     }
 
   });
