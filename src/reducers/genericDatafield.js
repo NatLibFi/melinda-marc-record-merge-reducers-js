@@ -7,6 +7,7 @@ import {
 
 
 import {
+  preprocessForBaseAndSource,
   postprocessRecordAfterMerge
 } from './mergePreAndPostprocess.js';
 
@@ -31,7 +32,7 @@ const datafieldString = '010 013 015 016 017 018 020 022 024 025 026 027 028 030
   '490 ' +
   '500 501 502 504 505 506 507 508 509 510 511 513 514 515 516 518 520 521 522 524 525 526 530 532 533 534 535 ' +
   '536 538 540 541 542 544 545 546 547 550 552 555 556 561 562 563 565 567 580 581 583 584 585 586 588 ' +
-  // '590 591 592 593 594 595 596 597 598 599 ' + // How about these?
+  '590 591 592 593 594 595 596 597 598 599 ' + // How about these?
   '600 610 611 630 647 648 650 651 653 654 655 656 657 658 882 688 ' +
   // NB!  700, 710, 711 and 730 are handled by corresponding 1XX. It's semi-magic.
   '720 740 751 752 753 754 758 ' +
@@ -43,6 +44,7 @@ const datafieldString = '010 013 015 016 017 018 020 022 024 025 026 027 028 030
 const datafields = datafieldString.split(' ');
 
 export default () => (record, record2) => {
+  record.fields.forEach(field => { preprocessForBaseAndSource(field); }); // Preprocess input record. Not necessary the best place to do it.
   datafields.forEach(tag => {
     //debug(`CURR TAG: ${tag}...`);
     const tagAsRegexp = tagToRegexp(tag);
