@@ -86,11 +86,15 @@ function postprocessLifespan(field) {
   });
 }
 
+
+
 export function postprocessField(field) {
   // Placeholder for proper
   postprocessX00a(field);
   postprocessXX0eFunction(field); // X00$e and X10$e
   postprocessLifespan(field); // X00$d
+
+  // TODO: mergeä $5:t, mergeä $9:t, removaa keeppaamattomat subsetit
   return field;
 }
 
@@ -200,15 +204,35 @@ function datesAssociatedWithName(field) {
 
 } 
 
+function normalizeSubfield0value(value) {
+  if (/^\(FI-MELINDA\)[0-9]{9}$/u.test(value)) {
+    return '(FIN01)'+value.substring(12);   // eslint-disable-line functional/immutable-data
+  }
+  if (/^\(FI-ASTERI-S\)[0-9]{9}$/u.test(value)) {
+    return '(FIN10)'+value.substring(13); // eslint-disable-line functional/immutable-data
+  }
+  if (/^\(FI-ASTERI-N\)[0-9]{9}$/u.test(value)) {
+    return '(FIN11)'+value.substring(13); // eslint-disable-line functional/immutable-data
+  }
+  if ( /^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]+$/u.test(value) ) {
+    return '(FIN11)'+value.slice(-9);
+  }
+  
+  if (/^\(FI-ASTERI-A\)[0-9]{9}$/u.test(value)) {
+    return '(FIN12)'+value.substring(13); // eslint-disable-line functional/immutable-data
+  }
+  if (/^\(FI-ASTERI-W\)[0-9]{9}$/u.test(value)) {
+    return '(FIN13)'+value.substring(13); // eslint-disable-line functional/immutable-data
+  }
+  return value 
+}
+
 function normalizeSubfield0(field) {
   field.subfields.forEach((subfield) => {
     const originalValue = subfield.value;
     if (subfield.code === '0') { // eslint-disable-line functional/no-conditional-statement
-      if (/^\(FI-MELINDA\)[0-9]{9}$/u.test(subfield.value)) {
-        subfield.value = '(FIN01)'+subfield.value.substring(12);   // eslint-disable-line functional/immutable-data
-      }
-      if (/^\(FI-ASTERI-N\)[0-9]{9}$/u.test(subfield.value)) {
-        subfield.value = '(FIN11)'+subfield.value.substring(13); // eslint-disable-line functional/immutable-data
+      if (/^\((?:FI-ASTERI-N|FI-MELINDA)\)[0-9]{9}$/u.test(subfield.value)) {
+        subfield.value = normalizeSubfield0value(subfield.value);   // eslint-disable-line functional/immutable-data
       }
       // TODO: isni to https form
       if ( subfield.value !== originalValue ) { // eslint-disable-line functional/immutable-data
