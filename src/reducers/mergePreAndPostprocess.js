@@ -194,6 +194,7 @@ function reindexSubfield6s(field, record) {
 const notYear       = /^\([1-9][0-9]*\)[,.]?$/u;
 
 function datesAssociatedWithName(field) {
+  // Skip irrelevant fields:
   if (!field.tag.match(/^[1678]00$/u)) {
     return field;
   }
@@ -204,7 +205,7 @@ function datesAssociatedWithName(field) {
 
 } 
 
-function normalizeSubfield0value(value) {
+export function normalizeSubfield0Value(value) {
   if (/^\(FI-MELINDA\)[0-9]{9}$/u.test(value)) {
     return '(FIN01)'+value.substring(12);   // eslint-disable-line functional/immutable-data
   }
@@ -214,7 +215,7 @@ function normalizeSubfield0value(value) {
   if (/^\(FI-ASTERI-N\)[0-9]{9}$/u.test(value)) {
     return '(FIN11)'+value.substring(13); // eslint-disable-line functional/immutable-data
   }
-  if ( /^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]+$/u.test(value) ) {
+  if ( /^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u.test(value) ) {
     return '(FIN11)'+value.slice(-9);
   }
   
@@ -224,7 +225,7 @@ function normalizeSubfield0value(value) {
   if (/^\(FI-ASTERI-W\)[0-9]{9}$/u.test(value)) {
     return '(FIN13)'+value.substring(13); // eslint-disable-line functional/immutable-data
   }
-  return value 
+  return value;
 }
 
 function normalizeSubfield0(field) {
@@ -232,7 +233,7 @@ function normalizeSubfield0(field) {
     const originalValue = subfield.value;
     if (subfield.code === '0') { // eslint-disable-line functional/no-conditional-statement
       if (/^\((?:FI-ASTERI-N|FI-MELINDA)\)[0-9]{9}$/u.test(subfield.value)) {
-        subfield.value = normalizeSubfield0value(subfield.value);   // eslint-disable-line functional/immutable-data
+        subfield.value = normalizeSubfield0Value(subfield.value);   // eslint-disable-line functional/immutable-data
       }
       // TODO: isni to https form
       if ( subfield.value !== originalValue ) { // eslint-disable-line functional/immutable-data
@@ -246,8 +247,11 @@ export function preprocessForBaseAndSource(field) {
   if ( !field.subfields ) {
     return;
   }
+  // Not sure whether we actually want any of these here... However, this is still a good place for something...
+  // Eg. umlaut normalizations...
+
   datesAssociatedWithName(field); // remove $d (1)
-  normalizeSubfield0(field);
+  //normalizeSubfield0(field);
 }
 
 export function cloneAndPreprocessField(originalField, record) {
