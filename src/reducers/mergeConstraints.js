@@ -63,9 +63,9 @@ const mergeConstraints = [
   {'tag': '086', 'required': '', 'paired': 'a', 'key': 'a'},
   {'tag': '088', 'required': '', 'paired': 'a', 'key': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
-  {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcj'},
-  {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgn'},
-  {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgn'},
+  {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'},
+  {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgntu'},
+  {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgntu'},
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
   {'tag': '210', 'required': 'a', 'key': 'ab'},
@@ -187,9 +187,9 @@ const mergeConstraints = [
   {'tag': '597', 'mergable': false, 'required': ''}, // always copy, never merge
   {'tag': '598', 'mergable': false, 'required': ''}, // always copy, never merge
   {'tag': '599', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '600', 'required': 'a', 'paired': 't', 'key': 'abcj'}, // aped from 700
-  {'tag': '610', 'required': 'a', 'paired': 't', 'key': 'abcdgn'}, // aped from 710
-  {'tag': '611', 'required': 'a', 'paired': 't', 'key': 'acdgn'}, // aped from 711
+  {'tag': '600', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'}, // aped from 700
+  {'tag': '610', 'required': 'a', 'paired': 't', 'key': 'abcdgntu'}, // aped from 710
+  {'tag': '611', 'required': 'a', 'paired': 't', 'key': 'acdgntu'}, // aped from 711
   {'tag': '630', 'required': 'a', 'key': 'adfhklmnoprsxvg'}, // aped from 730
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '647', 'required': 'a', 'key': 'acdgvxyz02'},
@@ -204,7 +204,7 @@ const mergeConstraints = [
   {'tag': '658', 'mergable': false, 'required': 'a'}, // N=0
   {'tag': '662', 'mergable': false, 'required': ''}, // N=0
   {'tag': '668', 'mergable': false, 'required': 'a'}, // N=0
-  {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcjt'}, // h/i/m/o/r/s/x are missing from 100
+  {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcjqtux'}, // h/i/m/o/r/s/x are missing from 100
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
@@ -232,7 +232,7 @@ const mergeConstraints = [
   {'tag': '785', 'mergable': false, 'required': ''},
   {'tag': '786', 'mergable': false, 'required': ''},
   {'tag': '787', 'mergable': false, 'required': ''},
-  {'tag': '800', 'required': 'a', 'paired': 't', 'key': 'abcj'},
+  {'tag': '800', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'},
   {'tag': '810', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '811', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
   {'tag': '830', 'required': 'ax', 'key': 'adfloprtvwxx'},
