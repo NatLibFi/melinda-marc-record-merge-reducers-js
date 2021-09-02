@@ -144,10 +144,13 @@ function cloneField(field) {
   return JSON.parse(JSON.stringify(field));
 }
 
-export function postprocessRecordAfterMerge(record) {
+export function postprocessRecord(record) {
   record.fields.forEach(field => {
     // remove merge-specific information:
-    delete field.sourced; // eslint-disable-line functional/immutable-data
+    if ( field.sourced ) {
+      // DO YOUR SHIT
+      delete field.sourced; // eslint-disable-line functional/immutable-data
+    }
   });
 }
 
