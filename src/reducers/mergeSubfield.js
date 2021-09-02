@@ -5,6 +5,10 @@ import {
   normalizeStringValue
 } from './utils.js';
 
+import {
+  normalizeSubfield0value
+} from './mergePreAndPostprocess.js';
+
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const excludeSubfieldsFromMerge = [
@@ -21,6 +25,7 @@ const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', 'j', '0', '5', '9']},
+  {'tag': '110', 'sortOrder': ['a', 'b', 'n' ]},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']},
@@ -31,10 +36,13 @@ const subfieldSortOrder = [
   {'tag': '505', 'sortOrder': ['a']},
   {'tag': '526', 'sortOrder': ['i', 'a']},
   {'tag': '600', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '610', 'sortOrder': ['a', 'b', 'n' ]},
   {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '700', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '710', 'sortOrder': ['a', 'b', 'n' ]},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '776', 'sortOrder': ['i', 'a']},
+  {'tag': '810', 'sortOrder': ['a', 'b', 'n' ]},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['a']} // Hack, so that default order is not used
@@ -81,7 +89,7 @@ function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfi
     return false;
   }
 
-  
+
   //if ( notYear.test(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
     if ( !anyYear(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
       relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
@@ -213,7 +221,7 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
   if ( candSubfield.code === 'g' && candSubfield.value === 'ENNAKKOTIETO.' ) {
     // Skip just $g subfield or the whole field?
     // We decided to skip just this subfield. We want at least $0 and maybe more even from ennakkotieto.
-    debug('040$d matched 040$a');
+    debug('Skip $g ENNAKKOTIETO.');
     return true;
   }
 
@@ -262,6 +270,7 @@ export function bottomUpSortSubfields(field) {
   // - Swap only sort adjacent pairs.
   // - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of 700$t...
 
+    // Should we support multiple values?
   const sortOrder = getSubfieldSortOrder(field);
 
   /*
@@ -271,7 +280,10 @@ export function bottomUpSortSubfields(field) {
   }
   */
 
+  // Handle control subfield order (it never changes):
+  swapSubfields(field, [ '8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']);
   swapSubfields(field, sortOrder || defaultSortOderString);
+
 
   return field;
 }
