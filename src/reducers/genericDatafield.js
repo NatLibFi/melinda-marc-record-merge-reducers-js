@@ -8,7 +8,7 @@ import {
 
 import {
   preprocessForBaseAndSource,
-  postprocessRecordAfterMerge
+  postprocessRecord
 } from './mergePreAndPostprocess.js';
 
 import {fieldToString} from './utils.js';
@@ -54,7 +54,7 @@ export default () => (record, record2) => {
       mergeOrAddField(record, candField);
     });
   });
-  postprocessRecordAfterMerge(record);
+  postprocessRecord(record);
   return record;
 };
 
