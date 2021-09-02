@@ -2,6 +2,7 @@
 import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
+  fieldHasNSubfields,
   fieldIsRepeatable,
   fieldToString,
   fieldsAreIdentical,
@@ -107,11 +108,11 @@ function compareSubfields(set1, set2) {
 }
 
 function normalizedSubfieldsMatch(subfields1, subfields2) { 
-  debug(`nSM ${subfields1.length} vs ${subfields2.length}`);
+  //debug(`nSM ${subfields1.length} vs ${subfields2.length}`);
   if (subfields1.length === 0 || subfields2.length === 0) {
     return true;
   }
-  debug(`nSM $${subfields1[0].code} ${subfields1.length} vs ${subfields2.length}`);
+  //debug(`nSM $${subfields1[0].code} ${subfields1.length} vs ${subfields2.length}`);
   const vals1 = subfields1.map(subfield => normalizeStringValue(subfield.value));
   const vals2 = subfields2.map(subfield => normalizeStringValue(subfield.value));
   const vals1b  = vals1.filter(value => !vals2.includes(value));
@@ -139,7 +140,7 @@ function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
   debug(`  COMPARE SUBS ${keySubfieldsAsString}`);
   debug(`    LEN b4 filth: ${field1.subfields.length} vs ${field2.subfields.length}`);
   return subfieldArray.every(subfieldCode => {
-    debug(`NOW ${subfieldCode}`);
+    //debug(`NOW ${subfieldCode}`);
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
     return normalizedSubfieldsMatch(subfields1, subfields2);
@@ -204,18 +205,7 @@ function arePairedSubfieldsInBalance(field1, field2) {
   const subfieldArray = subfieldString.split('');
 
   return subfieldArray.every(sfcode => {
-    if (fieldHasSubfield(field1, sfcode)) {
-      // Return true if present in f1 and f1. Return false if present in f1 but missing in f2:
-      if ( fieldHasSubfield(field2, sfcode) ) { return true; }
-      debug(`pairing failed with '${sfcode}'`)
-      return false;
-    }
-    // subfield is missing in both
-    if ( !fieldHasSubfield(field2, sfcode) ) {
-      return true;
-    }
-    debug(`pairing failed with '${sfcode}'`)
-    return false;
+    return fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode);
   });
 }
 
@@ -393,7 +383,7 @@ function removeEnnakkotieto(field) {
   }
 }
 
-export function mergeField(record, targetField, sourceField) {
+function mergeField(record, targetField, sourceField) {
   // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield: 
   if ( fieldHasSubfield(targetField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.') ) {
     removeEnnakkotieto(targetField);
@@ -501,6 +491,5 @@ export function mergeOrAddField(record, field) {
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
   debug(`mergeOrAddField(): No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`);
-  delete newField.sourced;
   return addField(record, newField);
 }
