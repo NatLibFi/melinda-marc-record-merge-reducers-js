@@ -63,6 +63,8 @@ function controlSubfield9PermitsMerge(field1, field2) {
   if (subfieldsAreEmpty(field1, field2, '9')) {
     return true;
   }
+  // TODO: If we have "whatever" and "whatever + DROP", is the result "whatever" or "whatever + DROP"?
+  // What should we check here anyway? Never merge FOO<KEEP> and FOO<DROP>?
   const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2); // NB! Do we need to sort these?
@@ -73,36 +75,42 @@ function controlSubfield9PermitsMerge(field1, field2) {
   return true;
 }
 
-function getPrefix(currSubfield) {
-  if (currSubfield.value.match(/^\([^)]+\)[0-9]+$/u)) {
-    return currSubfield.value.substr(0, currSubfield.value.indexOf(')') + 1);
+function getPrefix(value) {
+  const normalizedValue = normalizeSubfield0Value(value);
+
+  if (normalizedValue.match(/^\([^)]+\)[0-9]+$/u)) {
+    return normalizedValue.substr(0, normalizedValue.indexOf(')') + 1);
   }
-  if (currSubfield.value.match(/^https?:\/\//u)) {
-    return currSubfield.value.substr(0, currSubfield.value.lastIndexOf('/') + 1);
+
+  if (value.match(/^https?:\/\//u)) {
+    return normalizedValue.substr(0, normalizedValue.lastIndexOf('/') + 1);
   }
+
   return null;
 }
 
-function prefixIsOK(currSubfield, otherField, subfieldCode) {
-  const prefix = getPrefix(currSubfield);
+function prefixIsOK(currSubfield, otherField) {
+  debug(`FFS '${currSubfield.code} ${currSubfield.value}'`);
+  const normalizedCurrSubfieldValue = normalizeSubfield0Value(currSubfield.value);
+  debug(`FFS '${currSubfield.code} ${normalizedCurrSubfieldValue}'`);
+  const prefix = getPrefix(normalizedCurrSubfieldValue);
   if (prefix === null) {
     return false;
   }
+  debug(`FFS-PREFIX '${prefix}'`);
   // Look for same prefix + different identifier
-  const hits = otherField.subfields.filter(sf2 => sf2.code === subfieldCode /* && currSubfield.value !== sf2.value */ && sf2.value.indexOf(prefix) === 0);
+  const hits = otherField.subfields.filter(sf2 => sf2.code === currSubfield.code && normalizeSubfield0Value(sf2.value).indexOf(prefix) === 0);
   if (hits.length === 0) {
-    //debug(`Subfield ‡${subfieldCode} check OK: ${prefix} not found on Melinda base field '${fieldToString(otherField)}'.`);
+    debug(`Subfield ‡${currSubfield.code} check OK: ${prefix} not found on Melinda base field '${fieldToString(otherField)}'.`);
     return true;
   }
-  if (hits.every(sf2 => currSubfield.value === sf2.value)) {
-    //debug(`Identical subfield ‡${subfieldCode} found on Melinda base field '${fieldToString(otherField)}'.`);
+  if (hits.every(sf2 => normalizedCurrSubfieldValue === normalizeSubfield0Value(sf2.value))) {
+    debug(`Identical subfield ‡${currSubfield.code} found on Melinda base field '${fieldToString(otherField)}'.`);
     return true;
   }
-  debug(`Subfield ‡${subfieldCode} check FAILED: ‡${subfieldCode} '${currSubfield.value}' vs ‡${subfieldCode} '${hits[0].value}'.`);
+  debug(`Subfield ‡${currSubfield.code} check FAILED: ‡${currSubfield.code} '${currSubfield.value}' vs ‡${currSubfield.code} '${hits[0].value}'.`);
   return false;
 }
-
-
 
 function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode) {
   if (!fieldHasSubfield(field1, subfieldCode, null) || !fieldHasSubfield(field2, subfieldCode, null)) {
@@ -120,8 +128,8 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
     }
 
     return prefixIsOK(subfield, field2, subfieldCode);
-
   });
+
   if (!result) {
     debug(`Control subfield '${subfieldCode}' check failed.`);
     return false;
