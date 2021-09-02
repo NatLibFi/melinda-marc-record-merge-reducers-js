@@ -501,5 +501,6 @@ export function mergeOrAddField(record, field) {
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
   debug(`mergeOrAddField(): No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`);
+  delete newField.sourced;
   return addField(record, newField);
 }
