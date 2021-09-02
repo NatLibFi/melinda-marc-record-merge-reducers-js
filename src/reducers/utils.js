@@ -104,7 +104,7 @@ function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
     // Uh, can $0 appear on any field?
     return true;
   }
-  
+
   if ('6'.indexOf(subfieldCode) > -1) {
     return false;
   }
@@ -282,6 +282,15 @@ function internalFieldHasSubfield(field, subfieldCode, subfieldValue) {
 
 export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
   return internalFieldHasSubfield(field, subfieldCode, subfieldValue);
+}
+
+export function fieldHasNSubfields(field, subfieldCode, subfieldValue = null) {
+  const relevantSubfields = field.subfields.filter(sf => sf.code === subfieldCode);
+  if (subfieldValue === null) {
+    return relevantSubfields.length;
+  }
+  const subset = relevantSubfields.filter(value => subfieldValue);
+  return subset.length;
 }
 
 /**
