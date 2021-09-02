@@ -289,7 +289,7 @@ export function fieldHasNSubfields(field, subfieldCode, subfieldValue = null) {
   if (subfieldValue === null) {
     return relevantSubfields.length;
   }
-  const subset = relevantSubfields.filter(value => subfieldValue);
+  const subset = relevantSubfields.filter(value => value === subfieldValue);
   return subset.length;
 }
 
