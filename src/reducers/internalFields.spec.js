@@ -2,7 +2,8 @@ import chai from 'chai';
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './internalFields';
+//import createReducer from './internalFields';
+import createReducer from './genericDatafield';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 
 MarcRecord.setValidationOptions({subfieldValues: false});

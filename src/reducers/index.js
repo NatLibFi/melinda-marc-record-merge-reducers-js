@@ -59,7 +59,7 @@ export const localCopyReducerConfigs = [
 ];
 
 export const localReducers = [
-  internalFields(), // LOW, CAT, SID
+  //internalFields(), // LOW, CAT, SID
   leader(), // Test 01
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
