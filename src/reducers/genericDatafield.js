@@ -16,6 +16,11 @@ import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
+/* What about Kirjavälitys exceptions?
+*
+*
+*/
+
 // Array of datafields *that are handled by the generic code*!
 // Hmm... This list is incomplete. How to handle 6XX etc?
 
@@ -39,12 +44,14 @@ const datafieldString = '010 013 015 016 017 018 020 022 024 025 026 027 028 030
   '760 762 765 767 770 772 773 774 775 776 777 780 785 786 787 ' +
   '800 810 811 830 ' +
   '841 842 843 844 845 850 852 853 854 855 856 863 864 865 866 867 868 876 877 878 880 881 882 883 884 885 886 887 ' +
-  '900 910 911 940 960 995';
+  '900 910 911 940 960 995 LOW CAT SID';
 
 const datafields = datafieldString.split(' ');
 
 export default () => (record, record2) => {
-  record.fields.forEach(field => { preprocessForBaseAndSource(field); }); // Preprocess input record. Not necessary the best place to do it.
+  record.fields.forEach(field => {
+    preprocessForBaseAndSource(field);
+  }); // Preprocess input record. Not necessary the best place to do it.
   datafields.forEach(tag => {
     //debug(`CURR TAG: ${tag}...`);
     const tagAsRegexp = tagToRegexp(tag);
