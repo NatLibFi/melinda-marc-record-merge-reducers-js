@@ -87,14 +87,12 @@ function postprocessLifespan(field) {
 }
 
 
-
 export function postprocessField(field) {
   // Placeholder for proper
   postprocessX00a(field);
   postprocessXX0eFunction(field); // X00$e and X10$e
   postprocessLifespan(field); // X00$d
 
-  // TODO: mergeä $5:t, mergeä $9:t, removaa keeppaamattomat subsetit
   return field;
 }
 
@@ -147,9 +145,12 @@ function cloneField(field) {
 export function postprocessRecord(record) {
   record.fields.forEach(field => {
     // remove merge-specific information:
-    if ( field.sourced ) {
+    if (field.sourced) { // eslint-disable-line functional/no-conditional-statement
       // DO YOUR SHIT
       delete field.sourced; // eslint-disable-line functional/immutable-data
+      // NB! We could
+      // - remove subsets?
+      // - Fix X00 ind2 etc
     }
   });
 }
@@ -184,7 +185,7 @@ function reindexSubfield6s(field, record) {
           if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statement
             const index = subfield6Index(sf) + baseMax;
             const strindex = index < 10 ? `0${index}` : `${index}`;
-            sf.value = sf.value.substring(0, 4) + strindex + sf.value.substring(6); // eslint-disable-line functional/no-conditional-statement
+            sf.value = sf.value.substring(0, 4) + strindex + sf.value.substring(6); // eslint-disable-line functional/immutable-data
             debug(`SF6 is now ${sf.value}`);
           }
           return sf;
@@ -194,7 +195,7 @@ function reindexSubfield6s(field, record) {
 }
 
 // NB! These are defined also in mergeSubfield.js. Do something...
-const notYear       = /^\([1-9][0-9]*\)[,.]?$/u;
+const notYear = /^\([1-9][0-9]*\)[,.]?$/u;
 
 function datesAssociatedWithName(field) {
   // Skip irrelevant fields:
@@ -202,52 +203,54 @@ function datesAssociatedWithName(field) {
     return field;
   }
 
-  if ( field.subfields.some(sf => sf.code === 'd' && notYear.test(sf.value)) ) {
-    field.subfields = field.subfields.filter(sf => sf.code !== 'd' || !notYear.test(sf.value));  // eslint-disable-line functional/immutable-data
+  if (field.subfields.some(sf => sf.code === 'd' && notYear.test(sf.value))) { // eslint-disable-line functional/no-conditional-statement
+    field.subfields = field.subfields.filter(sf => sf.code !== 'd' || !notYear.test(sf.value)); // eslint-disable-line functional/immutable-data
   }
 
-} 
+}
 
 export function normalizeSubfield0Value(value) {
-  if (/^\(FI-MELINDA\)[0-9]{9}$/u.test(value)) {
-    return '(FIN01)'+value.substring(12);   // eslint-disable-line functional/immutable-data
+  if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
+    return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
   }
-  if (/^\(FI-ASTERI-S\)[0-9]{9}$/u.test(value)) {
-    return '(FIN10)'+value.substring(13); // eslint-disable-line functional/immutable-data
+  if ((/^\(FI-ASTERI-S\)[0-9]{9}$/u).test(value)) {
+    return `(FIN10)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
-  if (/^\(FI-ASTERI-N\)[0-9]{9}$/u.test(value)) {
-    return '(FIN11)'+value.substring(13); // eslint-disable-line functional/immutable-data
+  if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
+    return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
-  if ( /^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u.test(value) ) {
-    return '(FIN11)'+value.slice(-9);
+  if ((/^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u).test(value)) {
+    return `(FIN11)${value.slice(-9)}`;
   }
-  
-  if (/^\(FI-ASTERI-A\)[0-9]{9}$/u.test(value)) {
-    return '(FIN12)'+value.substring(13); // eslint-disable-line functional/immutable-data
+
+  if ((/^\(FI-ASTERI-A\)[0-9]{9}$/u).test(value)) {
+    return `(FIN12)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
-  if (/^\(FI-ASTERI-W\)[0-9]{9}$/u.test(value)) {
-    return '(FIN13)'+value.substring(13); // eslint-disable-line functional/immutable-data
+  if ((/^\(FI-ASTERI-W\)[0-9]{9}$/u).test(value)) {
+    return `(FIN13)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
   return value;
 }
 
+/*
 function normalizeSubfield0(field) {
   field.subfields.forEach((subfield) => {
     const originalValue = subfield.value;
     if (subfield.code === '0') { // eslint-disable-line functional/no-conditional-statement
-      if (/^\((?:FI-ASTERI-N|FI-MELINDA)\)[0-9]{9}$/u.test(subfield.value)) {
-        subfield.value = normalizeSubfield0Value(subfield.value);   // eslint-disable-line functional/immutable-data
+      if ((/^\((?:FI-ASTERI-N|FI-MELINDA)\)[0-9]{9}$/u).test(subfield.value)) {
+        subfield.value = normalizeSubfield0Value(subfield.value); // eslint-disable-line functional/immutable-data
       }
       // TODO: isni to https form
-      if ( subfield.value !== originalValue ) { // eslint-disable-line functional/immutable-data
+      if (subfield.value !== originalValue) { // eslint-disable-line functional/no-conditional-statement
         debug(`Update ${field.tag}$${subfield.code} : '${originalValue}' => '${subfield.value}'`);
       }
     }
   });
 }
+*/
 
 export function preprocessForBaseAndSource(field) {
-  if ( !field.subfields ) {
+  if (!field.subfields) {
     return;
   }
   // Not sure whether we actually want any of these here... However, this is still a good place for something...
