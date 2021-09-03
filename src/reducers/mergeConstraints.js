@@ -9,7 +9,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined.
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 
-// 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable
+// 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable. Subfields can be copied though, can't they?
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
@@ -118,7 +118,7 @@ const mergeConstraints = [
   {'tag': '377', 'required': '', 'paired': 'al', 'key': 'al'},
   {'tag': '380', 'required': 'a', 'key': 'a'},
   {'tag': '381', 'required': 'auv', 'key': 'auv'},
-  {'tag': '382', 'mergable': false, 'required': ''}, // merging would be madness...
+  {'tag': '382', 'mergable': false, 'required': ''}, // merging would be madness... However, this will miss cases, where only $5 or $9 differs...
   {'tag': '383', 'required': 'abcde', 'key': 'abcde'},
   {'tag': '384', 'required': 'a', 'key': 'a'},
   {'tag': '385', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
@@ -176,17 +176,16 @@ const mergeConstraints = [
   {'tag': '585', 'required': 'a', 'key': 'a'},
   {'tag': '586', 'required': 'a', 'key': 'a'},
   {'tag': '588', 'required': 'a', 'key': 'a'},
-  // We have no specs for 59X fields...
-  {'tag': '590', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '591', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '592', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '593', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '594', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '595', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '596', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '597', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '598', 'mergable': false, 'required': ''}, // always copy, never merge
-  {'tag': '599', 'mergable': false, 'required': ''}, // always copy, never merge
+  {'tag': '590', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '591', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '592', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '593', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '594', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '595', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '596', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '597', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '598', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '599', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
   {'tag': '600', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'}, // aped from 700
   {'tag': '610', 'required': 'a', 'paired': 't', 'key': 'abcdgntu'}, // aped from 710
   {'tag': '611', 'required': 'a', 'paired': 't', 'key': 'acdgntu'}, // aped from 711
@@ -209,7 +208,7 @@ const mergeConstraints = [
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
-  {'tag': '730', 'required': 'a', 'key': 'adfhlnoprstx'}, // TODO: compare subfields with 130...
+  {'tag': '730', 'required': 'a', 'key': 'adfhlnoprstx'}, // NB: 130->730 magic subfields might not agree...
   {'tag': '740', 'required': 'a', 'key': 'ahnp'},
   {'tag': '751', 'required': 'a', 'key': 'a'}, // N=11, kaikissa pelkkä $a
   {'tag': '752', 'mergable': false, 'required': '', 'key': 'abcdefgh'}, // N=12234
@@ -270,30 +269,35 @@ const mergeConstraints = [
   {'tag': '910', 'mergable': false, 'required': ''},
   {'tag': '940', 'mergable': false, 'required': ''},
   {'tag': '960', 'mergable': false, 'required': ''},
-  {'tag': '995', 'mergable': false, 'required': ''}
+  {'tag': '995', 'mergable': false, 'required': ''},
+  {'tag': 'CAT', 'mergable': false, 'required': ''},
+  {'tag': 'LOW', 'mergable': false, 'required': ''},
+  {'tag': 'SID', 'mergable': false, 'required': ''}
 ];
+  
 
-export function getMergeConstraintsForTag(tag, constraint) {
-  const activeTags = mergeConstraints.filter(entry => tag === entry.tag);
-  if (activeTags.length === 0) {
+function constraintToValue(tagsConstraints, constraintName) {
+  if (constraintName in tagsConstraints) {
+    return tagsConstraints[constraintName];
+  }
+  if (constraintName === 'mergable') { // missing mergable defaults to true. Don't complain about it either.
+    return true;
+  }
+  if (constraintName !== 'skip') { // eslint-disable-line functional/no-conditional-statement
+    debug(`WARNING\tMissing '${constraintName}'. Return NULL instead of a set of constraints.`);
+  }
+  return null; // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
+}
+
+export function getMergeConstraintsForTag(tag, constraintName) {
+  const tagsConstraintsArray = mergeConstraints.filter(entry => tag === entry.tag);
+  if (tagsConstraintsArray.length === 0) {
     debug(`WARNING\tNo key found for ${tag}. Returning NULL!`);
     return null;
   }
-
-  if (activeTags.length > 1) { // eslint-disable-line functional/no-conditional-statement
-    debug(`WARNING\tMultiple values for '${constraint}' (N=${activeTags.length}) found in ${tag}. Using first values.`);
+  // NB! should we support multiple contains for a field? Eg. 505$a vs 505($tg)+
+  if (tagsConstraintsArray.length > 1) { // eslint-disable-line functional/no-conditional-statement
+    debug(`WARNING\tMultiple values for '${constraintName}' (N=${tagsConstraintsArray.length}) found in ${tag}. Using first values.`);
   }
-
-  if (!(constraint in activeTags[0])) {
-    if (constraint === 'mergable') { // missing mergable defaults to true. Don't complain about it either.
-      return true;
-    }
-    if (constraint !== 'skip') { // eslint-disable-line functional/no-conditional-statement
-      debug(`WARNING\tField ${tag} is missing '${constraint}'. Return NULL instead of a set of constraints.`);
-    }
-    return null;
-  }
-  // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
-  // Thus we return string and not array. We might have think this further later on...
-  return activeTags[0][constraint];
+  return constraintToValue(tagsConstraintsArray[0], constraintName);
 }
