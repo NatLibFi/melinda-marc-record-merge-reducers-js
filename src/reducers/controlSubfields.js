@@ -63,7 +63,8 @@ function controlSubfield9PermitsMerge(field1, field2) {
   if (subfieldsAreEmpty(field1, field2, '9')) {
     return true;
   }
-  // TODO: If we have "whatever" and "whatever + DROP", is the result "whatever" or "whatever + DROP"?
+  // NB! We ignote $9s that aren't keeps or drops.
+  // NB: If we have "whatever" and "whatever + DROP", the result should be "whatever + DROP"?
   // What should we check here anyway? Never merge FOO<KEEP> and FOO<DROP>?
   const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
@@ -90,24 +91,23 @@ function getPrefix(value) {
 }
 
 function prefixIsOK(currSubfield, otherField) {
-  debug(`FFS '${currSubfield.code} ${currSubfield.value}'`);
+  //debug(`FFS '${currSubfield.code} ${currSubfield.value}'`);
   const normalizedCurrSubfieldValue = normalizeSubfield0Value(currSubfield.value);
-  debug(`FFS '${currSubfield.code} ${normalizedCurrSubfieldValue}'`);
+  //debug(`FFS '${currSubfield.code} ${normalizedCurrSubfieldValue}'`);
   const prefix = getPrefix(normalizedCurrSubfieldValue);
-  if (prefix === null) {
+  if (prefix === null) { // We don't like prefixless
     return false;
   }
-  debug(`FFS-PREFIX '${prefix}'`);
+  //debug(`FFS-PREFIX '${prefix}'`);
   // Look for same prefix + different identifier
   const hits = otherField.subfields.filter(sf2 => sf2.code === currSubfield.code && normalizeSubfield0Value(sf2.value).indexOf(prefix) === 0);
-  if (hits.length === 0) {
-    debug(`Subfield ‡${currSubfield.code} check OK: ${prefix} not found on Melinda base field '${fieldToString(otherField)}'.`);
+  if (hits.length === 0 || // <-- Nothing found, so it can't be a mismatch
+      // Every opposing subfields match:
+      hits.every(sf2 => normalizedCurrSubfieldValue === normalizeSubfield0Value(sf2.value))) {
+    debug(`Subfield ‡${currSubfield.code} check OK: No opposing ${prefix} prefixes found.`);
     return true;
   }
-  if (hits.every(sf2 => normalizedCurrSubfieldValue === normalizeSubfield0Value(sf2.value))) {
-    debug(`Identical subfield ‡${currSubfield.code} found on Melinda base field '${fieldToString(otherField)}'.`);
-    return true;
-  }
+
   debug(`Subfield ‡${currSubfield.code} check FAILED: ‡${currSubfield.code} '${currSubfield.value}' vs ‡${currSubfield.code} '${hits[0].value}'.`);
   return false;
 }
@@ -145,16 +145,12 @@ export function controlSubfieldsPermitMerge(field1, field2) {
     return false;
   }
 
-  if (!subfieldsAreEqual(field1, field2, '2') || !subfieldsAreEqual(field1, field2, '3') ) {
+  if (!subfieldsAreEqual(field1, field2, '2') || !subfieldsAreEqual(field1, field2, '3')) {
     //debug(' similar control subfield fails');
     return false;
   }
 
-  if ( !controlSubfield5PermitsMerge(field1, field2) ) {
-    return false;
-  }
-
-  if (!controlSubfield6PermitsMerge(field1, field2) || !controlSubfield9PermitsMerge(field1, field2)) {
+  if (!controlSubfield5PermitsMerge(field1, field2) || !controlSubfield6PermitsMerge(field1, field2) || !controlSubfield9PermitsMerge(field1, field2)) {
     return false;
   }
   // We don't handle $8 subfields here at all, as they affect multiple fields!
