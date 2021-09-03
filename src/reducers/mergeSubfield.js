@@ -5,10 +5,6 @@ import {
   normalizeStringValue
 } from './utils.js';
 
-import {
-  normalizeSubfield0value
-} from './mergePreAndPostprocess.js';
-
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const excludeSubfieldsFromMerge = [
@@ -25,7 +21,7 @@ const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', 'j', '0', '5', '9']},
-  {'tag': '110', 'sortOrder': ['a', 'b', 'n' ]},
+  {'tag': '110', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']},
@@ -36,24 +32,24 @@ const subfieldSortOrder = [
   {'tag': '505', 'sortOrder': ['a']},
   {'tag': '526', 'sortOrder': ['i', 'a']},
   {'tag': '600', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
-  {'tag': '610', 'sortOrder': ['a', 'b', 'n' ]},
+  {'tag': '610', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '700', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
-  {'tag': '710', 'sortOrder': ['a', 'b', 'n' ]},
+  {'tag': '710', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '776', 'sortOrder': ['i', 'a']},
-  {'tag': '810', 'sortOrder': ['a', 'b', 'n' ]},
+  {'tag': '810', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
-  {'tag': '880', 'sortOrder': ['a']} // Hack, so that default order is not used
+  {'tag': '880', 'sortOrder': ['a']},
+  {'tag': 'SID', 'sortOrder': ['c', 'b']} // Hack, so that default order is not used
 ];
 
 // NB! These are X00 specific. Should we somehow parametrize them?
-const notYear       = /^\([1-9][0-9]*\)[,.]?$/u;
+//const notYear = /^\([1-9][0-9]*\)[,.]?$/u;
 const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
 const onlyDeathYear = /^-[1-9][0-9]*[,.]?$/u;
 const birthYearAndDeathYear = /^[1-9][0-9]*-[1-9][0-9]*[,.]?$/u;
-
 
 function getDeathYear(str) {
   return parseInt(str.substring(str.indexOf('-') + 1));
@@ -66,13 +62,13 @@ function isValidBirthYearAndDeathYear(str) {
   // We have two years
   const b = parseInt(str);
   const d = getDeathYear(str);
-  if ( b > d ) { // died before birth! Rather unlikely.
+  if (b > d) { // died before birth! Rather unlikely.
     return false;
   }
-  if ( d - b > 125 ) { // Over 125 years old. Rather unlikely.
+  if (d - b > 125) { // Over 125 years old. Rather unlikely.
     return false;
   }
-  // Possible sanity check: Died after current year? 
+  // Possible sanity check: Died after current year?
   return true;
 }
 
@@ -85,25 +81,24 @@ function anyYear(str) {
 
 function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) {
   // Handle X100$d: add death year, if original value only contains birth year:
-  if (candSubfield.code !== 'd' || !/^[1678]00$/u.test(targetField.tag) ) {
+  if (candSubfield.code !== 'd' || !(/^[1678]00$/u).test(targetField.tag)) {
     return false;
   }
 
-
   //if ( notYear.test(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
-    if ( !anyYear(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
-      relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
-      return true;
+  if (!anyYear(relevantSubfields[0].value) && anyYear(candSubfield.value)) {
+    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    return true;
   }
 
   if (birthYearAndDeathYear.test(candSubfield.value)) {
-    if ( onlyBirthYear.test(relevantSubfields[0].value) && parseInt(relevantSubfields[0].value) === parseInt(candSubfield.value) ) {
+    if (onlyBirthYear.test(relevantSubfields[0].value) && parseInt(relevantSubfields[0].value) === parseInt(candSubfield.value)) {
       relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
       return true;
     }
 
-    if ( onlyDeathYear.test(relevantSubfields[0].value) && getDeathYear(relevantSubfields[0].value) === getDeathYear(candSubfield.value)) {
-      relevantSubfields[0].value = candSubfield.value;
+    if (onlyDeathYear.test(relevantSubfields[0].value) && getDeathYear(relevantSubfields[0].value) === getDeathYear(candSubfield.value)) {
+      relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
       return true;
     }
   }
@@ -111,7 +106,7 @@ function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfi
   return false;
 }
 
-function replaceSubfield(targetField, candSubfield) {
+function replaceSubfieldWithBetterValue(targetField, candSubfield) {
   // Return true, if replace succeeds.
   // However, replacing/succeeding requires a sanity check, that the new value is a better one...
   // Thus, typically this function fails...
@@ -121,7 +116,7 @@ function replaceSubfield(targetField, candSubfield) {
     return false;
   }
 
-  if ( replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields)) {
+  if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
 
@@ -149,7 +144,6 @@ function insertSubfieldAllowed(targetField, candSubfield) {
   if (fieldIsRepeatable(targetField.tag, candSubfield.code)) {
     return true;
   }
-
 
   return false;
 }
@@ -205,12 +199,12 @@ export function isSubfieldGoodForMerge(tag, subfieldCode) {
   return isSubfieldGood(tag, subfieldCode);
 }
 
-
 function mergeSubfieldNotRequired(targetField, candSubfield) {
   const targetSubfieldsAsStrings = targetField.subfields.map(sf => sf.code + normalizeStringValue(sf.value));
   const cand = candSubfield.code + normalizeStringValue(candSubfield.value);
   if (targetSubfieldsAsStrings.some(existingValue => cand === existingValue)) {
-    // Subfield with identical normalized value exists. Do nothing
+    // Subfield with identical normalized value exists. Do nothing.
+    // Not ideal 382$n subfields, I guess...
     return true;
   }
   if (targetField.tag === '040' && candSubfield.code === 'd' &&
@@ -218,7 +212,7 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
     debug('040$d matched 040$a');
     return true;
   }
-  if ( candSubfield.code === 'g' && candSubfield.value === 'ENNAKKOTIETO.' ) {
+  if (candSubfield.code === 'g' && candSubfield.value === 'ENNAKKOTIETO.') {
     // Skip just $g subfield or the whole field?
     // We decided to skip just this subfield. We want at least $0 and maybe more even from ennakkotieto.
     debug('Skip $g ENNAKKOTIETO.');
@@ -270,26 +264,20 @@ export function bottomUpSortSubfields(field) {
   // - Swap only sort adjacent pairs.
   // - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of 700$t...
 
-    // Should we support multiple values?
+  // Should we support multiple values?
   const sortOrder = getSubfieldSortOrder(field);
 
-  /*
-  // Currently always sort:
-  if (sortOrder === null) {
-    return field;
-  }
-  */
+  //// Currently always sort:
+  //if (sortOrder === null) { return field; }
 
   // Handle control subfield order (it never changes):
-  swapSubfields(field, [ '8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']);
+  swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']);
   swapSubfields(field, sortOrder || defaultSortOderString);
-
 
   return field;
 }
 
 export function mergeSubfield(record, targetField, candSubfield) {
-
   if (mergeSubfieldNotRequired(targetField, candSubfield)) {
     debug(`    No need to add subfield '‡${candSubfield.code} ${candSubfield.value}'`);
     return;
@@ -300,13 +288,12 @@ export function mergeSubfield(record, targetField, candSubfield) {
     debug(` Added subfield ‡'${str}' to field`);
     // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
     targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
-
     bottomUpSortSubfields(targetField);
     return;
   }
 
   // Currently only X00$d 1984- => 1984-2000 type of changes
-  if (replaceSubfield(targetField, candSubfield)) {
+  if (replaceSubfieldWithBetterValue(targetField, candSubfield)) {
     return;
   }
   // Didn't do anything, but thinks something should have been done:
