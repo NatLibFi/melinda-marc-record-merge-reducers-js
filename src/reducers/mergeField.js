@@ -36,16 +36,6 @@ const counterpartRegexps = {
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
 };
 
-function equalishFields(field1, field2) {
-  const s1 = fieldToString(field1);
-  const s2 = fieldToString(field2);
-  if (s1 === s2) {
-    return true;
-  }
-  // TODO: strip at least $9's keeps (and drops)
-  return false;
-}
-
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
   // NB! Assume that field1 and field2 have same relevant subfields.
   // What to do if if base
@@ -56,12 +46,12 @@ function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
 }
 
 function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
-  if (keySubfieldsAsString === null) {
+  if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
     // (NB! Here order matters. We should probably make it matter everywhere.)
     // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
-    return equalishFields(field1, field2);
+    return fieldToString(field1) === fieldToString(field2);
   }
 
   const subfieldArray = keySubfieldsAsString.split('');
@@ -91,23 +81,7 @@ function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
   });
 }
 
-// TODO: Normalize this:
-function compareSubfields(set1, set2) {
-  return set1.every(sf => {
-    const normSubfieldValue = normalizeStringValue(sf.value);
-    return set2.some(sf2 => {
-      const normSubfieldValue2 = normalizeStringValue(sf2.value);
-      if (normSubfieldValue === normSubfieldValue2) {
-        //debug(`pairing succeed for normalized '${normSubfieldValue}'`);
-        return true;
-      }
-      debug(`cS failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
-      return false;
-    });
-  });
-}
-
-function normalizedSubfieldsMatch(subfields1, subfields2) { 
+function normalizedSubfieldsMatch(subfields1, subfields2) {
   //debug(`nSM ${subfields1.length} vs ${subfields2.length}`);
   if (subfields1.length === 0 || subfields2.length === 0) {
     return true;
@@ -115,21 +89,12 @@ function normalizedSubfieldsMatch(subfields1, subfields2) {
   //debug(`nSM $${subfields1[0].code} ${subfields1.length} vs ${subfields2.length}`);
   const vals1 = subfields1.map(subfield => normalizeStringValue(subfield.value));
   const vals2 = subfields2.map(subfield => normalizeStringValue(subfield.value));
-  const vals1b  = vals1.filter(value => !vals2.includes(value));
-  const vals2b  = vals2.filter(value => !vals1.includes(value));
-  if ( vals1b.length == 0 || vals2b.length == 0 ) {
+  const vals1b = vals1.filter(value => !vals2.includes(value));
+  const vals2b = vals2.filter(value => !vals1.includes(value));
+  if (vals1b.length === 0 || vals2b.length === 0) {
     return true;
   }
   return false;
-  /*
-  // TODO: filter identical fields...
-  if (subfields1.length === subfields2.length && compareSubfields(subfields1, subfields2) && compareSubfields(subfields2, subfields1)) {
-    debug(`pairing succeed for normalized field`);
-    return true;
-  }
-  debug(`failed to pair subfields`);
-  return false;
-  */
 }
 
 function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
@@ -204,9 +169,7 @@ function arePairedSubfieldsInBalance(field1, field2) {
   }
   const subfieldArray = subfieldString.split('');
 
-  return subfieldArray.every(sfcode => {
-    return fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode);
-  });
+  return subfieldArray.every(sfcode => fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode));
 }
 
 
@@ -257,7 +220,7 @@ function compareName(baseField, sourceField) {
   const reducedField2 = fieldToNamePart(sourceField);
 
   // compare the remaining subsets:
-  if ( uniqueKeyMatches(reducedField1, reducedField2) ) {
+  if (uniqueKeyMatches(reducedField1, reducedField2)) {
     debug(`    name match: '${fieldToString(reducedField1)}'`);
     return true;
   }
@@ -305,6 +268,7 @@ function namePartThreshold(field) {
 function fieldToNamePart(field) {
   const index = namePartThreshold(field);
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i < index || index === -1)};
+
   /*
   if (index > -1) { // eslint-disable-line functional/no-conditional-statement
     debug(`Name subset: ${fieldToString(subsetField)}`);
@@ -315,7 +279,7 @@ function fieldToNamePart(field) {
 
 function fieldToTitlePart(field) {
   // Take everything after 1st subfield $t...
-  const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');;
+  const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i >= index)};
   debug(`Title subset: ${fieldToString(subsetField)}`);
   return subsetField;
@@ -330,10 +294,10 @@ function containsTitlePart(field) {
 }
 
 function compareTitlePart(field1, field2) {
-  if ( !containsTitlePart(field1) ) {
+  if (!containsTitlePart(field1)) {
     return !containsTitlePart(field2);
   }
-  if ( !containsTitlePart(field2) ) {
+  if (!containsTitlePart(field2)) {
     return false;
   }
 
@@ -378,14 +342,21 @@ export function getCounterpart(record, field) {
 
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
-  if ( tmp.length > 0 ) { // remove only iff something remains
+  if (tmp.length > 0) { // remove only iff something remains
     field.subfields = tmp; // eslint-disable-line functional/immutable-data
   }
 }
 
 function mergeField(record, targetField, sourceField) {
-  // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield: 
-  if ( fieldHasSubfield(targetField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.') ) {
+  // Duplicate field:
+  if ( fieldToString(sourceField) === fieldToString(targetField) ) {
+    // No need to try every field separately.
+    // Also no need to postprocess the resulting field.
+    return record;
+  }
+
+  // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield:
+  if (fieldHasSubfield(targetField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) {
     removeEnnakkotieto(targetField);
   }
 
