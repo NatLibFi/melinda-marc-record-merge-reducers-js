@@ -13,13 +13,11 @@ export function getTags(fields) {
 }
 
 export function fieldsAreIdentical(field1, field2) {
-  // NB! We are skipping normalizations here on purpose! They should be done beforehand...
-  if (field1.tag !== field2.tag) {
+  if (field1.tag !== field2.tag) { // NB! We are skipping normalizations here on purpose! They should be done beforehand...
     return false;
   }
-
-  // debug(`Compare '${localFieldToString(field1)}' vs '${localFieldToString(field2)}'...`);
-
+  return localFieldToString(field1) === localFieldToString(field2);
+  /*
   if ('value' in field1) { // 001-009
     return localFieldToString(field1) === localFieldToString(field2);
   }
@@ -28,13 +26,14 @@ export function fieldsAreIdentical(field1, field2) {
     if (field1.ind1 === field2.ind1 && field1.ind2 === field2.ind2 && field1.subfields.length === field2.subfields.length) {
       // NB! This does not check order of subfields, which might or might nor be a bad idea.
       // NV would just do localFieldToString() and compare them strings...
+      // NV: Also this is a subset check, not an equality check.
       // This is the original (Artturi?) way...
       return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
     }
     return false;
   }
 
-  return false;
+  */
 }
 
 // Modified from copy functionality in marc-record-merge
@@ -87,16 +86,6 @@ export function getFieldSpecs(tag) {
   const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tag);
   return fieldSpecs;
 }
-export function getRepCodes(tag) {
-  return getFieldSpecs(tag).subfields
-    .filter(sub => sub.repeatable === true)
-    .map(sub => sub.code);
-}
-export function getNonRepCodes(tag) {
-  return getFieldSpecs(tag).subfields
-    .filter(sub => sub.repeatable === false)
-    .map(sub => sub.code);
-}
 
 function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
   // These we know or "know":
@@ -147,8 +136,7 @@ export function normalizeStringValue(value) {
 }
 
 function strictEquality(subfieldA, subfieldB) {
-  return subfieldA.code === subfieldB.code &&
-    subfieldA.value === subfieldB.value;
+  return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
 }
 
 // Compare base and source subfield arrays defined by the given array of subfield codes
@@ -261,16 +249,6 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
   return sortSubfields(restSubfields, rest, orderedSubfields);
 }
 
-// Create new base field with custom array of sorted subfields
-export function makeNewBaseField(base, baseField, sortedSubfields) {
-  const newBaseField = JSON.parse(JSON.stringify(baseField));
-  /* eslint-disable */
-  newBaseField.subfields = sortedSubfields;
-  base.removeField(baseField); // remove old baseField
-  base.insertField(newBaseField); // insert newBaseField
-  /* eslint-enable */
-  return base;
-}
 
 // NVOLK's marc record modifications
 function internalFieldHasSubfield(field, subfieldCode, subfieldValue) {
