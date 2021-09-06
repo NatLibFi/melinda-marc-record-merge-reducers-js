@@ -12,7 +12,6 @@ import {
 
 import {
   cloneAndPreprocessField,
-  postprocessField
 } from './mergePreAndPostprocess.js';
 
 import {
@@ -102,8 +101,8 @@ function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
     return true;
   }
   const subfieldArray = keySubfieldsAsString.split('');
-  debug(`  COMPARE SUBS ${keySubfieldsAsString}`);
-  debug(`    LEN b4 filth: ${field1.subfields.length} vs ${field2.subfields.length}`);
+  //debug(`  COMPARE SUBS ${keySubfieldsAsString}`);
+  //debug(`    LEN b4 filth: ${field1.subfields.length} vs ${field2.subfields.length}`);
   return subfieldArray.every(subfieldCode => {
     //debug(`NOW ${subfieldCode}`);
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
@@ -221,7 +220,7 @@ function compareName(baseField, sourceField) {
 
   // compare the remaining subsets:
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
-    debug(`    name match: '${fieldToString(reducedField1)}'`);
+    //debug(`    name match: '${fieldToString(reducedField1)}'`);
     return true;
   }
   debug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
@@ -243,7 +242,7 @@ function semanticallyMergablePair(baseField, sourceField) {
     debug('Unmergable: Name part mismatch');
     return false;
   }
-  debug(' Semantic checks passed! We are MERGABLE!');
+  //debug(' Semantic checks passed! We are MERGABLE!');
 
   return true;
 }
@@ -358,22 +357,21 @@ function mergeField(record, targetField, sourceField) {
   // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield:
   if (fieldHasSubfield(targetField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) {
     removeEnnakkotieto(targetField);
+    targetField.merged = 1; // eslint-disable-line functional/immutable-data
   }
 
   sourceField.subfields.forEach(candSubfield => {
     const originalValue = fieldToString(targetField);
     mergeSubfield(record, targetField, candSubfield);
     const newValue = fieldToString(targetField);
-    if (originalValue === newValue) { // eslint-disable-line functional/no-conditional-statement
-      debug(`  mergeSubfield() did not add '‡${candSubfield.code} ${candSubfield.value}' to '${originalValue}'`);
-    } else { // eslint-disable-line functional/no-conditional-statement
+    if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
       debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${originalValue}'`);
       debug(`   RESULT: '${newValue}'`);
       debug(`   TODO: sort subfields, handle punctuation...`);
     }
+    //else { debug(`  mergeSubfield() did not add '‡${candSubfield.code} ${candSubfield.value}' to '${originalValue}'`); }
 
   });
-  postprocessField(targetField);
   return record;
 }
 
@@ -386,7 +384,7 @@ function checkSolitariness(record, tag) {
     // However, we won't block if all existing relevant fields come from source record.
     const candidateFields = record.get(tagToRegexp(tag));
     //return true;
-    return candidateFields.some(field => !field.sourced);
+    return candidateFields.some(field => !field.added);
 
   }
   // No reason to block:

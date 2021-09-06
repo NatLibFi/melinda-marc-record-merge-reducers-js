@@ -1,10 +1,12 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
+import { fieldFixPunctuation } from './punctuation.js';
 import {
   fieldHasSubfield,
   fieldRenameSubfieldCodes,
   fieldToString
 } from './utils.js';
+
 
 
 // TODO: Possible modifications:
@@ -88,11 +90,13 @@ function postprocessLifespan(field) {
 
 
 export function postprocessField(field) {
+  
+  //fieldFixPunctuation(field);
   // Placeholder for proper
-  postprocessX00a(field);
-  postprocessXX0eFunction(field); // X00$e and X10$e
-  postprocessLifespan(field); // X00$d
-
+  //postprocessX00a(field);
+  //postprocessXX0eFunction(field); // X00$e and X10$e
+  //postprocessLifespan(field); // X00$d
+  
   return field;
 }
 
@@ -120,7 +124,7 @@ function fieldSubfield6Index(field) {
 function getMaxSubfield6(record) {
   // Should we cache the value here?
   const vals = record.fields.map((field) => {
-    if (field.sourced) {
+    if (field.added) {
       return 0;
     } // field already added from source
     return fieldSubfield6Index(field);
@@ -138,19 +142,23 @@ function updateSubfield6(field, index) {
 
 function cloneField(field) {
   // mark it as coming from source:
-  field.sourced = 1; // eslint-disable-line functional/immutable-data
+  field.added = 1; // eslint-disable-line functional/immutable-data
   return JSON.parse(JSON.stringify(field));
 }
 
 export function postprocessRecord(record) {
   record.fields.forEach(field => {
     // remove merge-specific information:
-    if (field.sourced) { // eslint-disable-line functional/no-conditional-statement
+    if (field.merged) { // eslint-disable-line functional/no-conditional-statement
+      fieldFixPunctuation(field);
       // DO YOUR SHIT
-      delete field.sourced; // eslint-disable-line functional/immutable-data
+      delete field.merged; // eslint-disable-line functional/immutable-data
       // NB! We could
       // - remove subsets?
       // - Fix X00 ind2 etc
+    }
+    if ( field.added) {
+      delete field.added; // eslint-disable-line functional/immutable-data
     }
   });
 }
@@ -180,7 +188,7 @@ function reindexSubfield6s(field, record) {
       return {'tag': field.tag,
         'ind1': field.ind1,
         'ind2': field.ind2,
-        'sourced': 1,
+        // 'merged': 1,
         'subfields': field.subfields.map((sf) => {
           if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statement
             const index = subfield6Index(sf) + baseMax;
