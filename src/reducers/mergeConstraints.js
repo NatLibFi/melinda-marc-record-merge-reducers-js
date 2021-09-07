@@ -1,15 +1,13 @@
 import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
 // 'skip': no merge, no add.
-// 'mergable' = if true, no merge, just add. true/false, no if false can't be merged, defaults to true.
-// "paired" refers to a field that must either exist in both or be absent in both. Typically it's not defined.
+// 'mergable' = if false, don't merge, just add. true/false. Defaults to true.
+// "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined. ()
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
-
-// 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable. Subfields can be copied though, can't they?
+// 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable. Subfields can be copied though.
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
@@ -193,7 +191,7 @@ const mergeConstraints = [
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '647', 'required': 'a', 'key': 'acdgvxyz02'},
   {'tag': '648', 'required': 'a', 'key': 'avxyz02'},
-  {'tag': '650', 'required': 'a', 'paired': 'abcdegvxyz', 'key': 'abcdegvxyz20'}, // TODO: test
+  {'tag': '650', 'required': 'a', 'paired': 'abcdegvxyz', 'key': 'abcdegvxyz20'},
   {'tag': '651', 'required': 'a', 'paired': 'aegvxyz', 'key': 'aegvxyz20'},
   {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
   {'tag': '654', 'mergable': false, 'required': ''},
@@ -274,7 +272,6 @@ const mergeConstraints = [
   {'tag': 'LOW', 'mergable': false, 'required': ''},
   {'tag': 'SID', 'mergable': false, 'required': ''}
 ];
-
 
 function constraintToValue(tagsConstraints, constraintName) {
   if (constraintName in tagsConstraints) {
