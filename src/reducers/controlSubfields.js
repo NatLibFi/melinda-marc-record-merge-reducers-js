@@ -46,7 +46,7 @@ function controlSubfield6PermitsMerge(field1, field2) {
 }
 
 function controlSubfield5PermitsMerge(field1, field2) {
-  // field1.$5 XOR field2.$5 means false, NEITHER and BOTH mean true
+  // field1.$5 XOR field2.$5 means false, NEITHER and BOTH mean true, regardless of value
   if (!fieldHasSubfield(field1, '5')) {
     if (!fieldHasSubfield(field2, '5')) {
       return true; // If neither one has $5, it's ok to merge
@@ -87,17 +87,14 @@ function getPrefix(value) {
     return normalizedValue.substr(0, normalizedValue.lastIndexOf('/') + 1);
   }
 
-  return null;
+  return '';
 }
 
-function prefixIsOK(currSubfield, otherField) {
-  //debug(`FFS '${currSubfield.code} ${currSubfield.value}'`);
+function isMatchAfterNormalization(currSubfield, otherField) {
+  // TODO: implement isni normalizations:
   const normalizedCurrSubfieldValue = normalizeSubfield0Value(currSubfield.value);
-  //debug(`FFS '${currSubfield.code} ${normalizedCurrSubfieldValue}'`);
   const prefix = getPrefix(normalizedCurrSubfieldValue);
-  if (prefix === null) { // We don't like prefixless
-    return false;
-  }
+
   //debug(`FFS-PREFIX '${prefix}'`);
   // Look for same prefix + different identifier
   const hits = otherField.subfields.filter(sf2 => sf2.code === currSubfield.code && normalizeSubfield0Value(sf2.value).indexOf(prefix) === 0);
@@ -127,7 +124,7 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
       return true;
     }
 
-    return prefixIsOK(subfield, field2, subfieldCode);
+    return isMatchAfterNormalization(subfield, field2, subfieldCode);
   });
 
   if (!result) {
@@ -137,16 +134,16 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
   return true;
 }
 
-const controlSubfieldsContainingIdentifier = ['w', '0', '1'];
+const controlSubfieldsContainingIdentifier = ['w', '0', '1', '2']; // 2 ain't identifier, but the logic can be applied here as well
 
 export function controlSubfieldsPermitMerge(field1, field2) {
   if (!controlSubfieldsContainingIdentifier.every(subfieldCode => controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode))) {
-    //debug(' control subfields with identifiers failed');
+    debug(' control subfields with identifiers failed');
     return false;
   }
 
-  if (!subfieldsAreEqual(field1, field2, '2') || !subfieldsAreEqual(field1, field2, '3')) {
-    //debug(' similar control subfield fails');
+  if (!subfieldsAreEqual(field1, field2, '3')) {
+    debug(' similar control subfield fails');
     return false;
   }
 
@@ -155,7 +152,7 @@ export function controlSubfieldsPermitMerge(field1, field2) {
   }
   // We don't handle $8 subfields here at all, as they affect multiple fields!
   if (!subfieldsAreEmpty(field1, field2, '8')) {
-    //debug(' csf8 failed');
+    debug(' csf8 failed');
     return false;
   }
 
