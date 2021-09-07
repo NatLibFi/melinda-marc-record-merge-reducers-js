@@ -8,13 +8,13 @@ import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const stripCrap = / *[-;:,+]+$/u;
-const defaultNeedsPunc = /([a-z0-9A-Z])$/u;
+const defaultNeedsPunc = /([a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
 const field300NeedsPunc = /([\]a-zA-Z0-9\)]|ä)$/u
 
-const cleanX00aComma = { 'code' : 'a', 'followedBy' : '#01', 'context': /[a-z],$/u, 'remove': /,$/u };
-const cleanX00aDot = { 'code' : 'ade', 'followedBy' : 'bcdeg', 'context': /[a-z0-9]\.$/u, 'remove': /\.$/u };
+const cleanX00aComma = { 'code' : 'abde', 'followedBy' : '#01', 'context': /[a-z],$/u, 'remove': /,$/u };
+const cleanX00aDot = { 'code' : 'abcde', 'followedBy' : 'bcdeg', 'context': /[a-z0-9]\.$/u, 'remove': /\.$/u };
 
-const cleanX00eDot = { 'code' : 'e', 'followedBy' : 'eg', 'context': /(aja|äjä)\.$/u, 'remove': /\.$/u };
+const cleanX00eDot = { 'code' : 'e', 'followedBy' : 'eg', 'context': /(aja|jä)\.$/u, 'remove': /\.$/u };
 
 const addX00aComma = { 'add': ',', 'code' : 'abcde', 'followedBy' : 'deg', 'context': defaultNeedsPunc };
 const addX00aDot = { 'add': '.', 'code' : 'abcde', 'followedBy' : '#t01', 'context': defaultNeedsPunc };
