@@ -1,12 +1,11 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import { fieldFixPunctuation } from './punctuation.js';
+import {fieldFixPunctuation} from './punctuation.js';
 import {
   fieldHasSubfield,
   fieldRenameSubfieldCodes,
   fieldToString
 } from './utils.js';
-
 
 
 // TODO: Possible modifications:
@@ -90,13 +89,13 @@ function postprocessLifespan(field) {
 
 
 export function postprocessField(field) {
-  
+
   //fieldFixPunctuation(field);
   // Placeholder for proper
   //postprocessX00a(field);
   //postprocessXX0eFunction(field); // X00$e and X10$e
   //postprocessLifespan(field); // X00$d
-  
+
   return field;
 }
 
@@ -157,7 +156,7 @@ export function postprocessRecord(record) {
       // - remove subsets?
       // - Fix X00 ind2 etc
     }
-    if ( field.added) {
+    if (field.added) {
       delete field.added; // eslint-disable-line functional/immutable-data
     }
   });

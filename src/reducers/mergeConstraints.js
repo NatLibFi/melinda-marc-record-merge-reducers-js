@@ -274,7 +274,7 @@ const mergeConstraints = [
   {'tag': 'LOW', 'mergable': false, 'required': ''},
   {'tag': 'SID', 'mergable': false, 'required': ''}
 ];
-  
+
 
 function constraintToValue(tagsConstraints, constraintName) {
   if (constraintName in tagsConstraints) {

@@ -11,7 +11,7 @@ import {
 } from './utils.js';
 
 import {
-  cloneAndPreprocessField,
+  cloneAndPreprocessField
 } from './mergePreAndPostprocess.js';
 
 import {
@@ -348,7 +348,7 @@ function removeEnnakkotieto(field) {
 
 function mergeField(record, targetField, sourceField) {
   // Duplicate field:
-  if ( fieldToString(sourceField) === fieldToString(targetField) ) {
+  if (fieldToString(sourceField) === fieldToString(targetField)) {
     // No need to try every field separately.
     // Also no need to postprocess the resulting field.
     return record;

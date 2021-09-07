@@ -295,7 +295,7 @@ export function mergeSubfield(record, targetField, candSubfield) {
 
   // Currently only X00$d 1984- => 1984-2000 type of changes
   if (replaceSubfieldWithBetterValue(targetField, candSubfield)) {
-    targetField.merged = 1; 
+    targetField.merged = 1;
     return;
   }
   // Didn't do anything, but thinks something should have been done:
