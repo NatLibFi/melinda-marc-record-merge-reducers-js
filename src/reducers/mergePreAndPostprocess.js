@@ -3,99 +3,14 @@ import createDebugLogger from 'debug';
 import {fieldFixPunctuation} from './punctuation.js';
 import {
   fieldHasSubfield,
-  fieldRenameSubfieldCodes,
-  fieldToString
+  fieldRenameSubfieldCodes
+  //fieldToString
 } from './utils.js';
-
-
-// TODO: Possible modifications:
-// Move 040 back to a separate file, as it differs from everything else.
-// We might be able to simplify things after that.
-// Special treatments needed for:
-// - punctuation between fields..
-// - X00$d
-// - indicator for article length (eg. 245)
-
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-
-function postprocessX00a(field) {
-  if (!field.tag.match(/^[1678]00$/u)) {
-    return field;
-  }
-  debug(`postprocessX00a(${fieldToString(field)})`);
-  field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'a' || index + 1 === field.subfields.length) {
-      return;
-    }
-    if ('de'.indexOf(field.subfields[index + 1].code) > -1) {
-      if (sf.value.match(/[aeiouyäö][a-zåäö]$/u)) {
-        debug(`ADD ',' TO '${sf.value}'`);
-        sf.value += ','; // eslint-disable-line functional/immutable-data
-        return;
-      }
-      // Final '.' => ','
-      if (sf.value.match(/[aeiouyäö][a-zåäö]\.$/u)) {
-        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-        return; // KESKEN
-      }
-    }
-  });
-}
-
-function postprocessXX0eFunction(field) {
-  if (!field.tag.match(/^[1678][01]0$/u)) {
-    return field;
-  }
-  debug(`postprocessXX0e(${fieldToString(field)})`);
-  field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'e' || index + 1 === field.subfields.length) {
-      return;
-    }
-    if ('e'.indexOf(field.subfields[index + 1].code) > -1) {
-      // Final '.' => ',' if followed by $e (and if '.' follows an MTS term)
-      if (sf.value.match(/(?:esittäjä|kirjoittaja|sanoittaja|sovittaja|säveltäjä|toimittaja)\.$/u)) {
-        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-        return; // KESKEN
-      }
-    }
-  });
-}
-
-function postprocessLifespan(field) {
-  if (!field.tag.match(/^[1678]00$/u)) {
-    return field;
-  }
-  debug(`postprocessLifespan(${fieldToString(field)})`);
-  field.subfields.forEach((sf, index) => {
-    if (sf.code !== 'd' || index + 1 === field.subfields.length) {
-      return;
-    }
-    if (field.subfields[index + 1].code === 'e') {
-      if (sf.value.match(/^[0-9]+-[0-9]+$/u)) {
-        debug(`ADD ',' TO '${sf.value}'`);
-        sf.value += ','; // eslint-disable-line functional/immutable-data
-        return;
-      }
-      // Final '.' => ','
-      if (sf.value.match(/^[0-9]+-(?:[0-9]+)?\.$/u)) {
-        sf.value = `${sf.value.slice(0, -1)},`; // eslint-disable-line functional/immutable-data
-        return; // KESKEN
-      }
-    }
-  });
-}
-
-
 export function postprocessField(field) {
-
-  //fieldFixPunctuation(field);
-  // Placeholder for proper
-  //postprocessX00a(field);
-  //postprocessXX0eFunction(field); // X00$e and X10$e
-  //postprocessLifespan(field); // X00$d
-
+  // TODO: indicator update for article length (eg. 245)
   return field;
 }
 
@@ -156,7 +71,7 @@ export function postprocessRecord(record) {
       // - remove subsets?
       // - Fix X00 ind2 etc
     }
-    if (field.added) {
+    if (field.added) { // eslint-disable-line functional/no-conditional-statement
       delete field.added; // eslint-disable-line functional/immutable-data
     }
   });
@@ -216,6 +131,16 @@ function datesAssociatedWithName(field) {
 
 }
 
+function normalizeFIN11(value) {
+  if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
+    return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
+  }
+  if ((/^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u).test(value)) {
+    return `(FIN11)${value.slice(-9)}`;
+  }
+  return false;
+}
+
 export function normalizeSubfield0Value(value) {
   if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
     return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
@@ -223,20 +148,13 @@ export function normalizeSubfield0Value(value) {
   if ((/^\(FI-ASTERI-S\)[0-9]{9}$/u).test(value)) {
     return `(FIN10)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
-  if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
-    return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u).test(value)) {
-    return `(FIN11)${value.slice(-9)}`;
-  }
-
   if ((/^\(FI-ASTERI-A\)[0-9]{9}$/u).test(value)) {
     return `(FIN12)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
   if ((/^\(FI-ASTERI-W\)[0-9]{9}$/u).test(value)) {
     return `(FIN13)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
-  return value;
+  return normalizeFIN11(value) || value;
 }
 
 /*
