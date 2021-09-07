@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
   fieldIsRepeatable,
-  normalizeStringValue
+  subfieldsAreIdentical
 } from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -14,7 +14,6 @@ const excludeSubfieldsFromMerge = [
 ];
 
 const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
-
 
 // List only exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
@@ -52,7 +51,7 @@ const onlyDeathYear = /^-[1-9][0-9]*[,.]?$/u;
 const birthYearAndDeathYear = /^[1-9][0-9]*-[1-9][0-9]*[,.]?$/u;
 
 function getDeathYear(str) {
-  return parseInt(str.substring(str.indexOf('-') + 1));
+  return parseInt(str.substring(str.indexOf('-') + 1), 10);
 }
 
 function isValidBirthYearAndDeathYear(str) {
@@ -60,7 +59,7 @@ function isValidBirthYearAndDeathYear(str) {
     return false;
   }
   // We have two years
-  const b = parseInt(str);
+  const b = parseInt(str, 10);
   const d = getDeathYear(str);
   if (b > d) { // died before birth! Rather unlikely.
     return false;
@@ -79,20 +78,9 @@ function anyYear(str) {
   return false;
 }
 
-function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) {
-  // Handle X100$d: add death year, if original value only contains birth year:
-  if (candSubfield.code !== 'd' || !(/^[1678]00$/u).test(targetField.tag)) {
-    return false;
-  }
-
-  //if ( notYear.test(relevantSubfields[0].value) && anyYear(candSubfield.value) ) {
-  if (!anyYear(relevantSubfields[0].value) && anyYear(candSubfield.value)) {
-    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
-    return true;
-  }
-
+function replaceEntrysBirthAndDeathYear(targetField, candSubfield, relevantSubfields) {
   if (birthYearAndDeathYear.test(candSubfield.value)) {
-    if (onlyBirthYear.test(relevantSubfields[0].value) && parseInt(relevantSubfields[0].value) === parseInt(candSubfield.value)) {
+    if (onlyBirthYear.test(relevantSubfields[0].value) && parseInt(relevantSubfields[0].value, 10) === parseInt(candSubfield.value, 10)) {
       relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
       return true;
     }
@@ -102,7 +90,23 @@ function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfi
       return true;
     }
   }
+  return false;
+}
 
+function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) {
+  // Handle X100$d: add death year, if original value only contains birth year:
+  if (candSubfield.code !== 'd' || !(/^[1678]00$/u).test(targetField.tag)) {
+    return false;
+  }
+
+  if (!anyYear(relevantSubfields[0].value) && anyYear(candSubfield.value)) {
+    relevantSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    return true;
+  }
+
+  if (replaceEntrysBirthAndDeathYear(targetField, candSubfield, relevantSubfields)) {
+    return true;
+  }
   return false;
 }
 
@@ -111,22 +115,19 @@ function replaceSubfieldWithBetterValue(targetField, candSubfield) {
   // However, replacing/succeeding requires a sanity check, that the new value is a better one...
   // Thus, typically this function fails...
   const relevantSubfields = targetField.subfields.filter(subfield => subfield.code === candSubfield.code);
-  debug(`Got ${relevantSubfields.length} sf-cands for field ${targetField.tag}‡${candSubfield.code}`);
   if (relevantSubfields.length === 0) { // Can't replace anything, can I...
     return false;
   }
+  debug(`Got ${relevantSubfields.length} sf-cands for field ${targetField.tag}‡${candSubfield.code}`);
 
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
-
   return false; // default to failure
 }
 
 function okToInsertTagCode(tag, code) {
-  if (tag === '040' && code === 'a') {
-    // This is not allowed as such. It should be 040$d by now...
-    // NB: check this...
+  if (tag === '040' && code === 'a') { // It should be 040$d by now, anyway...
     return false;
   }
   return true;
@@ -134,18 +135,12 @@ function okToInsertTagCode(tag, code) {
 
 function insertSubfieldAllowed(targetField, candSubfield) {
   // NB! If insert is not allowed, the candicate subfield can still replace the original. (Not handled by this function though.)
-
   // Subfield codes missing from the original record can be added by defautl:
   if (!fieldHasSubfield(targetField, candSubfield.code) && okToInsertTagCode(targetField.tag, candSubfield.code)) {
     return true;
   }
-
   // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
-  if (fieldIsRepeatable(targetField.tag, candSubfield.code)) {
-    return true;
-  }
-
-  return false;
+  return fieldIsRepeatable(targetField.tag, candSubfield.code);
 }
 
 function listSubfieldsWorthKeeping(tag) {
@@ -154,16 +149,16 @@ function listSubfieldsWorthKeeping(tag) {
     debug(`keptables: ${entry[0].subfields}`);
     return entry[0].subfields;
   }
-  //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${tag}.`);
-  return '';
+  //debug(`NO KEEPABLE SUBFIELDS FOUND FOR ${tag}.`);
+  return null;
 }
 
 function isKeptableSubfield(tag, subfieldCode) {
   const listOfSubfieldsAsString = listSubfieldsWorthKeeping(tag);
-  // If nothing is listed, everything is good:
-  if (listOfSubfieldsAsString === '') {
+  if ( listOfSubfieldsAsString === null ) {
     return true;
   }
+  // NB! If nothing is listed, this will return true (feature).
   return listOfSubfieldsAsString.indexOf(subfieldCode) > -1;
 }
 
@@ -183,7 +178,7 @@ function isDroppableSubfield(tag, subfieldCode) {
   return droppings.indexOf(subfieldCode) > -1;
 }
 
-function isSubfieldGood(tag, subfieldCode) {
+export function isSubfieldGoodForMerge(tag, subfieldCode) {
   if (isDroppableSubfield(tag, subfieldCode)) {
     debug(`BAD SF: ${tag}$${subfieldCode} is droppable.`);
     return false;
@@ -195,20 +190,10 @@ function isSubfieldGood(tag, subfieldCode) {
   return true;
 }
 
-export function isSubfieldGoodForMerge(tag, subfieldCode) {
-  return isSubfieldGood(tag, subfieldCode);
-}
-
-function mergeSubfieldNotRequired(targetField, candSubfield) {
-  const targetSubfieldsAsStrings = targetField.subfields.map(sf => sf.code + normalizeStringValue(sf.value));
-  const cand = candSubfield.code + normalizeStringValue(candSubfield.value);
-  if (targetSubfieldsAsStrings.some(existingValue => cand === existingValue)) {
-    // Subfield with identical normalized value exists. Do nothing.
-    // Not ideal 382$n subfields, I guess...
-    return true;
-  }
+function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
+  // Add hard-coded exceptions here
   if (targetField.tag === '040' && candSubfield.code === 'd' &&
-    targetSubfieldsAsStrings.some(existingValue => `a${cand.substring(1)}` === existingValue)) {
+      targetField.subfields.some(sf => sf.code === 'a' && sf.value === candSubfield.value)) {
     debug('040$d matched 040$a');
     return true;
   }
@@ -218,9 +203,21 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
     debug('Skip $g ENNAKKOTIETO.');
     return true;
   }
+  return false;
+}
 
+function mergeSubfieldNotRequired(targetField, candSubfield) {
+
+  if (targetField.subfields.some(sf => subfieldsAreIdentical(sf, candSubfield))) {
+    // Subfield with identical normalized value exists. Do nothing.
+    // Not ideal 382$n subfields, I guess...
+    return true;
+  }
+  if (mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield)) {
+    return true;
+  }
   // Check whether we really want this subfield:
-  return !isSubfieldGood(targetField.tag, candSubfield.code);
+  return !isSubfieldGoodForMerge(targetField.tag, candSubfield.code);
 }
 
 function getSubfieldSortOrder(field) {
@@ -267,14 +264,21 @@ export function bottomUpSortSubfields(field) {
   // Should we support multiple values?
   const sortOrder = getSubfieldSortOrder(field);
 
-  //// Currently always sort:
-  //if (sortOrder === null) { return field; }
+  //if (sortOrder === null) { return field; } //// Currently always sort..
 
-  // Handle control subfield order (it never changes):
-  swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']);
+  swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']); // <= Handle control subfield order (it never changes)
   swapSubfields(field, sortOrder || defaultSortOderString);
 
   return field;
+}
+
+function addSubfield(targetField, candSubfield) {
+  const str = `${candSubfield.code} ${candSubfield.value}`;
+  debug(` Added subfield ‡'${str}' to field`);
+  // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
+  targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
+  targetField.merged = 1; // eslint-disable-line functional/immutable-data
+  bottomUpSortSubfields(targetField);
 }
 
 export function mergeSubfield(record, targetField, candSubfield) {
@@ -282,22 +286,15 @@ export function mergeSubfield(record, targetField, candSubfield) {
     //debug(`    No need to add subfield '‡${candSubfield.code} ${candSubfield.value}'`);
     return;
   }
-
-  const str = `${candSubfield.code} ${candSubfield.value}`;
   if (insertSubfieldAllowed(targetField, candSubfield)) {
-    debug(` Added subfield ‡'${str}' to field`);
-    // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
-    targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
-    targetField.merged = 1; // eslint-disable-line functional/immutable-data
-    bottomUpSortSubfields(targetField);
+    addSubfield(targetField, candSubfield);
     return;
   }
-
   // Currently only X00$d 1984- => 1984-2000 type of changes
   if (replaceSubfieldWithBetterValue(targetField, candSubfield)) {
-    targetField.merged = 1;
+    targetField.merged = 1; // eslint-disable-line functional/immutable-data
     return;
   }
   // Didn't do anything, but thinks something should have been done:
-  debug(`TODO: Handle merging/adding subfield '‡${str}' to field`);
+  debug(`TODO: Handle merging/adding subfield '‡${candSubfield.code} ${candSubfield.value}' to field`);
 }
