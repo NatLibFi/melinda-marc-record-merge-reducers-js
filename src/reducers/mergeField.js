@@ -235,7 +235,7 @@ function semanticallyMergablePair(baseField, sourceField) {
     return false;
   }
 
-  // TODO: we should check lifespan here
+  // TODO: we should check lifespan here, $d YYYY
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
   if (!compareName(baseField, sourceField)) {
@@ -321,16 +321,14 @@ export function getCounterpart(record, field) {
   if (!counterpartCands || counterpartCands.length === 0) {
     return null;
   }
-  const fieldStr = fieldToString(field);
-  debug(`Compare incoming '${fieldStr}' with (up to) ${counterpartCands.length} existing field(s)`);
+
+  debug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`);
   const index = counterpartCands.findIndex((currCand) => {
-    const currCandStr = fieldToString(currCand);
-    debug(`  COUNTERPART CAND: '${currCandStr}'`);
     if (mergablePair(currCand, field)) {
-      debug(`  OK pair found: '${currCandStr}'. Returning it!`);
+      debug(`  OK pair found: '${fieldToString(currCand)}'. Returning it!`);
       return true;
     }
-    debug(`  FAILED TO PAIR: '${currCandStr}'. Skipping it!`);
+    debug(`  FAILED TO PAIR: '${fieldToString(currCand)}'. Skipping it!`);
     return false;
   });
   if (index > -1) {
@@ -341,7 +339,8 @@ export function getCounterpart(record, field) {
 
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
-  if (tmp.length > 0) { // remove only iff something remains
+  // remove only iff some other subfield remains
+  if (tmp.length > 0) { // eslint-disable-line functional/no-conditional-statement
     field.subfields = tmp; // eslint-disable-line functional/immutable-data
   }
 }
@@ -355,7 +354,7 @@ function mergeField(record, targetField, sourceField) {
   }
 
   // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield:
-  if (fieldHasSubfield(targetField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) {
+  if (fieldHasSubfield(targetField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) { // eslint-disable-line functional/no-conditional-statement
     removeEnnakkotieto(targetField);
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
   }
@@ -437,17 +436,25 @@ function addField(record, field) {
   return record.insertField(bottomUpSortSubfields(field));
 }
 
-export function mergeOrAddField(record, field) {
+function skipMergeOrAddField(record, field) {
   // We are not interested in this field, whatever the case:
-  // (Currently fields: 066)
+  // (Currently fields: 066,  and some 8XX fields))
   if (getMergeConstraintsForTag(field.tag, 'skip')) {
-    return record;
+    return true;
+  }
+  // Skip duplicate field:
+  if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
+    //debug(`mergeOrAddField(): field '${fieldToString(field)}' already exists! No action required!`);
+    return true;
   }
 
+  return false;
+}
+
+export function mergeOrAddField(record, field) {
   const newField = cloneAndPreprocessField(field, record);
 
-  if (record.fields.some(baseField => fieldsAreIdentical(newField, baseField))) {
-    debug(`mergeOrAddField(): field '${fieldToString(newField)}' already exists! No action required!`);
+  if (skipMergeOrAddField(record, newField)) {
     return record;
   }
 
