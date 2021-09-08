@@ -13,9 +13,10 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const defaultNeedsPunc = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
 const field300NeedsPunc = /(?:[\]a-zA-Z0-9)]|ä)$/u;
 
-const cleanX00aComma = {'code': 'abde', 'followedBy': '#01', 'context': /[a-z],$/u, 'remove': /,$/u};
 // Will unfortunately trigger "Sukunimi, Th." type:
-const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdeg', 'context': /[a-z0-9]\.$/u, 'remove': /\.$/u};
+const cleanX00aComma = {'code': 'abde', 'followedBy': '#01', 'context': /(?:[a-z]|ä|ä|ö),$/u, 'remove': /,$/u};
+const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#01', 'context': /-[,.]$/u, 'remove': /[,.]$/u};
+const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdeg', 'context': /(?:[a-z0-9]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 
 const cleanX00eDot = {'code': 'e', 'followedBy': 'eg', 'context': /(?:aja|jä)\.$/u, 'remove': /\.$/u};
 
@@ -24,13 +25,16 @@ const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#t01', 'context'
 
 
 const cleanPunctuationRules = {
-  '100': [cleanX00aComma, cleanX00aDot, cleanX00eDot],
+  '100': [cleanX00aComma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot],
+  '110': [cleanX00aComma, cleanX00aDot, cleanX00eDot ],
   '300': [
     {'code': 'a', 'followedBy': '!b', 'remove': ' :'},
     {'code': 'ab', 'followedBy': '!c', 'remove': ' ;'},
     {'code': 'abc', 'followedBy': '!e', 'remove': ' +'}
   ],
-  '700': [cleanX00aComma, cleanX00aDot, cleanX00eDot]
+  '600': [cleanX00aComma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot],
+  '700': [cleanX00aComma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot],
+  '800': [cleanX00aComma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot]
 };
 
 const addPairedPunctuationRules = {
