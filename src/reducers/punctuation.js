@@ -2,6 +2,8 @@
 * punctuation.js -- try and fix a marc field punctuation
 *
 * Author(s): Nicholas Volk <nicholas.volk@helsinki.fi>
+*
+* TODO: implement https://www.kiwi.fi/display/kumea/Loppupisteohje
 */
 import createDebugLogger from 'debug';
 
@@ -12,11 +14,12 @@ const defaultNeedsPunc = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
 const field300NeedsPunc = /(?:[\]a-zA-Z0-9)]|ä)$/u;
 
 const cleanX00aComma = {'code': 'abde', 'followedBy': '#01', 'context': /[a-z],$/u, 'remove': /,$/u};
-const cleanX00aDot = {'code': 'abcde', 'followedBy': 'bcdeg', 'context': /[a-z0-9]\.$/u, 'remove': /\.$/u};
+// Will unfortunately trigger "Sukunimi, Th." type:
+const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdeg', 'context': /[a-z0-9]\.$/u, 'remove': /\.$/u};
 
 const cleanX00eDot = {'code': 'e', 'followedBy': 'eg', 'context': /(?:aja|jä)\.$/u, 'remove': /\.$/u};
 
-const addX00aComma = {'add': ',', 'code': 'abcde', 'followedBy': 'deg', 'context': defaultNeedsPunc};
+const addX00aComma = {'add': ',', 'code': 'abcde', 'followedBy': 'cdeg', 'context': defaultNeedsPunc};
 const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#t01', 'context': defaultNeedsPunc};
 
 
@@ -116,6 +119,98 @@ function subfieldFixPunctuation(tag, subfield1, subfield2) {
   addPairedPunctuation(tag, subfield1, subfield2);
 }
 
+function getFinalPunctuationSubfield264(field, subfield) {
+  // "Copyright-vuoden kanssa ei käytetä loppupistettä (2. indikaattori = 4)."
+  if ( field.ind2 === 4 ) {
+    return false;
+  }
+  // "264-kenttään tulee loppupiste, JOS on käytetty osakenttää ‡c tuotantoajan, julkaisuajan, jakeluajan tai valmistusajan ilmaisemiseen
+  // (2. indikaattori = 0, 1, 2 tai 3) JA osakenttä ‡c ei pääty hakasulkuun ']' tai tavuviivaan '-'   tai kaarisulkuun ')'  tai kysymysmerkkiin '?'
+  // NB! No need to check ind2 as the only other possible value has already been covered.
+  // NB! Can be use the generic punc regexp here?
+  if ( relevantSubfields[index].value.matches(/[\-\])?.]$/u)) {
+    return false;
+  }
+  return relevantSubfields[index];
+}
+
+function getRelevantSubfields(field) {
+  // Skip non-interesting fields:
+  if ( !field.tag.match(/^(?:036|051|[1678](?:00|10|11|30)|242|245|250|260|264|307|340|343|351|352|362|50[0-9]|51[1-8]|52[0-6]|53[0348]|54[014567]|55[0256]|56[1237]|58[01458]|720|740|752|754|76[0-9]|77[0-9]|78[0-7]|880)$/u) ) {
+    return null;
+  }
+  // Pick subfields:
+  return field.subfields.filter(subfield => {
+    if ( "uw0123456789".includes(subfield.code)) {
+      return false;
+    }
+    if ( field.tag === '242' && subfield.code === 'y' ) {
+      return false;
+    }
+
+    if ( field.tag === '506' && subfield.code === 'f' ) {
+      return false;
+    }
+    if ( subfield.code === 'u' && field.tag in [ '520', '538', ]) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function getFinalPunctuationSubfield(field) {
+  const relevantSubfields = getRelevantSubfields(field);
+  const index = relevantSubfields.length - 1;
+  if ( index < 0 ) {
+    return null;
+  }
+  // Already has punctuation ("Välimerkit: .?-!") :  
+  if ( '.?-!'.includes(relevantSubfields[index].value.slice(-1)) ) {
+    return null;
+  }
+
+  // Exceptions:
+  // X00, X10, X11, X30 and 740:
+  if ( field.tag.matches(/^(?:[1678]00|[1678]10|[1678]11|[1678]30|740)$/u) ) {
+    if ( relevantSubfields[index].value.slice(-1) === ')' ) {
+      return null; // Is this really an expection. See 260 specs...
+    }
+  }
+
+  if ( field.tag === '264' ) {
+    return getFinalPunctuationSubfield264(field, relevantSubfields[index]);
+  }
+  
+
+  if ( field.tag === '340' && 'cdgjkmop'.includes(relevantSubfields[index].code) ) {
+    return null;
+  }
+  if ( field.tag.matches(/^647|648|65[0145678]|662)$/u) ) {
+    // "EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ"
+    // NB! As we are Finns, we default to our way.
+    // We should add punc to most of the non-Finnish lexicons.. Will list them as exceptions here eventually.
+    return null;
+  }
+
+  // Fields 567 and 760...788:
+  if ( relevantSubfields[index] !== 'a' && field.tag.matches(/^(?:567|76.|77.|78.)$/u) ) {
+    // Funny, we don't want $a in 773 anyway...
+    return null;
+  }
+  return relevantSubfields[index-1];
+}
+
+function addFinalPunctuation(field) {
+  // Add punctuation as per https://www.kiwi.fi/display/kumea/Loppupisteohje:
+  const subfield = getFinalPunctuationSubfield(field);
+  if ( subfield && subfield.value.slice(-1) !== '.' )  {
+    debug(`TODO: add final punctuation to ${field.tag}.`);
+    subfield.value += '.';
+  }
+  // Remove?
+}
+
+
 export function fieldFixPunctuation(field) {
   debug('fieldFixPunctuation() TEST');
   if (!field.subfields) {
@@ -124,6 +219,7 @@ export function fieldFixPunctuation(field) {
   field.subfields.forEach((sf, i) => {
     subfieldFixPunctuation(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null);
   });
+  addFinalPunctuation(field);
 
   return field;
 }
