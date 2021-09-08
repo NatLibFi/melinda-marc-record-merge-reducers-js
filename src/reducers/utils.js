@@ -136,7 +136,7 @@ export function normalizeStringValue(value) {
   return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
 }
 
-function strictEquality(subfieldA, subfieldB) {
+export function subfieldsAreIdentical(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
 }
 
@@ -153,13 +153,13 @@ export function compareAllSubfields(baseField, sourceField, codes) {
   // Get base subfields for which a matching source subfield is found
   const equalSubfieldsBase = baseSubsNorm
     .filter(baseSub => sourceSubsNorm
-      .some(sourceSub => strictEquality(baseSub, sourceSub)));
+      .some(sourceSub => subfieldsAreIdentical(baseSub, sourceSub)));
   //debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
 
   // Get source subfields for which a matching base subfield is found
   const equalSubfieldsSource = sourceSubsNorm
     .filter(sourceSub => baseSubsNorm
-      .some(baseSub => strictEquality(sourceSub, baseSub)));
+      .some(baseSub => subfieldsAreIdentical(sourceSub, baseSub)));
   //debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
 
   // If the same number of matches is found both ways, all compared subfields are equal
