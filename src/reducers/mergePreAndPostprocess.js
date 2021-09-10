@@ -64,7 +64,8 @@ export function postprocessRecord(record) {
   record.fields.forEach(field => {
     // remove merge-specific information:
     if (field.merged) { // eslint-disable-line functional/no-conditional-statement
-      fieldFixPunctuation(field);
+      
+      fieldFixPunctuation(field); // NB! This won't fix existing or added fields!
       // DO YOUR SHIT
       delete field.merged; // eslint-disable-line functional/immutable-data
       // NB! We could
