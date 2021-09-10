@@ -265,8 +265,10 @@ const mergeConstraints = [
   {'tag': '900', 'mergable': false, 'required': ''},
   {'tag': '901', 'mergable': false, 'required': ''},
   {'tag': '910', 'mergable': false, 'required': ''},
+  {'tag': '935', 'required': 'a', 'key': 'az'}, // Fono information at least
   {'tag': '940', 'mergable': false, 'required': ''},
   {'tag': '960', 'mergable': false, 'required': ''},
+  {'tag': '973', 'required': 'w', key: 'w'}, // Viola multi-hosts 
   {'tag': '995', 'mergable': false, 'required': ''},
   {'tag': 'CAT', 'mergable': false, 'required': ''},
   {'tag': 'LOW', 'mergable': false, 'required': ''},
