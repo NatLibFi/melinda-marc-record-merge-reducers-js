@@ -10,6 +10,7 @@ import genericDatafield from './genericDatafield';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // ### Keskeneräinen
+// ### Sariannan testicommit: toimiiko uusi token? Tämän rivin saa poistaa.
 
 // Processing rules for MARC fields by field tag
 // Copy duplicate instance of non-identical field from source to base
