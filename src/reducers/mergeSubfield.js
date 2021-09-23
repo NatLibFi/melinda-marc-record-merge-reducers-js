@@ -19,7 +19,7 @@ const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want
 const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
-  {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
+  {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
   {'tag': '110', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
@@ -30,18 +30,19 @@ const subfieldSortOrder = [
   {'tag': '490', 'sortOrder': ['a', 'x', 'v', 'l']},
   {'tag': '505', 'sortOrder': ['a']},
   {'tag': '526', 'sortOrder': ['i', 'a']},
-  {'tag': '600', 'sortOrder': ['a', 'b', 'c', 'd', 'e', '0', '5', '9']},
+  {'tag': '600', 'sortOrder': ['a', 'b', 'c', 'q', 'd', 'e', '0', '5', '9']},
   {'tag': '610', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '700', 'sortOrder': ['i', 'a', 'b', 'c', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
+  {'tag': '700', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
   {'tag': '710', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '776', 'sortOrder': ['i', 'a']},
+  {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
   {'tag': '810', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['a']},
-  {'tag': 'SID', 'sortOrder': ['a', 'b']} // Hack, so that default order is not used
+  {'tag': 'SID', 'sortOrder': ['c', 'b']} // Hack, so that default order is not used
 ];
 
 // NB! These are X00 specific. Should we somehow parametrize them?
