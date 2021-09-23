@@ -366,7 +366,7 @@ function mergeField(record, targetField, sourceField) {
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
       debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${originalValue}'`);
       debug(`   RESULT: '${newValue}'`);
-      debug(`   TODO: sort subfields, handle punctuation...`);
+      //debug(`   TODO: sort subfields, handle punctuation...`);
     }
     //else { debug(`  mergeSubfield() did not add '‡${candSubfield.code} ${candSubfield.value}' to '${originalValue}'`); }
 
