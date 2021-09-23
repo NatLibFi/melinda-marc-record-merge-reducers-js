@@ -150,8 +150,11 @@ export function controlSubfieldsPermitMerge(field1, field2) {
   if (!controlSubfield5PermitsMerge(field1, field2) || !controlSubfield6PermitsMerge(field1, field2) || !controlSubfield9PermitsMerge(field1, field2)) {
     return false;
   }
-  // We don't handle $8 subfields here at all, as they affect multiple fields!
+  // We don't handle $8 subfields here at all, as they affect multiple fields! Also these would get screwed:
+  // 38211 	|8 3\u |a kuoro |2 seko
+  // 38211 	|8 6\u |a kuoro |2 seko |9 VIOLA<KEEP>
   if (!subfieldsAreEmpty(field1, field2, '8')) {
+
     //debug(' csf8 failed');
     return false;
   }
