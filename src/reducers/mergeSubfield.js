@@ -29,7 +29,7 @@ const subfieldSortOrder = [
   {'tag': '386', 'sortOrder': ['8', 'm', 'n', 'a']},
   {'tag': '490', 'sortOrder': ['a', 'x', 'v', 'l']},
   {'tag': '505', 'sortOrder': ['a']},
-  {'tag': '526', 'sortOrder': ['i', 'a']},
+  {'tag': '526', 'sortOrder': ['i', 'a', 'b', 'x', 'z']},
   {'tag': '600', 'sortOrder': ['a', 'b', 'c', 'q', 'd', 'e', '0', '5', '9']},
   {'tag': '610', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
@@ -156,7 +156,7 @@ function listSubfieldsWorthKeeping(tag) {
 
 function isKeptableSubfield(tag, subfieldCode) {
   const listOfSubfieldsAsString = listSubfieldsWorthKeeping(tag);
-  if ( listOfSubfieldsAsString === null ) {
+  if (listOfSubfieldsAsString === null) {
     return true;
   }
   // NB! If nothing is listed, this will return true (feature).
