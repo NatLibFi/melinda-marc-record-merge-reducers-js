@@ -39,7 +39,7 @@
 	"dependencies": {
 		"@natlibfi/marc-record": "^6.1.1",
 		"@natlibfi/marc-record-validate": "^6.0.1",
-		"@natlibfi/marc-record-validators-melinda": "git+https://github.com/NatLibFi/marc-record-validators-melinda.git#punc_single_field",
+		"@natlibfi/marc-record-validators-melinda": "^8.4.4",
 		"debug": "^4.3.1",
 		"normalize-diacritics": "^2.13.2"
 	},
