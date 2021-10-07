@@ -22,6 +22,7 @@ const subfieldSortOrder = [
   {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
   {'tag': '110', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
+  {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l' ]},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']},
   {'tag': '382', 'sortOrder': ['a']},
