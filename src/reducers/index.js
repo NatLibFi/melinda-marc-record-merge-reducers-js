@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import internalFields from './internalFields';
+//import internalFields from './internalFields';
 import leader from './leader';
 import field006 from './field006';
 import field007 from './field007';
@@ -41,7 +41,7 @@ const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude s
 // Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
 // eslint-disable-next-line
 const allReducers = [
-  internalFields(), // LOW, CAT, SID
+  //internalFields(), // LOW, CAT, SID
   leader(), // Test 01
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
