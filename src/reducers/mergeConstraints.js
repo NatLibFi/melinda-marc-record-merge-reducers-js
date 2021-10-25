@@ -219,7 +219,7 @@ const mergeConstraints = [
   {'tag': '767', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz'},
   {'tag': '770', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz'},
   {'tag': '772', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz'},
-  {'tag': '773', 'required': 'w', key: 'w'}, // Kirjavälitys should not have any component parts. However, this need to be re-thought...
+  {'tag': '773', 'required': 'w', key: 'wgq'}, // Kirjavälitys should not have any component parts. However, this need to be re-thought...
   // Currently we (appently) drop fields that don't contain 773$w...
   {'tag': '774', 'mergable': false, 'required': ''},
   {'tag': '775', 'mergable': false, 'required': ''},
@@ -268,7 +268,7 @@ const mergeConstraints = [
   {'tag': '935', 'required': 'a', 'key': 'az'}, // Fono information at least
   {'tag': '940', 'mergable': false, 'required': ''},
   {'tag': '960', 'mergable': false, 'required': ''},
-  {'tag': '973', 'required': 'w', key: 'w'}, // Viola multi-hosts 
+  {'tag': '973', 'required': 'w', key: 'w'}, // Viola multi-hosts
   {'tag': '995', 'mergable': false, 'required': ''},
   {'tag': 'CAT', 'mergable': false, 'required': ''},
   {'tag': 'LOW', 'mergable': false, 'required': ''},
