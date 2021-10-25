@@ -22,7 +22,7 @@ const subfieldSortOrder = [
   {'tag': '100', 'sortOrder': ['a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
   {'tag': '110', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l' ]},
+  {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
   {'tag': '245', 'sortOrder': ['a', 'b', 'n', 'p', 'c']},
   {'tag': '382', 'sortOrder': ['a']},
@@ -37,6 +37,7 @@ const subfieldSortOrder = [
   {'tag': '700', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
   {'tag': '710', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
+  {'tag': '773', 'sortOrder': ['7', 'w', 'a', 't', 'd', 'm', 'h', 'g', 'k', 'o', 'x', 'z', 'g', 'q']},
   {'tag': '776', 'sortOrder': ['i', 'a']},
   {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
   {'tag': '810', 'sortOrder': ['a', 'b', 'n']},
