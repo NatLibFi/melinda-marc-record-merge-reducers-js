@@ -64,7 +64,7 @@ export function postprocessRecord(record) {
   record.fields.forEach(field => {
     // remove merge-specific information:
     if (field.merged) { // eslint-disable-line functional/no-conditional-statement
-      
+
       fieldFixPunctuation(field); // NB! This won't fix existing or added fields!
       // DO YOUR SHIT
       delete field.merged; // eslint-disable-line functional/immutable-data
@@ -132,6 +132,16 @@ function datesAssociatedWithName(field) {
 
 }
 
+function normalizeFIN01(value) {
+  if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
+    return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
+  }
+  if ((/^FCC[0-9]{9}$/u).test(value)) {
+    return `(FIN01)${value.substring(3)}`; // eslint-disable-line functional/immutable-data
+  }
+  return false;
+}
+
 function normalizeFIN11(value) {
   if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
     return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
@@ -141,6 +151,8 @@ function normalizeFIN11(value) {
   }
   return false;
 }
+
+
 
 export function normalizeSubfield0Value(value) {
   if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
@@ -155,7 +167,7 @@ export function normalizeSubfield0Value(value) {
   if ((/^\(FI-ASTERI-W\)[0-9]{9}$/u).test(value)) {
     return `(FIN13)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
-  return normalizeFIN11(value) || value;
+  return normalizeFIN01(value) || normalizeFIN11(value) || value;
 }
 
 /*
