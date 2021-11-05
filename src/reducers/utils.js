@@ -123,20 +123,6 @@ export function subfieldsAreIdentical(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
 }
 
-// Compare base and source subfield arrays defined by the given array of subfield codes
-// Returns true if all compared subfields are equal
-export function compareAllSubfields(baseField, sourceField, codes) {
-  const baseSubsNorm = baseField.subfields
-    .filter(subfield => codes.indexOf(subfield.code) !== -1)
-    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
-  const sourceSubsNorm = sourceField.subfields
-    .filter(subfield => codes.indexOf(subfield.code) !== -1)
-    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
-
-  codes.forEach(code => debug(`Subfield (${code}): not equal in source and base`));
-  return false;
-}
-
 // Default subfield sort order if no custom order is given
 const sortDefault = [
   '8',
