@@ -6,10 +6,10 @@ import {
   fieldIsRepeatable,
   fieldToString,
   fieldsAreIdentical,
-  normalizeStringValue,
   recordHasField
 } from './utils.js';
 
+import { normalizeStringValue } from './normalize.js'
 import {
   cloneAndPreprocessField
 } from './mergePreAndPostprocess.js';

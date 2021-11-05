@@ -1,4 +1,3 @@
-import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
 
 import fs from 'fs';
@@ -103,20 +102,6 @@ export function fieldIsRepeatable(tag, code = null) {
     return fieldSpecs[0].repeatable;
   }
   return subfieldIsRepeatable(fieldSpecs[0], code);
-}
-
-// Normalize subfield values for comparison, returns array of normalized subfields
-export function normalizeSubfields(field) {
-  const normalizedSubs = field.subfields
-    .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
-  return normalizedSubs;
-}
-
-export function normalizeStringValue(value) {
-  // Regexp options: g: global search, u: unicode
-  // Note: normalize-diacritics also changes "äöå" to "aoa"
-  const punctuation = /[.,\-/#!?$%^&*;:{}=_`~()[\]]/gu;
-  return normalizeSync(value).toLowerCase().replace(punctuation, '', 'u').replace(/\s+/gu, ' ').trim();
 }
 
 export function subfieldsAreIdentical(subfieldA, subfieldB) {
