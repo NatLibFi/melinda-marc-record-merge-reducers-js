@@ -147,7 +147,7 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null) {
   }
 
   if (!(`${tag}` in ruleArray)) {
-    debug(`No punctuation rules found for ${tag}$ (${subfield1.code})`);
+    debug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`);
     return;
   }
   const activeRules = ruleArray[tag].filter(rule => checkRule(rule, subfield1, subfield2));
@@ -161,7 +161,7 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null) {
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
     }
     if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statement
-      debug(` PROCESS PUNC: '$${subfield1.code} ${originalValue}' => '$${subfield1.code} ${subfield1.value}'`); // eslint-disable-line functional/immutable-data
+      debug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`); // eslint-disable-line functional/immutable-data
     }
   });
 }
