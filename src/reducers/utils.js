@@ -16,17 +16,17 @@ export function fieldsAreIdentical(field1, field2) {
   if (field1.tag !== field2.tag) { // NB! We are skipping normalizations here on purpose! They should be done beforehand...
     return false;
   }
-  return localFieldToString(field1) === localFieldToString(field2);
+  return fieldToString(field1) === fieldToString(field2);
 
   /*
   if ('value' in field1) { // 001-009
-    return localFieldToString(field1) === localFieldToString(field2);
+    return fieldToString(field1) === fieldToString(field2);
   }
 
   if ('subfields' in field1) {
     if (field1.ind1 === field2.ind1 && field1.ind2 === field2.ind2 && field1.subfields.length === field2.subfields.length) {
       // NB! This does not check order of subfields, which might or might nor be a bad idea.
-      // NV would just do localFieldToString() and compare them strings...
+      // NV would just do fieldToString() and compare them strings...
       // NV: Also this is a subset check, not an equality check.
       // This is the original (Artturi?) way...
       return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
@@ -43,8 +43,8 @@ export function getNonIdenticalFields(baseFields, sourceFields) {
   debug(`gNIF() in... ${baseFields.length} vs ${sourceFields.length}`);
 
   /*
-  const baseFieldsAsString = baseFields.map(field => localFieldToString(field));
-  return sourceFields.filter(sourceField => baseFieldsAsString.some(fieldAsString => fieldAsString === localFieldToString(sourceField)));
+  const baseFieldsAsString = baseFields.map(field => fieldToString(field));
+  return sourceFields.filter(sourceField => baseFieldsAsString.some(fieldAsString => fieldAsString === fieldToString(sourceField)));
 */
   // Return array of non-identical fields (source fields not present in base)
   return sourceFields.filter(filterNonIdentical);
@@ -54,7 +54,7 @@ export function getNonIdenticalFields(baseFields, sourceFields) {
   }
 }
 
-function localFieldToString(f) {
+export function fieldToString(f) {
   if ('subfields' in f) {
     return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
   }
@@ -62,10 +62,6 @@ function localFieldToString(f) {
   function formatSubfields(field) {
     return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
   }
-}
-
-export function fieldToString(f) { // copied aped from marc-record-js, NB! Overrides the normal json output (oops)
-  return localFieldToString(f);
 }
 
 // Copy fields from source to base
