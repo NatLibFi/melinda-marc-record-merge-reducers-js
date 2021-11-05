@@ -34,7 +34,7 @@ const addX00aComma = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'conte
 const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#t01', 'context': defaultNeedsPuncAfter};
 
 
-const cleanPunctuationRules = {
+const cleanCrappyPunctuationRules = {
   '100': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket],
   '300': [
     {'code': 'a', 'followedBy': '!b', 'remove': ' :'},
@@ -46,6 +46,24 @@ const cleanPunctuationRules = {
   '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
   '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
   '245': [{'code': 'ab', 'followedBy': '!c', 'remove': ' /'}]
+};
+
+const cleanValidPunctuationRules = {
+  '100': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket],
+  '300': [
+    {'code': 'a', 'followedBy': 'b', 'remove': ' :'},
+    {'code': 'ab', 'followedBy': 'c', 'remove': ' ;'},
+    {'code': 'abc', 'followedBy': 'e', 'remove': ' +'}
+  ],
+  '600': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
+  '700': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket, cleanRHS],
+  '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
+  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
+  '245': [
+    {'code': 'a', 'followedBy': 'b', 'remove': ' :'},
+    {'code': 'a', 'followedBy': 'c', 'remove': ' /'},
+    {'code': 'b', 'followedBy': 'c', 'remove': ' /'},
+  ]
 };
 
 const addPairedPunctuationRules = {
@@ -74,7 +92,7 @@ function ruleAppliesToSubfield(rule, subfield) {
 }
 
 function ruleAppliesToNextSubfieldCode(rule, subfield) {
-  if (!('followedBy' in rule)) { // No sanity check required
+  if (!('followedBy' in rule)) { // apply
     return true;
   }
   const negation = rule.followedBy.includes('!');
@@ -116,41 +134,40 @@ function checkRule(rule, subfield1, subfield2) {
   return true;
 }
 
-function removeCrappyPunctuation(tag, subfield1, subfield2) {
-  if (!(`${tag}` in cleanPunctuationRules)) {
+
+
+function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null) {
+  if ( ruleArray === null ) {
+    debug(`applyPunctuation(): No rules to apply!`);
+    return;    
+  }
+
+  if (!(`${tag}` in cleanCrappyPunctuationRules)) {
     debug(`No crappy punc clean up rule found for ${tag}$ (${subfield1.code})`);
     return;
   }
-  const activeRules = cleanPunctuationRules[tag].filter(rule => checkRule(rule, subfield1, subfield2));
+  const activeRules = ruleArray[tag].filter(rule => checkRule(rule, subfield1, subfield2));
 
   activeRules.forEach(rule => {
     const originalValue = subfield1.value;
-    subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
+    if ( rule.remove ) { // eslint-disable-line functional/no-conditional-statement
+      subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
+    }
+    if ( rule.add ) { // eslint-disable-line functional/no-conditional-statement
+      subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
+    }
     if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statement
-      debug(` REMOVE PUNC: '$${subfield1.code} ${originalValue}' => '$${subfield1.code} ${subfield1.value}'`); // eslint-disable-line functional/immutable-data
+      debug(` PROCESS PUNC: '$${subfield1.code} ${originalValue}' => '$${subfield1.code} ${subfield1.value}'`); // eslint-disable-line functional/immutable-data
     }
   });
 }
 
-function addPairedPunctuation(tag, subfield1, subfield2) {
-  if (!(`${tag}` in addPairedPunctuationRules)) {
-    debug(`No clean up rule found for ${tag}$${subfield1.code}`);
-    return;
-  }
-
-  const activeRules = addPairedPunctuationRules[tag].filter(rule => checkRule(rule, subfield1, subfield2));
-  activeRules.forEach(rule => {
-    subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
-    debug(` ADDED IN-BETWEEN PUNC '${rule.add}', NOW: '$${subfield1.code} ${subfield1.value}'`);
-  });
-}
-
 function subfieldFixPunctuation(tag, subfield1, subfield2) {
-  removeCrappyPunctuation(tag, subfield1, subfield2);
-
-  addPairedPunctuation(tag, subfield1, subfield2);
+  applyPunctuationRules(tag, subfield1, subfield2, cleanCrappyPunctuationRules);
+  applyPunctuationRules(tag, subfield1, subfield2, addPairedPunctuationRules);
 }
 
+/*
 function getFinalPunctuationSubfield264(field, subfield) {
   // "Copyright-vuoden kanssa ei käytetä loppupistettä (2. indikaattori = 4)."
   // "Must be $a condition" is aped from marc-record-validators-melinda/src/ending-punctuation-conf.js.
@@ -167,6 +184,7 @@ function getFinalPunctuationSubfield264(field, subfield) {
   }
   return subfield;
 }
+*/
 
 function getRelevantSubfields(field) {
   // Skip non-interesting fields:
@@ -219,7 +237,7 @@ function getFinalPunctuationSubfield(field) {
   if (field.tag === '340' && 'cdgjkmop'.includes(relevantSubfields[index].code)) {
     return null;
   }
-  
+
   if (field.tag.match(/^(?:647|648|65[0145678]|662)$/u)) {
     // "EI suomalaisten sanastojen termeihin, muihin sanaston käytännön mukaan, yleensä KYLLÄ"
     // NB! As we are Finns, we default to our way.
@@ -239,6 +257,7 @@ function getFinalPunctuationSubfield(field) {
   return relevantSubfields[index];
 }
 
+/*
 function addFinalPunctuation(field) {
   // Add punctuation as per https://www.kiwi.fi/display/kumea/Loppupisteohje:
   const subfield = getFinalPunctuationSubfield(field);
@@ -248,7 +267,19 @@ function addFinalPunctuation(field) {
   }
   // Remove?
 }
+*/
 
+
+
+export function fieldStripPunctuation(field) {
+  if (!field.subfields) {
+    return field;
+  }
+
+  field.subfields.forEach((sf, i) => {
+    applyPunctuationRules(field.tag, sf, (i + 1 < field.subfields.length ? field.subfields[i + 1] : null), cleanValidPunctuationRules);
+  });  
+}
 
 export function fieldFixPunctuation(field) {
   debug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`);
