@@ -1,5 +1,8 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
+
+import { clone } from '@natlibfi/melinda-commons';
+
 import {
   fieldHasSubfield,
   fieldHasNSubfields,
@@ -9,7 +12,8 @@ import {
   recordHasField
 } from './utils.js';
 
-import { normalizeStringValue } from './normalize.js'
+import { cloneAndNormalizeField } from './normalize.js';
+
 import {
   cloneAndPreprocessField
 } from './mergePreAndPostprocess.js';
@@ -44,7 +48,7 @@ function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
   return optionalSubfieldComparison(baseField, sourceField, keySubfieldsAsString);
 }
 
-function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
+function mandatorySubfieldComparison(originalField1, originalField2, keySubfieldsAsString) {
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
@@ -52,6 +56,8 @@ function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
     // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
     return fieldToString(field1) === fieldToString(field2);
   }
+  const field1 = cloneAndNormalizeField(originalField1);
+  const field2 = cloneAndNormalizeField(originalField2);
 
   const subfieldArray = keySubfieldsAsString.split('');
 
@@ -65,14 +71,12 @@ function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
     }
 
     return subfields1.every(sf => {
-      const normSubfieldValue = normalizeStringValue(sf.value);
       return subfields2.some(sf2 => {
-        const normSubfieldValue2 = normalizeStringValue(sf2.value);
-        if (normSubfieldValue === normSubfieldValue2) {
-          debug(` mandatory pairing succeeded for normalized subfield ‡${sf.code} '${normSubfieldValue}'`);
+        if (sf.value === sf2.value) {
+          debug(` mandatory pairing succeeded for normalized subfield ‡${sf.code} '${sf.value}'`);
           return true;
         }
-        debug(`failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
+        debug(`failed to pair ‡${sf.code}: ${sf.value} and ${sf2.value}`);
         return false;
       });
     });
@@ -80,55 +84,35 @@ function mandatorySubfieldComparison(field1, field2, keySubfieldsAsString) {
   });
 }
 
-function normalizedSubfieldsMatch(subfields1, subfields2) {
-  //debug(`nSM ${subfields1.length} vs ${subfields2.length}`);
-  if (subfields1.length === 0 || subfields2.length === 0) {
-    return true;
+function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
+  if (keySubfieldsAsString === null) { // does not currently happen
+    // If keySubfieldsAsString is undefined, (practically) everything is the string.
+    // When everything is the string, the strings need to be (practically) identical.
+    // (NB! Here order matters. We should probably make it matter everywhere.)
+    // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
+    return fieldToString(field1) === fieldToString(field2);
   }
-  //debug(`nSM $${subfields1[0].code} ${subfields1.length} vs ${subfields2.length}`);
-  const vals1 = subfields1.map(subfield => normalizeStringValue(subfield.value));
-  const vals2 = subfields2.map(subfield => normalizeStringValue(subfield.value));
-  const vals1b = vals1.filter(value => !vals2.includes(value));
-  const vals2b = vals2.filter(value => !vals1.includes(value));
-  if (vals1b.length === 0 || vals2b.length === 0) {
-    return true;
-  }
-  return false;
-}
+  const field1 = cloneAndNormalizeField(originalBaseField);
+  const field2 = cloneAndNormalizeField(originalSourceField);
 
-function optionalSubfieldComparison(field1, field2, keySubfieldsAsString) {
-  if (keySubfieldsAsString === null) {
-    return true;
-  }
   const subfieldArray = keySubfieldsAsString.split('');
-  //debug(`  COMPARE SUBS ${keySubfieldsAsString}`);
-  //debug(`    LEN b4 filth: ${field1.subfields.length} vs ${field2.subfields.length}`);
-  return subfieldArray.every(subfieldCode => {
-    //debug(`NOW ${subfieldCode}`);
-    const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
-    const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
-    return normalizedSubfieldsMatch(subfields1, subfields2);
 
-    /*
-    if (subfields1.length === 0 || subfields2.length === 0) {
+  return subfieldArray.every(subfieldCode => {
+    const subfieldValues1 = field1.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
+    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
+    // If one side is empty, all is good
+    if (subfieldValues1.length === 0 || subfieldValues2.length === 0) {
       return true;
     }
+    // If one set is a subset of the other, all is good
+    if ( subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))){
+      return true;
+    }
+    return false;
 
-    return subfields1.every(sf => {
-      const normSubfieldValue = normalizeStringValue(sf.value);
-      return subfields2.some(sf2 => {
-        const normSubfieldValue2 = normalizeStringValue(sf2.value);
-        if (normSubfieldValue === normSubfieldValue2) {
-          debug(`pairing succeed for normalized '${normSubfieldValue}'`);
-          return true;
-        }
-        debug(`failed to pair ${normSubfieldValue} and ${normSubfieldValue2}`);
-        return false;
-      });
-    });
-*/
   });
 }
+
 
 function localTagToRegexp(tag) {
   if (tag in counterpartRegexps) {
@@ -187,6 +171,7 @@ function indicatorsMatch(field1, field2) {
   // However, we do not let them pass yet.
   return true;
 }
+
 
 
 function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
@@ -359,7 +344,11 @@ function mergeField(record, targetField, sourceField) {
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
   }
 
-  sourceField.subfields.forEach(candSubfield => {
+  // We want to add the field without punctuation, and add puctuation later on:
+  const normalizedSourceField = cloneAndNormalizeField(sourceField);
+
+  normalizedSourceField.subfields.forEach(candSubfield => {
+  //sourceField.subfields.forEach(candSubfield => {
     const originalValue = fieldToString(targetField);
     mergeSubfield(record, targetField, candSubfield);
     const newValue = fieldToString(targetField);
