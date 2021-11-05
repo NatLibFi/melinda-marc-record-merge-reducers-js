@@ -18,23 +18,10 @@ export function fieldsAreIdentical(field1, field2) {
   }
   return fieldToString(field1) === fieldToString(field2);
 
-  /*
-  if ('value' in field1) { // 001-009
-    return fieldToString(field1) === fieldToString(field2);
-  }
+  // The order of subfields is relevant! Bloody JS idiotisms make people use conditions such as:
+  // return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
 
-  if ('subfields' in field1) {
-    if (field1.ind1 === field2.ind1 && field1.ind2 === field2.ind2 && field1.subfields.length === field2.subfields.length) {
-      // NB! This does not check order of subfields, which might or might nor be a bad idea.
-      // NV would just do fieldToString() and compare them strings...
-      // NV: Also this is a subset check, not an equality check.
-      // This is the original (Artturi?) way...
-      return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
-    }
-    return false;
-  }
-
-  */
+  return fieldToString(field1) === fieldToString(field2);
 }
 
 // Modified from copy functionality in marc-record-merge
@@ -146,38 +133,9 @@ export function compareAllSubfields(baseField, sourceField, codes) {
     .filter(subfield => codes.indexOf(subfield.code) !== -1)
     .map(({code, value}) => ({code, value: normalizeStringValue(value)}));
 
-  // Get base subfields for which a matching source subfield is found
-  const equalSubfieldsBase = baseSubsNorm
-    .filter(baseSub => sourceSubsNorm
-      .some(sourceSub => subfieldsAreIdentical(baseSub, sourceSub)));
-  //debug(`equalSubfieldsBase: ${JSON.stringify(equalSubfieldsBase, undefined, 2)}`);
-
-  // Get source subfields for which a matching base subfield is found
-  const equalSubfieldsSource = sourceSubsNorm
-    .filter(sourceSub => baseSubsNorm
-      .some(baseSub => subfieldsAreIdentical(sourceSub, baseSub)));
-  //debug(`equalSubfieldsSource: ${JSON.stringify(equalSubfieldsSource, undefined, 2)}`);
-
-  // If the same number of matches is found both ways, all compared subfields are equal
-  if (baseSubsNorm.length === equalSubfieldsBase.length &&
-    sourceSubsNorm.length === equalSubfieldsSource.length &&
-    equalSubfieldsBase.length === equalSubfieldsSource.length) {
-    codes.forEach(code => debug(`Subfield (${code}): all equal in source and base`));
-    return true;
-  }
   codes.forEach(code => debug(`Subfield (${code}): not equal in source and base`));
   return false;
 }
-
-// Get non-repeatable subfields to copy from source to base
-// Filter out dropped and identifying subfields, if given
-export function getNonRepSubs(sourceField, nonRepCodes, dropCodes = [], idCodes = []) {
-  const nonRepSubs = sourceField.subfields
-    .filter(subfield => nonRepCodes
-      .filter(code => dropCodes.indexOf(code) === -1 && idCodes.indexOf(code) === -1).indexOf(subfield.code) !== -1);
-  return nonRepSubs;
-}
-
 
 // Default subfield sort order if no custom order is given
 const sortDefault = [
