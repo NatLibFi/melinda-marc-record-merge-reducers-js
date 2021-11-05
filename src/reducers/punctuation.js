@@ -22,7 +22,7 @@ const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 // Will unfortunately trigger "Sukunimi, Th." type:
 const removeX00Comma = {'code': 'abcqde', 'followedBy': '#0159', 'context': /(?:[a-z)]|ä|ä|ö),$/u, 'remove': /,$/u};
 const cleanRHS = {'code': 'abcde', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
-const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#0159', 'context': /-[,.]$/u, 'remove': /[,.]$/u};
+const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#0159', 'context': /[0-9][,.]$/u, 'remove': /[,.]$/u};
 const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 // These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation...
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj', 'context': /(?:aja|jä)\.$/u, 'remove': /\.$/u};
@@ -48,16 +48,20 @@ const cleanCrappyPunctuationRules = {
   '245': [{'code': 'ab', 'followedBy': '!c', 'remove': ' /'}]
 };
 
+const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
+const cleanLegalX00Dot = {'code': 'abcde', 'followedBy': 't#0159', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
+
 const cleanValidPunctuationRules = {
-  '100': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket],
+  
+  '100': [cleanLegalX00Comma, cleanLegalX00Dot],
+  '600': [cleanLegalX00Comma, cleanLegalX00Dot],
+  '700': [cleanLegalX00Comma, cleanLegalX00Dot],
+  '800': [cleanLegalX00Comma, cleanLegalX00Dot],
   '300': [
     {'code': 'a', 'followedBy': 'b', 'remove': ' :'},
     {'code': 'ab', 'followedBy': 'c', 'remove': ' ;'},
     {'code': 'abc', 'followedBy': 'e', 'remove': ' +'}
   ],
-  '600': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
-  '700': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket, cleanRHS],
-  '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
   '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
   '245': [
     {'code': 'a', 'followedBy': 'b', 'remove': ' :'},
@@ -102,7 +106,7 @@ function ruleAppliesToNextSubfieldCode(rule, subfield) {
     }
     return rule.followedBy.includes('#');
   }
-  debug(`NSF ${subfield.code} - ${rule.followedBy} - ${negation}`);
+  //debug(`NSF ${subfield.code} - ${rule.followedBy} - ${negation}`);
   if (negation) {
     return !rule.followedBy.includes(subfield.code);
   }
@@ -121,16 +125,16 @@ function ruleAppliesToNextSubfield(rule, subfield) {
 
 function checkRule(rule, subfield1, subfield2) {
   if (!ruleAppliesToSubfield(rule, subfield1)) {
-    debug(`FAIL ON LHS FIELD: '${subfield1.code} ${subfield1.value}`);
+    // debug(`FAIL ON LHS FIELD: '${subfield1.code} ${subfield1.value}`);
     return false;
   }
 
   if (!ruleAppliesToNextSubfield(rule, subfield2)) {
-    debug(`FAIL ON RHS FIELD`);
+    // debug(`FAIL ON RHS FIELD`);
     return false;
   }
 
-  debug(` ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`);
+  // debug(` ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`);
   return true;
 }
 
@@ -142,8 +146,8 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null) {
     return;    
   }
 
-  if (!(`${tag}` in cleanCrappyPunctuationRules)) {
-    debug(`No crappy punc clean up rule found for ${tag}$ (${subfield1.code})`);
+  if (!(`${tag}` in ruleArray)) {
+    debug(`No punctuation rules found for ${tag}$ (${subfield1.code})`);
     return;
   }
   const activeRules = ruleArray[tag].filter(rule => checkRule(rule, subfield1, subfield2));
