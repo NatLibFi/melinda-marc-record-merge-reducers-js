@@ -12,7 +12,7 @@ import {
   recordHasField
 } from './utils.js';
 
-import { cloneAndNormalizeField } from './normalize.js';
+import { cloneAndNormalizeField, cloneAndRemovePunctuation } from './normalize.js';
 
 import {
   cloneAndPreprocessField
@@ -345,7 +345,7 @@ function mergeField(record, targetField, sourceField) {
   }
 
   // We want to add the field without punctuation, and add puctuation later on:
-  const normalizedSourceField = cloneAndNormalizeField(sourceField);
+  const normalizedSourceField = cloneAndRemovePunctuation(sourceField);
 
   normalizedSourceField.subfields.forEach(candSubfield => {
   //sourceField.subfields.forEach(candSubfield => {
