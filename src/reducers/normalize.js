@@ -6,8 +6,12 @@ import { fieldStripPunctuation } from './punctuation';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-function conditionallyLowercase(tag, subfieldcode, value){
-    return value.toLowerCase();
+function conditionallyLowercase(tag, subfieldCode, value){
+    // (Used mostly when merging subfields: if normalized version exists, skip adding new subfield.)
+    if ( ['100', '110', '240', '245', '600', '610', '630', '700', '710', '800', '810'].includes(tag) ) {
+        return value.toLowerCase();
+    }
+    return value;
 }
 
 function removePunctuation(tag, subfieldCode, value) {
@@ -23,6 +27,18 @@ function normalizeField(field) {
 
     field.subfields = normalizeSubfields(field); // eslint-disable-line functional/immutable-data
     return field;
+}
+
+export function cloneAndRemovePunctuation(field) {
+    const clonedField = clone(field);
+    fieldStripPunctuation(clonedField);
+
+    field.subfields.forEach((value, index) => { 
+        if ( field.subfields[index].value !== clonedField.subfields[index].value) {
+            debug(`NORMALIZE: ${field.subfields[index].value} => ${clonedField.subfields[index].value}`);
+        }
+    });
+    return clonedField;
 }
 
 export function cloneAndNormalizeField(field) {
