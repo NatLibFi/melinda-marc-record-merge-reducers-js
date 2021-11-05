@@ -1,4 +1,5 @@
 import createDebugLogger from 'debug';
+import { cloneAndNormalizeField } from './normalize.js';
 import {
   fieldHasSubfield,
   fieldIsRepeatable,
@@ -210,8 +211,9 @@ function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
 }
 
 function mergeSubfieldNotRequired(targetField, candSubfield) {
+  const normalizedTargetField = cloneAndNormalizeField(targetField)
 
-  if (targetField.subfields.some(sf => subfieldsAreIdentical(sf, candSubfield))) {
+  if (normalizedTargetField.subfields.some(sf => subfieldsAreIdentical(sf, candSubfield))) {
     // Subfield with identical normalized value exists. Do nothing.
     // Not ideal 382$n subfields, I guess...
     return true;
