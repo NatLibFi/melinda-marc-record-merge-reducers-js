@@ -206,15 +206,11 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
 
 
 // NVOLK's marc record modifications
-function internalFieldHasSubfield(field, subfieldCode, subfieldValue) {
+export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
   if (subfieldValue === null) {
     return field.subfields.some(sf => sf.code === subfieldCode);
   }
   return field.subfields.some(sf => sf.code === subfieldCode && subfieldValue === sf.value);
-}
-
-export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
-  return internalFieldHasSubfield(field, subfieldCode, subfieldValue);
 }
 
 export function fieldHasNSubfields(field, subfieldCode, subfieldValue = null) {
