@@ -1,40 +1,59 @@
 import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
-import { fieldsAreIdentical } from './utils';
 import clone from 'clone';
-import { fieldStripPunctuation } from './punctuation';
+import { fieldStripPunctuation } from './punctuation.js';
+import { isControlSubfieldCode } from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-function conditionallyLowercase(tag, subfieldCode, value){
-    // (Used mostly when merging subfields: if normalized version exists, skip adding new subfield.)
-    if ( ['100', '110', '240', '245', '600', '610', '630', '700', '710', '800', '810'].includes(tag) ) {
-        return value.toLowerCase();
+function dontLowercase(tag, subfieldCode) {
+    if ( isControlSubfieldCode(subfieldCode) ) { return true; }
+    // (Used mostly when merging subfields (as if normalized version exists, adding new subfield is skipped.)
+    return false;
+}
+
+function fieldLowercase(field) {
+    // Skip non-interesting fields
+    if ( !['100', '110', '240', '245', '600', '610', '630', '700', '710', '800', '810'].includes(field.tag) ) {
+        return;
     }
-    return value;
+    field.subfields.forEach(sf => {
+        if ( isControlSubfieldCode(sf.code)) { return; }
+        sf.value = sf.value.toLowerCase(); // eslint-disable-line functional/immutable-data
+    });
 }
 
-function removePunctuation(tag, subfieldCode, value) {
-
-  
-    //return value;
-    //const punctuation = /[.,\-/#!?$%^&*;:{}=_`~()[\]]/gu;
-    return value; // value.replace(punctuation, '', 'u');
+function fieldPreprocess(field) {
+    field.subfields.forEach((sf, i) => {
+        // TODO
+        // 1. Fix composition
+         // I don't want to use normalizeSync(). "åäö" => "aao". Utter crap! NB: Use something else later on!
+        //sf.value = normalizeSync(sf.value);
+        
+        // 2. Fix other shit
+        // - non-breaking space etc whitespace characters
+        // - various '-' letters?
+        // - various copyright signs
+        // 3. Trim
+        sf.value.replace(/\s+/gu, ' ').trim(); // eslint-disable-line functional/immutable-data
+    });
 }
+
 
 function normalizeField(field) {
+    fieldPreprocess(field); // spacing, composition, remap wrong utf-8 characters
     fieldStripPunctuation(field);
-
-    field.subfields = normalizeSubfields(field); // eslint-disable-line functional/immutable-data
+    fieldLowercase(field);
     return field;
 }
 
 export function cloneAndRemovePunctuation(field) {
     const clonedField = clone(field);
+    fieldPreprocess(clonedField);
     fieldStripPunctuation(clonedField);
 
     field.subfields.forEach((value, index) => { 
-        if ( field.subfields[index].value !== clonedField.subfields[index].value) {
+        if ( value !== clonedField.subfields[index].value) {
             debug(`NORMALIZE: ${field.subfields[index].value} => ${clonedField.subfields[index].value}`);
         }
     });
@@ -52,18 +71,6 @@ export function cloneAndNormalizeField(field) {
     return clonedField;
 }
 
-// Normalize subfield values for comparison, returns array of normalized subfields (keep the original values)
-export function normalizeSubfields(field) {
-    const normalizedSubs = field.subfields
-      .map(({code, value}) => ({code, value: normalizeStringValue(field.tag, code, value)}));
 
-    return normalizedSubs;
-}
-  
-export function normalizeStringValue(tag, subfieldCode, value) {
-    if ( ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'w'].includes(subfieldCode) ) { return value; }
-    // Regexp options: g: global search, u: unicode
-    // Note: normalize-diacritics' nomalizeSync() also changes "äöå" to "aoa"
-    return removePunctuation(tag, subfieldCode, conditionallyLowercase(tag, subfieldCode, normalizeSync(value))).replace(/\s+/gu, ' ').trim();
-}
-  
+
+ 
