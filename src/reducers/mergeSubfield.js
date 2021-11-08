@@ -170,7 +170,7 @@ function listDroppableSubfields(tag) {
   // NB! Should we drop the here, or already on the preprocessor?
   const entry = excludeSubfieldsFromMerge.filter(currEntry => tag === currEntry.tag);
   if (entry.length > 0 && 'subfields' in entry[0]) {
-    debug(`droppables: ${tag}‡${entry[0].subfields}`);
+    //debug(`droppables: ${tag}‡${entry[0].subfields}`);
     return entry[0].subfields;
   }
   //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${tag}.`);
