@@ -7,7 +7,7 @@
 */
 import {validateSingleField} from '@natlibfi/marc-record-validators-melinda/dist/ending-punctuation';
 import createDebugLogger from 'debug';
-import {fieldToString} from './utils';
+import {fieldToString, isControlSubfieldCode} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -18,13 +18,14 @@ const field300NeedsPunc = /(?:[\]a-zA-Z0-9)]|ä)$/u;
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 
+// NB! 65X: Finnish terms don't use punctuation, but international ones do. Neither one is currently (2021-11-08) coded here.
 
 // Will unfortunately trigger "Sukunimi, Th." type:
-const removeX00Comma = {'code': 'abcqde', 'followedBy': '#0159', 'context': /(?:[a-z)]|ä|ä|ö),$/u, 'remove': /,$/u};
-const cleanRHS = {'code': 'abcde', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
-const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#0159', 'context': /[0-9][,.]$/u, 'remove': /[,.]$/u};
+const removeX00Comma = {'code': 'abcqde', 'followedBy': '#01459', 'context': /(?:[a-z)]|ä|ä|ö),$/u, 'remove': /,$/u};
+const cleanRHS = {'code': 'abcd', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
+const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#01459', 'context': /[0-9][,.]$/u, 'remove': /[,.]$/u};
 const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
-// These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation...
+// These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation such as "esitt."...
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj', 'context': /(?:aja|jä)\.$/u, 'remove': /\.$/u};
 
 const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/, 'remove': /\.$/u};
@@ -36,37 +37,38 @@ const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#t01', 'context'
 
 const cleanCrappyPunctuationRules = {
   '100': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket],
+  '600': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
+  '700': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket, cleanRHS],
+  '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
+  '245': [{'code': 'ab', 'followedBy': '!c', 'remove': ' /'}],
   '300': [
     {'code': 'a', 'followedBy': '!b', 'remove': ' :'},
     {'code': 'ab', 'followedBy': '!c', 'remove': ' ;'},
     {'code': 'abc', 'followedBy': '!e', 'remove': ' +'}
   ],
-  '600': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
-  '700': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket, cleanRHS],
-  '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
-  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
-  '245': [{'code': 'ab', 'followedBy': '!c', 'remove': ' /'}]
+  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot]
 };
 
 const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
-const cleanLegalX00Dot = {'code': 'abcde', 'followedBy': 't#0159', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
+// Accept upper case letters in X00$b, since they are probably Roman numerals.
+const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#01459', context: /^[IVXLCDM]+\.$/u, 'remove': /\.$/u};
+const cleanLegalX00Dot = {'code': 'abcde', 'followedBy': 't#01459', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 
-const cleanValidPunctuationRules = {
-  
-  '100': [cleanLegalX00Comma, cleanLegalX00Dot],
-  '600': [cleanLegalX00Comma, cleanLegalX00Dot],
-  '700': [cleanLegalX00Comma, cleanLegalX00Dot],
-  '800': [cleanLegalX00Comma, cleanLegalX00Dot],
+const legalX00punc = [cleanLegalX00Comma, cleanLegalX00bDot, cleanLegalX00Dot];
+const cleanValidPunctuationRules = {  
+  '100': legalX00punc,
+  '600': legalX00punc,
+  '700': legalX00punc,
+  '800': legalX00punc,
   '300': [
-    {'code': 'a', 'followedBy': 'b', 'remove': ' :'},
-    {'code': 'ab', 'followedBy': 'c', 'remove': ' ;'},
-    {'code': 'abc', 'followedBy': 'e', 'remove': ' +'}
+    {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
+    {'code': 'ab', 'followedBy': 'c', 'remove': / ;$/u},
+    {'code': 'abc', 'followedBy': 'e', 'remove': / \+$/u}
   ],
   '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
   '245': [
-    {'code': 'a', 'followedBy': 'b', 'remove': ' :'},
-    {'code': 'a', 'followedBy': 'c', 'remove': ' /'},
-    {'code': 'b', 'followedBy': 'c', 'remove': ' /'},
+    {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
+    {'code': 'ab', 'followedBy': 'c', 'remove': / \//u}
   ]
 };
 
@@ -82,6 +84,7 @@ const addPairedPunctuationRules = {
     {'code': 'abc', 'followedBy': 'e', 'add': ' +', 'context': field300NeedsPunc}
   ],
   '700': [addX00aComma, addX00aDot]
+  // TODO: 773 ". -" etc
 };
 
 function ruleAppliesToSubfield(rule, subfield) {
@@ -146,10 +149,13 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null) {
     return;    
   }
 
-  if (!(`${tag}` in ruleArray)) {
-    debug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`);
+  if (!(`${tag}` in ruleArray) ) {
+    if ( !['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) {
+      debug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`);
+    }
     return;
   }
+
   const activeRules = ruleArray[tag].filter(rule => checkRule(rule, subfield1, subfield2));
 
   activeRules.forEach(rule => {
@@ -282,6 +288,7 @@ export function fieldStripPunctuation(field) {
 
   field.subfields.forEach((sf, i) => {
     applyPunctuationRules(field.tag, sf, (i + 1 < field.subfields.length ? field.subfields[i + 1] : null), cleanValidPunctuationRules);
+    applyPunctuationRules(field.tag, sf, (i + 1 < field.subfields.length ? field.subfields[i + 1] : null), cleanCrappyPunctuationRules);
   });  
 }
 
