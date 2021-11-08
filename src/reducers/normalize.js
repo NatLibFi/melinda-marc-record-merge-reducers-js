@@ -2,7 +2,7 @@ import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
 import clone from 'clone';
 import { fieldStripPunctuation } from './punctuation.js';
-import { isControlSubfieldCode } from './utils.js';
+import { fieldToString, isControlSubfieldCode } from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -29,7 +29,7 @@ function fieldPreprocess(field) {
         // 1. Fix composition
          // I don't want to use normalizeSync(). "åäö" => "aao". Utter crap! NB: Use something else later on!
         //sf.value = normalizeSync(sf.value);
-        
+
         // 2. Fix other shit
         // - non-breaking space etc whitespace characters
         // - various '-' letters?
@@ -47,27 +47,30 @@ function normalizeField(field) {
     return field;
 }
 
+function fieldComparison(oldField, newField) {
+    oldField.subfields.forEach((subfield, index) => {
+        const newValue = newField.subfields[index].value;
+        if ( subfield.value !== newValue ) {
+            debug(`NORMALIZE: '${subfield.value}' => '${newValue}'`);
+        }
+    });
+}
+
 export function cloneAndRemovePunctuation(field) {
     const clonedField = clone(field);
     fieldPreprocess(clonedField);
     fieldStripPunctuation(clonedField);
 
-    field.subfields.forEach((value, index) => { 
-        if ( value !== clonedField.subfields[index].value) {
-            debug(`NORMALIZE: ${field.subfields[index].value} => ${clonedField.subfields[index].value}`);
-        }
-    });
+    fieldComparison(field, clonedField);
+
     return clonedField;
 }
 
 export function cloneAndNormalizeField(field) {
     const clonedField = normalizeField(clone(field));
 
-    field.subfields.forEach((value, index) => { 
-        if ( field.subfields[index].value !== clonedField.subfields[index].value) {
-            debug(`NORMALIZE: ${field.subfields[index].value} => ${clonedField.subfields[index].value}`);
-        }
-    });
+    fieldComparison(field, clonedField);
+
     return clonedField;
 }
 
