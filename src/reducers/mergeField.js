@@ -85,6 +85,8 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
 }
 
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
+  const field1 = cloneAndNormalizeField(originalBaseField);
+  const field2 = cloneAndNormalizeField(originalSourceField);
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
@@ -92,9 +94,6 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
     return fieldToString(field1) === fieldToString(field2);
   }
-  const field1 = cloneAndNormalizeField(originalBaseField);
-  const field2 = cloneAndNormalizeField(originalSourceField);
-
   const subfieldArray = keySubfieldsAsString.split('');
 
   return subfieldArray.every(subfieldCode => {
