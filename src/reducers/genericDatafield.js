@@ -13,6 +13,7 @@ import {
 
 import {fieldToString} from './utils.js';
 import createDebugLogger from 'debug';
+import { recordFixComposition } from './normalize.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -48,7 +49,9 @@ const datafieldString = '010 013 015 016 017 018 020 022 024 025 026 027 028 030
 
 const datafields = datafieldString.split(' ');
 
-export default () => (record, record2) => {
+export default () => (originalRecord, originalRecord2) => {
+  const record = recordFixComposition(originalRecord);
+  const record2 = recordFixComposition(originalRecord2);
   record.fields.forEach(field => {
     preprocessForBaseAndSource(field);
   }); // Preprocess input record. Not necessary the best place to do it.
