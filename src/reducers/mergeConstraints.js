@@ -282,7 +282,7 @@ function constraintToValue(tagsConstraints, constraintName) {
   if (constraintName === 'mergable') { // missing mergable defaults to true. Don't complain about it either.
     return true;
   }
-  if (constraintName !== 'skip') { // eslint-disable-line functional/no-conditional-statement
+  if (constraintName !== 'skip' && constraintName !== 'solitary') { // eslint-disable-line functional/no-conditional-statement
     debug(`WARNING\tMissing '${constraintName}'. Return NULL instead of a set of constraints.`);
   }
   return null; // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.

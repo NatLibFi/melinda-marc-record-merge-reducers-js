@@ -346,6 +346,7 @@ function mergeField(record, targetField, sourceField) {
 
   // We want to add the field without punctuation, and add puctuation later on:
   const normalizedSourceField = cloneAndRemovePunctuation(sourceField);
+  debug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`);
 
   normalizedSourceField.subfields.forEach(candSubfield => {
   //sourceField.subfields.forEach(candSubfield => {
