@@ -26,7 +26,7 @@ export function fieldsAreIdentical(field1, field2) {
 // Modified from copy functionality in marc-record-merge
 // Changed function name from checkIdenticalness to getNonIdenticalFields / SS 28.5.2021
 export function getNonIdenticalFields(baseFields, sourceFields) {
-  debug(`gNIF() in... ${baseFields.length} vs ${sourceFields.length}`);
+  // debug(`gNIF() in... ${baseFields.length} vs ${sourceFields.length}`);
 
   /*
   const baseFieldsAsString = baseFields.map(field => fieldToString(field));
