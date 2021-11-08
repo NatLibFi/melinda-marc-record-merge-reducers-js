@@ -34,17 +34,21 @@ const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/, 'remove': /\
 const addX00aComma = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
 const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#t01', 'context': defaultNeedsPuncAfter};
 
+const NONE = 0;
+const ADD = 2;
+const REMOVE = 1;
+const REMOVE_AND_ADD = 3;
 
 const cleanCrappyPunctuationRules = {
   '100': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket],
   '600': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
   '700': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket, cleanRHS],
   '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
-  '245': [{'code': 'ab', 'followedBy': '!c', 'remove': ' /'}],
+  '245': [{'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u}],
   '300': [
-    {'code': 'a', 'followedBy': '!b', 'remove': ' :'},
-    {'code': 'ab', 'followedBy': '!c', 'remove': ' ;'},
-    {'code': 'abc', 'followedBy': '!e', 'remove': ' +'}
+    {'code': 'a', 'followedBy': '!b', 'remove': / :$/u},
+    {'code': 'ab', 'followedBy': '!c', 'remove': / ;$/u},
+    {'code': 'abc', 'followedBy': '!e', 'remove': / \+$/u}
   ],
   '110': [removeX00Comma, cleanX00aDot, cleanX00eDot]
 };
@@ -60,23 +64,25 @@ const cleanValidPunctuationRules = {
   '600': legalX00punc,
   '700': legalX00punc,
   '800': legalX00punc,
+  '245': [
+    {'name': 'A:B', 'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
+    {'name': 'ABK:F', 'code': 'abk', 'followedBy': 'f', 'remove': /,$/u},
+    {'name': 'ABFNP:C', 'code': 'abfnp', 'followedBy': 'c', 'remove': / \/$/u}
+  ],
   '300': [
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
     {'code': 'ab', 'followedBy': 'c', 'remove': / ;$/u},
     {'code': 'abc', 'followedBy': 'e', 'remove': / \+$/u}
   ],
-  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
-  '245': [
-    {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
-    {'code': 'ab', 'followedBy': 'c', 'remove': / \//u}
-  ]
+  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot]
 };
 
 const addPairedPunctuationRules = {
   '100': [addX00aComma, addX00aDot],
   '245': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
-    {'code': 'abnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
+    {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
+    {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
   ],
   '300': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': field300NeedsPunc},
@@ -87,9 +93,24 @@ const addPairedPunctuationRules = {
   // TODO: 773 ". -" etc
 };
 
-function ruleAppliesToSubfield(rule, subfield) {
-  // NB! Should be support negation here?
-  if (!rule.code.includes(subfield.code)) {
+function ruleAppliesToSubfieldCode(targetSubfieldCodes, currSubfieldCode) {
+  const negation = targetSubfieldCodes.includes('!');
+  // The '#' existance check applies only to the RHS field. LHS always exists.
+  if (currSubfieldCode === null) {
+    if (negation) {
+      return !targetSubfieldCodes.includes('#');
+    }
+    return targetSubfieldCodes.includes('#');
+  }
+  if (negation) {
+    return !targetSubfieldCodes.includes(currSubfieldCode);
+  }
+  return targetSubfieldCodes.includes(currSubfieldCode);
+}
+
+
+function ruleAppliesToCurrentSubfield(rule, subfield) {
+  if (!ruleAppliesToSubfieldCode(rule.code, subfield.code)) {
     return false;
   }
   if ('context' in rule && !subfield.value.match(rule.context)) {
@@ -98,26 +119,11 @@ function ruleAppliesToSubfield(rule, subfield) {
   return true;
 }
 
-function ruleAppliesToNextSubfieldCode(rule, subfield) {
-  if (!('followedBy' in rule)) { // apply
+function ruleAppliesToNextSubfield(rule, subfield) {
+  if (!('followedBy' in rule)) { // Return true, if we are not interested in the next subfield
     return true;
   }
-  const negation = rule.followedBy.includes('!');
-  if (subfield === null) {
-    if (negation) {
-      return !rule.followedBy.includes('#');
-    }
-    return rule.followedBy.includes('#');
-  }
-  //debug(`NSF ${subfield.code} - ${rule.followedBy} - ${negation}`);
-  if (negation) {
-    return !rule.followedBy.includes(subfield.code);
-  }
-  return rule.followedBy.includes(subfield.code);
-}
-
-function ruleAppliesToNextSubfield(rule, subfield) {
-  if (!ruleAppliesToNextSubfieldCode(rule, subfield)) {
+  if (!ruleAppliesToSubfieldCode(rule.followedBy, subfield.code)) {
     return false;
   }
   if ('contextRHS' in rule && !subfield.value.match(rule.contextRHS)) {
@@ -127,24 +133,25 @@ function ruleAppliesToNextSubfield(rule, subfield) {
 }
 
 function checkRule(rule, subfield1, subfield2) {
-  if (!ruleAppliesToSubfield(rule, subfield1)) {
-    // debug(`FAIL ON LHS FIELD: '${subfield1.code} ${subfield1.value}`);
+  const name = rule.name || 'UNNAMED'
+  if (!ruleAppliesToCurrentSubfield(rule, subfield1)) {
+    debug(`${name}: FAIL ON LHS FIELD: '\$${subfield1.code} ${subfield1.value}', SF=${rule.code}`);
     return false;
   }
 
   if (!ruleAppliesToNextSubfield(rule, subfield2)) {
-    // debug(`FAIL ON RHS FIELD`);
+    debug(`${name}: FAIL ON RHS FIELD, '\$${subfield2.code} ${subfield2.value}', SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`);
     return false;
   }
 
-  // debug(` ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`);
+  debug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`);
   return true;
 }
 
 
 
-function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null) {
-  if ( ruleArray === null ) {
+function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, operation = NONE) {
+  if ( ruleArray === null || operation === NONE ) {
     debug(`applyPunctuation(): No rules to apply!`);
     return;    
   }
@@ -156,15 +163,19 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null) {
     return;
   }
 
+  debug(`APR1A ${tag}: '${subfield1.value}'`);
   const activeRules = ruleArray[tag].filter(rule => checkRule(rule, subfield1, subfield2));
 
   activeRules.forEach(rule => {
     const originalValue = subfield1.value;
-    if ( rule.remove ) { // eslint-disable-line functional/no-conditional-statement
+    if ( rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove) ) { // eslint-disable-line functional/no-conditional-statement
+      debug(`    REMOVAL TO BE PERFORMED FOR \${subfield1.code} '${subfield1.value}'`);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
+      debug(`    REMOVAL PERFORMED FOR '${subfield1.value}'`);
     }
-    if ( rule.add ) { // eslint-disable-line functional/no-conditional-statement
+    if ( rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statement
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
+      debug(`    ADDED '${rule.add}' TO '${subfield1.value}'`);
     }
     if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statement
       debug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`); // eslint-disable-line functional/immutable-data
@@ -173,8 +184,8 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null) {
 }
 
 function subfieldFixPunctuation(tag, subfield1, subfield2) {
-  applyPunctuationRules(tag, subfield1, subfield2, cleanCrappyPunctuationRules);
-  applyPunctuationRules(tag, subfield1, subfield2, addPairedPunctuationRules);
+  applyPunctuationRules(tag, subfield1, subfield2, cleanCrappyPunctuationRules, REMOVE);
+  applyPunctuationRules(tag, subfield1, subfield2, addPairedPunctuationRules, ADD);
 }
 
 /*
@@ -287,8 +298,11 @@ export function fieldStripPunctuation(field) {
   }
 
   field.subfields.forEach((sf, i) => {
-    applyPunctuationRules(field.tag, sf, (i + 1 < field.subfields.length ? field.subfields[i + 1] : null), cleanValidPunctuationRules);
-    applyPunctuationRules(field.tag, sf, (i + 1 < field.subfields.length ? field.subfields[i + 1] : null), cleanCrappyPunctuationRules);
+    debug(`FSP1: '${sf.value}'`);
+    applyPunctuationRules(field.tag, sf, (i + 1 < field.subfields.length ? field.subfields[i + 1] : null), cleanValidPunctuationRules, REMOVE);
+    debug(`FSP2: '${sf.value}'`);
+    applyPunctuationRules(field.tag, sf, (i + 1 < field.subfields.length ? field.subfields[i + 1] : null), cleanCrappyPunctuationRules, REMOVE);
+    debug(`FSP3: '${sf.value}'`);
   });  
 }
 
