@@ -117,20 +117,7 @@ function reindexSubfield6s(field, record) {
   }
 }
 
-// NB! These are defined also in mergeSubfield.js. Do something...
-const notYear = /^\([1-9][0-9]*\)[,.]?$/u;
 
-function datesAssociatedWithName(field) {
-  // Skip irrelevant fields:
-  if (!field.tag.match(/^[1678]00$/u)) {
-    return field;
-  }
-
-  if (field.subfields.some(sf => sf.code === 'd' && notYear.test(sf.value))) { // eslint-disable-line functional/no-conditional-statement
-    field.subfields = field.subfields.filter(sf => sf.code !== 'd' || !notYear.test(sf.value)); // eslint-disable-line functional/immutable-data
-  }
-
-}
 
 function normalizeFIN01(value) {
   if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
@@ -187,16 +174,7 @@ function normalizeSubfield0(field) {
 }
 */
 
-export function preprocessForBaseAndSource(field) {
-  if (!field.subfields) {
-    return;
-  }
-  // Not sure whether we actually want any of these here... However, this is still a good place for something...
-  // Eg. umlaut normalizations...
 
-  datesAssociatedWithName(field); // remove $d (1)
-  //normalizeSubfield0(field);
-}
 
 export function cloneAndPreprocessField(originalField, record) {
   // source-only preprocessing:
@@ -205,8 +183,6 @@ export function cloneAndPreprocessField(originalField, record) {
   convertOriginalToModifyingAgency(field); // 040$a => $040$d
   mainEntryToAddedEntry(field); // 1XX => 7XX
   reindexSubfield6s(field, record); // field's $6 values start from record's max $6 value + 1
-  // shared stuff:
-  preprocessForBaseAndSource(field);
 
   return field;
 }
