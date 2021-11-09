@@ -153,3 +153,42 @@ export function recordFixComposition(record) {
     record.fields.forEach((field, index) => fieldPreprocess(field));
     return record;
  }
+
+
+function normalizeFIN01(value) {
+    if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
+      return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
+    }
+    if ((/^FCC[0-9]{9}$/u).test(value)) {
+      return `(FIN01)${value.substring(3)}`; // eslint-disable-line functional/immutable-data
+    }
+    return false;
+  }
+  
+  function normalizeFIN11(value) {
+    if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
+      return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
+    }
+    if ((/^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u).test(value)) {
+      return `(FIN11)${value.slice(-9)}`;
+    }
+    return false;
+  }
+  
+  
+  
+  export function normalizeSubfield0Value(value) {
+    if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
+      return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
+    }
+    if ((/^\(FI-ASTERI-S\)[0-9]{9}$/u).test(value)) {
+      return `(FIN10)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
+    }
+    if ((/^\(FI-ASTERI-A\)[0-9]{9}$/u).test(value)) {
+      return `(FIN12)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
+    }
+    if ((/^\(FI-ASTERI-W\)[0-9]{9}$/u).test(value)) {
+      return `(FIN13)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
+    }
+    return normalizeFIN01(value) || normalizeFIN11(value) || value;
+  }
