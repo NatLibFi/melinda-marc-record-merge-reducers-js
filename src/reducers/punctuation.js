@@ -95,13 +95,6 @@ const addPairedPunctuationRules = {
 
 function ruleAppliesToSubfieldCode(targetSubfieldCodes, currSubfieldCode) {
   const negation = targetSubfieldCodes.includes('!');
-  // The '#' existance check applies only to the RHS field. LHS always exists.
-  if (currSubfieldCode === null) {
-    if (negation) {
-      return !targetSubfieldCodes.includes('#');
-    }
-    return targetSubfieldCodes.includes('#');
-  }
   if (negation) {
     return !targetSubfieldCodes.includes(currSubfieldCode);
   }
@@ -119,14 +112,23 @@ function ruleAppliesToCurrentSubfield(rule, subfield) {
   return true;
 }
 
-function ruleAppliesToNextSubfield(rule, subfield) {
+function ruleAppliesToNextSubfield(rule, nextSubfield) {
   if (!('followedBy' in rule)) { // Return true, if we are not interested in the next subfield
     return true;
   }
-  if (!ruleAppliesToSubfieldCode(rule.followedBy, subfield.code)) {
+  // The '#' existence check applies only to the RHS field. LHS always exists.
+  if (nextSubfield === null) {
+    const negation = rule.followedBy.includes('!');
+    if (negation) {
+      return !rule.followedBy.includes('#');
+    }
+    return rule.followedBy.includes('#');
+  }
+
+  if (!ruleAppliesToSubfieldCode(rule.followedBy, nextSubfield.code)) {
     return false;
   }
-  if ('contextRHS' in rule && !subfield.value.match(rule.contextRHS)) {
+  if ('contextRHS' in rule && !nextSubfield.value.match(rule.contextRHS)) {
     return false;
   }
   return true;
@@ -140,7 +142,8 @@ function checkRule(rule, subfield1, subfield2) {
   }
 
   if (!ruleAppliesToNextSubfield(rule, subfield2)) {
-    debug(`${name}: FAIL ON RHS FIELD, '\$${subfield2.code} ${subfield2.value}', SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`);
+    const msg = `${name}: FAIL ON RHS FIELD` + ( subfield2 ? `'\$${subfield2.code}' not in [${rule.followedBy}]` : '');
+    debug(msg);
     return false;
   }
 
