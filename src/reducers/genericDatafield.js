@@ -7,13 +7,12 @@ import {
 
 
 import {
-  preprocessForBaseAndSource,
   postprocessRecord
 } from './mergePreAndPostprocess.js';
 
 import {fieldToString} from './utils.js';
 import createDebugLogger from 'debug';
-import { recordFixComposition } from './normalize.js';
+import {recordPreprocess} from './normalize.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -50,11 +49,12 @@ const datafieldString = '010 013 015 016 017 018 020 022 024 025 026 027 028 030
 const datafields = datafieldString.split(' ');
 
 export default () => (originalRecord, originalRecord2) => {
-  const record = recordFixComposition(originalRecord);
-  const record2 = recordFixComposition(originalRecord2);
-  record.fields.forEach(field => {
-    preprocessForBaseAndSource(field);
-  }); // Preprocess input record. Not necessary the best place to do it.
+  // We should clone the records here and just here...
+  //const record = recordFixComposition(originalRecord); // fix composition et al
+  //const record2 = recordFixComposition(originalRecord2); // fix composition et al
+  const record = recordPreprocess(originalRecord); // fix composition et al
+  const record2 = recordPreprocess(originalRecord2); // fix composition et al
+
   datafields.forEach(tag => {
     //debug(`CURR TAG: ${tag}...`);
     const tagAsRegexp = tagToRegexp(tag);
