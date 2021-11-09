@@ -56,6 +56,7 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
     // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
     return fieldToString(field1) === fieldToString(field2);
   }
+  // We use clones here, since these changes done below are not intented to appear on the actual records.
   const field1 = cloneAndNormalizeField(originalField1);
   const field2 = cloneAndNormalizeField(originalField2);
 
@@ -85,6 +86,7 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
 }
 
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
+  // We use clones here, since these changes done below are not intented to appear on the actual records.
   const field1 = cloneAndNormalizeField(originalBaseField);
   const field2 = cloneAndNormalizeField(originalSourceField);
   if (keySubfieldsAsString === null) { // does not currently happen
@@ -343,7 +345,8 @@ function mergeField(record, targetField, sourceField) {
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
   }
 
-  // We want to add the field without punctuation, and add puctuation later on:
+  // We want to add the incoming subfields without punctuation, and add puctuation later on.
+  // (Cloning is harmless, but probably not needed.)
   const normalizedSourceField = cloneAndRemovePunctuation(sourceField);
   debug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`);
 
@@ -441,7 +444,7 @@ function skipMergeOrAddField(record, field) {
 }
 
 export function mergeOrAddField(record, field) {
-  const newField = cloneAndPreprocessField(field, record);
+  const newField = cloneAndPreprocessField(field, record); // probably unnecessary cloning, but safer this way
 
   if (skipMergeOrAddField(record, newField)) {
     return record;
@@ -451,6 +454,7 @@ export function mergeOrAddField(record, field) {
 
   if (counterpartField) {
     debug(`mergeOrAddfield(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
+    
     mergeField(record, counterpartField, newField);
     return record;
   }
