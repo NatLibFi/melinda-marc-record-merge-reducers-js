@@ -4,7 +4,6 @@ import {fieldFixPunctuation} from './punctuation.js';
 import {
   fieldHasSubfield,
   fieldRenameSubfieldCodes
-  //fieldToString
 } from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -116,65 +115,6 @@ function reindexSubfield6s(field, record) {
     }
   }
 }
-
-
-
-function normalizeFIN01(value) {
-  if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^FCC[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(3)}`; // eslint-disable-line functional/immutable-data
-  }
-  return false;
-}
-
-function normalizeFIN11(value) {
-  if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
-    return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u).test(value)) {
-    return `(FIN11)${value.slice(-9)}`;
-  }
-  return false;
-}
-
-
-
-export function normalizeSubfield0Value(value) {
-  if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^\(FI-ASTERI-S\)[0-9]{9}$/u).test(value)) {
-    return `(FIN10)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^\(FI-ASTERI-A\)[0-9]{9}$/u).test(value)) {
-    return `(FIN12)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^\(FI-ASTERI-W\)[0-9]{9}$/u).test(value)) {
-    return `(FIN13)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
-  }
-  return normalizeFIN01(value) || normalizeFIN11(value) || value;
-}
-
-/*
-function normalizeSubfield0(field) {
-  field.subfields.forEach((subfield) => {
-    const originalValue = subfield.value;
-    if (subfield.code === '0') { // eslint-disable-line functional/no-conditional-statement
-      if ((/^\((?:FI-ASTERI-N|FI-MELINDA)\)[0-9]{9}$/u).test(subfield.value)) {
-        subfield.value = normalizeSubfield0Value(subfield.value); // eslint-disable-line functional/immutable-data
-      }
-      // TODO: isni to https form
-      if (subfield.value !== originalValue) { // eslint-disable-line functional/no-conditional-statement
-        debug(`Update ${field.tag}$${subfield.code} : '${originalValue}' => '${subfield.value}'`);
-      }
-    }
-  });
-}
-*/
-
-
 
 export function cloneAndPreprocessField(originalField, record) {
   // source-only preprocessing:
