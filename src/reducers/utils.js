@@ -19,8 +19,6 @@ export function fieldsAreIdentical(field1, field2) {
 
   // The order of subfields is relevant! Bloody JS idiotisms make people use conditions such as:
   // return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
-
-  return fieldToString(field1) === fieldToString(field2);
 }
 
 // Modified from copy functionality in marc-record-merge
@@ -230,6 +228,8 @@ export function recordReplaceField(record, originalField, newField) {
 }
 
 export function isControlSubfieldCode(subfieldCode) {
-  if ( ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'w'].includes(subfieldCode) ) { return true; }
+  if (['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'w'].includes(subfieldCode)) {
+    return true;
+  }
   return false;
 }
