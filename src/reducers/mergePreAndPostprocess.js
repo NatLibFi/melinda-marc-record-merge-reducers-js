@@ -9,7 +9,7 @@ import {
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 export function postprocessField(field) {
-  // TODO: indicator update for article length (eg. 245)
+  // Should we update indicator for article length (eg. 245)?
   return field;
 }
 

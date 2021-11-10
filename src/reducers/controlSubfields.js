@@ -89,7 +89,7 @@ function getPrefix(value) {
 }
 
 function isMatchAfterNormalization(currSubfield, otherField) {
-  // TODO: implement isni normalizations:
+  // NB! Add implement isni normalizations (to normalize.js) and apply here:
   const normalizedCurrSubfieldValue = normalizeSubfield0Value(currSubfield.value);
   const prefix = getPrefix(normalizedCurrSubfieldValue);
 
@@ -149,8 +149,8 @@ export function controlSubfieldsPermitMerge(field1, field2) {
     return false;
   }
   // We don't handle $8 subfields here at all, as they affect multiple fields! Also these would get screwed:
-  // 38211 	|8 3\u |a kuoro |2 seko
-  // 38211 	|8 6\u |a kuoro |2 seko |9 VIOLA<KEEP>
+  // 38211 |8 3\u |a kuoro |2 seko
+  // 38211 |8 6\u |a kuoro |2 seko |9 VIOLA<KEEP>
   if (!subfieldsAreEmpty(field1, field2, '8')) {
 
     //debug(' csf8 failed');

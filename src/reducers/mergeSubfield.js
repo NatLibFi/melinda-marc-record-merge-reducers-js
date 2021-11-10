@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import { cloneAndRemovePunctuation } from './normalize.js';
+import {cloneAndRemovePunctuation} from './normalize.js';
 import {
   fieldHasSubfield,
   fieldIsRepeatable,
@@ -212,7 +212,7 @@ function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
 
 function mergeSubfieldNotRequired(targetField, candSubfield) {
   // candSubfield has been stripped of punctuation
-  const normalizedTargetField = cloneAndRemovePunctuation (targetField);
+  const normalizedTargetField = cloneAndRemovePunctuation(targetField);
 
   if (normalizedTargetField.subfields.some(sf => subfieldsAreIdentical(sf, candSubfield))) {
     // Subfield with identical normalized value exists. Do nothing.

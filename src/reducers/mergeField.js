@@ -1,8 +1,5 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-
-import { clone } from '@natlibfi/melinda-commons';
-
 import {
   fieldHasSubfield,
   fieldHasNSubfields,
@@ -12,15 +9,9 @@ import {
   recordHasField
 } from './utils.js';
 
-import { cloneAndNormalizeField, cloneAndRemovePunctuation } from './normalize.js';
-
-import {
-  cloneAndPreprocessField
-} from './mergePreAndPostprocess.js';
-
-import {
-  getMergeConstraintsForTag
-} from './mergeConstraints.js';
+import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize.js';
+import {cloneAndPreprocessField} from './mergePreAndPostprocess.js';
+import {getMergeConstraintsForTag} from './mergeConstraints.js';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
@@ -49,6 +40,9 @@ function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
 }
 
 function mandatorySubfieldComparison(originalField1, originalField2, keySubfieldsAsString) {
+  // NB! We use clones here, since these changes done below are not intented to appear on the actual records.
+  const field1 = cloneAndNormalizeField(originalField1);
+  const field2 = cloneAndNormalizeField(originalField2);
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
@@ -56,33 +50,20 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
     // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
     return fieldToString(field1) === fieldToString(field2);
   }
-  // We use clones here, since these changes done below are not intented to appear on the actual records.
-  const field1 = cloneAndNormalizeField(originalField1);
-  const field2 = cloneAndNormalizeField(originalField2);
-
   const subfieldArray = keySubfieldsAsString.split('');
 
   return subfieldArray.every(subfieldCode => {
-    const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode);
-    const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode);
+    const subfieldValues1 = field1.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
+    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
     // Assume that at least 1 instance must exist and that all instances must match
-    if (subfields1.length !== subfields2.length) {
+    if (subfieldValues1.length !== subfieldValues2.length) {
       debug(`mSC: Unique key: subfield ${subfieldCode} issues...`);
       return false;
     }
 
-    return subfields1.every(sf => {
-      return subfields2.some(sf2 => {
-        if (sf.value === sf2.value) {
-          debug(` mandatory pairing succeeded for normalized subfield ‡${sf.code} '${sf.value}'`);
-          return true;
-        }
-        debug(`failed to pair ‡${sf.code}: ${sf.value} and ${sf2.value}`);
-        return false;
-      });
-    });
-
+    return subfieldValues1.every(value => subfieldValues2.includes(value));
   });
+
 }
 
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
@@ -106,14 +87,13 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
       return true;
     }
     // If one set is a subset of the other, all is good
-    if ( subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))){
+    if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
       return true;
     }
     return false;
 
   });
 }
-
 
 function localTagToRegexp(tag) {
   if (tag in counterpartRegexps) {
@@ -173,8 +153,6 @@ function indicatorsMatch(field1, field2) {
   return true;
 }
 
-
-
 function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
   // Indicators *must* be equal:
   if (!indicatorsMatch(baseField, sourceField) ||
@@ -221,7 +199,7 @@ function semanticallyMergablePair(baseField, sourceField) {
     return false;
   }
 
-  // TODO: we should check lifespan here, $d YYYY
+  // Hmm... we should check lifespan here, $d YYYY
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
   if (!compareName(baseField, sourceField)) {
@@ -454,7 +432,7 @@ export function mergeOrAddField(record, field) {
 
   if (counterpartField) {
     debug(`mergeOrAddfield(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
-    
+
     mergeField(record, counterpartField, newField);
     return record;
   }
