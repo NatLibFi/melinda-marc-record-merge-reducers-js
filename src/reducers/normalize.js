@@ -1,8 +1,7 @@
-import {normalizeSync} from 'normalize-diacritics';
 import createDebugLogger from 'debug';
 import clone from 'clone';
 import { fieldStripPunctuation } from './punctuation.js';
-import { fieldToString, isControlSubfieldCode, subfieldsAreIdentical } from './utils.js';
+import { fieldToString, isControlSubfieldCode } from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -14,6 +13,30 @@ function precomposeFinnishLetters(value) {
         replace(/Å/gu, 'Å').
         replace(/Ä/gu, 'Ä').
         replace(/Ö/gu, 'Ö');
+}
+
+function normalizationExceptions(value) {
+  // This is just a placeholder for now.
+  // Possible normalizations include but are not limited to: 
+  // ø => ö? Might be language dependent: 041 $a fin => ö, 041 $a eng => o?
+  // Ø => Ö?
+  // ß => ss
+  // þ => th (NB! Both upper and lower case)
+  // ...
+  // Probably nots:
+  // ü => y (probably not, though this correlates with Finnish letter-to-sound rules)
+  // w => v (OK for Finnish sorting in certain cases, but we are not here, are we?)
+  // I guess we should use decomposed values in code here. (Not sure what composition my examples above use.)
+  return value;
+}
+
+function removeDecomposedDiacritics(value) {
+  // NB #1: Does nothing to precomposed letters. String.normalize('NFD') can handle them.
+  // NB #2: Finnish letters 'å', 'ä', 'ö', 'Å', Ä', and 'Ö' should be handled before this.
+  // NB #3: Calling our very own fixComposition() before this function handles both #1 and #2.
+  // NB #4: See normalizationExceptions() for other stuff that one might want to take into consideration.
+  // But ah! For once something is simple :  
+  return String(value).replace(/\p{Diacritic}/gu, "");
 }
 
 function fixComposition(value) {
@@ -70,6 +93,12 @@ function fieldLowercase(field) {
     });
 }
 
+function fieldRemoveDecomposedDiacritics(field) {
+  field.subfields.forEach((sf, i) => {
+    sf.value = removeDecomposedDiacritics(sf); // eslint-disable-line functional/immutable-data
+  }); 
+}
+
 function fieldPreprocess(field) {
     //// 1. Fix composition
     // I don't want to use normalizeSync(). "åäö" => "aao". Utter crap! NB: Use something else later on!
@@ -93,7 +122,8 @@ function fieldPreprocess(field) {
 
 
 function normalizeField(field) {
-    fieldPreprocess(field); // spacing, composition, remap wrong utf-8 characters
+    fieldPreprocess(field); // spacing, composition, diacritics, remap wrong utf-8 characters (eg. various - characters)
+    //sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
     fieldStripPunctuation(field);
     fieldLowercase(field);
     return field;
@@ -125,6 +155,7 @@ export function cloneAndRemovePunctuation(field) {
 
 export function cloneAndNormalizeField(field) {
     const clonedField = normalizeField(clone(field));
+    fieldRemoveDecomposedDiacritics(clonedField);
 
     fieldComparison(field, clonedField);
 
