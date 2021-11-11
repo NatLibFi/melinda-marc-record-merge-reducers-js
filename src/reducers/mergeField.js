@@ -136,21 +136,33 @@ function arePairedSubfieldsInBalance(field1, field2) {
   return subfieldArray.every(sfcode => fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode));
 }
 
+const ind1NonFilingChars = ['130', '630', '730', '740'];
+const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];
+
+function indicator1Matches(field1, field2) {
+  if (ind1NonFilingChars.includes(field1.tag)) {
+    return true;
+  }
+  // Exceptions:
+  // 245: value is based on the presence of a 1XX field, which may vary
+  if (['245'].includes(field1.tag)) {
+    return true;
+  }
+
+  // Default:
+  return field1.ind1 !== field2.ind1;
+}
+
+function indicator2Matches(field1, field2) {
+  if (ind2NonFilingChars.includes(field1.tag)) {
+    return true;
+  }
+  // Default:
+  return field1.ind2 !== field2.ind2;
+}
 
 function indicatorsMatch(field1, field2) {
-  // The value of 245 IND1 depends on other fields, and those field might diffent from Melinda and incoming record:
-  if (field1.ind1 !== field2.ind1 && !['245'].includes(field1.tag)) {
-    debug('indicator 1 check failed');
-    return false;
-  }
-  // "ohitusindikaattori" difference does not trigger failure:
-  if (field1.ind2 !== field2.ind2 && !['240', '243', '245'].includes(field1.tag)) {
-    debug('indicator 1 check failed');
-    return false;
-  }
-  // NB! There are cases where indicator values are, says # and 1, and the define value (here 1) should be used. (Eg. field 100.)
-  // However, we do not let them pass yet.
-  return true;
+  return indicator1Matches(field1, field2) && indicator2Matches(field1, field2);
 }
 
 function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
