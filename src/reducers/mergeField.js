@@ -30,6 +30,11 @@ const counterpartRegexps = {
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
 };
 
+function nvdebug(message) {
+  debug(message);
+  console.info(message);
+}
+
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
   // NB! Assume that field1 and field2 have same relevant subfields.
   // What to do if if base
@@ -150,15 +155,15 @@ function indicator1Matches(field1, field2) {
   }
 
   // Default:
-  return field1.ind1 !== field2.ind1;
+  return field1.ind1 === field2.ind1;
 }
 
 function indicator2Matches(field1, field2) {
   if (ind2NonFilingChars.includes(field1.tag)) {
-    return true;
+    return true; 
   }
   // Default:
-  return field1.ind2 !== field2.ind2;
+  return field1.ind2 === field2.ind2;
 }
 
 function indicatorsMatch(field1, field2) {
@@ -321,11 +326,53 @@ function removeEnnakkotieto(field) {
   }
 }
 
+function mergeIndicators(toField, fromField) {
+  // NB! For non-filing indicators we deem that bigger is better. This is a bit quick'n'dirty, as usual.
+  // We could and should checks the relevant article length (using language information whilst doing it).
+  // However, this is a task for record internal fixer, not merge.
+  //
+  // NB! We could add fixes for various other indicator types as well. However, it gets quickly pretty ad hoc.
+  nvdebug(fieldToString(toField));
+  nvdebug(fieldToString(fromField));
+  mergeIndicator1(toField, fromField);
+  mergeIndicator2(toField, fromField);
+  function mergeIndicator1(toField, fromField) {
+    if (toField.ind1 === fromField.ind1) {
+      return; // Do nothing
+    }
+    if (ind1NonFilingChars.includes(toField.tag)) {
+      toField.ind1 = getBigger(toField.ind1, fromField.ind1); // eslint-disable-line functional/immutable-data
+    }
+  }
+  
+  function mergeIndicator2(toField, fromField) {
+    if (ind2NonFilingChars.includes(toField.tag)) {
+      toField.ind2 = getBigger(toField.ind2, fromField.ind2); // eslint-disable-line functional/immutable-data
+    }
+  }
+
+  function stringIsDigit(val) {
+    return /^[0-9]$/.test(val);
+  }
+
+  function getBigger(value1, value2) {
+    if (value1 === ' ' && stringIsDigit(value2)) {
+      return value2;
+    }
+    if (stringIsDigit(value1) && stringIsDigit(value2)) {
+      if (parseInt(value2) > parseInt(value1)) {
+        return value2;
+      }
+    }
+    return value1;
+  }
+}
+
 function mergeField(record, targetField, sourceField) {
-  // Duplicate field:
+  //// Identical fields
+  // No need to check every subfield separately.
+  // Also no need to postprocess the resulting field.
   if (fieldToString(sourceField) === fieldToString(targetField)) {
-    // No need to try every field separately.
-    // Also no need to postprocess the resulting field.
     return record;
   }
 
@@ -335,6 +382,7 @@ function mergeField(record, targetField, sourceField) {
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
   }
 
+  mergeIndicators(targetField, sourceField);
   // We want to add the incoming subfields without punctuation, and add puctuation later on.
   // (Cloning is harmless, but probably not needed.)
   const normalizedSourceField = cloneAndRemovePunctuation(sourceField);
