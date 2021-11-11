@@ -307,6 +307,7 @@ export function fieldStripPunctuation(field) {
     applyPunctuationRules(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanCrappyPunctuationRules, REMOVE);
     debug(`FSP3: '${sf.value}'`);
   });
+  return field;
 }
 
 export function fieldFixPunctuation(field) {
