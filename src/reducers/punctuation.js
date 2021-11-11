@@ -65,9 +65,12 @@ const cleanValidPunctuationRules = {
   '700': legalX00punc,
   '800': legalX00punc,
   '245': [
-    {'name': 'A:B', 'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
+    {'name': 'A:B', 'code': 'a', 'followedBy': 'b', 'remove': / [:;=]$/u},
+    {'name': 'AB:K', 'code': 'ab', 'followedBy': 'k', 'remove': / :$/u},
     {'name': 'ABK:F', 'code': 'abk', 'followedBy': 'f', 'remove': /,$/u},
-    {'name': 'ABFNP:C', 'code': 'abfnp', 'followedBy': 'c', 'remove': / \/$/u}
+    {'name': 'ABFNP:C', 'code': 'abfnp', 'followedBy': 'c', 'remove': / \/$/u},
+    {'name': 'ABN:N', 'code': 'abn', 'followedBy': 'n', 'remove': /\.$/u },
+    {'name': 'N:P', 'code': 'n', 'followedBy': 'p', 'remove': /,$/u }
   ],
   '300': [
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
@@ -80,6 +83,7 @@ const cleanValidPunctuationRules = {
 const addPairedPunctuationRules = {
   '100': [addX00aComma, addX00aDot],
   '245': [
+    // Blah! "$a = $b" and "$a ; $b" can be valid...
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
     {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
     {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
