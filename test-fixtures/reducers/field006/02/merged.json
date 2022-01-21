@@ -3,19 +3,7 @@
   "fields": [
     {
       "tag": "006",
-      "value": "006_base1"
-    },
-    {
-      "tag": "006",
-      "value": "006_base2"
-    },
-    {
-      "tag": "006",
-      "value": "006_source1"
-    },
-    {
-      "tag": "006",
-      "value": "006_source2"
+      "value": "006_base"
     }
   ]
 }

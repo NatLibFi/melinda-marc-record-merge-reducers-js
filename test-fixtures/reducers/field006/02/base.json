@@ -3,11 +3,7 @@
   "fields": [
     {
       "tag": "006",
-      "value": "006_base1"
-    },
-    {
-      "tag": "006",
-      "value": "006_base2"
+      "value": "006_base"
     }
   ]
 }

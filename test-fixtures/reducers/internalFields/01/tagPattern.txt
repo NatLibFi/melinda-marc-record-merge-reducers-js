@@ -1,1 +1,0 @@
-^(LOW|CAT|SID)$
