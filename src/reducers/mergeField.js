@@ -1,27 +1,13 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {
-  fieldHasSubfield,
-  fieldHasNSubfields,
-  fieldIsRepeatable,
-  fieldToString,
-  fieldsAreIdentical,
-  recordHasField
-} from './utils.js';
-
-import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize.js';
-import {cloneAndPreprocessField} from './mergePreAndPostprocess.js';
-import {getMergeConstraintsForTag} from './mergeConstraints.js';
+import {fieldHasSubfield, fieldHasNSubfields, fieldIsRepeatable, fieldToString, fieldsAreIdentical, recordHasField} from './utils';
+import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize';
+import {cloneAndPreprocessField} from './mergePreAndPostprocess';
+import {getMergeConstraintsForTag} from './mergeConstraints';
+import {controlSubfieldsPermitMerge} from './controlSubfields';
+import {bottomUpSortSubfields, isSubfieldGoodForMerge, mergeSubfield} from './mergeSubfield';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
-
-import {controlSubfieldsPermitMerge} from './controlSubfields.js';
-
-import {
-  bottomUpSortSubfields,
-  isSubfieldGoodForMerge,
-  mergeSubfield
-} from './mergeSubfield.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -32,7 +18,7 @@ const counterpartRegexps = {
 
 function nvdebug(message) {
   debug(message);
-  console.info(message);
+  console.info(message); // eslint-disable-line no-console
 }
 
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
@@ -160,7 +146,7 @@ function indicator1Matches(field1, field2) {
 
 function indicator2Matches(field1, field2) {
   if (ind2NonFilingChars.includes(field1.tag)) {
-    return true; 
+    return true;
   }
   // Default:
   return field1.ind2 === field2.ind2;
@@ -342,17 +328,19 @@ function mergeIndicators(toField, fromField) {
     }
     if (ind1NonFilingChars.includes(toField.tag)) {
       toField.ind1 = getBigger(toField.ind1, fromField.ind1); // eslint-disable-line functional/immutable-data
+      return;
     }
   }
-  
+
   function mergeIndicator2(toField, fromField) {
     if (ind2NonFilingChars.includes(toField.tag)) {
       toField.ind2 = getBigger(toField.ind2, fromField.ind2); // eslint-disable-line functional/immutable-data
+      return;
     }
   }
 
   function stringIsDigit(val) {
-    return /^[0-9]$/.test(val);
+    return (/^[0-9]$/u).test(val);
   }
 
   function getBigger(value1, value2) {
@@ -360,7 +348,7 @@ function mergeIndicators(toField, fromField) {
       return value2;
     }
     if (stringIsDigit(value1) && stringIsDigit(value2)) {
-      if (parseInt(value2) > parseInt(value1)) {
+      if (parseInt(value2, 10) > parseInt(value1, 10)) {
         return value2;
       }
     }
@@ -389,7 +377,7 @@ function mergeField(record, targetField, sourceField) {
   debug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`);
 
   normalizedSourceField.subfields.forEach(candSubfield => {
-  //sourceField.subfields.forEach(candSubfield => {
+    //sourceField.subfields.forEach(candSubfield => {
     const originalValue = fieldToString(targetField);
     mergeSubfield(record, targetField, candSubfield);
     const newValue = fieldToString(targetField);
