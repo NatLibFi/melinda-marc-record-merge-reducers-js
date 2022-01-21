@@ -183,8 +183,8 @@ function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
 
 
 function pairableAsteriIDs(baseField, sourceField) {
-  nvdebug(`ASTERI1 ${fieldToString(baseField)}`); // eslint-disable-line
-  nvdebug(`ASTERI2 ${fieldToString(sourceField)}`); // eslint-disable-line
+  //nvdebug(`ASTERI1 ${fieldToString(baseField)}`); // eslint-disable-line
+  //nvdebug(`ASTERI2 ${fieldToString(sourceField)}`); // eslint-disable-line
 
   // Check that relevant control subfield(s) exist in both records (as controlSubfieldsPermitMerge() doesn't check it):
   const fin11a = getAsteriIDs(baseField);
@@ -195,14 +195,14 @@ function pairableAsteriIDs(baseField, sourceField) {
   if (fin11b.length === 0) {
     return false;
   }
-  nvdebug(`ASTERI WP3:\n${fin11a.join(", ")}\n${fin11b.join(", ")}`); // eslint-disable-line
+  //nvdebug(`ASTERI WP3:\n${fin11a.join(", ")}\n${fin11b.join(", ")}`); // eslint-disable-line
   // Check that found control subfields agree. Use pre-existing generic function to reduce code.
   // (NB! We could optimize and just return true here, as control subfield check is done elsewhere as well.
   // However, explicitly checking them here makes the code more robust.)
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
     return false;
   }
-  console.log(`ASTERI PAIR ${fieldToString(sourceField)}`); // eslint-disable-line
+  //console.log(`ASTERI PAIR ${fieldToString(sourceField)}`); // eslint-disable-line
   return true;
 
   function getAsteriIDs(field) {
@@ -212,23 +212,23 @@ function pairableAsteriIDs(baseField, sourceField) {
   }
 }
 
-function compareName(baseField, sourceField) {
+function pairableName(baseField, sourceField) {
   // 100$a$t: remove $t and everything after that
   const reducedField1 = fieldToNamePart(baseField);
   const reducedField2 = fieldToNamePart(sourceField);
 
   // compare the remaining subsets:
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
-    debug(`    name match: '${fieldToString(reducedField1)}'`);
+    //debug(`    name match: '${fieldToString(reducedField1)}'`);
     return true;
   }
 
   if (pairableAsteriIDs(baseField, sourceField)) {
-    debug(`    name match based on ASTERI $0'`);
+    //debug(`    name match based on ASTERI $0'`);
     return true;
   }
 
-  debug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
+  //debug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
   return false;
 }
 
@@ -243,7 +243,7 @@ function semanticallyMergablePair(baseField, sourceField) {
   // Hmm... we should check lifespan here, $d YYYY
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
-  if (!compareName(baseField, sourceField)) {
+  if (!pairableName(baseField, sourceField)) {
     debug('Unmergable: Name part mismatch');
     return false;
   }
