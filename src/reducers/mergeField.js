@@ -1,11 +1,12 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldIsRepeatable, fieldToString, fieldsAreIdentical, recordHasField} from './utils';
-import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize';
+import {cloneAndNormalizeField, cloneAndRemovePunctuation, normalizeSubfield0Value} from './normalize';
 import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {bottomUpSortSubfields, isSubfieldGoodForMerge, mergeSubfield} from './mergeSubfield';
+// import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
@@ -18,7 +19,7 @@ const counterpartRegexps = {
 
 function nvdebug(message) {
   debug(message);
-  //console.info(message); // eslint-disable-line no-console
+  console.info(message); // eslint-disable-line no-console
 }
 
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
@@ -180,6 +181,37 @@ function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
   return fieldSpecificCallback === null || fieldSpecificCallback(baseField, sourceField);
 }
 
+
+function pairableAsteriIDs(baseField, sourceField) {
+  nvdebug(`ASTERI1 ${fieldToString(baseField)}`); // eslint-disable-line
+  nvdebug(`ASTERI2 ${fieldToString(sourceField)}`); // eslint-disable-line
+
+  // Check that relevant control subfield(s) exist in both records (as controlSubfieldsPermitMerge() doesn't check it):
+  const fin11a = getAsteriIDs(baseField);
+  if (fin11a.length === 0) {
+    return false;
+  }
+  const fin11b = getAsteriIDs(sourceField);
+  if (fin11b.length === 0) {
+    return false;
+  }
+  nvdebug(`ASTERI WP3:\n${fin11a.join(", ")}\n${fin11b.join(", ")}`); // eslint-disable-line
+  // Check that found control subfields agree. Use pre-existing generic function to reduce code.
+  // (NB! We could optimize and just return true here, as control subfield check is done elsewhere as well.
+  // However, explicitly checking them here makes the code more robust.)
+  if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
+    return false;
+  }
+  console.log(`ASTERI PAIR ${fieldToString(sourceField)}`); // eslint-disable-line
+  return true;
+
+  function getAsteriIDs(field) {
+    return field.subfields.filter(sf => sf.code === '0')
+      .map(sf => normalizeSubfield0Value(sf.value))
+      .filter(val => val.substring(0, 7) === '(FIN11)');
+  }
+}
+
 function compareName(baseField, sourceField) {
   // 100$a$t: remove $t and everything after that
   const reducedField1 = fieldToNamePart(baseField);
@@ -187,9 +219,15 @@ function compareName(baseField, sourceField) {
 
   // compare the remaining subsets:
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
-    //debug(`    name match: '${fieldToString(reducedField1)}'`);
+    debug(`    name match: '${fieldToString(reducedField1)}'`);
     return true;
   }
+
+  if (pairableAsteriIDs(baseField, sourceField)) {
+    debug(`    name match based on ASTERI $0'`);
+    return true;
+  }
+
   debug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
   return false;
 }
