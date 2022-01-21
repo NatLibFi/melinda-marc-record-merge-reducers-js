@@ -26,30 +26,30 @@
 *
 */
 
-import fs from 'fs';
-import path from 'path';
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createValidator from './validate';
+import {READERS} from '@natlibfi/fixura';
+import generateTests from '@natlibfi/fixugen';
 
-const FIXTURES_PATH = path.join(__dirname, '../test-fixtures/validate');
-
-describe('validate', () => {
-  let validator; // eslint-disable-line
-
-  before(async () => {
-    validator = await createValidator();
-  });
-
-  fs.readdirSync(path.join(FIXTURES_PATH, 'in')).forEach(file => {
-    it(file, async () => {
-      const record = new MarcRecord(JSON.parse(fs.readFileSync(path.join(FIXTURES_PATH, 'in', file), 'utf8')));
-
-      const result = await validator(record, true, true);
-      const expectedPath = path.join(FIXTURES_PATH, 'out', file);
-      const formattedResult = {...result, record: result.record.toObject()};
-
-      expect(formattedResult).to.eql(JSON.parse(fs.readFileSync(expectedPath, 'utf8')));
-    });
-  });
+generateTests({
+  callback,
+  path: [__dirname, '..', 'test-fixtures', 'validate'],
+  recurse: false,
+  useMetadataFile: true,
+  fixura: {
+    failWhenNotFound: false,
+    reader: READERS.JSON
+  }
 });
+
+async function callback({getFixture}) {
+  const validator = await createValidator();
+
+  const record = new MarcRecord(getFixture('record.json'), {subfieldValues: false});
+  const expectedResult = getFixture('expectedResult.json');
+  const result = await validator(record, true, true);
+  const formattedResult = {...result, record: result.record.toObject()};
+
+  expect(formattedResult).to.eql(expectedResult);
+}
