@@ -1,0 +1,3 @@
+{
+  "description":"If 007/00-01 are different in base and source, copy 007 from source to base as new field (2x)"
+}

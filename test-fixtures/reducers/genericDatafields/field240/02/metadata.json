@@ -1,0 +1,3 @@
+{
+  "description":"Base does not contain 240 or 130 => copy 240 from source\nNote: Test base has dummy 010 because if fields = [], it is not recognized as a valid MarcRecord object"
+}
