@@ -1,3 +1,3 @@
 {
-  "description":"Copy subfields from source field to base field (case 2) : 2"
+  "description":"Don't copy source's $d (same as base's $a), don't copy source's $a (same as base's $d). Otherwise business as usual"
 }

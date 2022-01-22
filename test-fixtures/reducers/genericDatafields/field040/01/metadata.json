@@ -1,3 +1,3 @@
 {
-  "description":"Copy new field from source to base record (case 1)\nNote: Test 18 base has a dummy 010 field because if fields=[], it is not a valid MarcRecord"
+  "description":"Copy 040 field from source to base record (which does not have one)"
 }
