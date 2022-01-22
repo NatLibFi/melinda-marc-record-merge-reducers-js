@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {cloneAndRemovePunctuation} from './normalize.js';
+import {cloneAndRemovePunctuation, normalizeSubfield0Value} from './normalize.js';
 import {
   fieldHasSubfield,
   fieldIsRepeatable,
@@ -205,6 +205,11 @@ function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
     // Skip just $g subfield or the whole field?
     // We decided to skip just this subfield. We want at least $0 and maybe more even from ennakkotieto.
     debug('Skip $g ENNAKKOTIETO.');
+    return true;
+  }
+  // Don't add $0 subfields that mean the same even if they look different:
+  if (candSubfield.code === '0' &&
+      targetField.subfields.some(sf => sf.code === '0' && normalizeSubfield0Value(sf.value) === normalizeSubfield0Value(candSubfield.value))) {
     return true;
   }
   return false;
