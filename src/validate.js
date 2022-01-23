@@ -41,6 +41,9 @@ import {
 } from '@natlibfi/marc-record-validators-melinda';
 import createDebugLogger from 'debug';
 
+import {recordPreprocess} from './reducers/normalize';
+import {fieldFixPunctuation} from './reducers/punctuation';
+
 // ### Kopioitu täältä: https://github.com/NatLibFi/melinda-record-import-transformer-helmet
 // ### Muokkaa vielä oikeat validaattorit mergeä varten
 export default async () => {
@@ -69,8 +72,14 @@ export default async () => {
   //  const validatePunctuation = await validateFactoryPunctuation();
 
   return async (record, fix, validateFixes) => {
+    const record2 = fix ? recordPreprocess(record) : record;
+    if (fix) { // eslint-disable-line functional/no-conditional-statement
+      record2.fields.forEach(field => {
+        fieldFixPunctuation(field);
+      });
+    }
     const opts = fix ? {fix, validateFixes} : {fix};
-    const result = await validate(record, opts);
+    const result = await validate(record2, opts);
     //const result = await validatePunctuation(prevalidated.record, opts);
     return {
       record: result.record,
