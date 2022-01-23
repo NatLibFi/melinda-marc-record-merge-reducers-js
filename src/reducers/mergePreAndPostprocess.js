@@ -75,6 +75,7 @@ export function postprocessRecord(record) {
       delete field.added; // eslint-disable-line functional/immutable-data
     }
   });
+  return record;
 }
 
 function convertOriginalToModifyingAgency(field) {
