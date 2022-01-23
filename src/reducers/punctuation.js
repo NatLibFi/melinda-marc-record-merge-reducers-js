@@ -23,7 +23,7 @@ const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 // Will unfortunately trigger "Sukunimi, Th." type:
 const removeX00Comma = {'code': 'abcqde', 'followedBy': '#01459', 'context': /(?:[a-z)]|ä|ä|ö),$/u, 'remove': /,$/u};
 const cleanRHS = {'code': 'abcd', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
-const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#01459', 'context': /[0-9][,.]$/u, 'remove': /[,.]$/u};
+const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#01459', 'context': /[0-9]-[,.]$/u, 'remove': /[,.]$/u};
 const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 // These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation such as "esitt."...
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj', 'context': /(?:aja|jä)\.$/u, 'remove': /\.$/u};
@@ -32,7 +32,9 @@ const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /
 
 
 const addX00aComma = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
+const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
 const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#t01', 'context': defaultNeedsPuncAfter};
+
 
 const NONE = 0;
 const ADD = 2;
@@ -81,7 +83,7 @@ const cleanValidPunctuationRules = {
 };
 
 const addPairedPunctuationRules = {
-  '100': [addX00aComma, addX00aDot],
+  '100': [addX00aComma, addX00aComma2, addX00aDot],
   '245': [
     // Blah! "$a = $b" and "$a ; $b" can be valid...
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
@@ -322,7 +324,8 @@ export function fieldFixPunctuation(field) {
   field.subfields.forEach((sf, i) => {
     subfieldFixPunctuation(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null);
   });
-  //addFinalPunctuation(field); // Attempt to use the (modified version of) existing stuff. Nothings happens as of now.
+  // addFinalPunctuation(field); // local version. use shared code instead.
+  // Use shared code for final punctuation (sadly this does not fix intermediate punc):
   validateSingleField(field, false, true); // NB! Don't use field.tag as second argument! It's a string, not an int. 3rd arg must be true (=fix)
   return field;
 }
