@@ -6,8 +6,8 @@ import {fieldToString, isControlSubfieldCode} from './utils.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 function nvdebug(message = "") {
-  debug(message);
-  console.info(message); // eslint-disable-line no-console
+  //debug(message);
+  //console.info(message); // eslint-disable-line no-console
 }
 
 function precomposeFinnishLetters(value = "") {
