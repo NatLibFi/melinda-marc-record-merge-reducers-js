@@ -108,6 +108,10 @@ function fieldRemoveDecomposedDiacritics(field) {
 }
 
 function fieldPreprocess(field) {
+  // Do nothing for control fields or corrupted data fields:
+  if (!field.subfields) {
+    return field;
+  }
   //// 1. Fix composition
   // I don't want to use normalizeSync(). "åäö" => "aao". Utter crap! NB: Use something else later on!
   fieldFixComposition(field);
@@ -115,13 +119,13 @@ function fieldPreprocess(field) {
   // - remove crappy 100$d subfields:
   fieldRemoveDatesAssociatedWithName(field); // eg. "100$d (1)"
   field.subfields.forEach(sf => {
-    // Things to do:
-    // 2. Fix other shit
+    // Possible things to do:
+    // 2. Fix other issues
     // - normalize non-breaking space etc whitespace characters
-    // - normalize various '-' letters?
+    // - normalize various '-' letters in ISBN et al?
     // - normalize various copyright signs
-    // - FIN01 vs (FI-MELINDA)...
-    // - remove 020$c? This one is a bit tricky, since it often contains non-price information...
+    // - FIN01 vs (FI-MELINDA)? No... Probably should not be done here.
+    // - remove 020$c? This one would a bit tricky, since it often contains non-price information...
     // 3. Trim
     sf.value.replace(/\s+/gu, ' ').trim(); // eslint-disable-line functional/immutable-data
   });
