@@ -5,7 +5,12 @@ import {fieldToString, isControlSubfieldCode} from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-function precomposeFinnishLetters(value) {
+function nvdebug(message = "") {
+  debug(message);
+  console.info(message); // eslint-disable-line no-console
+}
+
+function precomposeFinnishLetters(value = "") {
   return value.
     replace(/å/gu, 'å').
     replace(/ä/gu, 'ä').
@@ -16,7 +21,7 @@ function precomposeFinnishLetters(value) {
 }
 
 /*
-function normalizationExceptions(value) {
+function normalizationExceptions(value = "") {
   // This is just a placeholder for now.
   // Possible normalizations include but are not limited to:
   // ø => ö? Might be language dependent: 041 $a fin => ö, 041 $a eng => o?
@@ -31,14 +36,14 @@ function normalizationExceptions(value) {
   return value;
 }
 */
-function removeDecomposedDiacritics(value) {
+function removeDecomposedDiacritics(value = "") {
   // NB #1: Does nothing to precomposed letters. String.normalize('NFD') can handle them.
   // NB #2: Finnish letters 'å', 'ä', 'ö', 'Å', Ä', and 'Ö' should be handled before this.
   // NB #3: Calling our very own fixComposition() before this function handles both #1 and #2.
   return String(value).replace(/\p{Diacritic}/gu, '');
 }
 
-function fixComposition(value) {
+function fixComposition(value = "") {
   // Target: Diacritics use Melinda internal notation.
   // General solution: Decompose everything and then compose 'å', 'ä', 'ö', 'Å', 'Ä' and 'Ö'.
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/normalize
@@ -112,6 +117,7 @@ function fieldPreprocess(field) {
   if (!field.subfields) {
     return field;
   }
+
   //// 1. Fix composition
   // I don't want to use normalizeSync(). "åäö" => "aao". Utter crap! NB: Use something else later on!
   fieldFixComposition(field);
@@ -178,6 +184,7 @@ export function fieldFixComposition(field) {
     return field;
   }
   const originalValue = fieldToString(field);
+  nvdebug(`fFC: '${originalValue}'`);
   field.subfields.forEach((subfield, index) => {
     field.subfields[index].value = fixComposition(subfield.value); // eslint-disable-line functional/immutable-data
   });
@@ -207,7 +214,7 @@ export function recordPreprocess(record) {
 }
 
 
-function normalizeFIN01(value) {
+function normalizeFIN01(value = "") {
   if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
     return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
   }
@@ -217,7 +224,7 @@ function normalizeFIN01(value) {
   return value;
 }
 
-function normalizeFIN11(value) {
+function normalizeFIN11(value = "") {
   if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
     return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
   }
@@ -227,7 +234,7 @@ function normalizeFIN11(value) {
   return value;
 }
 
-export function normalizeSubfield0Value(value) {
+export function normalizeSubfield0Value(value = "") {
   const fin01 = normalizeFIN01(value);
   if (fin01 !== value) {
     return fin01;
