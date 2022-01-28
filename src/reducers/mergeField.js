@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldIsRepeatable, fieldToString, fieldsAreIdentical, recordHasField} from './utils';
+import {fieldHasSubfield, fieldHasNSubfields, fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug, recordHasField} from './utils';
 import {cloneAndNormalizeField, cloneAndRemovePunctuation, normalizeSubfield0Value} from './normalize';
 import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {getMergeConstraintsForTag} from './mergeConstraints';
@@ -10,17 +10,12 @@ import {bottomUpSortSubfields, isSubfieldGoodForMerge, mergeSubfield} from './me
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
 
 const counterpartRegexps = {
   '100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
 };
-
-function nvdebug(message) {
-  debug(message);
-  console.info(message); // eslint-disable-line no-console
-}
 
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
   // NB! Assume that field1 and field2 have same relevant subfields.
@@ -511,18 +506,19 @@ export function mergeOrAddField(record, field) {
   const newField = cloneAndPreprocessField(field, record); // probably unnecessary cloning, but safer this way
 
   if (skipMergeOrAddField(record, newField)) {
+    nvdebug(`mergeOrAddField(): don't merge or add '${fieldToString(field)}'`, debug);
     return record;
   }
-
+  nvdebug(`mergeOrAddField(): Try to merge or add '${fieldToString(field)}'.`, debug);
   const counterpartField = getCounterpart(record, newField);
 
   if (counterpartField) {
-    debug(`mergeOrAddfield(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
+    nvdebug(`mergeOrAddfield(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debug);
 
     mergeField(record, counterpartField, newField);
     return record;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  debug(`mergeOrAddField(): No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`);
+  nvdebug(`mergeOrAddField(): No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`, debug);
   return addField(record, newField);
 }
