@@ -233,3 +233,12 @@ export function isControlSubfieldCode(subfieldCode) {
   }
   return false;
 }
+
+export function nvdebug(message, func) {
+  if (func) { // eslint-disable-line functional/no-conditional-statement
+    func(message);
+  }
+  console.info(message); // eslint-disable-line no-console
+}
+
+
