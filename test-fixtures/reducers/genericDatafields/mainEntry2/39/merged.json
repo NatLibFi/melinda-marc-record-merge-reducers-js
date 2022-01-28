@@ -11,6 +11,10 @@
           "value": "Sisältää (teos):"
         },
         {
+          "code": "i",
+          "value": "Sisältää:"
+        },
+        {
           "code": "a",
           "value": "Eurenius, Jacobus Abrahami,"
         },
