@@ -33,7 +33,7 @@ const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /
 
 const addX00aComma = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
-const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#t01', 'context': defaultNeedsPuncAfter};
+const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#tu01', 'context': defaultNeedsPuncAfter};
 
 
 const NONE = 0;
@@ -58,7 +58,7 @@ const cleanCrappyPunctuationRules = {
 const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
 // Accept upper case letters in X00$b, since they are probably Roman numerals.
 const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#01459', context: /^[IVXLCDM]+\.$/u, 'remove': /\.$/u};
-const cleanLegalX00Dot = {'code': 'abcde', 'followedBy': 't#01459', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
+const cleanLegalX00Dot = {'code': 'abcde', 'followedBy': 'tu#01459', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 
 const legalX00punc = [cleanLegalX00Comma, cleanLegalX00bDot, cleanLegalX00Dot];
 const cleanValidPunctuationRules = {
