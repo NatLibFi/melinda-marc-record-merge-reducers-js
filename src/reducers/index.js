@@ -41,12 +41,12 @@ const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude s
 // Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
 // eslint-disable-next-line
 const allReducers = [
-  //internalFields(), // LOW, CAT, SID
+  //internalFields(), // LOW, CAT, SID. Nowadays part of genericDatafield(
   leader(), // Test 01
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
-  genericDatafield() // Import tests?
+  genericDatafield()
 
 ];
 
@@ -60,7 +60,7 @@ export const localCopyReducerConfigs = [
 ];
 
 export const localReducers = [
-  //internalFields(), // LOW, CAT, SID
+  //internalFields(), // LOW, CAT, SID. Nowadays part of genericDatafield()
   leader(), // Test 01
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
