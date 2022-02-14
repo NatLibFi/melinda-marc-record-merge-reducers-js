@@ -120,13 +120,11 @@ function fieldLowercase(field) {
 }
 
 export function normalizableSubfieldPrefix(tag, sf) {
-  if (sf.code === '0' || sf.code === '1') {
+  if (sf.code === '0' || sf.code === '1' || sf.code === 'w') {
     return true;
   }
-  if (sf.code === 'w' && ['773'].includes(tag)) {
-    return true;
-  }
-  if (sf.code === 'a' && ['035'].includes(tag)) {
+
+  if (tag === '035' && ['a', 'z'].includes(sf.code)) {
     return true;
   }
   return false;
