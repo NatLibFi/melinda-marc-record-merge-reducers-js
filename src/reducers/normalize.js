@@ -119,6 +119,29 @@ function fieldLowercase(field) {
   });
 }
 
+export function normalizableSubfieldPrefix(tag, sf) {
+  if (sf.code === '0' || sf.code === '1') {
+    return true;
+  }
+  if (sf.code === 'w' && ['773'].includes(tag)) {
+    return true;
+  }
+  if (sf.code === 'a' && ['035'].includes(tag)) {
+    return true;
+  }
+  return false;
+}
+
+export function fieldNormalizePrefixes(field) {
+  field.subfields.forEach(sf => {
+    if (normalizableSubfieldPrefix(field.tag, sf)) {
+      console.info(`NORMALIZE SUBFIELD: '${fieldToString(field)}'`); // eslint-disable-line no-console
+      sf.value = normalizeSubfield0Value(sf.value); // eslint-disable-line functional/immutable-data
+      return;
+    }
+  });
+}
+
 function fieldRemoveDecomposedDiacritics(field) {
   field.subfields.forEach((sf) => {
     sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
@@ -159,6 +182,7 @@ function normalizeField(field) {
   //sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
   fieldStripPunctuation(field);
   fieldLowercase(field);
+  fieldNormalizePrefixes(field);
   return field;
 }
 
@@ -210,6 +234,7 @@ export function fieldFixComposition(field) {
   return field;
 }
 
+/*
 export function recordFixComposition(record) {
   if (!record.fields) {
     return record;
@@ -219,6 +244,7 @@ export function recordFixComposition(record) {
   });
   return record;
 }
+*/
 
 
 function externalFixes(record) {
