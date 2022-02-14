@@ -63,10 +63,13 @@ export function copyFields(record, fields) {
 
 // Get field specs from melindaCustomMergeFields.json
 const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
+
+/*
 export function getFieldSpecs(tag) {
   const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tag);
   return fieldSpecs;
 }
+*/
 
 function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
   // These we know or "know":
