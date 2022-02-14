@@ -30,14 +30,14 @@
 import validateFactory from '@natlibfi/marc-record-validate';
 //import validateFactoryPunctuation from '@natlibfi/marc-record-validators-melinda/src/punctuation/';
 import {
-  //FieldExclusion,
+  FieldExclusion,
   //FieldStructure,
   FieldsPresent,
-  Punctuation
-  //EmptyFields,
-  //EndingPunctuation
-  //IsbnIssn,
-  //SubfieldExclusion
+  Punctuation,
+  EmptyFields,
+  EndingPunctuation,
+  IsbnIssn,
+  SubfieldExclusion
 } from '@natlibfi/marc-record-validators-melinda';
 import createDebugLogger from 'debug';
 
@@ -50,24 +50,26 @@ export default async () => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   debug(`### testing`);
   const validate = validateFactory([
-    await FieldsPresent([/^100$/u]),
-    await Punctuation()
-    //await EndingPunctuation()
-    //await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]),
-    //await FieldsPresent([/^336$/, /^337$/, /^338$/]),
-    /*
+    //await FieldsPresent([/^100$/u]), // not required by merge
+    //await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]), // Helmet-specific rule? Skip...
+    await FieldsPresent([/^336$/u, /^337$/u]), // Comps don't always have 338, so don't require it. Add 245?
+
     await FieldExclusion([
-    /^(001|091|092|093|094|095|256|533|574|575|576|577|578|599)$/,
-    {tag: /^264$/, subfields: [{code: /^a$/, value: /^\[.*\]$/}]},
-    {tag: /^650$/, subfields: [{code: /^a$/, value: /^overdrive$/i}]},
-    {tag: /^(648|650|651|655)$/, subfields: [{code: /^2$/, value: /^(ysa|musa|allars|cilla)$/}]},
-    {tag: /^041$/, dependencies: [{leader: /^.{6}[g|i]/}]}
+      // /^(001|091|092|093|094|095|256|533|574|575|576|577|578|599)$/,
+      //{tag: /^264$/, subfields: [{code: /^a$/, value: /^\[.*\]$/}]}, // Not sure about this either
+      //{tag: /^650$/, subfields: [{code: /^a$/, value: /^overdrive$/i}]}, // Not sure what this is
+      {tag: /^041$/u, dependencies: [{leader: /^.{6}[g|i]/u}]},
+      {tag: /^(?:648|650|651|655)$/u, subfields: [{code: /^2$/u, value: /^(?:ysa|musa|allars|cilla)$/u}]}
     ]),
     await EmptyFields(),
     await IsbnIssn({hyphenateISBN: true}),
-    await SubfieldExclusion([{tag: /^041$/, subfields: [{code: /a|d/, value: /^zxx$/}]}]),
-    await FieldStructure([{tag: /^007$/, dependencies: [{leader: /^.{6}[^at]/}]}]),
-    await EndingPunctuation() */
+    await SubfieldExclusion([
+      {tag: /^041$/u, subfields: [{code: /^[ad]$/u, value: /^zxx$/u}]},
+      {tag: /^02[04]$/u, subfields: [{code: /^c$/u, value: /^.*(?:€|£|\$|FIM).*$/u}]} // price info
+    ]),
+    //await FieldStructure([{tag: /^007$/u, dependencies: [{leader: /^.{6}[^at]/u}]}]),
+    await Punctuation(),
+    await EndingPunctuation()
   ]);
   //  const validatePunctuation = await validateFactoryPunctuation();
 
@@ -78,7 +80,8 @@ export default async () => {
         fieldFixPunctuation(field);
       });
     }
-    const opts = fix ? {fix, validateFixes} : {fix};
+    //const opts = fix ? {fix, validateFixes} : {fix}; // NV: This does not seems right...
+    const opts = fix ? {fix, validateFixes} : {validateFixes}; // NV: my replacement
     const result = await validate(record2, opts);
     //const result = await validatePunctuation(prevalidated.record, opts);
     return {
