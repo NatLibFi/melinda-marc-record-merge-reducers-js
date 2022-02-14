@@ -1,3 +1,3 @@
 {
-  "description":"Preprocessor adds line to a 020$a ISBN"
+  "description":"Field 020: Preprocessor adds hyphens to an ISBN 020$a, and removes 020$c"
 }
