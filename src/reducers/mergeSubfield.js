@@ -1,5 +1,6 @@
 import createDebugLogger from 'debug';
-import {cloneAndRemovePunctuation, normalizeSubfield0Value} from './normalize.js';
+import clone from 'clone';
+import {cloneAndRemovePunctuation, /*fieldNormalizePrefixes,*/ normalizableSubfieldPrefix, normalizeSubfield0Value} from './normalize.js';
 import {
   fieldHasSubfield,
   fieldIsRepeatable, fieldToString, nvdebug,
@@ -210,15 +211,15 @@ function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
     return true;
   }
   // Don't add $0 subfields that mean the same even if they look different:
-  if (candSubfield.code === '0' &&
-      targetField.subfields.some(sf => sf.code === '0' && normalizeSubfield0Value(sf.value) === normalizeSubfield0Value(candSubfield.value))) {
+  if (normalizableSubfieldPrefix(targetField.tag, candSubfield) &&
+      targetField.subfields.some(sf => normalizeSubfield0Value(sf.value) === normalizeSubfield0Value(candSubfield.value))) {
     return true;
   }
   return false;
 }
 
 function mergeSubfieldNotRequired(targetField, candSubfield) {
-  // candSubfield has been stripped of punctuation
+  // candSubfield has been stripped of punctuation.
   const normalizedTargetField = cloneAndRemovePunctuation(targetField);
 
   nvdebug(`     Look for identical subfields in '${fieldToString(normalizedTargetField)}'`);
@@ -298,7 +299,7 @@ function addSubfield(targetField, candSubfield) {
 
 export function mergeSubfield(record, targetField, candSubfield) {
   nvdebug(`   Q: mergeSubfield '‡${candSubfield.code} ${candSubfield.value}' to field '${fieldToString(targetField)}'?`, debug);
-  if (mergeSubfieldNotRequired(targetField, candSubfield)) {
+  if (mergeSubfieldNotRequired(targetField, clone(candSubfield))) {
     nvdebug(`    A: No. No need to merge subfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
     return;
   }
