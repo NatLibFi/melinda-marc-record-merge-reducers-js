@@ -1,3 +1,4 @@
 {
-  "description":"main entry punc a d no end punc"
+  "description":"Punctuation test for field 100: Add ',' separator between $a and $d subfields",
+  "enabled": false
 }
