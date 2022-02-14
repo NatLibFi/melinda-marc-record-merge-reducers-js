@@ -43,7 +43,11 @@ generateTests({
   }
 });
 
-async function callback({getFixture}) {
+async function callback({getFixture, enabled}) {
+  if (!enabled) {
+    console.log('TEST DISABLED!'); // eslint-disable-line no-console
+    return;
+  }
   const validator = await createValidator();
 
   const record = new MarcRecord(getFixture('record.json'), {subfieldValues: false});
