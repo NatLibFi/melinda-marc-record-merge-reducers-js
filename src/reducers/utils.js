@@ -109,11 +109,12 @@ export function subfieldsAreIdentical(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
 }
 
+/*
 // Default subfield sort order if no custom order is given (use string first to improve readablility and compactness)
 const sortDefaultString = '8673abcdefghijklmnopqrstuvwxyz420159';
 const sortDefault = sortDefaultString.split('');
 
-export function sortSubfields(subfields, order = sortDefault, orderedSubfields = []) {
+function sortSubfields(subfields, order = sortDefault, orderedSubfields = []) {
   const [filter, ...rest] = order;
   if (filter === undefined) {
     return [...orderedSubfields, ...subfields];
@@ -121,7 +122,7 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
   //debug(`### Subfield sort filter: ${JSON.stringify(filter)}`);
   //debug(`### Subfields: ${JSON.stringify(subfields)}`);
   //debug(`### Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
-  /* eslint-disable */
+  // eslint-disable
   const filtered = subfields.filter(sub => {
     if (typeof filter === 'string') {
       return sub.code === filter;
@@ -132,14 +133,14 @@ export function sortSubfields(subfields, order = sortDefault, orderedSubfields =
     if (typeof filter === 'string') {
       return sub.code !== filter;
     }
-    /* eslint-enable */
+    // eslint-enable
   });
   if (filtered.length > 0) {
     return sortSubfields(restSubfields, rest, [...orderedSubfields, ...filtered]);
   }
   return sortSubfields(restSubfields, rest, orderedSubfields);
 }
-
+*/
 
 // NVOLK's marc record modifications
 export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
