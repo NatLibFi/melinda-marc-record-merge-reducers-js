@@ -109,45 +109,9 @@ export function subfieldsAreIdentical(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
 }
 
-// Default subfield sort order if no custom order is given
-const sortDefault = [
-  '8',
-  '6',
-  '7',
-  '3',
-  'a',
-  'b',
-  'c',
-  'd',
-  'e',
-  'f',
-  'g',
-  'h',
-  'i',
-  'j',
-  'k',
-  'l',
-  'm',
-  'n',
-  'o',
-  'p',
-  'q',
-  'r',
-  's',
-  't',
-  'u',
-  'v',
-  'w',
-  'x',
-  'y',
-  'z',
-  '4',
-  '2',
-  '0',
-  '1',
-  '5',
-  '9'
-];
+// Default subfield sort order if no custom order is given (use string first to improve readablility and compactness)
+const sortDefaultString = '8673abcdefghijklmnopqrstuvwxyz420159';
+const sortDefault = sortDefaultString.split('');
 
 export function sortSubfields(subfields, order = sortDefault, orderedSubfields = []) {
   const [filter, ...rest] = order;
