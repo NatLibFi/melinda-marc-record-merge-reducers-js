@@ -14,6 +14,6 @@ describe('utils/getTags', () => {
     // getFixture({components: ['foo', 'bar.txt'], reader: READERS.JSON})
     const test = getFixture({components: ['testi.json'], reader: READERS.JSON});
     console.log(test); // eslint-disable-line
-    expect(utils.getTags(test.fields, [])).to.eql('jotain');
+    expect(utils.getTags(test.fields, [])).to.eql(['jotain']);
   });
 });
