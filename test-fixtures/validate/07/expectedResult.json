@@ -3,12 +3,34 @@
   "messages": [
     {
       "description": "Checks whether the configured fields are present in the record",
-      "messages": [],
+      "messages": [
+        "The following tag patterns are not present in the record tag field:  /^336$/u /^337$/u"
+      ],
+      "state": "invalid"
+    },
+    {
+      "description": "Checks that the record does not contain the configured fields",
+      "state": "valid"
+    },
+    {
+      "description": "Handles empty fields",
+      "state": "valid"
+    },
+    {
+      "description": "Validates ISBN and ISSN values",
+      "state": "valid"
+    },
+    {
+      "description": "Checks that the record does not contain the configured subfields",
       "state": "valid"
     },
     {
       "description": "Fixes punctuation of fields",
-      "state": "fixed"
+      "state": "valid"
+    },
+    {
+      "description": "Handles invalid ending punctuation",
+      "state": "valid"
     }
   ],
   "record": {
