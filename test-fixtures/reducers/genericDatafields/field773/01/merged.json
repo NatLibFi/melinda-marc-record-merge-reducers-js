@@ -12,7 +12,15 @@
         },
         {
           "code": "t",
-          "value": "Tittelintuure"
+          "value": "Tittelintuure. -"
+        },
+        {
+          "code": "d",
+          "value": "Paikka : Pulju, 2022. -"
+        },
+        {
+          "code": "h",
+          "value": "1 CD-äänilevy"
         }
       ]
     }
