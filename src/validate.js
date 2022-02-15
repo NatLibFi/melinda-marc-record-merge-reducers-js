@@ -41,8 +41,8 @@ import {
 } from '@natlibfi/marc-record-validators-melinda';
 import createDebugLogger from 'debug';
 
-import {recordPreprocess} from './reducers/normalize';
-import {fieldFixPunctuation} from './reducers/punctuation';
+//import {recordPreprocess} from './reducers/normalize';
+//import {fieldFixPunctuation} from './reducers/punctuation';
 
 // ### Kopioitu täältä: https://github.com/NatLibFi/melinda-record-import-transformer-helmet
 // ### Muokkaa vielä oikeat validaattorit mergeä varten
@@ -56,8 +56,7 @@ export default async () => {
 
     await FieldExclusion([
       // /^(001|091|092|093|094|095|256|533|574|575|576|577|578|599)$/,
-      //{tag: /^264$/, subfields: [{code: /^a$/, value: /^\[.*\]$/}]}, // Not sure about this either
-      //{tag: /^650$/, subfields: [{code: /^a$/, value: /^overdrive$/i}]}, // Not sure what this is
+
       {tag: /^041$/u, dependencies: [{leader: /^.{6}[g|i]/u}]},
       {tag: /^(?:648|650|651|655)$/u, subfields: [{code: /^2$/u, value: /^(?:ysa|musa|allars|cilla)$/u}]}
     ]),
@@ -74,15 +73,18 @@ export default async () => {
   //  const validatePunctuation = await validateFactoryPunctuation();
 
   return async (record, fix, validateFixes) => {
+
+    /*
     const record2 = fix ? recordPreprocess(record) : record;
     if (fix) { // eslint-disable-line functional/no-conditional-statement
       record2.fields.forEach(field => {
         fieldFixPunctuation(field);
       });
     }
-    //const opts = fix ? {fix, validateFixes} : {fix}; // NV: This does not seems right...
-    const opts = fix ? {fix, validateFixes} : {validateFixes}; // NV: my replacement
-    const result = await validate(record2, opts);
+    */
+
+    const opts = fix ? {fix, validateFixes} : {fix};
+    const result = await validate(record, opts);
     //const result = await validatePunctuation(prevalidated.record, opts);
     return {
       record: result.record,
