@@ -17,7 +17,7 @@ const excludeSubfieldsFromMerge = [
 
 const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
 
-// List only exceptional order here. Otherwise default order is used.
+// List *only* exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
@@ -132,18 +132,22 @@ function replaceSubfieldWithBetterValue(targetField, candSubfield) {
   return false; // default to failure
 }
 
+/*
+// Commented out, as this is handled when preprocessing the source 040 field, and thus never happens.
+// This will probably be removed eventually.
 function okToInsertTagCode(tag, code) {
   if (tag === '040' && code === 'a') { // It should be 040$d by now, anyway...
     return false;
   }
   return true;
 }
+*/
 
 function insertSubfieldAllowed(targetField, candSubfield) {
   // NB! If insert is not allowed, the candicate subfield can still replace the original. (Not handled by this function though.)
 
   // Subfield codes missing from the original record can be added by default:
-  if (!fieldHasSubfield(targetField, candSubfield.code) && okToInsertTagCode(targetField.tag, candSubfield.code)) {
+  if (!fieldHasSubfield(targetField, candSubfield.code)/* && okToInsertTagCode(targetField.tag, candSubfield.code)*/) {
     return true;
   }
   // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
