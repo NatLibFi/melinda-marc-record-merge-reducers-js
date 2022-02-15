@@ -503,7 +503,7 @@ function skipMergeOrAddField(record, field) {
 }
 
 export function mergeOrAddField(record, field) {
-  const newField = cloneAndPreprocessField(field, record); // probably unnecessary cloning, but safer this way
+  const newField = cloneAndPreprocessField(field); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:
   if (skipMergeOrAddField(record, newField)) {

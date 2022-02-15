@@ -2,7 +2,6 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {
   fieldHasSubfield,
-  // fieldIsRepeatable,
   fieldToString
 } from './utils.js';
 
@@ -32,11 +31,24 @@ function subfieldsAreEmpty(field1, field2, subfieldCode) {
   return false;
 }
 
+function fieldsAreEqualAfterRemovingSubfield(field1, field2, code) {
+  const strippedField1 = field1.subfields.filter(subfield => subfield.code !== code);
+  const strippedField2 = field2.subfields.filter(subfield => subfield.code !== code);
+  return MarcRecord.isEqual(strippedField1, strippedField2);
+}
 
 function controlSubfield6PermitsMerge(field1, field2) {
   if (subfieldsAreEmpty(field1, field2, '6')) {
     return true;
   }
+
+  if (!fieldHasSubfield(field1, '6') && fieldHasSubfield(field2, '6') && fieldsAreEqualAfterRemovingSubfield(field1, field2, '6')) {
+    return true;
+  }
+  if (!fieldHasSubfield(field2, '6') && fieldHasSubfield(field1, '6') && fieldsAreEqualAfterRemovingSubfield(field1, field2, '6')) {
+    return true;
+  }
+
   // There are two (plus) fields involved (Field XXX (one) and field 880 (one plus).
   // Thus this generic solution can't handle them. Use postprocess instead.
   debug(`  controlSubfield6PermitsMerge() fails always on generic part (feature).`);
@@ -66,7 +78,7 @@ function controlSubfield9PermitsMerge(field1, field2) {
   // What should we check here anyway? Never merge FOO<KEEP> and FOO<DROP>?
   const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
-  const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2); // NB! Do we need to sort these?
+  const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2); // NB! Do we need to sort them subfields?
   if (!result) {
     debug(` control subfield 9 disallows merge`);
     return false;
@@ -158,4 +170,73 @@ export function controlSubfieldsPermitMerge(field1, field2) {
   }
 
   return true;
+}
+
+
+const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
+
+function subfield6Index(subfield) {
+  if (!subfield.value.match(sf6Regexp)) {
+    return 0;
+  }
+  const tailPart = subfield.value.substring(4, 6); // 4 is for "TAG-"
+  const result = parseInt(tailPart, 10);
+  debug(`SF6: ${subfield.value} => ${tailPart} => ${result}`);
+  return result;
+}
+
+/*
+function updateSubfield6(field, index) {
+  const sf6s = field.subfields.filter(subfield => subfield.code === '6');
+  const strindex = index < 10 ? `0${index}` : `${index}`;
+  sf6s[0].value.replace(sf6s[0].substring(4, 6), strindex);
+}
+*/
+
+
+function fieldSubfield6Index(field) {
+  const sf6s = field.subfields.filter(subfield => subfield.code === '6');
+  if (sf6s.length === 0) {
+    return 0;
+  }
+  const vals = sf6s.map(sf => subfield6Index(sf));
+  return Math.max(...vals);
+}
+
+export function getMaxSubfield6(record) {
+  // Should we cache the value here?
+  const vals = record.fields.map((field) => {
+    if (field.added) {
+      return 0;
+    } // field already added from source
+    return fieldSubfield6Index(field);
+  });
+  return Math.max(...vals);
+}
+
+
+export function reindexSubfield6s(record, baseMax) {
+  debug(`MAX SF6 is ${baseMax}`);
+
+  if (baseMax === 0) { // No action required
+    return record;
+  }
+  record.fields.forEach(field => fieldUpdateSubfield6s(field, baseMax));
+
+
+  function fieldUpdateSubfield6s(field, max) {
+    if (!field.subfields) {
+      return;
+    }
+    field.subfields.forEach(sf => updateSubfield6(sf, max));
+  }
+
+  function updateSubfield6(sf, max) {
+    if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statement
+      const index = subfield6Index(sf) + max;
+      const strindex = index < 10 ? `0${index}` : `${index}`;
+      sf.value = sf.value.substring(0, 4) + strindex + sf.value.substring(6); // eslint-disable-line functional/immutable-data
+      debug(`SF6 is now ${sf.value}`);
+    }
+  }
 }

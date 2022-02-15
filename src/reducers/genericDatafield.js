@@ -13,6 +13,7 @@ import {
 import {fieldToString} from './utils.js';
 import createDebugLogger from 'debug';
 import {recordPreprocess} from './normalize.js';
+import {getMaxSubfield6, reindexSubfield6s} from './controlSubfields.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -50,10 +51,10 @@ const datafields = datafieldString.split(' ');
 
 export default () => (originalRecord, originalRecord2) => {
   // We should clone the records here and just here...
-  //const record = recordFixComposition(originalRecord); // fix composition et al
-  //const record2 = recordFixComposition(originalRecord2); // fix composition et al
   const record = recordPreprocess(originalRecord); // fix composition et al
+  const max6 = getMaxSubfield6(originalRecord);
   const record2 = recordPreprocess(originalRecord2); // fix composition et al
+  reindexSubfield6s(record2, max6);
 
   datafields.forEach(tag => {
     //debug(`CURR TAG: ${tag}...`);
