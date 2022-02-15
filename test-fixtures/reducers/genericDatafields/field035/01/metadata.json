@@ -1,3 +1,3 @@
 {
-  "description":"Copy 040 field from source to base record (which does not have one)"
+  "description":"Don't copy 035 field as it refers to same data as existing 035 field"
 }
