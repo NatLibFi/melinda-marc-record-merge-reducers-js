@@ -78,7 +78,7 @@ function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
     return true;
   }
 
-  if ('6'.indexOf(subfieldCode) > -1) {
+  if (subfieldCode === '6') {
     return false;
   }
 
