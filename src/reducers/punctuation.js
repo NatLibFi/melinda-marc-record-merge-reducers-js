@@ -7,7 +7,7 @@
 */
 import {validateSingleField} from '@natlibfi/marc-record-validators-melinda/dist/ending-punctuation';
 import createDebugLogger from 'debug';
-import {fieldToString, isControlSubfieldCode} from './utils';
+import {fieldToString, isControlSubfieldCode, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -15,6 +15,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const commaNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö|\))$/u;
 const defaultNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
 const field300NeedsPunc = /(?:[\]a-zA-Z0-9)]|ä)$/u;
+const field773NeedsPunc = /\. -$/u;
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 
@@ -35,6 +36,7 @@ const addX00aComma = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'conte
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
 const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#tu01', 'context': defaultNeedsPuncAfter};
 
+const dotSpaceMinus773 = 'dghkoqtxyz';
 
 const NONE = 0;
 const ADD = 2;
@@ -79,7 +81,8 @@ const cleanValidPunctuationRules = {
     {'code': 'ab', 'followedBy': 'c', 'remove': / ;$/u},
     {'code': 'abc', 'followedBy': 'e', 'remove': / \+$/u}
   ],
-  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot]
+  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
+  '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'remove': field773NeedsPunc}]
 };
 
 const addPairedPunctuationRules = {
@@ -95,7 +98,8 @@ const addPairedPunctuationRules = {
     {'code': 'ab', 'followedBy': 'c', 'add': ' ;', 'context': field300NeedsPunc},
     {'code': 'abc', 'followedBy': 'e', 'add': ' +', 'context': field300NeedsPunc}
   ],
-  '700': [addX00aComma, addX00aDot]
+  '700': [addX00aComma, addX00aDot],
+  '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'add': '. -', 'context': /[^-]$/u}]
   // MISSING: 773 ". -" etc
 };
 
@@ -143,17 +147,17 @@ function ruleAppliesToNextSubfield(rule, nextSubfield) {
 function checkRule(rule, subfield1, subfield2) {
   const name = rule.name || 'UNNAMED';
   if (!ruleAppliesToCurrentSubfield(rule, subfield1)) {
-    // debug(`${name}: FAIL ON LHS FIELD: '$${subfield1.code} ${subfield1.value}', SF=${rule.code}`);
+    //nvdebug(`${name}: FAIL ON LHS FIELD: '$${subfield1.code} ${subfield1.value}', SF=${rule.code}`, debug);
     return false;
   }
 
   if (!ruleAppliesToNextSubfield(rule, subfield2)) {
-    const msg = subfield2 ? `${name}: FAIL ON RHS FIELD '${subfield2.code}' not in [${rule.followedBy}]` : `${name}: FAIL ON RHS FIELD`;
-    debug(msg);
+    //const msg = subfield2 ? `${name}: FAIL ON RHS FIELD '${subfield2.code}' not in [${rule.followedBy}]` : `${name}: FAIL ON RHS FIELD`;
+    //nvdebug(msg, debug);
     return false;
   }
 
-  debug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`);
+  //nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`, debug);
   return true;
 }
 
@@ -165,27 +169,28 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
 
   if (!(`${tag}` in ruleArray)) {
     if (!['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) { // eslint-disable-line functional/no-conditional-statement
-      debug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`);
+      nvdebug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`, debug);
+
     }
     return;
   }
 
-  debug(`APR1A ${tag}: '${subfield1.value}'`);
+  nvdebug(`OP=${operation} ${tag}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debug);
   const activeRules = ruleArray[tag].filter(rule => checkRule(rule, subfield1, subfield2));
 
   activeRules.forEach(rule => {
     const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statement
-      debug(`    REMOVAL TO BE PERFORMED FOR \${subfield1.code} '${subfield1.value}'`);
+      nvdebug(`    REMOVAL TO BE PERFORMED FOR \${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
-      debug(`    REMOVAL PERFORMED FOR '${subfield1.value}'`);
+      nvdebug(`    REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statement
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
-      debug(`    ADDED '${rule.add}' TO '${subfield1.value}'`);
+      nvdebug(`    ADDED '${rule.add}' TO '${subfield1.value}'`, debug);
     }
     if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statement
-      debug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`); // eslint-disable-line functional/immutable-data
+      nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug); // eslint-disable-line functional/immutable-data
     }
   });
 }
