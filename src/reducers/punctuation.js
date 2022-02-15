@@ -43,6 +43,8 @@ const ADD = 2;
 const REMOVE = 1;
 const REMOVE_AND_ADD = 3;
 
+// Crappy punctuation consists of various crap that is somewhat common.
+// We strip crap for merge decisions. We are not trying to actively remove crap here.
 const cleanCrappyPunctuationRules = {
   '100': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket],
   '600': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
@@ -88,7 +90,7 @@ const cleanValidPunctuationRules = {
 const addPairedPunctuationRules = {
   '100': [addX00aComma, addX00aComma2, addX00aDot],
   '245': [
-    // Blah! "$a = $b" and "$a ; $b" can be valid...
+    // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
     {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
     {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
@@ -157,17 +159,19 @@ function checkRule(rule, subfield1, subfield2) {
     return false;
   }
 
-  //nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`, debug);
+  nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`, debug);
   return true;
 }
 
 function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, operation = NONE) {
+
+  /*
   if (ruleArray === null || operation === NONE) {
     debug(`applyPunctuation(): No rules to apply!`);
     return;
   }
-
-  if (!(`${tag}` in ruleArray)) {
+*/
+  if (!(`${tag}` in ruleArray) || ruleArray === null || operation === NONE) {
     if (!['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) { // eslint-disable-line functional/no-conditional-statement
       nvdebug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`, debug);
 
