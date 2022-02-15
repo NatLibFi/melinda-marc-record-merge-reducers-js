@@ -78,12 +78,9 @@ function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
     return true;
   }
 
-  if (subfieldCode === '6') {
-    return false;
-  }
-
   const subfieldSpecs = currFieldSpecs.subfields.filter(subfield => subfield.code === subfieldCode);
-  if (subfieldSpecs.length !== 1) {
+  // Currently we don't supprt multiple $6 fields due to re-indexing limitations...
+  if (subfieldSpecs.length !== 1 || subfieldCode === '6') {
     return false; // repeatable if not specified?
   }
   return subfieldSpecs[0].repeatable;
@@ -92,11 +89,14 @@ function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
 export function fieldIsRepeatable(tag, code = null) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
+
+    /*
     if (!code) {
       debug(` WARNING! Getting field ${tag} data failed! Default to unrepeatable field.`);
       return false;
     }
-    debug(` WARNING! Getting field ${tag}$${code} data failed! Default to repeatable subfield.`);
+    */
+    debug(` WARNING! Getting field ${tag}$${code || ''} data failed! Default to repeatable subfield.`);
     return true;
   }
   if (!code) { // Field is repeatable:
@@ -109,7 +109,7 @@ export function subfieldsAreIdentical(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
 }
 
-/*
+/* // subfield sorting is done in mergeSubfield.js
 // Default subfield sort order if no custom order is given (use string first to improve readablility and compactness)
 const sortDefaultString = '8673abcdefghijklmnopqrstuvwxyz420159';
 const sortDefault = sortDefaultString.split('');
