@@ -1,4 +1,4 @@
 {
   "description":"Punctuation test for field 100: Add ',' between subfield $a and $d. Dot in \"E.\" is data and thus not dropped",
-  "enabled": false
+  "enabled": true
 }
