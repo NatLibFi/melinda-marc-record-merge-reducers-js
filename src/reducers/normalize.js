@@ -289,8 +289,7 @@ export function recordPreprocess(record) {
   if (!record.fields) {
     return record;
   }
-  externalFixes(record);
-
+  externalFixes(record); // Fixes from outside this module
 
   //record = result.record; // eslint-disable-line functional/immutable-data
 
