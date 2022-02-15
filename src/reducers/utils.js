@@ -150,13 +150,13 @@ export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
   return field.subfields.some(sf => sf.code === subfieldCode && subfieldValue === sf.value);
 }
 
-export function fieldHasNSubfields(field, subfieldCode, subfieldValue = null) {
+export function fieldHasNSubfields(field, subfieldCode/*, subfieldValue = null*/) {
   const relevantSubfields = field.subfields.filter(sf => sf.code === subfieldCode);
-  if (subfieldValue === null) {
-    return relevantSubfields.length;
-  }
-  const subset = relevantSubfields.filter(value => value === subfieldValue);
-  return subset.length;
+  //if (subfieldValue === null) {
+  return relevantSubfields.length;
+  //}
+  //const subset = relevantSubfields.filter(value => value === subfieldValue);
+  //return subset.length;
 }
 
 /**
