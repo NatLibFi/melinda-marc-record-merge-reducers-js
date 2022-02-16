@@ -32,13 +32,16 @@ import validateFactory from '@natlibfi/marc-record-validate';
 import {
   FieldExclusion,
   //FieldStructure,
-  FieldsPresent,
+  //FieldsPresent,
   Punctuation,
   EmptyFields,
   EndingPunctuation,
   IsbnIssn,
   SubfieldExclusion
 } from '@natlibfi/marc-record-validators-melinda';
+//import {recordPreprocess} from './reducers/normalize';
+
+import NormalizeEncoding from './reducers/normalizeEncoding';
 import createDebugLogger from 'debug';
 
 //import {recordPreprocess} from './reducers/normalize';
@@ -50,10 +53,10 @@ export default async () => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   debug(`### testing`);
   const validate = validateFactory([
+    await NormalizeEncoding(),
     //await FieldsPresent([/^100$/u]), // not required by merge
     //await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]), // Helmet-specific rule? Skip...
-    await FieldsPresent([/^336$/u, /^337$/u]), // Comps don't always have 338, so don't require it. Add 245?
-
+    //await FieldsPresent([/^336$/u, /^337$/u]), // Comps don't always have 338, so don't require it. Add 245?
     await FieldExclusion([
       // /^(001|091|092|093|094|095|256|533|574|575|576|577|578|599)$/,
 
