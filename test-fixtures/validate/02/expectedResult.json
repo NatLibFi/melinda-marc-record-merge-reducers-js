@@ -1,10 +1,9 @@
 {
-  "failed": true,
+  "failed": false,
   "messages": [
     {
-      "description": "Checks whether the configured fields are present in the record",
-      "messages": [ "The following tag patterns are not present in the record tag field:  /^336$/u /^337$/u" ],
-      "state": "invalid"
+      "description": "Normalizes diacritics from latin characters",
+      "state": "valid"
     },
     {
       "description": "Checks that the record does not contain the configured fields",
