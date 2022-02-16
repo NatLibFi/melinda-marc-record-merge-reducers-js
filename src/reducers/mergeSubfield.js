@@ -6,6 +6,7 @@ import {
   fieldIsRepeatable, fieldToString, nvdebug,
   subfieldsAreIdentical
 } from './utils.js';
+import {sortAdjacentSubfields} from './sortSubfields.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 
@@ -16,38 +17,6 @@ const excludeSubfieldsFromMerge = [
 ];
 
 const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
-
-// List *only* exceptional order here. Otherwise default order is used.
-const subfieldSortOrder = [
-  {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
-  {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
-  {'tag': '100', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
-  {'tag': '110', 'sortOrder': ['a', 'b', 'n']},
-  {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
-  {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
-  {'tag': '245', 'sortOrder': ['6', 'a', 'b', 'n', 'p', 'k', 'f', 'c']},
-  {'tag': '382', 'sortOrder': ['a']},
-  {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a']},
-  {'tag': '386', 'sortOrder': ['8', 'm', 'n', 'a']},
-  {'tag': '490', 'sortOrder': ['a', 'x', 'v', 'l']},
-  {'tag': '505', 'sortOrder': ['a']},
-  {'tag': '526', 'sortOrder': ['i', 'a', 'b', 'x', 'z']},
-  {'tag': '600', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', '0', '5', '9']},
-  {'tag': '610', 'sortOrder': ['6', 'a', 'b', 'n']},
-  {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '700', 'sortOrder': ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
-  {'tag': '710', 'sortOrder': ['a', 'b', 'n']},
-  {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '773', 'sortOrder': ['7', 'w', 'a', 't', 'd', 'm', 'h', 'g', 'k', 'o', 'x', 'z', 'g', 'q']},
-  {'tag': '776', 'sortOrder': ['i', 'a']},
-  {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
-  {'tag': '810', 'sortOrder': ['a', 'b', 'n']},
-  {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
-  {'tag': '880', 'sortOrder': ['a']},
-  {'tag': 'SID', 'sortOrder': ['c', 'b']} // Hack, so that default order is not used
-];
 
 // NB! These are X00 specific. Should we somehow parametrize them?
 //const notYear = /^\([1-9][0-9]*\)[,.]?$/u;
@@ -240,70 +209,13 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
   return !isSubfieldGoodForMerge(targetField.tag, candSubfield.code);
 }
 
-function getSubfieldSortOrder(field) {
-  const entry = subfieldSortOrder.filter(currEntry => field.tag === currEntry.tag);
-  if (entry.length > 0 && 'sortOrder' in entry[0]) {
-    debug(`sort order for ${field.tag}: ${entry[0].sortOrder}`);
-    return entry[0].sortOrder;
-  }
-  //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${field.tag}.`);
-  return '';
-}
-
-// Now this gets ugly here lintwise...
-function swapSubfields(field, sortOrder) {
-  const loopAgain = field.subfields.some((sf, index) => {
-    if (index === 0) {
-      return false;
-    }
-    const currPos = sortOrder.indexOf(sf.code);
-    const prevPos = sortOrder.indexOf(field.subfields[index - 1].code);
-    if (currPos === -1 || prevPos === -1 || currPos >= prevPos) {
-      return false;
-    }
-    // Swap:
-    const tmp = field.subfields[index - 1];
-    field.subfields[index - 1] = sf; // eslint-disable-line functional/immutable-data
-    field.subfields[index] = tmp; // eslint-disable-line functional/immutable-data
-    return true;
-  });
-
-
-  if (loopAgain) {
-    return swapSubfields(field, sortOrder);
-  }
-
-  return;
-}
-
-const defaultSortOrderString = '8673abcdefghijklmnopqrstuvwxyz420159';
-const defaultSortOrder = defaultSortOrderString.split('');
-
-export function bottomUpSortSubfields(field) {
-  // Features:
-  // - Swap only sort adjacent pairs.
-  // - No sorting over unlisted subfield codes. Thus a given subfield can not shift to wrong side of 700$t...
-
-  // Implement: 880 field should use values from $6...
-
-  // Should we support multiple sort orders per field?
-  const sortOrder = getSubfieldSortOrder(field);
-
-  //if (sortOrder === null) { return field; } //// Currently always sort..
-
-  swapSubfields(field, ['8', '6', '7', '3', 'a', '4', '2', '0', '1', '5', '9']); // <= Handle control subfield order (it never changes)
-  swapSubfields(field, sortOrder || defaultSortOrder);
-
-  return field;
-}
-
 function addSubfield(targetField, candSubfield) {
   const str = `${candSubfield.code} ${candSubfield.value}`;
   nvdebug(` Added subfield ‡'${str}' to field`, debug);
   // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
   targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
   targetField.merged = 1; // eslint-disable-line functional/immutable-data
-  bottomUpSortSubfields(targetField);
+  sortAdjacentSubfields(targetField);
 }
 
 export function mergeSubfield(record, targetField, candSubfield) {
