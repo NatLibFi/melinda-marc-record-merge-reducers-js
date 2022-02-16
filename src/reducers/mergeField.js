@@ -5,7 +5,8 @@ import {cloneAndNormalizeField, cloneAndRemovePunctuation, normalizeSubfield0Val
 import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
-import {bottomUpSortSubfields, isSubfieldGoodForMerge, mergeSubfield} from './mergeSubfield';
+import {isSubfieldGoodForMerge, mergeSubfield} from './mergeSubfield';
+import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
@@ -123,10 +124,12 @@ function arePairedSubfieldsInBalance(field1, field2) {
   return subfieldArray.every(sfcode => fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode));
 }
 
+
 const ind1NonFilingChars = ['130', '630', '730', '740'];
 const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];
 
 function indicator1Matches(field1, field2) {
+  // When checking similarity of indicators, we are not interested in non-filing characters
   if (ind1NonFilingChars.includes(field1.tag)) {
     return true;
   }
@@ -136,15 +139,16 @@ function indicator1Matches(field1, field2) {
     return true;
   }
 
-  // Default:
+  // Default: require that indicators match
   return field1.ind1 === field2.ind1;
 }
 
 function indicator2Matches(field1, field2) {
+  // When checking similarity of indicators, we are not interested in non-filing characters
   if (ind2NonFilingChars.includes(field1.tag)) {
     return true;
   }
-  // Default:
+  // Default: indicators must match
   return field1.ind2 === field2.ind2;
 }
 
@@ -484,7 +488,7 @@ function addField(record, field) {
   }
   debug(`Add as ${fieldToString(field)}`);
   // Do we need to sort unmerged subfields?
-  return record.insertField(bottomUpSortSubfields(field));
+  return record.insertField(sortAdjacentSubfields(field));
 }
 
 function skipMergeOrAddField(record, field) {
