@@ -53,7 +53,7 @@ export default async () => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   debug(`### testing`);
   const validate = validateFactory([
-    await NormalizeEncoding(),
+    await NormalizeEncoding(), // procompose å & ä & ö. Decompose the rest.
     //await FieldsPresent([/^100$/u]), // not required by merge
     //await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]), // Helmet-specific rule? Skip...
     //await FieldsPresent([/^336$/u, /^337$/u]), // Comps don't always have 338, so don't require it. Add 245?
@@ -88,7 +88,6 @@ export default async () => {
 
     const opts = fix ? {fix, validateFixes} : {fix};
     const result = await validate(record, opts);
-    //const result = await validatePunctuation(prevalidated.record, opts);
     return {
       record: result.record,
       failed: result.valid === false,
