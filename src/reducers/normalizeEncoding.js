@@ -9,12 +9,12 @@ export default function () {
 
   return {
     description: 'Normalizes diacritics from latin characters',
-    fix, validate
+    validate, fix
   };
 
   function fix(record) {
-    const message = {message: []};
-    message.fix = []; // eslint-disable-line functional/immutable-data
+    const res = {message: [], fix: [], valid: true};
+    //message.fix = []; // eslint-disable-line functional/immutable-data
 
     // Actual parsing of all fields
     if (!record.fields) {
@@ -27,11 +27,11 @@ export default function () {
     });
 
     // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
-    return message;
+    return res;
   }
 
   function validate(record) {
-    const message = {message: []};
+    const res = {message: []};
 
     // Actual parsing of all fields
     if (!record.fields) {
@@ -39,14 +39,14 @@ export default function () {
     }
 
     record.fields.forEach(field => {
-      validateField(field, message);
+      validateField(field, res);
     });
 
-    message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
-    return message;
+    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    return res;
   }
 
-  function validateField(field, message) {
+  function validateField(field, res) {
     if (!field.subfields) {
       return;
     }
@@ -55,7 +55,7 @@ export default function () {
     const normalizedField = fieldFixComposition(clone(field));
     const mod = fieldToString(normalizedField);
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
-      message.push(`'${orig}' requires normalization`); // eslint-disable-line functional/immutable-data
+      res.message.push(`'${orig}' requires normalization`); // eslint-disable-line functional/immutable-data
       return;
     }
     return;
