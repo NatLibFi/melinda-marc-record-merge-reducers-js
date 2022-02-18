@@ -1,0 +1,61 @@
+{
+  "failed": false,
+  "messages": [
+    {
+      "description": "Normalizes diacritics from latin characters",
+      "state": "fixed"
+    },
+    {
+      "description": "Checks that the record does not contain the configured fields",
+      "state": "valid"
+    },
+    {
+      "description": "Handles empty fields",
+      "state": "valid"
+    },
+    {
+      "description": "Validates ISBN and ISSN values",
+      "state": "valid"
+    },
+    {
+      "description": "Checks that the record does not contain the configured subfields",
+      "state": "valid"
+    },
+    {
+      "description": "Fixes punctuation of fields",
+      "state": "valid"
+    },
+    {
+      "description": "Handles invalid ending punctuation",
+      "state": "valid"
+    }
+  ],
+  "record": {
+    "leader": "01331cam a22003494i 4500",
+    "fields": [
+      {
+        "tag": "005",
+        "value": "20200202111111.0"
+      },
+      {
+        "tag": "100",
+        "ind1": "1",
+        "ind2": " ",
+        "subfields": [
+          {
+            "code": "a",
+            "value": "Sirén, Günther,"
+          },
+          {
+            "code": "d",
+            "value": "1234-"
+          },
+          {
+            "code": "e",
+            "value": "toimittaja."
+          }
+        ]
+      }
+    ]
+  }
+}
