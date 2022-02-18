@@ -1,7 +1,7 @@
 //import createDebugLogger from 'debug';
 
 import {
-  tagToRegexp,
+  //tagToRegexp,
   mergeOrAddField
 } from './mergeField.js';
 
@@ -28,8 +28,8 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // Non-repeatables: 010, 018, 044, 049, 243, 254, 263, 306, 357, 507 514, 841, 882
 // '027 030 031 043 085 088 222 247 310', // is repeatable but listed in copyIfMissing. Why?
-
-const datafieldString = '010 013 015 016 017 018 020 022 024 025 026 027 028 030 031 032 033 034 035 036 037 038 039 040 041 042 043 044 045 046 047 048 049 ' +
+/*
+const datafieldString = '010 013 015 016 017 018 019 020 022 024 025 026 027 028 030 031 032 033 034 035 036 037 038 039 040 041 042 043 044 045 046 047 048 049 ' +
   '050 051 052 055 060 061 066 070 080 082 083 084 085 086 088 ' +
   '100 110 111 130 ' +
   '210 222 240 242 243 245 246 247 ' +
@@ -42,13 +42,13 @@ const datafieldString = '010 013 015 016 017 018 020 022 024 025 026 027 028 030
   '600 610 611 630 647 648 650 651 653 654 655 656 657 658 882 688 ' +
   // NB!  700, 710, 711 and 730 are handled by corresponding 1XX. It's semi-magic.
   '720 740 751 752 753 754 758 ' +
-  '760 762 765 767 770 772 773 774 775 776 777 780 785 786 787 ' +
+  '760 762 765 767 770 772 773 774 775 776 777 780 785 786 787 790 ' +
   '800 810 811 830 ' +
   '841 842 843 844 845 850 852 853 854 855 856 863 864 865 866 867 868 876 877 878 880 881 882 883 884 885 886 887 ' +
-  '900 910 911 935 940 960 973 995 LOW CAT SID';
+  '900 901 902 903 904 905 906 910 911 935 940 960 973 995 LOW CAT SID';
 
 const datafields = datafieldString.split(' ');
-
+*/
 export default () => (originalRecord, originalRecord2) => {
   // We should clone the records here and just here...
   const record = recordPreprocess(originalRecord); // fix composition et al
@@ -56,6 +56,7 @@ export default () => (originalRecord, originalRecord2) => {
   const record2 = recordPreprocess(originalRecord2); // fix composition et al
   reindexSubfield6s(record2, max6);
 
+  /*
   datafields.forEach(tag => {
     //debug(`CURR TAG: ${tag}...`);
     const tagAsRegexp = tagToRegexp(tag);
@@ -65,6 +66,15 @@ export default () => (originalRecord, originalRecord2) => {
       mergeOrAddField(record, candField);
     });
   });
+  */
+
+  const candidateFields = record2.get(/^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u);
+  candidateFields.forEach(candField => {
+    debug(`Now processing ${fieldToString(candField)}`);
+    mergeOrAddField(record, candField);
+  });
+
+
   postprocessRecord(record);
   return record;
 };
