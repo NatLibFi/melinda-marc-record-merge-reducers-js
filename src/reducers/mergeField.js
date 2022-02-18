@@ -83,7 +83,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   });
 }
 
-function localTagToRegexp(tag) {
+function tagToRegexp(tag) {
   if (tag in counterpartRegexps) {
     // Are the hard-coded hacks actually used? Check...
     const regexp = counterpartRegexps[tag];
@@ -92,10 +92,6 @@ function localTagToRegexp(tag) {
   }
   // debug(`WARNING: locallocalTagToRegexp(${tag}): no precompiled regexp found.`);
   return new RegExp(`^${tag}$`, 'u');
-}
-
-export function tagToRegexp(tag) {
-  return localTagToRegexp(tag);
 }
 
 function areRequiredSubfieldsPresent(field) {
