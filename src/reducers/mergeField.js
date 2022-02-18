@@ -90,7 +90,7 @@ function tagToRegexp(tag) {
     //debug(`regexp for ${tag} found: ${regexp}`);
     return regexp;
   }
-  // debug(`WARNING: locallocalTagToRegexp(${tag}): no precompiled regexp found.`);
+  // debug(`WARNING: tagToRegexp(${tag}): no precompiled regexp found.`);
   return new RegExp(`^${tag}$`, 'u');
 }
 
@@ -315,7 +315,7 @@ export function getCounterpart(record, field) {
     return null;
   }
   // Get tag-wise relevant 1XX and 7XX fields:
-  const counterpartCands = record.get(localTagToRegexp(field.tag));
+  const counterpartCands = record.get(tagToRegexp(field.tag));
   // debug(counterpartCands);
 
   if (!counterpartCands || counterpartCands.length === 0) {
