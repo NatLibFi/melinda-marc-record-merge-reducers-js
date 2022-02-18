@@ -6,23 +6,9 @@ import {fieldToString, isControlSubfieldCode} from './utils.js';
 import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
 import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
-import {fieldFixComposition} from './normalizeEncoding';
-
-/*
-import {
-  //FieldExclusion,
-  ////FieldStructure,
-  //FieldsPresent
-  //Punctuation,
-  //EmptyFields,
-  //EndingPunctuation,
-  //IsbnIssn,
-  //SubfieldExclusion
-} from '@natlibfi/marc-record-validators-melinda';
-*/
+import {default as normalizeEncoding, fieldFixComposition} from './normalizeEncoding';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
-
 
 /*
 // We might want something like this:
@@ -242,7 +228,7 @@ export function recordPreprocess(record) {
   externalFixes(record); // Fixes from outside this module
 
   //record = result.record; // eslint-disable-line functional/immutable-data
-
+  normalizeEncoding().fix(record);
   record.fields.forEach(field => fieldPreprocess(field));
   return record;
 }
