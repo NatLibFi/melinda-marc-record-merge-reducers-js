@@ -11,6 +11,43 @@
           "value": "asiasana"
         }
       ]
+    },
+    {
+      "tag": "666",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "alpha"
+        },
+        {
+          "code": "a",
+          "value": "beta"
+        }
+      ]
+    },
+    {
+      "tag": "666",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "beta"
+        }
+      ]
+    },
+    {
+      "tag": "666",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "gamma"
+        }
+      ]
     }
   ]
 }
