@@ -42,6 +42,8 @@ import {
 //import {recordPreprocess} from './reducers/normalize';
 
 import NormalizeEncoding from './reducers/normalizeEncoding';
+import NormalizeControlNumber from './reducers/normalizeIdentifier';
+
 import createDebugLogger from 'debug';
 
 //import {recordPreprocess} from './reducers/normalize';
@@ -54,6 +56,7 @@ export default async () => {
   debug(`### testing`);
   const validate = validateFactory([
     await NormalizeEncoding(), // procompose å & ä & ö. Decompose the rest.
+    await NormalizeControlNumber(), // (FI-MELINDA)/FCC/(FIN01) normalizations
     //await FieldsPresent([/^100$/u]), // not required by merge
     //await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]), // Helmet-specific rule? Skip...
     //await FieldsPresent([/^336$/u, /^337$/u]), // Comps don't always have 338, so don't require it. Add 245?
@@ -76,17 +79,7 @@ export default async () => {
   //  const validatePunctuation = await validateFactoryPunctuation();
 
   return async (record, fix, validateFixes) => {
-
-    /*
-    const record2 = fix ? recordPreprocess(record) : record;
-    if (fix) { // eslint-disable-line functional/no-conditional-statement
-      record2.fields.forEach(field => {
-        fieldFixPunctuation(field);
-      });
-    }
-    */
-
-    const opts = fix ? {fix, validateFixes} : {fix};
+    const opts = fix ? {fix, validateFixes} : {fix}; // NV: The logic of this evades me.
     const result = await validate(record, opts);
     return {
       record: result.record,
