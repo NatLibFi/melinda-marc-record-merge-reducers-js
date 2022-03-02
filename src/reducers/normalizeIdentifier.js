@@ -49,7 +49,8 @@ export function normalizeControlSubfieldValue(value = '') {
   return value;
 }
 
-export function normalizableSubfieldPrefix(tag, sf) {
+//export function normalizableSubfieldPrefix(tag, sf) {
+export function mayContainControlNumberIdentifier(tag, sf) {   
   if (sf.code === '0' || sf.code === '1' || sf.code === 'w') {
     return true;
   }
@@ -62,7 +63,7 @@ export function normalizableSubfieldPrefix(tag, sf) {
 
 export function fieldNormalizePrefixes(field) {
   field.subfields.forEach(sf => {
-    if (normalizableSubfieldPrefix(field.tag, sf)) {
+    if (mayContainControlNumberIdentifier(field.tag, sf)) {
       console.info(`NORMALIZE SUBFIELD: '${fieldToString(field)}'`); // eslint-disable-line no-console
       sf.value = normalizeControlSubfieldValue(sf.value); // eslint-disable-line functional/immutable-data
       return;

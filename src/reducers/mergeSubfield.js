@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import clone from 'clone';
 import {cloneAndRemovePunctuation} from './normalize.js';
-import {normalizableSubfieldPrefix, normalizeControlSubfieldValue} from './normalizeIdentifier';
+import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {
   fieldHasSubfield,
   fieldIsRepeatable, fieldToString, nvdebug,
@@ -185,7 +185,7 @@ function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
     return true;
   }
   // Don't add $0 subfields that mean the same even if they look different:
-  if (normalizableSubfieldPrefix(targetField.tag, candSubfield) &&
+  if (mayContainControlNumberIdentifier(targetField.tag, candSubfield) &&
       targetField.subfields.some(sf => normalizeControlSubfieldValue(sf.value) === normalizeControlSubfieldValue(candSubfield.value))) {
     return true;
   }
