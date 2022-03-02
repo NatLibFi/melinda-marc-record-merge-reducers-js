@@ -1,6 +1,7 @@
 import createDebugLogger from 'debug';
 import clone from 'clone';
-import {cloneAndRemovePunctuation, /*fieldNormalizePrefixes,*/ normalizableSubfieldPrefix, normalizeSubfield0Value} from './normalize.js';
+import {cloneAndRemovePunctuation} from './normalize.js';
+import {normalizableSubfieldPrefix, normalizeSubfield0Value} from './normalizeIdentifier';
 import {
   fieldHasSubfield,
   fieldIsRepeatable, fieldToString, nvdebug,

@@ -5,7 +5,7 @@ import {
   fieldToString
 } from './utils.js';
 
-import {normalizeSubfield0Value} from './normalize.js';
+import {normalizeSubfield0Value} from './normalizeIdentifier';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 

@@ -111,6 +111,20 @@ export function fieldFixComposition(field) {
   return field;
 }
 
+
+function removeDecomposedDiacritics(value = '') {
+  // NB #1: Does nothing to precomposed letters. String.normalize('NFD') can handle them.
+  // NB #2: Finnish letters 'å', 'ä', 'ö', 'Å', Ä', and 'Ö' should be handled before this.
+  // NB #3: Calling our very own fixComposition() before this function handles both #1 and #2.
+  return String(value).replace(/\p{Diacritic}/gu, '');
+}
+
+export function fieldRemoveDecomposedDiacritics(field) {
+  field.subfields.forEach((sf) => {
+    sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
+  });
+}
+
 /*
   export function recordFixComposition(record) {
     if (!record.fields) {

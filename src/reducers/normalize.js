@@ -6,7 +6,8 @@ import {fieldToString, isControlSubfieldCode} from './utils.js';
 import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
 import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
-import {default as normalizeEncoding, fieldFixComposition} from './normalizeEncoding';
+import {default as normalizeEncoding, fieldFixComposition, fieldRemoveDecomposedDiacritics} from './normalizeEncoding';
+import {fieldNormalizePrefixes} from './normalizeIdentifier';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
@@ -27,13 +28,6 @@ function normalizationExceptions(value = "") {
   return value;
 }
 */
-
-function removeDecomposedDiacritics(value = '') {
-  // NB #1: Does nothing to precomposed letters. String.normalize('NFD') can handle them.
-  // NB #2: Finnish letters 'å', 'ä', 'ö', 'Å', Ä', and 'Ö' should be handled before this.
-  // NB #3: Calling our very own fixComposition() before this function handles both #1 and #2.
-  return String(value).replace(/\p{Diacritic}/gu, '');
-}
 
 
 // NB! These are defined also in mergeSubfield.js. Do something...
@@ -80,33 +74,6 @@ function fieldLowercase(field) {
       return;
     }
     sf.value = sf.value.toLowerCase(); // eslint-disable-line functional/immutable-data
-  });
-}
-
-export function normalizableSubfieldPrefix(tag, sf) {
-  if (sf.code === '0' || sf.code === '1' || sf.code === 'w') {
-    return true;
-  }
-
-  if (tag === '035' && ['a', 'z'].includes(sf.code)) {
-    return true;
-  }
-  return false;
-}
-
-export function fieldNormalizePrefixes(field) {
-  field.subfields.forEach(sf => {
-    if (normalizableSubfieldPrefix(field.tag, sf)) {
-      console.info(`NORMALIZE SUBFIELD: '${fieldToString(field)}'`); // eslint-disable-line no-console
-      sf.value = normalizeSubfield0Value(sf.value); // eslint-disable-line functional/immutable-data
-      return;
-    }
-  });
-}
-
-function fieldRemoveDecomposedDiacritics(field) {
-  field.subfields.forEach((sf) => {
-    sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
   });
 }
 
@@ -174,7 +141,6 @@ export function cloneAndRemovePunctuation(field) {
 export function cloneAndNormalizeField(field) {
   const clonedField = normalizeField(clone(field));
   fieldRemoveDecomposedDiacritics(clonedField);
-  debug('NORM');
   fieldComparison(field, clonedField);
 
   return clonedField;
@@ -233,48 +199,3 @@ export function recordPreprocess(record) {
   return record;
 }
 
-
-function normalizeFIN01(value = '') {
-  if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^FCC[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(3)}`; // eslint-disable-line functional/immutable-data
-  }
-  return value;
-}
-
-function normalizeFIN11(value = '') {
-  if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
-    return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u).test(value)) {
-    return `(FIN11)${value.slice(-9)}`;
-  }
-  return value;
-}
-
-export function normalizeSubfield0Value(value = '') {
-  const fin01 = normalizeFIN01(value);
-  if (fin01 !== value) {
-    return fin01;
-  }
-  if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(12)}`;
-  }
-  if ((/^\(FI-ASTERI-S\)[0-9]{9}$/u).test(value)) {
-    return `(FIN10)${value.substring(13)}`;
-  }
-  const fin11 = normalizeFIN11(value);
-  if (fin11 !== value) {
-    return fin11;
-  }
-  if ((/^\(FI-ASTERI-A\)[0-9]{9}$/u).test(value)) {
-    return `(FIN12)${value.substring(13)}`;
-  }
-  if ((/^\(FI-ASTERI-W\)[0-9]{9}$/u).test(value)) {
-    return `(FIN13)${value.substring(13)}`;
-  }
-  // NB! we could/should normalize isni to uri...
-  return value;
-}

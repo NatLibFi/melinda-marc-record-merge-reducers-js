@@ -1,7 +1,8 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug, recordHasField} from './utils';
-import {cloneAndNormalizeField, cloneAndRemovePunctuation, normalizeSubfield0Value} from './normalize';
+import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize';
+import {normalizeSubfield0Value} from './normalizeIdentifier';
 import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
