@@ -1,9 +1,71 @@
 //import createDebugLogger from 'debug';
-
+import clone from 'clone';
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeIdentifiers');
 
 import {fieldToString} from './utils.js';
 
+export default function () {
+
+  return {
+    description: 'Normalizes control number identifiers characters',
+    validate, fix
+  };
+
+  function fix(record) {
+    const res = {message: [], fix: [], valid: true};
+    //message.fix = []; // eslint-disable-line functional/immutable-data
+
+    // Actual parsing of all fields
+    /*
+      if (!record.fields) {
+        return false;
+      }
+      */
+
+    record.fields.forEach(field => {
+      fieldNormalizePrefixes(field);
+      //validateField(field, true, message);
+    });
+
+    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    return res;
+  }
+
+  function validate(record) {
+    const res = {message: []};
+
+    // Actual parsing of all fields
+    /*
+      if (!record.fields) {
+        return false;
+      }
+      */
+
+    record.fields.forEach(field => {
+      validateField(field, res);
+    });
+
+    res.valid = !(res.message.length >= 1); // eslint-disable-line functional/immutable-data
+    return res;
+  }
+
+  function validateField(field, res) {
+    if (!field.subfields) {
+      return;
+    }
+    const orig = fieldToString(field);
+
+    const normalizedField = fieldNormalizePrefixes(clone(field));
+    const mod = fieldToString(normalizedField);
+    if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
+      res.message.push(`'${orig}' could do with control number identifier normalization`); // eslint-disable-line functional/immutable-data
+      return;
+    }
+    return;
+  }
+}
+
+// Should we have something like "const defaultFIN01 = 'FIN01'"...
 function normalizeFIN01(value = '') {
   if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
     return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
@@ -50,7 +112,7 @@ export function normalizeControlSubfieldValue(value = '') {
 }
 
 //export function normalizableSubfieldPrefix(tag, sf) {
-export function mayContainControlNumberIdentifier(tag, sf) {   
+export function mayContainControlNumberIdentifier(tag, sf) {
   if (sf.code === '0' || sf.code === '1' || sf.code === 'w') {
     return true;
   }
@@ -62,6 +124,8 @@ export function mayContainControlNumberIdentifier(tag, sf) {
 }
 
 export function fieldNormalizePrefixes(field) {
+  // Rename "Prefixes" as "ControlNumberIdentifiers"?
+  // No, sinee isni etc...  however, just "ControlNumber" would do...
   field.subfields.forEach(sf => {
     if (mayContainControlNumberIdentifier(field.tag, sf)) {
       console.info(`NORMALIZE SUBFIELD: '${fieldToString(field)}'`); // eslint-disable-line no-console
