@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {getNonIdenticalFields, copyFields} from './utils.js';
+import {getNonIdenticalFields, copyFields, fieldToString} from './utils.js';
 
 // Test 04: If 007/00-01 are different in base and source, copy 007 from source to base as new field (2x)
 // Test 05: If 007/00-01 are the same, keep existing field 007 in base (2x)
@@ -20,17 +20,17 @@ export default () => (base, source) => {
   return mergeField007();
 
   function mergeField007() {
-    if (sourceFields.every(sourceField => baseFields.some(baseField => copyField(baseField, sourceField)))) {
+    if (sourceFields.every(sourceField => baseFields.some(baseField => allowCopy(baseField, sourceField)))) {
       return copyFields(base, nonIdenticalFields);
     }
-    function copyField(baseField, sourceField) {
+    function allowCopy(baseField, sourceField) {
       // Copy source field if source 007/00 and/or 007/01 are different from base
-      if (baseField.value[0] !== sourceField.value[0] || baseField.value[1] !== sourceField.value[1]) {
-        return true;
+      if (baseField.value[0] === sourceField.value[0] && baseField.value[1] === sourceField.value[1]) {
+        // If 007/00 and 01 are identical, keep base field
+        debug(`Don't copy ${fieldToString(sourceField)}`);
+        return false;
       }
-      // If 007/00 and 01 are identical, keep base field
-      debug(`Keeping base field ${baseField.tag}`);
-      return false;
+      return true;
     }
     return base;
   }
