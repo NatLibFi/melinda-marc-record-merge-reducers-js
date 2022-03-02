@@ -186,7 +186,7 @@ function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   }
   // Don't add $0 subfields that mean the same even if they look different:
   if (normalizableSubfieldPrefix(targetField.tag, candSubfield) &&
-      targetField.subfields.some(sf => normalizeControlSubfieldValue(sf.value) === normalizeSubfield0Value(candSubfield.value))) {
+      targetField.subfields.some(sf => normalizeControlSubfieldValue(sf.value) === normalizeControlSubfieldValue(candSubfield.value))) {
     return true;
   }
   return false;
