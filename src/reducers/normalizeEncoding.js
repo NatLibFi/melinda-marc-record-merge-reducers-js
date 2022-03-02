@@ -17,9 +17,11 @@ export default function () {
     //message.fix = []; // eslint-disable-line functional/immutable-data
 
     // Actual parsing of all fields
+    /*
     if (!record.fields) {
       return false;
     }
+    */
 
     record.fields.forEach(field => {
       fieldFixComposition(field);
@@ -34,9 +36,11 @@ export default function () {
     const res = {message: []};
 
     // Actual parsing of all fields
+    /*
     if (!record.fields) {
       return false;
     }
+    */
 
     record.fields.forEach(field => {
       validateField(field, res);
