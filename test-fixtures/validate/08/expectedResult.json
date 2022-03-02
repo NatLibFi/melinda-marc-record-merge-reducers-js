@@ -6,6 +6,10 @@
       "state": "valid"
     },
     {
+      "description": "Normalizes control number identifiers characters",
+      "state": "valid"
+    },
+    {
       "description": "Checks that the record does not contain the configured fields",
       "state": "valid"
     },
