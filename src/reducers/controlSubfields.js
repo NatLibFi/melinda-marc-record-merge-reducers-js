@@ -5,7 +5,7 @@ import {
   fieldToString
 } from './utils.js';
 
-import {normalizeSubfield0Value} from './normalizeIdentifier';
+import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -87,7 +87,7 @@ function controlSubfield9PermitsMerge(field1, field2) {
 }
 
 function getPrefix(value) {
-  const normalizedValue = normalizeSubfield0Value(value);
+  const normalizedValue = normalizeControlSubfieldValue(value);
 
   if (normalizedValue.match(/^\([^)]+\)[0-9]+$/u)) {
     return normalizedValue.substr(0, normalizedValue.indexOf(')') + 1);
@@ -102,15 +102,15 @@ function getPrefix(value) {
 
 function isMatchAfterNormalization(currSubfield, otherField) {
   // NB! Add implement isni normalizations (to normalize.js) and apply here:
-  const normalizedCurrSubfieldValue = normalizeSubfield0Value(currSubfield.value);
+  const normalizedCurrSubfieldValue = normalizeControlSubfieldValue(currSubfield.value);
   const prefix = getPrefix(normalizedCurrSubfieldValue);
 
   //debug(`FFS-PREFIX '${prefix}'`);
   // Look for same prefix + different identifier
-  const hits = otherField.subfields.filter(sf2 => sf2.code === currSubfield.code && normalizeSubfield0Value(sf2.value).indexOf(prefix) === 0);
+  const hits = otherField.subfields.filter(sf2 => sf2.code === currSubfield.code && normalizeControlSubfieldValue(sf2.value).indexOf(prefix) === 0);
   if (hits.length === 0 || // <-- Nothing found, so it can't be a mismatch
       // Every opposing subfields match:
-      hits.every(sf2 => normalizedCurrSubfieldValue === normalizeSubfield0Value(sf2.value))) {
+      hits.every(sf2 => normalizedCurrSubfieldValue === normalizeControlSubfieldValue(sf2.value))) {
     debug(`Subfield ‡${currSubfield.code} check OK: No opposing ${prefix} prefixes found.`);
     return true;
   }

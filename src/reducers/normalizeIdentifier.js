@@ -24,7 +24,7 @@ function normalizeFIN11(value = '') {
   return value;
 }
 
-export function normalizeSubfield0Value(value = '') {
+export function normalizeControlSubfieldValue(value = '') {
   const fin01 = normalizeFIN01(value);
   if (fin01 !== value) {
     return fin01;
@@ -64,7 +64,7 @@ export function fieldNormalizePrefixes(field) {
   field.subfields.forEach(sf => {
     if (normalizableSubfieldPrefix(field.tag, sf)) {
       console.info(`NORMALIZE SUBFIELD: '${fieldToString(field)}'`); // eslint-disable-line no-console
-      sf.value = normalizeSubfield0Value(sf.value); // eslint-disable-line functional/immutable-data
+      sf.value = normalizeControlSubfieldValue(sf.value); // eslint-disable-line functional/immutable-data
       return;
     }
   });

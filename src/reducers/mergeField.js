@@ -2,7 +2,7 @@
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug, recordHasField} from './utils';
 import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize';
-import {normalizeSubfield0Value} from './normalizeIdentifier';
+import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
@@ -203,7 +203,7 @@ function pairableAsteriIDs(baseField, sourceField) {
 
   function getAsteriIDs(field) {
     return field.subfields.filter(sf => sf.code === '0')
-      .map(sf => normalizeSubfield0Value(sf.value))
+      .map(sf => normalizeControlSubfieldValue(sf.value))
       .filter(val => val.substring(0, 7) === '(FIN11)');
   }
 }
