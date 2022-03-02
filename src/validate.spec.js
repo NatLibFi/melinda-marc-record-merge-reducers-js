@@ -4,7 +4,7 @@
 *
 * Generic MARC record merge reducers for use with marc-record-merge
 *
-* Copyright (C) 2021 University Of Helsinki (The National Library Of Finland)
+* Copyright (C) 2021-2022 University Of Helsinki (The National Library Of Finland)
 *
 * This file is part of melinda-marc-record-merge-reducers-js
 *
