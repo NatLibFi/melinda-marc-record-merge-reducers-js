@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {getNonIdenticalFields, copyFields, fieldToString} from './utils.js';
+import {copyFields, fieldToString} from './utils.js';
 
 // Test 04: If 007/00-01 are different in base and source, copy 007 from source to base as new field (2x)
 // Test 05: If 007/00-01 are the same, keep existing field 007 in base (2x)
@@ -10,28 +10,26 @@ export default () => (base, source) => {
   const baseFields = base.get(/^007$/u);
   const sourceFields = source.get(/^007$/u);
 
-  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
+  const mergableFields = sourceFields.filter(sf => baseFields.every(bf => allowCopy(bf, sf)));
 
-  if (nonIdenticalFields.length === 0) {
-    debug(`Identical fields in source and base`);
-    return base;
+  //const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
+
+  if (mergableFields.length > 0) {
+    debug(`${mergableFields.length} copyable field(s)`);
+    return copyFields(base, mergableFields);
   }
 
-  return mergeField007();
+  return base;
 
-  function mergeField007() {
-    if (sourceFields.every(sourceField => baseFields.some(baseField => allowCopy(baseField, sourceField)))) {
-      return copyFields(base, nonIdenticalFields);
-    }
-    function allowCopy(baseField, sourceField) {
-      // Copy source field if source 007/00 and/or 007/01 are different from base
-      if (baseField.value[0] === sourceField.value[0] && baseField.value[1] === sourceField.value[1]) {
+  function allowCopy(baseField, sourceField) {
+    // Copy source field if source 007/00 and/or 007/01 are different from base
+    if (baseField.value[0] === sourceField.value[0]) {
+      if (baseField.value[1] === sourceField.value[1] || sourceField.value[1] === '|') {
         // If 007/00 and 01 are identical, keep base field
         debug(`Don't copy ${fieldToString(sourceField)}`);
         return false;
       }
-      return true;
     }
-    return base;
+    return true;
   }
 };
