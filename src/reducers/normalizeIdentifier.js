@@ -1,8 +1,9 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import clone from 'clone';
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeIdentifiers');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeIdentifiers');
 
-import {fieldToString, nvdebug} from './utils.js';
+import {fieldToString} from './utils.js';
+//import { nvdebug} from './utils.js';
 
 export default function () {
 
@@ -22,11 +23,11 @@ export default function () {
       }
       */
 
-    nvdebug(`NORMALIZE CONTROL NUMBER FIX`, debug);
+    //nvdebug(`NORMALIZE CONTROL NUMBER FIX`, debug);
     record.fields.forEach(field => {
-      nvdebug(` NORMALIZE CONTROL NUMBER FIX ${fieldToString(field)}`, debug);
+      //nvdebug(` NORMALIZE CONTROL NUMBER FIX ${fieldToString(field)}`, debug);
 
-      //fieldNormalizePrefixes(field);
+      fieldNormalizePrefixes(field);
       //validateField(field, true, message);
     });
 
@@ -36,7 +37,7 @@ export default function () {
 
   function validate(record) {
     const res = {message: []};
-    nvdebug(`NORMALIZE CONTROL NUMBER VALIDATE`, debug);
+    //nvdebug(`NORMALIZE CONTROL NUMBER VALIDATE`, debug);
     // Actual parsing of all fields
     /*
       if (!record.fields) {
@@ -45,7 +46,7 @@ export default function () {
       */
 
     record.fields.forEach(field => {
-      nvdebug(` NORMALIZE CONTROL NUMBER VALIDATE ${fieldToString(field)}`, debug);
+      //nvdebug(` NORMALIZE CONTROL NUMBER VALIDATE ${fieldToString(field)}`, debug);
       validateField(field, res);
     });
 
@@ -58,14 +59,11 @@ export default function () {
       return;
     }
 
-
-    const orig = fieldToString(field);
-
     const normalizedField = clone(field);
     fieldNormalizePrefixes(normalizedField);
-    nvdebug('FOO');
+
+    const orig = fieldToString(field);
     const mod = fieldToString(normalizedField);
-    nvdebug('BAR');
     if (orig !== mod) { // Fail as the input is "broken"/"crap"/sumthing
       res.message.push(`'${orig}' could do with control number identifier normalization`); // eslint-disable-line functional/immutable-data
       return;
@@ -136,14 +134,13 @@ export function mayContainControlNumberIdentifier(tag, sf) {
 export function fieldNormalizePrefixes(field) {
   // Rename "Prefixes" as "ControlNumberIdentifiers"?
   // No, sinee isni etc...  however, just "ControlNumber" would do...
-  /*
   if (!field.subfields) {
     return;
   }
-  */
+
   field.subfields.forEach(sf => {
     if (mayContainControlNumberIdentifier(field.tag, sf)) {
-      nvdebug(`NORMALIZE SUBFIELD: '${fieldToString(field)}'`, debug);
+      //nvdebug(`NORMALIZE SUBFIELD: '${fieldToString(field)}'`, debug);
       sf.value = normalizeControlSubfieldValue(sf.value); // eslint-disable-line functional/immutable-data
       return;
     }
