@@ -1,41 +1,9 @@
 import createDebugLogger from 'debug';
-import {getNonIdenticalFields, recordReplaceField} from './utils.js';
-
-// base record level codes from highest (1) to lowest (10)
-// levelValue = value of 000/17
-// levelCode 1 is given if the value is either empty ' ' (space) or '^', depending on where the record comes from
-/*
-const levelCodes = [
-  {levelCode: 1, levelValue: ' '},
-  {levelCode: 1, levelValue: '^'},
-  {levelCode: 2, levelValue: '4'},
-  {levelCode: 3, levelValue: '1'},
-  {levelCode: 4, levelValue: '5'},
-  {levelCode: 5, levelValue: '7'},
-  {levelCode: 6, levelValue: '2'},
-  {levelCode: 7, levelValue: '3'},
-  {levelCode: 8, levelValue: '8'},
-  {levelCode: 9, levelValue: 'u'},
-  {levelCode: 10, levelValue: 'z'}
-];
-*/
-
-const ldr17ToLevelCode = {' ': 1, '^': 1, '4': 2, '1': 3, '5': 4, '7': 5, '2': 6, '3': 7, '8': 8, 'u': 9, 'z': 10};
+import {getEncodingLevelRanking, getNonIdenticalFields, recordReplaceField} from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 const regexp008 = /^008$/u;
 
-function getLevelCode(record) {
-  const ldr17 = record.leader.charAt(17); //record.leader[17];
-  if (ldr17 in ldr17ToLevelCode) {
-    const lc = ldr17ToLevelCode[ldr17];
-    debug(`Level code is ${lc}`);
-    return lc;
-  }
-  debug(`LEVEL CODE '${ldr17}' NOT FOUND. USING DEFAULT VALUE 10.`);
-  return 10;
-  //return levelCodes.filter(level => level.levelValue === record.leader[17])[0].levelCode;
-}
 
 function yearLanguageAndCountryAgree(field1, field2) {
   // First check that these character positions are the same in source and base:
@@ -51,7 +19,7 @@ function yearLanguageAndCountryAgree(field1, field2) {
 }
 
 function requiresModification(originalRecord, alternativeRecord) {
-  if (getLevelCode(originalRecord) <= getLevelCode(alternativeRecord)) { // smaller is better!
+  if (getEncodingLevelRanking(originalRecord) <= getEncodingLevelRanking(alternativeRecord)) { // smaller is better!
     // The original version is better or as good as the alternative version.
     return false;
   }

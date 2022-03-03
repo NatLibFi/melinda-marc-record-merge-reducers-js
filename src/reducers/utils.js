@@ -209,4 +209,18 @@ export function nvdebug(message, func) {
   console.info(message); // eslint-disable-line no-console
 }
 
+// base record level codes from highest (1) to lowest (10)
+const ldr17ToRanking = {' ': 1, '^': 1, '4': 2, '1': 3, '5': 4, '7': 5, '2': 6, '3': 7, '8': 8, 'u': 9, 'z': 10};
+
+export function getEncodingLevelRanking(record) {
+  const ldr17 = record.leader.charAt(17); //record.leader[17];
+  if (ldr17 in ldr17ToRanking) {
+    const ranking = ldr17ToRanking[ldr17];
+    debug(`LDR/17 ranking is ${ranking}`);
+    return ranking;
+  }
+  debug(`LDR/19 VALUE '${ldr17}' NOT FOUND. USING DEFAULT RANKING 10.`);
+  return 10;
+  //return levelCodes.filter(level => level.levelValue === record.leader[17])[0].levelCode;
+}
 
