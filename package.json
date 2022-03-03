@@ -37,8 +37,8 @@
 	},
 	"dependencies": {
 		"@natlibfi/marc-record": "^6.1.1",
-		"@natlibfi/marc-record-validate": "^6.0.1",
-		"@natlibfi/marc-record-validators-melinda": "^8.2.2",
+		"@natlibfi/marc-record-validate": "^7.0.1",
+		"@natlibfi/marc-record-validators-melinda": "^9.0.4",
 		"@natlibfi/melinda-commons": "^11.1.1",
 		"debug": "^4.3.1",
 		"normalize-diacritics": "^2.13.2"
