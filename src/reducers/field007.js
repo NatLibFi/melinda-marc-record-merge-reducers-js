@@ -1,12 +1,19 @@
 import createDebugLogger from 'debug';
-import {copyFields, fieldToString} from './utils.js';
+import {copyFields, fieldToString, getEncodingLevelRanking} from './utils.js';
 
 // Test 04: If 007/00-01 are different in base and source, copy 007 from source to base as new field (2x)
 // Test 05: If 007/00-01 are the same, keep existing field 007 in base (2x)
 
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+
 // NB: handle merging better.ns
 export default () => (base, source) => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+
+  if (getEncodingLevelRanking(base) < getEncodingLevelRanking(source)) { // smaller is better!
+    // The original version is better than the alternative version.
+    return base;
+  }
+
   const baseFields = base.get(/^007$/u);
   const sourceFields = source.get(/^007$/u);
 
