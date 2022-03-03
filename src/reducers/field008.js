@@ -20,7 +20,7 @@ function yearLanguageAndCountryAgree(field1, field2) {
 
 function requiresModification(originalRecord, alternativeRecord) {
   if (getEncodingLevelRanking(originalRecord) <= getEncodingLevelRanking(alternativeRecord)) { // smaller is better!
-    // The original version is better or as good as the alternative version.
+    // The original version is better than or as good as the alternative version.
     return false;
   }
   const baseFields = originalRecord.get(regexp008);
