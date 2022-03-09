@@ -47,13 +47,14 @@ function getSubfieldSortOrder(field) {
   return '';
 }
 
+
 function swapSubfields(field, sortOrder) {
   const loopAgain = field.subfields.some((sf, index) => {
     if (index === 0) {
       return false;
     }
-    const currPos = sortOrder.indexOf(sf.code);
-    const prevPos = sortOrder.indexOf(field.subfields[index - 1].code);
+    const currPos = getPosition(sf, sortOrder);
+    const prevPos = getPosition(field.subfields[index - 1], sortOrder);
     if (currPos === -1 || prevPos === -1 || currPos >= prevPos) {
       return false;
     }
@@ -69,6 +70,14 @@ function swapSubfields(field, sortOrder) {
   }
 
   return;
+
+  function getPosition(subfield, sortOrder) {
+    // Magic exception that *always* comes first, used by Aleph in linking overlong fields
+    if (sortOrder.indexOf('9') > -1 && subfield.code === '9' && ['^', '^^'].includes(subfield.value)) {
+      return -0.5; // normal "best value" is 0, and "worst value" is N
+    }
+    return sortOrder.indexOf(subfield.code);
+  }
 }
 
 export function sortAdjacentSubfields(field) {
