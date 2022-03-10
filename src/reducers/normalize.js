@@ -1,14 +1,15 @@
-import createDebugLogger from 'debug';
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
-import {fieldToString, isControlSubfieldCode} from './utils.js';
+import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 
 import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
 import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {default as normalizeEncoding, fieldFixComposition, fieldRemoveDecomposedDiacritics} from './normalizeEncoding';
 import {fieldNormalizePrefixes} from './normalizeIdentifier';
+import {getMaxSubfield6, getMaxSubfield8, reindexSubfield6s, reindexSubfield8s} from './controlSubfields.js';
 
+import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
 /*
@@ -187,7 +188,7 @@ function externalFixes(record) {
   return record;
 }
 
-export function recordPreprocess(record) {
+export function recordPreprocess(record) { // For both base and source record
   if (!record.fields) {
     return record;
   }
@@ -198,4 +199,14 @@ export function recordPreprocess(record) {
   record.fields.forEach(field => fieldPreprocess(field));
   return record;
 }
+
+export function sourceRecordPreprocess(baseRecord, sourceRecord) {
+  const max6 = getMaxSubfield6(baseRecord);
+  const max8 = getMaxSubfield8(baseRecord);
+  nvdebug(`MAX8 FROM BASE: ${max8}`);
+  reindexSubfield6s(sourceRecord, max6);
+  reindexSubfield8s(sourceRecord, max8);
+  return sourceRecord;
+}
+
 
