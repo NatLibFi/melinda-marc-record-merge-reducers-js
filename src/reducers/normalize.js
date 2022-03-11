@@ -10,6 +10,7 @@ import {fieldNormalizePrefixes} from './normalizeIdentifier';
 import {getMaxSubfield6, getMaxSubfield8, reindexSubfield6s, reindexSubfield8s} from './controlSubfields.js';
 
 import createDebugLogger from 'debug';
+import {recordNormalizeSubfield9Linkage} from './normalizeSubfield9Linkage.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
 /*
@@ -196,6 +197,7 @@ export function recordPreprocess(record) { // For both base and source record
 
   //record = result.record; // eslint-disable-line functional/immutable-data
   normalizeEncoding().fix(record);
+  recordNormalizeSubfield9Linkage(record);
   record.fields.forEach(field => fieldPreprocess(field));
   return record;
 }
