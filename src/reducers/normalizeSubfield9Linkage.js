@@ -3,6 +3,41 @@ import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeSubfield9Linkage');
 
+export default function () {
+
+  return {
+    description: 'Normalizes $9-chains',
+    validate, fix
+  };
+
+  function fix(record) {
+    const res = {message: [], fix: [], valid: true};
+    recordNormalizeSubfield9Linkage(record);
+    // message.fix = []; // eslint-disable-line functional/immutable-data
+    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    return res;
+  }
+
+  function validate(record) {
+    const res = {message: [], valid: true};
+    //nvdebug(`NORMALIZE CONTROL NUMBER VALIDATE`, debug);
+    // Actual parsing of all fields
+    /*
+        if (!record.fields) {
+          return false;
+        }
+        */
+    const position = getIndexOfLinkableFields(record);
+    if (position !== -1) { // Fail
+      res.message.push(`Record had $9 linkage that may need to removed`); // eslint-disable-line functional/immutable-data
+      res.valid = false; // eslint-disable-line functional/immutable-data
+      return res;
+    }
+
+    return res;
+  }
+}
+
 function getLastSubfield(field) {
   return field.subfields[field.subfields.length - 1];
 }

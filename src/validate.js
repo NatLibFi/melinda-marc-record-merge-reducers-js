@@ -43,6 +43,7 @@ import {
 
 import NormalizeEncoding from './reducers/normalizeEncoding';
 import NormalizeControlNumber from './reducers/normalizeIdentifier';
+import normalizeSubfield9Linkage from './reducers/normalizeSubfield9Linkage';
 
 import createDebugLogger from 'debug';
 
@@ -57,6 +58,7 @@ export default async () => {
   const validate = validateFactory([
     await NormalizeEncoding(), // procompose å & ä & ö. Decompose the rest.
     await NormalizeControlNumber(), // (FI-MELINDA)/FCC/(FIN01) normalizations
+    await normalizeSubfield9Linkage(), // merge linkage done by subfield $9 ^^ chains
     //await FieldsPresent([/^100$/u]), // not required by merge
     //await FieldsPresent([/^(100|110|111|130|700|710|711|730)$/]), // Helmet-specific rule? Skip...
     //await FieldsPresent([/^336$/u, /^337$/u]), // Comps don't always have 338, so don't require it. Add 245?
