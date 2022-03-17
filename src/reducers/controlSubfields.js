@@ -9,6 +9,7 @@ import {
 import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debugData = debug.extend('data');
 
 function subfieldsAreEqual(field1, field2, subfieldCode) {
   // Check OK if neither one has given subfield.
@@ -211,7 +212,8 @@ export function getMaxSubfield6(record) {
   return Math.max(...vals);
 
   function fieldSubfield6Index(field) {
-    const sf6s = field.subfields.filter(subfield => subfield.code === '6');
+    debugData(`Checking subfields $6 from ${JSON.stringify(field)}`);
+    const sf6s = field.subfields ? field.subfields.filter(subfield => subfield.code === '6') : [];
     if (sf6s.length === 0) {
       return 0;
     }
@@ -225,7 +227,8 @@ export function getMaxSubfield8(record) {
   const vals = record.fields.map((field) => fieldSubfield8Index(field));
   return Math.max(...vals);
   function fieldSubfield8Index(field) {
-    const sf8s = field.subfields.filter(subfield => subfield.code === '8');
+    debugData(`Checking subfields $8 from ${JSON.stringify(field)}`);
+    const sf8s = field.subfields ? field.subfields.filter(subfield => subfield.code === '8') : [];
     if (sf8s.length === 0) {
       return 0;
     }
