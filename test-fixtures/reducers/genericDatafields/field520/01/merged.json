@@ -22,12 +22,12 @@
       "ind2": " ",
       "subfields": [
         {
-          "code": "9",
-          "value": "^^"
-        },
-        {
           "code": "a",
           "value": "ipsum"
+        },
+        {
+          "code": "9",
+          "value": "^^"
         },
         {
           "code": "9",
