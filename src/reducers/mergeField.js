@@ -7,7 +7,7 @@ import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {isSubfieldGoodForMerge, mergeSubfield} from './mergeSubfield';
-import {sortAdjacentSubfields} from './sortSubfields';
+//import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
@@ -483,9 +483,10 @@ function addField(record, field) {
     debug(`ERROR: No subfields in field-to-add`);
     return record;
   }
-  debug(`Add as ${fieldToString(field)}`);
+  nvdebug(`Add as ${fieldToString(field)}`, debug);
   // Do we need to sort unmerged subfields?
-  return record.insertField(sortAdjacentSubfields(field));
+  //return record.insertField(sortAdjacentSubfields(field));
+  return record.insertField(field);
 }
 
 function skipMergeOrAddField(record, field) {
