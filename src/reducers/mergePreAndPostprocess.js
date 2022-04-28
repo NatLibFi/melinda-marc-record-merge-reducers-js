@@ -2,6 +2,7 @@
 import createDebugLogger from 'debug';
 import {fieldFixPunctuation} from './punctuation.js';
 import {fieldRenameSubfieldCodes} from './utils.js';
+import {sortAdjacentSubfields} from './sortSubfields';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -37,9 +38,11 @@ export function postprocessRecord(record) {
 
 function convertOriginalToModifyingAgency(field) {
   // Convert source record's 040$a 040$d, since it can not be an $a of the base record.
-  if (field.tag === '040') { // eslint-disable-line functional/no-conditional-statement
+  if (field.tag === '040' && field.subfields.some(sf => sf.code === 'a')) { // eslint-disable-line functional/no-conditional-statement
     debug(`  Convert source record's 040$a to $d`);
     fieldRenameSubfieldCodes(field, 'a', 'd');
+    // Since subfields were sorted, they may be in the wrong order now:
+    sortAdjacentSubfields(field);
   }
 }
 
