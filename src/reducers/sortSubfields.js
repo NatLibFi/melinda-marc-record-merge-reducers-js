@@ -7,7 +7,7 @@ const defaultSortOrder = defaultSortOrderString.split('');
 
 // List *only* exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
-  {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'c', 'e', 'd', 'x']},
+  {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'e', 'c', 'd', 'x']},
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
   {'tag': '110', 'sortOrder': ['a', 'b', 'n']},
