@@ -71,7 +71,7 @@ function replaceEntrysBirthAndDeathYear(targetField, candSubfield, relevantSubfi
 function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) {
   // Add also the death year, if the original value only contains birth year.
   // This function treats only with X00$d subfields:
-  if (candSubfield.code !== 'd' || !(/^[1678]00$/u).test(targetField.tag)) {
+  if (candSubfield.code !== 'd' || !(/^[1678]00$/u).test(targetField.tag)) { // njsscan-ignore: regex_dos
     return false;
   }
 

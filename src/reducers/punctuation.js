@@ -140,7 +140,7 @@ function ruleAppliesToNextSubfield(rule, nextSubfield) {
   if (!ruleAppliesToSubfieldCode(rule.followedBy, nextSubfield.code)) {
     return false;
   }
-  if ('contextRHS' in rule && !nextSubfield.value.match(rule.contextRHS)) {
+  if ('contextRHS' in rule && !nextSubfield.value.match(rule.contextRHS)) { // njsscan-ignore: regex_injection_dos
     return false;
   }
   return true;
