@@ -1,3 +1,4 @@
 {
-  "description":"041: drop incoming field as it's only subfield ($d zxx) gets dropped"
+  "description":"041: drop incoming field as it's only subfield ($d zxx) gets dropped",
+  "skip": "true"
 }

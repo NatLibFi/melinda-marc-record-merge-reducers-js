@@ -1,4 +1,4 @@
 {
   "description":"Field 100: do not add ',' to the end of $d 1234-",
-  "enabled": true
+  "skip": "true"
 }

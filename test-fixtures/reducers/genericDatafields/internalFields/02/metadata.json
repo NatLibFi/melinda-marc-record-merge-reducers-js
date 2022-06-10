@@ -1,4 +1,5 @@
 {
   "description":"Some identical, some different --> copy different from source to base",
-  "tagPattern": "^(LOW|CAT|SID)$"
+  "tagPattern": "^(LOW|CAT|SID)$",
+  "skip": "true"
 }

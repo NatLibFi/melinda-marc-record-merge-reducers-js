@@ -1,4 +1,4 @@
 {
   "description":"Field 100: fix punctuation between two $e subfield. Strip '.'",
-  "enabled": false
+  "skip": "true"
 }
