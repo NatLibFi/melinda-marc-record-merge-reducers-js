@@ -118,7 +118,7 @@ function ruleAppliesToCurrentSubfield(rule, subfield) {
   if (!ruleAppliesToSubfieldCode(rule.code, subfield.code)) {
     return false;
   }
-  if ('context' in rule && !subfield.value.match(rule.context)) {
+  if ('context' in rule && !subfield.value.match(rule.context)) { // njsscan-ignore: regex_injection_dos
     return false;
   }
   return true;
