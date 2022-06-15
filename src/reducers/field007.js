@@ -1,3 +1,4 @@
+import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {copyFields, fieldToString, getEncodingLevelRanking} from './utils.js';
 
@@ -13,9 +14,11 @@ export default () => (base, source) => {
     // The original version is better than the alternative version.
     return base;
   }
+  const baseRecord = new MarcRecord(base, {subfieldValues: false});
+  const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
-  const baseFields = base.get(/^007$/u);
-  const sourceFields = source.get(/^007$/u);
+  const baseFields = baseRecord.get(/^007$/u);
+  const sourceFields = sourceRecord.get(/^007$/u);
 
   const mergableFields = sourceFields.filter(sf => baseFields.every(bf => allowCopy(bf, sf)));
 
@@ -23,7 +26,7 @@ export default () => (base, source) => {
 
   if (mergableFields.length > 0) {
     debug(`${mergableFields.length} copyable field(s)`);
-    return copyFields(base, mergableFields);
+    return copyFields(baseRecord, mergableFields);
   }
 
   return base;

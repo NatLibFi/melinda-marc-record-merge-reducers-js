@@ -1,3 +1,4 @@
+import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {getEncodingLevelRanking, getNonIdenticalFields, recordReplaceField} from './utils.js';
 
@@ -18,13 +19,14 @@ function yearLanguageAndCountryAgree(field1, field2) {
   return basePubYear === sourcePubYear && baseCountry === sourceCountry && baseLanguage === sourceLanguage;
 }
 
-function requiresModification(originalRecord, alternativeRecord) {
-  if (getEncodingLevelRanking(originalRecord) <= getEncodingLevelRanking(alternativeRecord)) { // smaller is better!
+function requiresModification(baseRecord, sourceRecord) {
+  if (getEncodingLevelRanking(baseRecord) <= getEncodingLevelRanking(sourceRecord)) { // smaller is better!
     // The original version is better than or as good as the alternative version.
     return false;
   }
-  const baseFields = originalRecord.get(regexp008);
-  const sourceFields = alternativeRecord.get(regexp008);
+
+  const baseFields = baseRecord.get(regexp008);
+  const sourceFields = sourceRecord.get(regexp008);
 
   const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
 
@@ -40,14 +42,18 @@ function requiresModification(originalRecord, alternativeRecord) {
 }
 
 export default () => (base, source) => {
-  if (requiresModification(base, source)) {
-    const baseFields = base.get(regexp008);
-    const sourceFields = source.get(regexp008);
+
+  const baseRecord = new MarcRecord(base, {subfieldValues: false});
+  const sourceRecord = new MarcRecord(source, {subfieldValues: false});
+
+  if (requiresModification(baseRecord, sourceRecord)) {
+    const baseFields = baseRecord.get(regexp008);
+    const sourceFields = sourceRecord.get(regexp008);
     // Test 06: If the level code of the source record is better (smaller number)
     // Replace base field 008 with field 008 from source
     debug(`Replacing base field ${baseFields[0].tag}`);
     // Field 008 is non-repeatable. This [0] is/should be a safe approach:
-    return recordReplaceField(base, baseFields[0], sourceFields[0]);
+    return recordReplaceField(baseRecord, baseFields[0], sourceFields[0]);
   }
   // Test 07: If the level code of the base record is better or the same, keep existing 008
   // Test 08: If the character positions for year, language and country are not the same, keep existing 008

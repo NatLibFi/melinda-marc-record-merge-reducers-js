@@ -1,4 +1,5 @@
 import createDebugLogger from 'debug';
+import {MarcRecord} from '@natlibfi/marc-record';
 import {getNonIdenticalFields, copyFields} from './utils.js';
 
 // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field (2x)
@@ -15,8 +16,12 @@ export default () => (base, source) => {
     return base;
   }
 
-  const baseFields = base.get(regexp006);
-  const sourceFields = source.get(regexp006);
+  const baseRecord = new MarcRecord(base, {subfieldValues: false});
+  const sourceRecord = new MarcRecord(source, {subfieldValues: false});
+
+
+  const baseFields = baseRecord.get(regexp006);
+  const sourceFields = sourceRecord.get(regexp006);
   const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
 
   if (nonIdenticalFields.length === 0) {
@@ -24,5 +29,5 @@ export default () => (base, source) => {
     return base;
   }
 
-  return copyFields(base, nonIdenticalFields);
+  return copyFields(baseRecord, nonIdenticalFields);
 };

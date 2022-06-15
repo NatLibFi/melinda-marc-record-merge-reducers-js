@@ -1,9 +1,16 @@
+import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
 export default () => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  const baseFields = base.get(/^LDR$/u);
-  const sourceFields = source.get(/^LDR$/u);
+  //debug(`********* We have base: **********`);
+  //debug(base.constructor.name);
+  const baseRecord = new MarcRecord(base, {subfieldValues: false});
+  const sourceRecord = new MarcRecord(source, {subfieldValues: false});
+
+  // Should this be sourceRecord.leader?
+  const baseFields = baseRecord.get(/^LDR$/u);
+  const sourceFields = sourceRecord.get(/^LDR$/u);
   debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
   debug(`base.leader: ${base.leader}`);
   debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
