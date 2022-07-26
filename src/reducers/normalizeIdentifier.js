@@ -73,49 +73,48 @@ export default function () {
   }
 }
 
-// Should we have something like "const defaultFIN01 = 'FIN01'"...
-function normalizeFIN01(value = '') {
-  if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(12)}`; // eslint-disable-line functional/immutable-data
-  }
-  if ((/^FCC[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(3)}`; // eslint-disable-line functional/immutable-data
-  }
-  return value;
-}
+const defaultFIN01 = '(FIN01)';
+const defaultFIN10 = '(FIN10)';
+const defaultFIN11 = '(FIN11)';
+const defaultFIN12 = '(FIN12)';
+const defaultFIN13 = '(FIN13)';
 
-function normalizeFIN11(value = '') {
-  if ((/^\(FI-ASTERI-N\)[0-9]{9}$/u).test(value)) {
-    return `(FIN11)${value.substring(13)}`; // eslint-disable-line functional/immutable-data
+const prefixMappings = {
+  'FCC': defaultFIN01,
+  '(FI-ASTERI-A)': defaultFIN12,
+  '(FI-ASTERI-N)': defaultFIN11,
+  '(FI-ASTERI-S)': defaultFIN10,
+  '(FI-ASTERI-W)': defaultFIN13,
+  '(FI-MELINDA)': defaultFIN01,
+  '(FIN01)': defaultFIN01,
+  '(FIN10)': defaultFIN10,
+  '(FIN11)': defaultFIN11,
+  '(FIN12)': defaultFIN12,
+  '(FIN13)': defaultFIN13,
+  'http://urn.fi/URN:NBN:fi:au:finaf:': defaultFIN11,
+  'https://urn.fi/URN:NBN:fi:au:finaf:': defaultFIN11
+};
+
+function normalizeNineDigitIDs(value) {
+  // $value should be prefix + nine-digits. Do nothing if nine-digit tail condition is not met:
+  const nineDigitTail = value.slice(-9);
+  if (!(/^[0-9]{9}$/u).test(nineDigitTail)) {
+    return value;
   }
-  if ((/^https?:\/\/urn\.fi\/URN:NBN:fi:au:finaf:[0-9]{9}$/u).test(value)) {
-    return `(FIN11)${value.slice(-9)}`;
+  // Normalize prefix:
+  const currPrefix = value.slice(0, -9);
+  if (currPrefix in prefixMappings) {
+    return `${prefixMappings[currPrefix]}${value.slice(-9)}`;
   }
   return value;
 }
 
 export function normalizeControlSubfieldValue(value = '') {
-  const fin01 = normalizeFIN01(value);
-  if (fin01 !== value) {
-    return fin01;
+  const normalizedValue = normalizeNineDigitIDs(value);
+  if (normalizedValue !== value) {
+    return normalizedValue;
   }
-  if ((/^\(FI-MELINDA\)[0-9]{9}$/u).test(value)) {
-    return `(FIN01)${value.substring(12)}`;
-  }
-  if ((/^\(FI-ASTERI-S\)[0-9]{9}$/u).test(value)) {
-    return `(FIN10)${value.substring(13)}`;
-  }
-  const fin11 = normalizeFIN11(value);
-  if (fin11 !== value) {
-    return fin11;
-  }
-  if ((/^\(FI-ASTERI-A\)[0-9]{9}$/u).test(value)) {
-    return `(FIN12)${value.substring(13)}`;
-  }
-  if ((/^\(FI-ASTERI-W\)[0-9]{9}$/u).test(value)) {
-    return `(FIN13)${value.substring(13)}`;
-  }
-  // NB! we could/should normalize isni to uri...
+  // Something for isni IDs?
   return value;
 }
 
