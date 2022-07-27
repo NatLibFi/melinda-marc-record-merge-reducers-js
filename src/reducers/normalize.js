@@ -7,8 +7,8 @@ import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/sub
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {default as normalizeEncoding, fieldFixComposition, fieldRemoveDecomposedDiacritics} from './normalizeEncoding';
 import {fieldNormalizePrefixes} from './normalizeIdentifier';
-import {getMaxSubfield6, getMaxSubfield8, reindexSubfield6s, reindexSubfield8s} from './controlSubfields.js';
-
+import {getMaxSubfield6, reindexSubfield6s} from './reindexSubfield6.js';
+import {getMaxSubfield8, reindexSubfield8s} from './reindexSubfield8.js';
 import createDebugLogger from 'debug';
 import {recordNormalizeSubfield9Linkage} from './normalizeSubfield9Linkage.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
