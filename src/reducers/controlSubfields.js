@@ -191,7 +191,7 @@ const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disa
 
 function subfield8Index(subfield) {
   const match = subfield.value.match(sf8Regexp);
-  if (match.lenght === 0) {
+  if (match.length === 0) {
     return 0;
   }
   return parseInt(match[0], 10);
