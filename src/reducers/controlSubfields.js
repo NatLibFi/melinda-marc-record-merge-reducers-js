@@ -186,15 +186,6 @@ function subfield6Index(subfield) {
   return result;
 }
 
-/*
-function updateSubfield6(field, index) {
-  const sf6s = field.subfields.filter(subfield => subfield.code === '6');
-  const strindex = index < 10 ? `0${index}` : `${index}`;
-  sf6s[0].value.replace(sf6s[0].substring(4, 6), strindex);
-}
-*/
-
-
 export function getMaxSubfield6(record) {
   // Should we cache the value here?
   const vals = record.fields.map((field) => fieldSubfield6Index(field));
