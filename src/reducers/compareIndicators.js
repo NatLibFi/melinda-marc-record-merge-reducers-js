@@ -12,11 +12,12 @@ import {fieldToString, nvdebug} from './utils';
 const ind1NonFilingChars = ['130', '630', '730', '740'];
 const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];
 
-function indicator1Matches(field1, field2) {
+export function indicator1Matches(field1, field2) {
   // When checking similarity of indicators, we are not interested in non-filing characters
   if (ind1NonFilingChars.includes(field1.tag)) {
     return true;
   }
+
   // Exceptions:
   // 245: value is based on the presence of a 1XX field, which may vary
   if (['245'].includes(field1.tag)) {
@@ -27,17 +28,13 @@ function indicator1Matches(field1, field2) {
   return field1.ind1 === field2.ind1;
 }
 
-function indicator2Matches(field1, field2) {
+export function indicator2Matches(field1, field2) {
   // When checking similarity of indicators, we are not interested in non-filing characters
   if (ind2NonFilingChars.includes(field1.tag)) {
     return true;
   }
   // Default: indicators must match
   return field1.ind2 === field2.ind2;
-}
-
-export function indicatorsMatch(field1, field2) {
-  return indicator1Matches(field1, field2) && indicator2Matches(field1, field2);
 }
 
 export function mergeIndicators(toField, fromField) {

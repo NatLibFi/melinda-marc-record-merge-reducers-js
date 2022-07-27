@@ -7,7 +7,7 @@ import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {isSubfieldGoodForMerge, mergeSubfield} from './mergeSubfield';
-import {indicatorsMatch, mergeIndicators} from './compareIndicators';
+import {indicator1Matches, indicator2Matches, mergeIndicators} from './compareIndicators';
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
@@ -123,9 +123,11 @@ function arePairedSubfieldsInBalance(field1, field2) {
 }
 
 function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
-  // Indicators *must* be equal:
-  if (!indicatorsMatch(baseField, sourceField) ||
-    !controlSubfieldsPermitMerge(baseField, sourceField)) {
+  // Indicators must typically be equal (there are exceptions such as non-filing characters though):
+  if (!indicator1Matches(baseField, sourceField) || !indicator2Matches(baseField, sourceField)) {
+    return false;
+  }
+  if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
     return false;
   }
   //debug('mergablePair()... wp2');
