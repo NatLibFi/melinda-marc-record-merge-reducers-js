@@ -124,7 +124,7 @@ function arePairedSubfieldsInBalance(field1, field2) {
 
 function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
-  if (!indicator1Matches(baseField, sourceField) || !indicator2Matches(baseField, sourceField)) {
+  if (!indicator1Matches(baseField, sourceField, undefined) || !indicator2Matches(baseField, sourceField, undefined)) {
     return false;
   }
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
