@@ -79,7 +79,7 @@ export function mergeField(record, field) {
   // skip duplicates and special cases:
   if (skipMergeOrAddField(record, newField)) {
     nvdebug(`mergeField(): don't merge or add '${fieldToString(field)}'`, debug);
-    return record;
+    return true;
   }
   nvdebug(`mergeField(): Try to merge or add '${fieldToString(field)}'.`, debug);
   const counterpartField = getCounterpart(record, newField);
@@ -88,7 +88,7 @@ export function mergeField(record, field) {
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debug);
 
     mergeField2(record, counterpartField, newField);
-    return record;
+    return true;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
   nvdebug(`mergeField(): No mergable counterpart found for '${fieldToString(field)}'.`, debug);
