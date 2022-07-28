@@ -8,6 +8,7 @@ import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {isSubfieldGoodForMerge, mergeSubfield} from './mergeSubfield';
 import {indicator1Matches, indicator2Matches, mergeIndicators} from './compareIndicators';
+import {mergableTag} from './mergableTag';
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
@@ -163,6 +164,7 @@ function pairableAsteriIDs(baseField, sourceField) {
     return false;
   }
   //nvdebug(`ASTERI WP3:\n${fin11a.join(", ")}\n${fin11b.join(", ")}`); // eslint-disable-line
+
   // Check that found control subfields agree. Use pre-existing generic function to reduce code.
   // (NB! We could optimize and just return true here, as control subfield check is done elsewhere as well.
   // However, explicitly checking them here makes the code more robust.)
@@ -172,6 +174,7 @@ function pairableAsteriIDs(baseField, sourceField) {
   //console.log(`ASTERI PAIR ${fieldToString(sourceField)}`); // eslint-disable-line
   return true;
 
+  // NB! This assumes that the default prefix for Asteri is FIN11, not FI-ASTERI-N nor a finaf urn.
   function getAsteriIDs(field) {
     return field.subfields.filter(sf => sf.code === '0')
       .map(sf => normalizeControlSubfieldValue(sf.value))
@@ -179,21 +182,26 @@ function pairableAsteriIDs(baseField, sourceField) {
   }
 }
 
+
 function pairableName(baseField, sourceField) {
   // 100$a$t: remove $t and everything after that
   const reducedField1 = fieldToNamePart(baseField);
   const reducedField2 = fieldToNamePart(sourceField);
 
-  // compare the remaining subsets:
+  // Compare the remaining subsets...
+  // First check that name matches...
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
     //debug(`    name match: '${fieldToString(reducedField1)}'`);
     return true;
   }
 
+
+  // However, mismatch is not critical! If Asteri ID matches, it's still a match!
   if (pairableAsteriIDs(baseField, sourceField)) {
     //debug(`    name match based on ASTERI $0'`);
     return true;
   }
+
 
   //debug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
   return false;
@@ -201,8 +209,9 @@ function pairableName(baseField, sourceField) {
 
 
 function semanticallyMergablePair(baseField, sourceField) {
-  // On rare occasions a field contains a title part and partial checks are required:
-  if (!compareTitlePart(baseField, sourceField)) {
+  // On rare occasions a field contains also a title part, name part and title part must
+  // be checked separately:
+  if (!titlePartsMatch(baseField, sourceField)) {
     debug(` ${baseField.tag} is unmergable: Title part mismatch.`);
     return false;
   }
@@ -264,7 +273,7 @@ function containsTitlePart(field) {
   }
 }
 
-function compareTitlePart(field1, field2) {
+function titlePartsMatch(field1, field2) {
   if (!containsTitlePart(field1)) {
     return !containsTitlePart(field2);
   }
@@ -282,7 +291,7 @@ function compareTitlePart(field1, field2) {
 
 
 export function getCounterpart(record, field) {
-  if (getMergeConstraintsForTag(field.tag, 'skip') || getMergeConstraintsForTag(field.tag, 'mergable') === false) {
+  if (getMergeConstraintsForTag(field.tag, 'skip') || !mergableTag(field.tag)) {
     // debug(`${field.tag}/mergable is ${tmp} `);
     return null;
   }
