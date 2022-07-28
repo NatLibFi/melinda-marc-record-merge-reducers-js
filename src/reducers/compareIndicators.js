@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils';
+//import {fieldToString, nvdebug} from './utils';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -72,11 +72,15 @@ export function mergeIndicators(toField, fromField) {
   // We could and should checks the relevant article length (using language information whilst doing it).
   // However, this is a task for record internal fixer, not merge.
   //
+  // For other indicators the situation is trickier, as we don't know which one is the good value.
+  //
   // NB! We could add fixes for various other indicator types as well. However, it gets quickly pretty ad hoc.
-  nvdebug(fieldToString(toField));
-  nvdebug(fieldToString(fromField));
+  // nvdebug(fieldToString(toField));
+  // nvdebug(fieldToString(fromField));
+
   mergeIndicator1(toField, fromField);
   mergeIndicator2(toField, fromField);
+
   function mergeIndicator1(toField, fromField) {
     if (toField.ind1 === fromField.ind1) {
       return; // Do nothing
