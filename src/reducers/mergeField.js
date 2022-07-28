@@ -5,7 +5,7 @@ import {cloneAndRemovePunctuation} from './normalize';
 import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {mergeSubfield} from './mergeSubfield';
 import {mergeIndicators} from './compareIndicators';
-import {addableTag, mergableTag} from './mergableTag';
+import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -60,8 +60,8 @@ function mergeField2(record, targetField, sourceField) {
 }
 
 
-function skipMergeField(record, field, config) {
-  if (!addableTag(field.tag, undefined) && !mergableTag(field.tag, config.skipMergeTags)) {
+function skipMergeField(record, field, config = []) {
+  if (!mergableTag(field.tag, config.skipMergeTags)) {
     return true;
   }
   // Skip duplicate field:
