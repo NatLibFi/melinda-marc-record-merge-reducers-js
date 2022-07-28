@@ -1,6 +1,30 @@
 //import createDebugLogger from 'debug';
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
+const defaultNonMergableNonAddableFields = [
+  '066', // 066 - Character sets present (NR)
+  // Them 8XX fields are holdingds related fields:
+  '841',
+  '842',
+  '843',
+  '844',
+  '845',
+  '852',
+  '853',
+  '854',
+  '855',
+  '863',
+  '864',
+  '865',
+  '866',
+  '867',
+  '868',
+  '876',
+  '877',
+  '878',
+  'HLI' // Aleph internal noise
+];
+
 const defaultNonMergableFields = [
   '382', // 382: merging would be madness... However, this will miss cases, where only $5 or $9 differs...
   // 59X: always copy, never merge. NB! No specs exist!
@@ -60,8 +84,17 @@ const defaultNonMergableFields = [
 export function mergableTag(tag, skipPolicy = undefined) {
   // undefined skipPolicy: use defaults (eg. skip non-filing characters)
   if (skipPolicy === undefined) {
-    return !(tag in defaultNonMergableFields);
+    return !(tag in defaultNonMergableFields || tag in defaultNonMergableNonAddableFields);
   }
 
   return !skipPolicy; // if skip merge, it is not mergable and vice versa
+}
+
+export function addableTag(tag, skipPolicy = undefined) {
+  // undefined skipPolicy: use defaults (eg. skip non-filing characters)
+  if (skipPolicy === undefined) {
+    return !(tag in defaultNonMergableNonAddableFields);
+  }
+
+  return !skipPolicy; // if skip add, it is not addable and vice versa
 }

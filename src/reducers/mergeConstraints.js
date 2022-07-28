@@ -3,7 +3,6 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
-// 'skip': no merge, no add.
 // "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined. ()
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 // 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable. Subfields can be copied though.
@@ -47,7 +46,7 @@ const mergeConstraints = [
   {'tag': '055', 'required': 'a', 'key': 'ab'},
   {'tag': '060', 'required': 'a', 'key': 'ab'},
   {'tag': '061', 'required': 'a', 'paired': 'b', 'key': 'abc'},
-  {'tag': '066', 'skip': true, 'required': 'c'},
+  {'tag': '066', 'required': 'c'},
   {'tag': '070', 'required': 'a', 'key': 'ab'},
   {'tag': '071', 'required': 'a', 'paired': 'abc', 'key': 'abc'}, // N=3
   {'tag': '072', 'required': 'a', 'key': 'ax'},
@@ -233,27 +232,27 @@ const mergeConstraints = [
   {'tag': '810', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '811', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
   {'tag': '830', 'required': 'ax', 'key': 'adfloprtvwxx'},
-  {'tag': '840', 'skip': true, 'required': 'a'},
-  {'tag': '841', 'skip': true, 'required': 'a'},
-  {'tag': '842', 'skip': true, 'required': 'a'},
-  {'tag': '843', 'skip': true, 'required': 'a'},
-  {'tag': '844', 'skip': true, 'required': 'a'},
-  {'tag': '845', 'skip': true, 'required': 'a'},
+  {'tag': '840', 'required': 'a'},
+  {'tag': '841', 'required': 'a'},
+  {'tag': '842', 'required': 'a'},
+  {'tag': '843', 'required': 'a'},
+  {'tag': '844', 'required': 'a'},
+  {'tag': '845', 'required': 'a'},
   {'tag': '850', 'required': 'a', 'key': 'a'},
-  {'tag': '852', 'skip': true, 'required': 'a'}, // HMM... we might want to reconsider this...
-  {'tag': '853', 'skip': true, 'required': 'a'},
-  {'tag': '854', 'skip': true, 'required': 'a'},
-  {'tag': '855', 'skip': true, 'required': 'a'},
+  {'tag': '852', 'required': 'a'}, // HMM... we might want to reconsider this...
+  {'tag': '853', 'required': 'a'},
+  {'tag': '854', 'required': 'a'},
+  {'tag': '855', 'required': 'a'},
   {'tag': '856', 'required': ''},
-  {'tag': '863', 'skip': true, 'required': 'a'},
-  {'tag': '864', 'skip': true, 'required': 'a'},
-  {'tag': '865', 'skip': true, 'required': 'a'},
-  {'tag': '866', 'skip': true, 'required': 'a'},
-  {'tag': '867', 'skip': true, 'required': 'a'},
-  {'tag': '868', 'skip': true, 'required': 'a'},
-  {'tag': '876', 'skip': true, 'required': 'a'},
-  {'tag': '877', 'skip': true, 'required': 'a'},
-  {'tag': '878', 'skip': true, 'required': 'a'},
+  {'tag': '863', 'required': 'a'},
+  {'tag': '864', 'required': 'a'},
+  {'tag': '865', 'required': 'a'},
+  {'tag': '866', 'required': 'a'},
+  {'tag': '867', 'required': 'a'},
+  {'tag': '868', 'required': 'a'},
+  {'tag': '876', 'required': 'a'},
+  {'tag': '877', 'required': 'a'},
+  {'tag': '878', 'required': 'a'},
   {'tag': '880', 'required': '', 'paired': 'a', 'key': 'abcdefghijklmnopqrstuvwxyz'},
   {'tag': '881', 'required': ''},
   {'tag': '882', 'required': ''},
@@ -279,7 +278,7 @@ function constraintToValue(tagsConstraints, constraintName) {
   if (constraintName in tagsConstraints) {
     return tagsConstraints[constraintName];
   }
-  if (constraintName !== 'skip' && constraintName !== 'solitary') { // eslint-disable-line functional/no-conditional-statement
+  if (constraintName !== 'solitary') { // eslint-disable-line functional/no-conditional-statement
     debug(`WARNING\tMissing '${constraintName}'. Return NULL instead of a set of constraints.`);
   }
   return null; // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
