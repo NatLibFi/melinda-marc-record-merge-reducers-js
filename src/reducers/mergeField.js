@@ -60,8 +60,8 @@ function mergeField2(record, targetField, sourceField) {
 }
 
 
-function skipMergeOrAddField(record, field) {
-  if (!addableTag(field.tag, undefined) && !mergableTag(field.tag, undefined)) {
+function skipMergeField(record, field, config) {
+  if (!addableTag(field.tag, undefined) && !mergableTag(field.tag, config.skipMergeTags)) {
     return true;
   }
   // Skip duplicate field:
@@ -77,7 +77,7 @@ export function mergeField(record, field) {
   const newField = cloneAndPreprocessField(field); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:
-  if (skipMergeOrAddField(record, newField)) {
+  if (skipMergeField(record, newField)) {
     nvdebug(`mergeField(): don't merge or add '${fieldToString(field)}'`, debug);
     return true;
   }

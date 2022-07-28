@@ -288,8 +288,8 @@ function titlePartsMatch(field1, field2) {
 }
 
 
-export function getCounterpart(record, field) {
-  if (!mergableTag(field.tag, undefined)) {
+export function getCounterpart(record, field, config = []) {
+  if (!mergableTag(field.tag, config.skipMergeTags)) {
     // debug(`${field.tag}/mergable is ${tmp} `);
     return null;
   }

@@ -76,19 +76,29 @@ function addField2(record, field) {
 }
 
 function skipAddField(record, field) {
-  if (!addableTag(field.tag, undefined) /* && !mergableTag(field.tag, undefined) */) {
-    return true;
-  }
   // Skip duplicate field:
   if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
     //debug(`addField(): field '${fieldToString(field)}' already exists! No action required!`);
     return true;
   }
 
+  if (!addableTag(field.tag, undefined)) {
+    return true;
+  }
+
+
   return false;
 }
 
-export function addField(record, field) {
+export function addField(record, field, config = []) {
+
+
+  // skip duplicates and special cases:
+  if (skipAddField(record, field, config)) {
+    nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
+    return false;
+  }
+
   const newField = cloneAndPreprocessField(field); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:

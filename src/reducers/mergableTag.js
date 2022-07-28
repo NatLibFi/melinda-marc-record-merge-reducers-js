@@ -81,20 +81,19 @@ const defaultNonMergableFields = [
   'SID'
 ];
 
-export function mergableTag(tag, skipPolicy = undefined) {
-  // undefined skipPolicy: use defaults (eg. skip non-filing characters)
-  if (skipPolicy === undefined) {
-    return !(tag in defaultNonMergableFields || tag in defaultNonMergableNonAddableFields);
+export function mergableTag(tag, skipList = []) {
+  if (skipList.length > 0) {
+    return !skipList.includes(tag);
   }
 
-  return !skipPolicy; // if skip merge, it is not mergable and vice versa
+  return !(defaultNonMergableFields.includes(tag) || defaultNonMergableNonAddableFields.includes(tag));
 }
 
-export function addableTag(tag, skipPolicy = undefined) {
-  // undefined skipPolicy: use defaults (eg. skip non-filing characters)
-  if (skipPolicy === undefined) {
-    return !(tag in defaultNonMergableNonAddableFields);
+export function addableTag(tag, skipList = []) {
+  if (skipList.length > 0) {
+    return !skipList.includes(tag);
   }
 
-  return !skipPolicy; // if skip add, it is not addable and vice versa
+  //return !(tag in defaultNonMergableNonAddableFields);
+  return !defaultNonMergableNonAddableFields.includes(defaultNonMergableNonAddableFields);
 }
