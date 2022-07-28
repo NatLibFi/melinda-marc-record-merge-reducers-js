@@ -16,11 +16,7 @@ export default () => (base, source) => {
   const record = recordPreprocess(baseRecord); // fix composition et al
   const record2 = sourceRecordPreprocess(record, recordPreprocess(sourceRecord)); // fix composition et al
 
-  const mainAndCorrespondingAddedEntries = ['100', '110', '111', '130', '700', '710', '711', '730'];
-
-  const candidateFields = record2.get(/^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u)
-    .filter(field => !mainAndCorrespondingAddedEntries.includes(field.tag));
-
+  const candidateFields = record2.get(/^(?:1[0-9][0-9]|700|710|711|730)$/u);
   candidateFields.forEach(candField => {
     debug(`Now processing ${fieldToString(candField)}`);
     mergeOrAddField(record, candField);
