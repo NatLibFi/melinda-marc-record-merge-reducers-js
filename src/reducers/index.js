@@ -6,7 +6,7 @@ import field007 from './field007';
 import field008 from './field008';
 //import field995 from './field995';
 import genericDatafield from './genericDatafield';
-
+import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // ### Keskeneräinen
@@ -65,6 +65,7 @@ export const localReducers = [
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
+  mainAndCorrespondingAddedEntry(),
   genericDatafield()
 
 ];
