@@ -4,7 +4,7 @@ import createReducer from './mainAndCorrespondingAddedEntry';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
-describe('genericDatafields tests: ', () => {
+describe('mainAndCorrspondingAddedEntry tests: ', () => {
   generateTests({
     callback,
     path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'mainEntries'],
