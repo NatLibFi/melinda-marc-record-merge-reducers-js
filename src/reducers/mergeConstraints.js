@@ -4,7 +4,6 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
 // 'skip': no merge, no add.
-// 'mergable' = if false, don't merge, just add. true/false. Defaults to true.
 // "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined. ()
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 // 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable. Subfields can be copied though.
@@ -116,7 +115,7 @@ const mergeConstraints = [
   {'tag': '377', 'required': '', 'paired': 'al', 'key': 'al'},
   {'tag': '380', 'required': 'a', 'key': 'a'},
   {'tag': '381', 'required': 'auv', 'key': 'auv'},
-  {'tag': '382', 'mergable': false, 'required': ''}, // merging would be madness... However, this will miss cases, where only $5 or $9 differs...
+  {'tag': '382', 'required': ''},
   {'tag': '383', 'required': 'abcde', 'key': 'abcde'},
   {'tag': '384', 'required': 'a', 'key': 'a'},
   {'tag': '385', 'required': 'a', 'paired': 'abmn', 'key': 'abmn'},
@@ -174,16 +173,16 @@ const mergeConstraints = [
   {'tag': '585', 'required': 'a', 'key': 'a'},
   {'tag': '586', 'required': 'a', 'key': 'a'},
   {'tag': '588', 'required': 'a', 'key': 'a'},
-  {'tag': '590', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '591', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '592', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '593', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '594', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '595', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '596', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '597', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '598', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
-  {'tag': '599', 'mergable': false, 'required': ''}, // always copy, never merge. NB! No specs exist!
+  {'tag': '590', 'required': ''},
+  {'tag': '591', 'required': ''},
+  {'tag': '592', 'required': ''},
+  {'tag': '593', 'required': ''},
+  {'tag': '594', 'required': ''},
+  {'tag': '595', 'required': ''},
+  {'tag': '596', 'required': ''},
+  {'tag': '597', 'required': ''},
+  {'tag': '598', 'required': ''},
+  {'tag': '599', 'required': ''},
   {'tag': '600', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'}, // aped from 700
   {'tag': '610', 'required': 'a', 'paired': 't', 'key': 'abcdgntu'}, // aped from 710
   {'tag': '611', 'required': 'a', 'paired': 't', 'key': 'acdgntu'}, // aped from 711
@@ -194,13 +193,13 @@ const mergeConstraints = [
   {'tag': '650', 'required': 'a', 'paired': 'abcdegvxyz', 'key': 'abcdegvxyz20'},
   {'tag': '651', 'required': 'a', 'paired': 'aegvxyz', 'key': 'aegvxyz20'},
   {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
-  {'tag': '654', 'mergable': false, 'required': ''},
+  {'tag': '654', 'required': ''},
   {'tag': '655', 'required': 'a', 'paired': 'axyz', 'key': 'axyz20'},
-  {'tag': '656', 'mergable': false, 'required': 'a'}, // N=0
-  {'tag': '657', 'mergable': false, 'required': 'a'}, // N=0
-  {'tag': '658', 'mergable': false, 'required': 'a'}, // N=0
-  {'tag': '662', 'mergable': false, 'required': ''}, // N=0
-  {'tag': '668', 'mergable': false, 'required': 'a'}, // N=0
+  {'tag': '656', 'required': 'a'}, // N=0
+  {'tag': '657', 'required': 'a'}, // N=0
+  {'tag': '658', 'required': 'a'}, // N=0
+  {'tag': '662', 'required': ''}, // N=0
+  {'tag': '668', 'required': 'a'}, // N=0
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcjqtux'}, // h/i/m/o/r/s/x are missing from 100
   {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
@@ -209,26 +208,27 @@ const mergeConstraints = [
   {'tag': '730', 'required': 'a', 'key': 'adfhlnoprstx'}, // NB: 130->730 magic subfields might not agree...
   {'tag': '740', 'required': 'a', 'key': 'ahnp'},
   {'tag': '751', 'required': 'a', 'key': 'a'}, // N=11, kaikissa pelkkä $a
-  {'tag': '752', 'mergable': false, 'required': '', 'key': 'abcdefgh'}, // N=12234
-  {'tag': '753', 'mergable': false, 'required': '', 'key': 'abc'},
-  {'tag': '754', 'mergable': false, 'required': '', 'key': 'acdxz'}, // N=3
-  {'tag': '758', 'mergable': false, 'required': 'a', 'key': 'ai'}, // N=1
-  {'tag': '760', 'mergable': false, 'required': 'tw', key: 'w'},
-  {'tag': '762', 'mergable': false, 'required': 't', key: 'abcdhmstxy'},
-  {'tag': '765', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz'},
-  {'tag': '767', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz'},
-  {'tag': '770', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz'},
-  {'tag': '772', 'mergable': false, 'required': '', key: 'abcdhmrstuwxyz'},
+  {'tag': '752', 'required': '', 'key': 'abcdefgh'}, // N=12234
+  {'tag': '753', 'required': '', 'key': 'abc'},
+  {'tag': '754', 'required': '', 'key': 'acdxz'}, // N=3
+  {'tag': '758', 'required': 'a', 'key': 'ai'}, // N=1
+
+  {'tag': '760', 'required': 'tw', key: 'w'},
+  {'tag': '762', 'required': 't', key: 'abcdhmstxy'},
+  {'tag': '765', 'required': '', key: 'abcdhmrstuwxyz'},
+  {'tag': '767', 'required': '', key: 'abcdhmrstuwxyz'},
+  {'tag': '770', 'required': '', key: 'abcdhmrstuwxyz'},
+  {'tag': '772', 'required': '', key: 'abcdhmrstuwxyz'},
   {'tag': '773', 'required': 'w', key: 'wgq'}, // Kirjavälitys should not have any component parts. However, this need to be re-thought...
   // Currently we (appently) drop fields that don't contain 773$w...
-  {'tag': '774', 'mergable': false, 'required': ''},
-  {'tag': '775', 'mergable': false, 'required': ''},
-  {'tag': '776', 'mergable': false, 'required': ''},
-  {'tag': '777', 'mergable': false, 'required': ''},
-  {'tag': '780', 'mergable': false, 'required': ''},
-  {'tag': '785', 'mergable': false, 'required': ''},
-  {'tag': '786', 'mergable': false, 'required': ''},
-  {'tag': '787', 'mergable': false, 'required': ''},
+  {'tag': '774', 'required': ''},
+  {'tag': '775', 'required': ''},
+  {'tag': '776', 'required': ''},
+  {'tag': '777', 'required': ''},
+  {'tag': '780', 'required': ''},
+  {'tag': '785', 'required': ''},
+  {'tag': '786', 'required': ''},
+  {'tag': '787', 'required': ''},
   {'tag': '800', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'},
   {'tag': '810', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '811', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
@@ -244,7 +244,7 @@ const mergeConstraints = [
   {'tag': '853', 'skip': true, 'required': 'a'},
   {'tag': '854', 'skip': true, 'required': 'a'},
   {'tag': '855', 'skip': true, 'required': 'a'},
-  {'tag': '856', 'mergable': false, 'required': ''},
+  {'tag': '856', 'required': ''},
   {'tag': '863', 'skip': true, 'required': 'a'},
   {'tag': '864', 'skip': true, 'required': 'a'},
   {'tag': '865', 'skip': true, 'required': 'a'},
@@ -255,32 +255,29 @@ const mergeConstraints = [
   {'tag': '877', 'skip': true, 'required': 'a'},
   {'tag': '878', 'skip': true, 'required': 'a'},
   {'tag': '880', 'required': '', 'paired': 'a', 'key': 'abcdefghijklmnopqrstuvwxyz'},
-  {'tag': '881', 'mergable': false, 'required': ''},
-  {'tag': '882', 'mergable': false, 'required': ''},
-  {'tag': '883', 'mergable': false, 'required': ''},
-  {'tag': '884', 'mergable': false, 'required': ''},
-  {'tag': '885', 'mergable': false, 'required': ''},
-  {'tag': '886', 'mergable': false, 'required': ''},
-  {'tag': '887', 'mergable': false, 'required': ''},
-  {'tag': '900', 'mergable': false, 'required': ''},
-  {'tag': '901', 'mergable': false, 'required': ''},
-  {'tag': '910', 'mergable': false, 'required': ''},
+  {'tag': '881', 'required': ''},
+  {'tag': '882', 'required': ''},
+  {'tag': '883', 'required': ''},
+  {'tag': '884', 'required': ''},
+  {'tag': '885', 'required': ''},
+  {'tag': '886', 'required': ''},
+  {'tag': '887', 'required': ''},
+  {'tag': '900', 'required': ''},
+  {'tag': '901', 'required': ''},
+  {'tag': '910', 'required': ''},
   {'tag': '935', 'required': 'a', 'key': 'az'}, // Fono information at least
-  {'tag': '940', 'mergable': false, 'required': ''},
-  {'tag': '960', 'mergable': false, 'required': ''},
+  {'tag': '940', 'required': ''},
+  {'tag': '960', 'required': ''},
   {'tag': '973', 'required': 'w', key: 'w'}, // Viola multi-hosts
-  {'tag': '995', 'mergable': false, 'required': ''},
-  {'tag': 'CAT', 'mergable': false, 'required': ''},
-  {'tag': 'LOW', 'mergable': false, 'required': ''},
-  {'tag': 'SID', 'mergable': false, 'required': ''}
+  {'tag': '995', 'required': ''},
+  {'tag': 'CAT', 'required': ''},
+  {'tag': 'LOW', 'required': ''},
+  {'tag': 'SID', 'required': ''}
 ];
 
 function constraintToValue(tagsConstraints, constraintName) {
   if (constraintName in tagsConstraints) {
     return tagsConstraints[constraintName];
-  }
-  if (constraintName === 'mergable') { // missing mergable defaults to true. Don't complain about it either.
-    return true;
   }
   if (constraintName !== 'skip' && constraintName !== 'solitary') { // eslint-disable-line functional/no-conditional-statement
     debug(`WARNING\tMissing '${constraintName}'. Return NULL instead of a set of constraints.`);
