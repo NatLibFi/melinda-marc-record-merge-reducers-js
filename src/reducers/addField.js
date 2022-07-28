@@ -13,24 +13,6 @@ import {addableTag, mergableTag} from './mergableTag';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
 
-const counterpartRegexps = {
-  '100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
-  '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
-};
-
-
-function tagToRegexp(tag) {
-  if (tag in counterpartRegexps) {
-    // Are the hard-coded hacks actually used? Check...
-    const regexp = counterpartRegexps[tag];
-    //debug(`regexp for ${tag} found: ${regexp}`);
-    return regexp;
-  }
-  // debug(`WARNING: tagToRegexp(${tag}): no precompiled regexp found.`);
-  return new RegExp(`^${tag}$`, 'u');
-}
-
-
 function checkSolitariness(record, tag) {
   // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
   // These are listed in https://workgroups.helsinki.fi/x/K1ohCw . (However, we do not always agree with specs.)
@@ -38,10 +20,8 @@ function checkSolitariness(record, tag) {
   if (solitary) {
     // Blocking is requested by specs for a field with 'solitary':true.
     // However, we won't block if all existing relevant fields come from source record.
-    const candidateFields = record.get(tagToRegexp(tag));
-    //return true;
+    const candidateFields = record.get(new RegExp(`^${tag}$`, 'u'));
     return candidateFields.some(field => !field.added);
-
   }
   // No reason to block:
   return false;
@@ -66,6 +46,7 @@ function fieldCanBeAdded(record, field) {
     return false;
   }
 
+  // Should these be configured?
   if (field.tag === '240' && recordHasField(record, '130')) {
     return false;
   }
@@ -94,13 +75,13 @@ function addField2(record, field) {
   return record.insertField(field);
 }
 
-function skipMergeOrAddField(record, field) {
+function skipAddField(record, field) {
   if (!addableTag(field.tag, undefined) && !mergableTag(field.tag, undefined)) {
     return true;
   }
   // Skip duplicate field:
   if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
-    //debug(`mergeOrAddField(): field '${fieldToString(field)}' already exists! No action required!`);
+    //debug(`addField(): field '${fieldToString(field)}' already exists! No action required!`);
     return true;
   }
 
@@ -111,12 +92,12 @@ export function addField(record, field) {
   const newField = cloneAndPreprocessField(field); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:
-  if (skipMergeOrAddField(record, newField)) {
+  if (skipAddField(record, newField)) {
     nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
-    return record;
+    return false;
   }
 
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  nvdebug(`addField(): No mergable counterpart found for '${fieldToString(field)}'. Try to add it instead.`, debug);
+  nvdebug(`addField(): Try to add '${fieldToString(field)}'.`, debug);
   return addField2(record, newField);
 }
