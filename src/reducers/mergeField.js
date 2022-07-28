@@ -8,7 +8,7 @@ import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {isSubfieldGoodForMerge, mergeSubfield} from './mergeSubfield';
 import {indicator1Matches, indicator2Matches, mergeIndicators} from './compareIndicators';
-import {mergableTag} from './mergableTag';
+import {addableTag, mergableTag} from './mergableTag';
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
@@ -291,7 +291,7 @@ function titlePartsMatch(field1, field2) {
 
 
 export function getCounterpart(record, field) {
-  if (getMergeConstraintsForTag(field.tag, 'skip') || !mergableTag(field.tag)) {
+  if (!mergableTag(field.tag, undefined)) {
     // debug(`${field.tag}/mergable is ${tmp} `);
     return null;
   }
@@ -427,9 +427,7 @@ function addField(record, field) {
 }
 
 function skipMergeOrAddField(record, field) {
-  // We are not interested in this field, whatever the case:
-  // (Currently fields: 066,  and some 8XX fields))
-  if (getMergeConstraintsForTag(field.tag, 'skip')) {
+  if (!addableTag(field.tag, undefined) && !mergableTag(field.tag, undefined)) {
     return true;
   }
   // Skip duplicate field:
