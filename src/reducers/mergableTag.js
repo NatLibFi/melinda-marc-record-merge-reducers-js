@@ -86,7 +86,7 @@ export function mergableTag(tag, skipList = []) {
     return !skipList.includes(tag);
   }
 
-  return !(defaultNonMergableFields.includes(tag) || defaultNonMergableNonAddableFields.includes(tag));
+  return !(tag in defaultNonMergableFields || tag in defaultNonMergableNonAddableFields);
 }
 
 export function addableTag(tag, skipList = []) {
@@ -95,5 +95,5 @@ export function addableTag(tag, skipList = []) {
   }
 
   //return !(tag in defaultNonMergableNonAddableFields);
-  return !defaultNonMergableNonAddableFields.includes(defaultNonMergableNonAddableFields);
+  return !(tag in defaultNonMergableNonAddableFields);
 }
