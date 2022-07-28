@@ -16,7 +16,7 @@ export default () => (base, source) => {
   const record = recordPreprocess(baseRecord); // fix composition et al
   const record2 = sourceRecordPreprocess(record, recordPreprocess(sourceRecord)); // fix composition et al
 
-  const candidateFields = record2.get(/^(?:1[0-9][0-9]|700|710|711|730)$/u);
+  const candidateFields = record2.get(/^(?:1[0-9][0-9]|700|710|711|730|880)$/u);
   candidateFields.forEach(candField => {
     debug(`Now processing ${fieldToString(candField)}`);
     mergeOrAddField(record, candField);
