@@ -4,7 +4,7 @@ import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, 
 import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {isSubfieldGoodForMerge} from './mergeSubfield';
-import {addableTag, mergableTag} from './mergableTag';
+import {addableTag} from './mergableTag';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -76,7 +76,7 @@ function addField2(record, field) {
 }
 
 function skipAddField(record, field) {
-  if (!addableTag(field.tag, undefined) && !mergableTag(field.tag, undefined)) {
+  if (!addableTag(field.tag, undefined) /* && !mergableTag(field.tag, undefined) */) {
     return true;
   }
   // Skip duplicate field:
