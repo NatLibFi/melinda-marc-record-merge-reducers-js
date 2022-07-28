@@ -1,4 +1,5 @@
-import {mergeOrAddField} from './mergeField.js';
+import {mergeField} from './mergeField.js';
+import {addField} from './addField.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 import {fieldToString} from './utils.js';
 import {recordPreprocess, sourceRecordPreprocess} from './normalize.js';
@@ -19,7 +20,9 @@ export default () => (base, source) => {
   const candidateFields = record2.get(/^(?:1[0-9][0-9]|700|710|711|730|880)$/u);
   candidateFields.forEach(candField => {
     debug(`Now processing ${fieldToString(candField)}`);
-    mergeOrAddField(record, candField);
+    if (!mergeField(record, candField)) { // eslint-disable-line functional/no-conditional-statement
+      addField(record, candField);
+    }
   });
 
 
