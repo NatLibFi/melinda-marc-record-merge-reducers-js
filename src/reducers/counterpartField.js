@@ -6,7 +6,7 @@ import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {indicator1Matches, indicator2Matches} from './compareIndicators';
-import {mergableTag} from './mergableTag';
+//import {mergableTag} from './mergableTag';
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
@@ -121,9 +121,9 @@ function arePairedSubfieldsInBalance(field1, field2) {
   return subfieldArray.every(sfcode => fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode));
 }
 
-function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
+function mergablePair(baseField, sourceField, config) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
-  if (!indicator1Matches(baseField, sourceField, undefined) || !indicator2Matches(baseField, sourceField, undefined)) {
+  if (!indicator1Matches(baseField, sourceField, config) || !indicator2Matches(baseField, sourceField, config)) {
     return false;
   }
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
@@ -144,7 +144,7 @@ function mergablePair(baseField, sourceField, fieldSpecificCallback = null) {
   if (!semanticallyMergablePair(baseField, sourceField)) {
     return false;
   }
-  return fieldSpecificCallback === null || fieldSpecificCallback(baseField, sourceField);
+  return true;
 }
 
 
@@ -172,7 +172,7 @@ function pairableAsteriIDs(baseField, sourceField) {
   //console.log(`ASTERI PAIR ${fieldToString(sourceField)}`); // eslint-disable-line
   return true;
 
-  // NB! This assumes that the default prefix for Asteri is FIN11, not FI-ASTERI-N nor a finaf urn.
+  // NB! This boldly assumes that the default prefix for Asteri is '(FIN11)', not '(FI-ASTERI-N)' nor a finaf urn...
   function getAsteriIDs(field) {
     return field.subfields.filter(sf => sf.code === '0')
       .map(sf => normalizeControlSubfieldValue(sf.value))
@@ -289,10 +289,14 @@ function titlePartsMatch(field1, field2) {
 
 
 export function getCounterpart(record, field, config) {
+
+  /*
   if (!mergableTag(field.tag, config)) { // NB! Removable; handled elsewhere. However, need to commit other changes first...
     nvdebug(`Tag ${field.tag} is not mergable`, debug);
     return null;
   }
+  */
+
   // Get tag-wise relevant 1XX and 7XX fields:
   const counterpartCands = record.get(tagToRegexp(field.tag));
   debug(counterpartCands);
@@ -304,7 +308,7 @@ export function getCounterpart(record, field, config) {
 
   nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debug);
   const index = counterpartCands.findIndex((currCand) => {
-    if (mergablePair(currCand, field)) {
+    if (mergablePair(currCand, field, config)) {
       debug(`  OK pair found: '${fieldToString(currCand)}'. Returning it!`);
       return true;
     }

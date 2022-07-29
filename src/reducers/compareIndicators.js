@@ -36,17 +36,12 @@ function skippableIndicator2ByDefault(tag) {
   return false;
 }
 
-export function indicator1Matches(field1, field2, skipPolicy = undefined) {
-  // skipPolicy explained:
-  // - undefined: use defaults (eg. skip non-filing characters)
-  // - true: return true (user allows this in some configuration file)
-  // - false: skip defaults, always compare field1.ind1 === field2.ind1
-
-  if (skipPolicy === true) {
+export function indicator1Matches(field1, field2, config) {
+  if (config.ignoreIndicator1) {
     return true;
   }
 
-  if (skipPolicy === undefined && skippableIndicator1ByDefault(field1.tag)) {
+  if (skippableIndicator1ByDefault(field1.tag)) {
     return true;
   }
 
@@ -54,12 +49,12 @@ export function indicator1Matches(field1, field2, skipPolicy = undefined) {
   return field1.ind1 === field2.ind1;
 }
 
-export function indicator2Matches(field1, field2, skipPolicy = undefined) {
-  // skipPolicy is explained in indicator1Matches() above.
-  if (skipPolicy === true) {
+export function indicator2Matches(field1, field2, config) {
+  if (config.ignoreIndicator2) {
     return true;
   }
-  if (skipPolicy === undefined && skippableIndicator2ByDefault(field1.tag)) {
+
+  if (skippableIndicator2ByDefault(field1.tag)) {
     return true;
   }
 
