@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldToString} from './utils';
+import {fieldHasSubfield, fieldHasNSubfields, fieldToString, nvdebug} from './utils';
 import {cloneAndNormalizeField} from './normalize';
 import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {getMergeConstraintsForTag} from './mergeConstraints';
@@ -12,7 +12,7 @@ import {mergableTag} from './mergableTag';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
 const counterpartRegexps = {
   '100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
@@ -88,10 +88,10 @@ function tagToRegexp(tag) {
   if (tag in counterpartRegexps) {
     // Are the hard-coded hacks actually used? Check...
     const regexp = counterpartRegexps[tag];
-    //debug(`regexp for ${tag} found: ${regexp}`);
+    nvdebug(`regexp for ${tag} found: ${regexp}`, debug);
     return regexp;
   }
-  // debug(`WARNING: tagToRegexp(${tag}): no precompiled regexp found.`);
+  nvdebug(`WARNING: tagToRegexp(${tag}): no precompiled regexp found.`, debug);
   return new RegExp(`^${tag}$`, 'u');
 }
 
@@ -288,20 +288,21 @@ function titlePartsMatch(field1, field2) {
 }
 
 
-export function getCounterpart(record, field, config = []) {
-  if (!mergableTag(field.tag, config.skipMergeTags)) {
-    // debug(`${field.tag}/mergable is ${tmp} `);
+export function getCounterpart(record, field, config) {
+  if (!mergableTag(field.tag, config)) { // NB! Removable; handled elsewhere. However, need to commit other changes first...
+    nvdebug(`Tag ${field.tag} is not mergable`, debug);
     return null;
   }
   // Get tag-wise relevant 1XX and 7XX fields:
   const counterpartCands = record.get(tagToRegexp(field.tag));
-  // debug(counterpartCands);
+  debug(counterpartCands);
 
   if (!counterpartCands || counterpartCands.length === 0) {
+    nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debug);
     return null;
   }
 
-  debug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`);
+  nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debug);
   const index = counterpartCands.findIndex((currCand) => {
     if (mergablePair(currCand, field)) {
       debug(`  OK pair found: '${fieldToString(currCand)}'. Returning it!`);
