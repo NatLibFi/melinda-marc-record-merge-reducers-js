@@ -11,7 +11,7 @@ import {addableTag} from './mergableTag';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 
 function checkSolitariness(record, tag) {
   // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
@@ -42,7 +42,7 @@ function repetitionBlocksAdding(record, tag) {
 
 function fieldCanBeAdded(record, field) {
   if (repetitionBlocksAdding(record, field.tag)) {
-    debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
+    nvdebug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`, debug);
     return false;
   }
 
@@ -75,14 +75,14 @@ function addField2(record, field) {
   return record.insertField(field);
 }
 
-function skipAddField(record, field) {
+function skipAddField(record, field, config = {}) {
   // Skip duplicate field:
   if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
     //debug(`addField(): field '${fieldToString(field)}' already exists! No action required!`);
     return true;
   }
 
-  if (!addableTag(field.tag, undefined)) {
+  if (!addableTag(field.tag, config)) {
     return true;
   }
 
@@ -90,19 +90,11 @@ function skipAddField(record, field) {
   return false;
 }
 
-export function addField(record, field, config = []) {
-
-
-  // skip duplicates and special cases:
-  if (skipAddField(record, field, config)) {
-    nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
-    return false;
-  }
-
+export function addField(record, field, config = {}) {
   const newField = cloneAndPreprocessField(field); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:
-  if (skipAddField(record, newField)) {
+  if (skipAddField(record, newField, config)) {
     nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
     return false;
   }
