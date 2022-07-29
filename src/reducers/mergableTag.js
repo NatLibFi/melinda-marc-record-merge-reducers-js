@@ -81,19 +81,18 @@ const defaultNonMergableFields = [
   'SID'
 ];
 
-export function mergableTag(tag, skipList = []) {
-  if (skipList.length > 0) {
-    return !skipList.includes(tag);
+export function mergableTag(tag, config) {
+  if (config.skipMergeTags.length > 0) {
+    return !config.skipMergeTags.includes(tag);
   }
 
-  return !(tag in defaultNonMergableFields || tag in defaultNonMergableNonAddableFields);
+  return !(defaultNonMergableFields.includes(tag) || defaultNonMergableNonAddableFields.includes(tag));
 }
 
-export function addableTag(tag, skipList = []) {
-  if (skipList.length > 0) {
-    return !skipList.includes(tag);
+export function addableTag(tag, config) {
+  if (config.skipAddTags.length > 0) {
+    return !config.skipAddTags.includes(tag);
   }
 
-  //return !(tag in defaultNonMergableNonAddableFields);
-  return !(tag in defaultNonMergableNonAddableFields);
+  return !defaultNonMergableNonAddableFields.includes(tag);
 }
