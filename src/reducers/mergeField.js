@@ -7,6 +7,7 @@ import {mergeSubfield} from './mergeSubfield';
 import {mergeIndicators} from './compareIndicators';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
+
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
@@ -41,7 +42,7 @@ function mergeField2(record, targetField, sourceField) {
   // We want to add the incoming subfields without punctuation, and add puctuation later on.
   // (Cloning is harmless, but probably not needed.)
   const normalizedSourceField = cloneAndRemovePunctuation(sourceField);
-  debug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`);
+  nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`, debug);
 
   normalizedSourceField.subfields.forEach(candSubfield => {
     //sourceField.subfields.forEach(candSubfield => {
@@ -60,29 +61,30 @@ function mergeField2(record, targetField, sourceField) {
 }
 
 
-function skipMergeField(record, field, config = []) {
-  if (!mergableTag(field.tag, config.skipMergeTags)) {
+function skipMergeField(record, field, config) {
+  if (!mergableTag(field.tag, config)) {
+    nvdebug(`mergeField(): field '${fieldToString(field)}' listed as skippable!`, debug);
     return true;
   }
   // Skip duplicate field:
   if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
-    //debug(`mergeOrAddField(): field '${fieldToString(field)}' already exists! No action required!`);
+    nvdebug(`mergeField(): field '${fieldToString(field)}' already exists! No action required!`, debug);
     return true;
   }
 
   return false;
 }
 
-export function mergeField(record, field) {
+export function mergeField(record, field, config) {
   const newField = cloneAndPreprocessField(field); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:
-  if (skipMergeField(record, newField)) {
-    nvdebug(`mergeField(): don't merge or add '${fieldToString(field)}'`, debug);
-    return true;
+  if (skipMergeField(record, newField, config)) {
+    nvdebug(`mergeField(): don't merge '${fieldToString(field)}'`, debug);
+    return false;
   }
-  nvdebug(`mergeField(): Try to merge or add '${fieldToString(field)}'.`, debug);
-  const counterpartField = getCounterpart(record, newField);
+  nvdebug(`mergeField(): Try to merge '${fieldToString(field)}'.`, debug);
+  const counterpartField = getCounterpart(record, newField, config);
 
   if (counterpartField) {
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debug);
