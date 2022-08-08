@@ -1,4 +1,5 @@
-//import {MarcRecord} from '@natlibfi/marc-record';
+// For each incoming field that
+
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldToString, nvdebug} from './utils';
 import {cloneAndNormalizeField} from './normalize';
@@ -6,11 +7,6 @@ import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {indicator1Matches, indicator2Matches} from './compareIndicators';
-//import {mergableTag} from './mergableTag';
-//import {sortAdjacentSubfields} from './sortSubfields';
-// import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
-
-// Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
@@ -289,17 +285,9 @@ function titlePartsMatch(field1, field2) {
 
 
 export function getCounterpart(record, field, config) {
-
-  /*
-  if (!mergableTag(field.tag, config)) { // NB! Removable; handled elsewhere. However, need to commit other changes first...
-    nvdebug(`Tag ${field.tag} is not mergable`, debug);
-    return null;
-  }
-  */
-
-  // Get tag-wise relevant 1XX and 7XX fields:
+  // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
+  // (240/940 and 773/940 might be interesting as well, but not supported.)
   const counterpartCands = record.get(tagToRegexp(field.tag));
-  debug(counterpartCands);
 
   if (!counterpartCands || counterpartCands.length === 0) {
     nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debug);
@@ -307,6 +295,8 @@ export function getCounterpart(record, field, config) {
   }
 
   nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debug);
+
+  // Then find (the index of) the first mathing candidate field and return it.
   const index = counterpartCands.findIndex((currCand) => {
     if (mergablePair(currCand, field, config)) {
       debug(`  OK pair found: '${fieldToString(currCand)}'. Returning it!`);
