@@ -1,5 +1,7 @@
-//import createDebugLogger from 'debug';
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+import createDebugLogger from 'debug';
+import {nvdebug} from './utils';
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+
 
 const defaultNonMergableNonAddableFields = [
   '066', // 066 - Character sets present (NR)
@@ -83,6 +85,7 @@ const defaultNonMergableFields = [
 
 export function mergableTag(tag, config) {
   if (config.skipMergeTags.length > 0) {
+
     return !config.skipMergeTags.includes(tag);
   }
 
@@ -91,6 +94,7 @@ export function mergableTag(tag, config) {
 
 export function addableTag(tag, config) {
   if (config.skipAddTags.length > 0) {
+    nvdebug(`NVD Tag ${tag} in ${config.skipAddTags.join(', ')}`, debug);
     return !config.skipAddTags.includes(tag);
   }
 
