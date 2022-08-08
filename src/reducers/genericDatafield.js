@@ -9,13 +9,14 @@ import {initFieldMergeConfig} from './fieldMergeConfig.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-export default () => (base, source) => {
+export default (config = {}) => (base, source) => {
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
+  nvdebug(`OBJ: ${JSON.stringify(config)}`);
   // How do we read the config? Config file? Parameters from calling function? Currently this just sets the defaults...
-  const config = initFieldMergeConfig();
+  const processedConfig = initFieldMergeConfig(config);
 
   // We should clone the records here and just here...
   const record = recordPreprocess(baseRecord); // fix composition et al
@@ -26,8 +27,8 @@ export default () => (base, source) => {
 
   candidateFields.forEach(candField => {
     nvdebug(`Now processing ${fieldToString(candField)}`, debug);
-    if (!mergeField(record, candField, config)) { // eslint-disable-line functional/no-conditional-statement
-      addField(record, candField, config);
+    if (!mergeField(record, candField, processedConfig)) { // eslint-disable-line functional/no-conditional-statement
+      addField(record, candField, processedConfig);
     }
   });
 
