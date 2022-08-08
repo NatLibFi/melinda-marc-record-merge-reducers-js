@@ -17,21 +17,19 @@ describe('genericDatafields tests: ', () => {
   });
 
   function callback({getFixture,
-    skipAddTags = [],
+    config = {},
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
     const expectedRecord = getFixture('merged.json');
-    const marcReducers = generateReducers(tagPattern, skipAddTags);
+    const marcReducers = generateReducers(tagPattern, config);
     const mergedRecord = marcReducers(base, source);
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
 
-    function generateReducers(tagPattern, skipAddTags = []) {
-      const config = {};
+    function generateReducers(tagPattern, config = {}) {
       if (tagPattern) { // eslint-disable-line functional/no-conditional-statement
         config.tagPattern = tagPattern; // eslint-disable-line functional/immutable-data
       }
-      config.skipAddTags = skipAddTags; // eslint-disable-line functional/immutable-data
 
       /*
       if (tagPattern) {
