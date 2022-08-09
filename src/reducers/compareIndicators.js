@@ -2,6 +2,8 @@
 //import createDebugLogger from 'debug';
 //import {fieldToString, nvdebug} from './utils';
 
+import {nvdebug} from './utils';
+
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
@@ -79,8 +81,11 @@ export function mergeIndicators(toField, fromField, config) {
   function getIndicatorPreferredValues(tag, indicatorNumber, config) {
     const preferredValues = indicatorNumber === 1 ? config.indicator1PreferredValues : config.indicator2PreferredValues;
 
-    if (preferredValues && tag in preferredValues) {
-      return preferredValues[tag];
+    if (preferredValues) {
+
+      if (tag in preferredValues) {
+        return preferredValues[tag];
+      }
     }
 
     if (indicatorNumber === 1 && ind1NonFilingChars.includes(tag)) {
@@ -109,12 +114,13 @@ export function mergeIndicators(toField, fromField, config) {
     if (toField.ind1 === fromField.ind1) {
       return; // Do nothing
     }
-
     const preferredValues = getIndicatorPreferredValues(toField.tag, 1, config);
 
     if (preferredValues) {
+      nvdebug(`PREF VALS: ${preferredValues}`);
       const preferredValue = getPreferredValue(preferredValues, fromField.ind1, toField.ind1);
       if (typeof preferredValue !== 'undefined') {
+        nvdebug(`${preferredValue} WINS!`);
         toField.ind1 = preferredValue; // eslint-disable-line functional/immutable-data
         return;
       }
@@ -126,10 +132,11 @@ export function mergeIndicators(toField, fromField, config) {
     if (toField.ind2 === fromField.ind2) {
       return; // Do nothing
     }
-
+    nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`);
     const preferredValues = getIndicatorPreferredValues(toField.tag, 2, config);
 
     if (preferredValues) {
+      nvdebug(`  Try to merge indicator 2. Got preferred values '${preferredValues}'`);
       const preferredValue = getPreferredValue(preferredValues, fromField.ind2, toField.ind2);
       if (typeof preferredValue !== 'undefined') {
         toField.ind2 = preferredValue; // eslint-disable-line functional/immutable-data
