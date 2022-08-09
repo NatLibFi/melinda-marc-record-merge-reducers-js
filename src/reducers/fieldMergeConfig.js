@@ -10,7 +10,7 @@ export function initFieldMergeConfig(initData = {}) {
     ignoreIndicator2: initData.ignoreIndicator2 || false,
     // When fields are merged despite of difference in indicator value, typically base field's value is kept.
     // However, source's value might be used if indicator value preference is defined (per tag):
-    indicator2PreferredValues: initData.indicator2PreferredValues && Array.isArray(initData.indicator2PreferredValues) ? initData.indicator2PreferredValues : [],
+    indicator2PreferredValues: initData.indicator2PreferredValues && typeof initData.indicator2PreferredValues === 'object' ? initData.indicator2PreferredValues : false,
 
     // skipAddTags: list of tags, that prevent adding. If empty, hard-coded defaults/educated guesses are used.
     skipAddTags: initData.skipAddTags && Array.isArray(initData.skipAddTags) ? initData.skipAddTags : [],
