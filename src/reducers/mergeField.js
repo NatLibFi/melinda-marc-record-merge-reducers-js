@@ -24,7 +24,7 @@ function removeEnnakkotieto(field) {
 }
 
 
-function mergeField2(record, targetField, sourceField) {
+function mergeField2(record, targetField, sourceField, config) {
   //// Identical fields
   // No need to check every subfield separately.
   // Also no need to postprocess the resulting field.
@@ -38,7 +38,7 @@ function mergeField2(record, targetField, sourceField) {
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
   }
 
-  mergeIndicators(targetField, sourceField);
+  mergeIndicators(targetField, sourceField, config);
   // We want to add the incoming subfields without punctuation, and add puctuation later on.
   // (Cloning is harmless, but probably not needed.)
   const normalizedSourceField = cloneAndRemovePunctuation(sourceField);
@@ -89,7 +89,7 @@ export function mergeField(record, field, config) {
   if (counterpartField) {
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debug);
 
-    mergeField2(record, counterpartField, newField);
+    mergeField2(record, counterpartField, newField, config);
     return true;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:

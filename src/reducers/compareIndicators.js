@@ -62,7 +62,7 @@ export function indicator2Matches(field1, field2, config) {
   return field1.ind2 === field2.ind2;
 }
 
-export function mergeIndicators(toField, fromField) {
+export function mergeIndicators(toField, fromField, config) {
   // NB! For non-filing indicators we deem that bigger is better. This is a bit quick'n'dirty, as usual.
   // We could and should checks the relevant article length (using language information whilst doing it).
   // However, this is a task for record internal fixer, not merge.
@@ -73,39 +73,70 @@ export function mergeIndicators(toField, fromField) {
   // nvdebug(fieldToString(toField));
   // nvdebug(fieldToString(fromField));
 
-  mergeIndicator1(toField, fromField);
-  mergeIndicator2(toField, fromField);
+  mergeIndicator1(toField, fromField, config);
+  mergeIndicator2(toField, fromField, config);
 
-  function mergeIndicator1(toField, fromField) {
+  function getIndicatorPreferredValues(tag, indicatorNumber, config) {
+    const preferredValues = indicatorNumber === 1 ? config.indicator1PreferredValues : config.indicator2PreferredValues;
+
+    if (preferredValues && tag in preferredValues) {
+      return preferredValues[tag];
+    }
+
+    if (indicatorNumber === 1 && ind1NonFilingChars.includes(tag)) {
+      return '9876543210 ';
+    }
+    if (indicatorNumber === 2 && ind2NonFilingChars.includes(tag)) {
+      return '9876543210 ';
+    }
+    return undefined;
+  }
+
+  function getPreferredValue(preferenceString, val1, val2) {
+    const i1 = preferenceString.indexOf(val1);
+    const i2 = preferenceString.indexOf(val2);
+    if (i1 === -1) {
+      return i2 === -1 ? undefined : val2;
+    }
+    if (i2 === -1) {
+      return val1;
+    }
+    // The sooner, the better:
+    return i1 < i2 ? val1 : val2;
+  }
+
+  function mergeIndicator1(toField, fromField, config) {
     if (toField.ind1 === fromField.ind1) {
       return; // Do nothing
     }
-    if (ind1NonFilingChars.includes(toField.tag)) {
-      toField.ind1 = getBigger(toField.ind1, fromField.ind1); // eslint-disable-line functional/immutable-data
-      return;
-    }
-  }
 
-  function mergeIndicator2(toField, fromField) {
-    if (ind2NonFilingChars.includes(toField.tag)) {
-      toField.ind2 = getBigger(toField.ind2, fromField.ind2); // eslint-disable-line functional/immutable-data
-      return;
-    }
-  }
+    const preferredValues = getIndicatorPreferredValues(toField.tag, 1, config);
 
-  function stringIsDigit(val) {
-    return (/^[0-9]$/u).test(val);
-  }
-
-  function getBigger(value1, value2) {
-    if (value1 === ' ' && stringIsDigit(value2)) {
-      return value2;
-    }
-    if (stringIsDigit(value1) && stringIsDigit(value2)) {
-      if (parseInt(value2, 10) > parseInt(value1, 10)) {
-        return value2;
+    if (preferredValues) {
+      const preferredValue = getPreferredValue(preferredValues, fromField.ind1, toField.ind1);
+      if (typeof preferredValue !== 'undefined') {
+        toField.ind1 = preferredValue; // eslint-disable-line functional/immutable-data
+        return;
       }
     }
-    return value1;
   }
+
+
+  function mergeIndicator2(toField, fromField, config) {
+    if (toField.ind2 === fromField.ind2) {
+      return; // Do nothing
+    }
+
+    const preferredValues = getIndicatorPreferredValues(toField.tag, 2, config);
+
+    if (preferredValues) {
+      const preferredValue = getPreferredValue(preferredValues, fromField.ind2, toField.ind2);
+      if (typeof preferredValue !== 'undefined') {
+        toField.ind2 = preferredValue; // eslint-disable-line functional/immutable-data
+        return;
+      }
+    }
+
+  }
+
 }
