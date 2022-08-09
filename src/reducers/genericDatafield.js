@@ -1,7 +1,7 @@
 import {addField} from './addField.js';
 import {mergeField} from './mergeField.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
-import {fieldToString, isMainOrCorrespondingAddedEntryField, nvdebug} from './utils.js';
+import {fieldToString, nvdebug} from './utils.js';
 import {recordPreprocess, sourceRecordPreprocess} from './normalize.js';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
@@ -22,8 +22,8 @@ export default (config = {}) => (base, source) => {
   const record = recordPreprocess(baseRecord); // fix composition et al
   const record2 = sourceRecordPreprocess(record, recordPreprocess(sourceRecord)); // fix composition et al
 
-  const candidateFields = record2.get(/^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u)
-    .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
+  const candidateFields = record2.get(/^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u);
+  //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
   candidateFields.forEach(candField => {
     nvdebug(`Now processing ${fieldToString(candField)}`, debug);
