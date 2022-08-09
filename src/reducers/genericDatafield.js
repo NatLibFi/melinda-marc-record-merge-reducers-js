@@ -22,7 +22,9 @@ export default (config = {}) => (base, source) => {
   const record = recordPreprocess(baseRecord); // fix composition et al
   const record2 = sourceRecordPreprocess(record, recordPreprocess(sourceRecord)); // fix composition et al
 
-  const candidateFields = record2.get(/^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u);
+  const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
+
+  const candidateFields = record2.get(processedConfig.tagPattern ? processedConfig.tagPattern : defCandFieldsRegexp);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
   candidateFields.forEach(candField => {
