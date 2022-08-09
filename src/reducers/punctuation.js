@@ -7,7 +7,7 @@
 */
 import {validateSingleField} from '@natlibfi/marc-record-validators-melinda/dist/ending-punctuation';
 import createDebugLogger from 'debug';
-import {fieldToString, isControlSubfieldCode, nvdebug} from './utils';
+import {fieldToString, /*isControlSubfieldCode,*/ nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -172,10 +172,13 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
   }
 */
   if (!(`${tag}` in ruleArray) || ruleArray === null || operation === NONE) {
+
+    /*
     if (!['020', '650'].includes(tag) || !isControlSubfieldCode(subfield1.code)) { // eslint-disable-line functional/no-conditional-statement
       nvdebug(`No punctuation rules found for ${tag} (looking for: ‡${subfield1.code})`, debug);
 
     }
+    */
     return;
   }
 
@@ -316,11 +319,11 @@ export function fieldStripPunctuation(field) {
   }
 
   field.subfields.forEach((sf, i) => {
-    debug(`FSP1: '${sf.value}'`);
+    //debug(`FSP1: '${sf.value}'`);
     applyPunctuationRules(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanValidPunctuationRules, REMOVE);
-    debug(`FSP2: '${sf.value}'`);
+    //debug(`FSP2: '${sf.value}'`);
     applyPunctuationRules(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanCrappyPunctuationRules, REMOVE);
-    debug(`FSP3: '${sf.value}'`);
+    //debug(`FSP3: '${sf.value}'`);
   });
   return field;
 }
