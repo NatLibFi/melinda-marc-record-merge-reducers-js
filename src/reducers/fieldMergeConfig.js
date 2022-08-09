@@ -10,7 +10,9 @@ export function initFieldMergeConfig(initData = {}) {
     // skipAddTags: list of tags, that prevent adding. If empty, hard-coded defaults/educated guesses are used.
     skipAddTags: initData.skipAddTags && Array.isArray(initData.skipAddTags) ? initData.skipAddTags : [],
     // skipMergeTags: list of tags, that prevent merge. If empty, hard-coded defaults/education guesses will be used
-    skipMergeTags: initData.skipMergeTags && Array.isArray(initData.skipMergeTags) ? initData.skipMergeTags : []
+    skipMergeTags: initData.skipMergeTags && Array.isArray(initData.skipMergeTags) ? initData.skipMergeTags : [],
+
+    tagPattern: initData.tagPattern && initData.tagPattern instanceof RegExp ? initData.tagPattern : false
   };
   return config;
 }
