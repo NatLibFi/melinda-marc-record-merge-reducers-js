@@ -13,27 +13,40 @@ import {addableTag} from './mergableTag';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 
-const defaultNonAddableFieldsRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
+const defaultDoNotCopyIfFieldPresentRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
 
-function recordHasFieldWithTag(record, tag) {
+function getConfigDoNotCopyIfFieldPresentRegexp(config) {
+  if (config.doNotCopyIfFieldPresentRegexp) {
+    return new RegExp(`^${config.doNotCopyIfFieldPresentRegexp}`, 'u');
+  }
+  return undefined;
+}
+
+function recordHasOriginalFieldWithTag(record, tag) {
   const candidateFields = record.get(new RegExp(`^${tag}$`, 'u'));
   // Only original fields matter here Added fields are not counted.
   return candidateFields.some(field => !field.added);
 }
 
-function repeatableTagIsNonAddable(record, tag) {
+function repeatableTagIsNonAddable(record, tag, config) {
   // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
   // The original listing is from https://workgroups.helsinki.fi/x/K1ohCw .
   // However, we might have deviated from the specs.
   // NB! DO WE WAN'T TO OVERRIDE THESE VIA CONFIG? Can't think of a case, so not implementing support for that.
-  if (tag.match(defaultNonAddableFieldsRegexp)) {
-    return recordHasFieldWithTag(record, tag);
+  if (tag.match(getNonAddableRegexp(config))) {
+    return recordHasOriginalFieldWithTag(record, tag);
   }
+
   // No reason to block:
   return false;
+
+  function getNonAddableRegexp(config) {
+    const configRegexp = getConfigDoNotCopyIfFieldPresentRegexp(config);
+    return configRegexp ? configRegexp : defaultDoNotCopyIfFieldPresentRegexp;
+  }
 }
 
-function repetitionBlocksAdding(record, tag) {
+function repetitionBlocksAdding(record, tag, config) {
   // It's not a repetition:
   if (!recordHasField(record, tag)) {
     return false;
@@ -42,32 +55,25 @@ function repetitionBlocksAdding(record, tag) {
   if (!fieldIsRepeatable(tag)) {
     return true; // blocked
   }
-  // Semantics/logic prevents adding:
-  return repeatableTagIsNonAddable(record, tag);
-}
-
-function fieldCanBeAdded(record, field) {
-  if (repetitionBlocksAdding(record, field.tag)) {
-    nvdebug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`, debug);
-    return false;
-  }
-
-  // Should these be configured?
-  if (field.tag === '240' && recordHasField(record, '130')) {
-    return false;
-  }
-  if (field.tag === '830' && !fieldHasSubfield(field, 'x')) {
-    return false;
-  }
-  // We could block 260/264 pairs here.
-
-  return true;
+  // Semantics/logic prevents adding (can this be overridden via config?):
+  return repeatableTagIsNonAddable(record, tag, config);
 }
 
 function skipAddField(record, field, config = {}) {
-  if (!fieldCanBeAdded(record, field)) {
+  if (repetitionBlocksAdding(record, field.tag, config)) {
+    nvdebug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`, debug);
     return true;
   }
+
+  // NB! NB! Required by specs. But should these be configured?
+  if (field.tag === '240' && recordHasField(record, '130')) {
+    return true;
+  }
+  if (field.tag === '830' && !fieldHasSubfield(field, 'x')) {
+    return true;
+  }
+  // We could block 260/264 pairs here.
+
   // Should we have something like config.forceAdd
   // Skip duplicate field:
   if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
