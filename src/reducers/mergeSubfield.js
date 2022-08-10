@@ -4,8 +4,8 @@ import {cloneAndRemovePunctuation} from './normalize.js';
 import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {
   fieldHasSubfield,
-  fieldIsRepeatable, fieldToString, nvdebug,
-  subfieldsAreIdentical
+  fieldToString, nvdebug,
+  subfieldIsRepeatable, subfieldsAreIdentical
 } from './utils.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
 
@@ -121,7 +121,7 @@ function insertSubfieldAllowed(targetField, candSubfield) {
     return true;
   }
   // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
-  return fieldIsRepeatable(targetField.tag, candSubfield.code);
+  return subfieldIsRepeatable(targetField.tag, candSubfield.code);
 }
 
 function listSubfieldsWorthKeeping(tag) {

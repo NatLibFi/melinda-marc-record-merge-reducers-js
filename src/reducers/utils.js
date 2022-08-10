@@ -64,45 +64,37 @@ export function copyFields(record, fields) {
 // Get field specs from melindaCustomMergeFields.json
 const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
 
-/*
-export function getFieldSpecs(tag) {
-  const [fieldSpecs] = melindaFields.fields.filter(field => field.tag === tag);
-  return fieldSpecs;
-}
-*/
 
-function subfieldIsRepeatable(currFieldSpecs, subfieldCode) {
+export function subfieldIsRepeatable(tag, subfieldCode) {
+  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  if (fieldSpecs.length !== 1) {
+    debug(` WARNING! Getting field ${tag} data failed! Default value true is used for'${subfieldCode}' .`);
+    return true;
+  }
+
   // These we know or "know":
   if ('0159'.indexOf(subfieldCode) > -1) {
     // Uh, can $0 appear on any field?
     return true;
   }
 
-  const subfieldSpecs = currFieldSpecs.subfields.filter(subfield => subfield.code === subfieldCode);
-  // Currently we don't supprt multiple $6 fields due to re-indexing limitations...
+  const subfieldSpecs = fieldSpecs[0].subfields.filter(subfield => subfield.code === subfieldCode);
+  // Currently we don't support multiple $6 fields due to re-indexing limitations...
+  // (This might actually already be fixed... Marginal issue, but check eventually.)
   if (subfieldSpecs.length !== 1 || subfieldCode === '6') {
-    return false; // repeatable if not specified?
+    return false; // repeatable if not specified, I guess. Maybe add log or warn?
   }
   return subfieldSpecs[0].repeatable;
 }
 
-export function fieldIsRepeatable(tag, code = null) {
+
+export function fieldIsRepeatable(tag) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
-
-    /*
-    if (!code) {
-      debug(` WARNING! Getting field ${tag} data failed! Default to unrepeatable field.`);
-      return false;
-    }
-    */
-    debug(` WARNING! Getting field ${tag}$${code || ''} data failed! Default to repeatable subfield.`);
+    debug(` WARNING! Getting field ${tag} data failed! Default to repeatable field.`);
     return true;
   }
-  if (!code) { // Field is repeatable:
-    return fieldSpecs[0].repeatable;
-  }
-  return subfieldIsRepeatable(fieldSpecs[0], code);
+  return fieldSpecs[0].repeatable;
 }
 
 export function subfieldsAreIdentical(subfieldA, subfieldB) {
