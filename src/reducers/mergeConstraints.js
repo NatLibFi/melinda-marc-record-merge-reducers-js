@@ -5,7 +5,6 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
 // "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined. ()
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
-// 'solitary':true : field is not copied, if tag is already present, even if specs say it's repeatable. Subfields can be copied though.
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 const mergeConstraints = [
   {'tag': '010', 'required': 'a', 'key': 'a'},
@@ -31,7 +30,7 @@ const mergeConstraints = [
   {'tag': '037', 'required': 'b', 'key': 'ab'},
   {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
-  {'tag': '041', 'required': '', 'key': '', 'solitary': true},
+  {'tag': '041', 'required': '', 'key': ''},
   {'tag': '042', 'required': 'a', 'key': ''}, // NB: preprocessor hacks applied
   {'tag': '043', 'required': 'a', 'key': 'abc'},
   {'tag': '044', 'required': '', 'key': 'abc', 'paired': 'abc'},
@@ -79,19 +78,19 @@ const mergeConstraints = [
   {'tag': '256', 'required': 'a', 'key': 'a'},
   {'tag': '257', 'required': 'a', 'key': 'a'},
   {'tag': '258', 'required': 'a', 'key': 'a'}, // Melinda: N=1
-  {'tag': '260', 'required': '', 'paired': 'abc', 'key': 'abcdefg', 'solitary': true},
+  {'tag': '260', 'required': '', 'paired': 'abc', 'key': 'abcdefg'},
   {'tag': '263', 'required': 'a', 'key': 'a'},
-  {'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc', 'solitary': true}, // NB "S.l." normalizations?" not implemented
+  {'tag': '264', 'required': '', 'paired': 'abc', 'key': 'abc'}, // NB "S.l." normalizations?" not implemented
   // SKIP TAG 270 ON PURPOSE! Melinda's N=43.
-  {'tag': '300', 'required': 'a', 'key': 'abcefg', 'solitary': true},
+  {'tag': '300', 'required': 'a', 'key': 'abcefg'},
   {'tag': '306', 'required': 'a', 'key': 'a'},
   // SKIP TAG 307 ON PURPOSE! N=0
-  {'tag': '310', 'required': 'a', 'key': 'ab', 'solitary': true},
-  {'tag': '321', 'required': 'a', 'key': 'ab', 'solitary': true},
-  {'tag': '335', 'required': 'a', 'key': 'ab', 'solitary': true}, // Melinda N=1 (a test field). M might increase?
-  {'tag': '336', 'required': 'b2', 'key': 'b', 'solitary': true},
-  {'tag': '337', 'required': 'b2', 'key': 'b', 'solitary': true},
-  {'tag': '338', 'required': 'b2', 'key': 'b', 'solitary': true},
+  {'tag': '310', 'required': 'a', 'key': 'ab'},
+  {'tag': '321', 'required': 'a', 'key': 'ab'},
+  {'tag': '335', 'required': 'a', 'key': 'ab'}, // Melinda N=1 (a test field). M might increase?
+  {'tag': '336', 'required': 'b2', 'key': 'b'},
+  {'tag': '337', 'required': 'b2', 'key': 'b'},
+  {'tag': '338', 'required': 'b2', 'key': 'b'},
   {'tag': '340', 'required': '', 'paired': 'abcdefghijkmnop', 'key': 'abcdefghijkmnop'},
   {'tag': '341', 'required': '', 'paired': 'abcde', 'key': 'abcde'}, // SKIP 341. NOT SEEN!
   {'tag': '342', 'required': '', 'paired': 'abcdefghijklmnopqrstuvw', 'key': 'abcdefghijklmnopqrstuvw'}, // SKIP 342. NOT SEEN!
@@ -277,9 +276,6 @@ const mergeConstraints = [
 function constraintToValue(tagsConstraints, constraintName) {
   if (constraintName in tagsConstraints) {
     return tagsConstraints[constraintName];
-  }
-  if (constraintName !== 'solitary') { // eslint-disable-line functional/no-conditional-statement
-    debug(`WARNING\tMissing '${constraintName}'. Return NULL instead of a set of constraints.`);
   }
   return null; // NB! "" might mean "apply to everything" (eg. 040.key) while null means that it is not applied.
 }

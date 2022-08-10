@@ -2,9 +2,9 @@
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug, recordHasField} from './utils';
 import {cloneAndPreprocessField} from './mergePreAndPostprocess';
-import {getMergeConstraintsForTag} from './mergeConstraints';
 import {isSubfieldGoodForMerge} from './mergeSubfield';
 import {addableTag} from './mergableTag';
+
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -13,13 +13,15 @@ import {addableTag} from './mergableTag';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 
-function checkSolitariness(record, tag) {
+const defaultNonAddableFields = ['041', '260', '264', '300', '310', '321', '335', '336', '337', '338'];
+
+function repeatableTagIsNonAddable(record, tag) {
   // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
-  // These are listed in https://workgroups.helsinki.fi/x/K1ohCw . (However, we do not always agree with specs.)
-  const solitary = getMergeConstraintsForTag(tag, 'solitary');
-  if (solitary) {
-    // Blocking is requested by specs for a field with 'solitary':true.
-    // However, we won't block if all existing relevant fields come from source record.
+  // The original listing is from https://workgroups.helsinki.fi/x/K1ohCw .
+  // However, we might have deviated from the specs.
+  // NB! DO WE WAN'T TO OVERRIDE THESE VIA CONFIG? Can't think of a case, so not implementing support for that.
+  if (defaultNonAddableFields.includes(tag)) {
+    // Adding is not blocked if all existing relevant fields come from source record.
     const candidateFields = record.get(new RegExp(`^${tag}$`, 'u'));
     return candidateFields.some(field => !field.added);
   }
@@ -36,8 +38,8 @@ function repetitionBlocksAdding(record, tag) {
   if (!fieldIsRepeatable(tag)) {
     return true; // blocked
   }
-  // Solitariness is a hack, see checkSolitariness() for details.
-  return checkSolitariness(record, tag);
+  // Semantics/logic prevents adding:
+  return repeatableTagIsNonAddable(record, tag);
 }
 
 function fieldCanBeAdded(record, field) {
