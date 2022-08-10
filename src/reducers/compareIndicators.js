@@ -38,7 +38,7 @@ function skippableIndicator2ByDefault(tag) {
   return false;
 }
 
-export function indicator1Matches(field1, field2, config) {
+export function mergableIndicator1(field1, field2, config) {
   if (config.ignoreIndicator1) {
     return true;
   }
@@ -51,7 +51,7 @@ export function indicator1Matches(field1, field2, config) {
   return field1.ind1 === field2.ind1;
 }
 
-export function indicator2Matches(field1, field2, config) {
+export function mergableIndicator2(field1, field2, config) {
   if (config.ignoreIndicator2) {
     return true;
   }

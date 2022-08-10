@@ -6,7 +6,7 @@ import {cloneAndNormalizeField} from './normalize';
 import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
-import {indicator1Matches, indicator2Matches} from './compareIndicators';
+import {mergableIndicator1, mergableIndicator2} from './compareIndicators';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
@@ -119,7 +119,7 @@ function arePairedSubfieldsInBalance(field1, field2) {
 
 function mergablePair(baseField, sourceField, config) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
-  if (!indicator1Matches(baseField, sourceField, config) || !indicator2Matches(baseField, sourceField, config)) {
+  if (!mergableIndicator1(baseField, sourceField, config) || !mergableIndicator2(baseField, sourceField, config)) {
     return false;
   }
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
