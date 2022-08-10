@@ -80,9 +80,9 @@ export function mergeIndicators(toField, fromField, config) {
 
   function getIndicatorPreferredValues(tag, indicatorNumber, config) {
     const preferredValues = indicatorNumber === 1 ? config.indicator1PreferredValues : config.indicator2PreferredValues;
-
+    //nvdebug(`${tag} IND${indicatorNumber}: get preferred values...\nCONFIG: ${JSON.stringify(config)}`);
     if (preferredValues) {
-
+      //nvdebug(`${tag} PREF VALS: ${JSON.stringify(preferredValues)}`);
       if (tag in preferredValues) {
         return preferredValues[tag];
       }
@@ -114,17 +114,22 @@ export function mergeIndicators(toField, fromField, config) {
     if (toField.ind1 === fromField.ind1) {
       return; // Do nothing
     }
+
     const preferredValues = getIndicatorPreferredValues(toField.tag, 1, config);
 
     if (preferredValues) {
-      nvdebug(`PREF VALS: ${preferredValues}`);
+      //nvdebug(`Try to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}'`);
+      //nvdebug(`PREF VALS: ${preferredValues}`);
       const preferredValue = getPreferredValue(preferredValues, fromField.ind1, toField.ind1);
       if (typeof preferredValue !== 'undefined') {
-        nvdebug(`${preferredValue} WINS!`);
+        //nvdebug(`${preferredValue} WINS!`);
         toField.ind1 = preferredValue; // eslint-disable-line functional/immutable-data
         return;
       }
+      //nvdebug(`No winner found indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`);
+      return;
     }
+    //nvdebug(`TAG '${toField.tag}': No rule to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`);
   }
 
 
