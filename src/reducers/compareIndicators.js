@@ -127,7 +127,7 @@ export function mergeIndicators(toField, fromField, config) {
         return;
       }
       //nvdebug(`No winner found indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`);
-      return;
+      //return;
     }
     //nvdebug(`TAG '${toField.tag}': No rule to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`);
   }
