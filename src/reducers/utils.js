@@ -216,6 +216,7 @@ export function getEncodingLevelRanking(record) {
   //return levelCodes.filter(level => level.levelValue === record.leader[17])[0].levelCode;
 }
 
+/*
 export function isMainOrCorrespondingAddedEntryFieldTag(tag) {
   const tags = ['100', '110', '111', '130', '700', '710', '711', '730'];
   return tags.includes(tag);
@@ -236,4 +237,5 @@ export function isMainOrCorrespondingAddedEntryField(field) {
 
   return 0;
 }
+*/
 
