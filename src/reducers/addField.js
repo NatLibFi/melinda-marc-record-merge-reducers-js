@@ -13,17 +13,21 @@ import {addableTag} from './mergableTag';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 
-const defaultNonAddableFields = ['041', '260', '264', '300', '310', '321', '335', '336', '337', '338'];
+const defaultNonAddableFieldsRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
+
+function recordHasFieldWithTag(record, tag) {
+  const candidateFields = record.get(new RegExp(`^${tag}$`, 'u'));
+  // Only original fields matter here Added fields are not counted.
+  return candidateFields.some(field => !field.added);
+}
 
 function repeatableTagIsNonAddable(record, tag) {
   // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
   // The original listing is from https://workgroups.helsinki.fi/x/K1ohCw .
   // However, we might have deviated from the specs.
   // NB! DO WE WAN'T TO OVERRIDE THESE VIA CONFIG? Can't think of a case, so not implementing support for that.
-  if (defaultNonAddableFields.includes(tag)) {
-    // Adding is permitted if all existing relevant fields come from source record.
-    const candidateFields = record.get(new RegExp(`^${tag}$`, 'u'));
-    return candidateFields.some(field => !field.added);
+  if (tag.match(defaultNonAddableFieldsRegexp)) {
+    return recordHasFieldWithTag(record, tag);
   }
   // No reason to block:
   return false;
