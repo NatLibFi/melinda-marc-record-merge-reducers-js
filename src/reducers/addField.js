@@ -21,7 +21,7 @@ function repeatableTagIsNonAddable(record, tag) {
   // However, we might have deviated from the specs.
   // NB! DO WE WAN'T TO OVERRIDE THESE VIA CONFIG? Can't think of a case, so not implementing support for that.
   if (defaultNonAddableFields.includes(tag)) {
-    // Adding is not blocked if all existing relevant fields come from source record.
+    // Adding is permitted if all existing relevant fields come from source record.
     const candidateFields = record.get(new RegExp(`^${tag}$`, 'u'));
     return candidateFields.some(field => !field.added);
   }
@@ -60,24 +60,11 @@ function fieldCanBeAdded(record, field) {
   return true;
 }
 
-function addField2(record, field) {
-  if (!fieldCanBeAdded(record, field)) {
-    return record;
-  }
-
-  field.subfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code)); // eslint-disable-line functional/immutable-data
-
-  if (field.subfields.length === 0) {
-    debug(`ERROR: No subfields in field-to-add`);
-    return record;
-  }
-  nvdebug(`Add as ${fieldToString(field)}`, debug);
-  // Do we need to sort unmerged subfields?
-  //return record.insertField(sortAdjacentSubfields(field));
-  return record.insertField(field);
-}
-
 function skipAddField(record, field, config = {}) {
+  if (!fieldCanBeAdded(record, field)) {
+    return true;
+  }
+  // Should we have something like config.forceAdd
   // Skip duplicate field:
   if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
     //debug(`addField(): field '${fieldToString(field)}' already exists! No action required!`);
@@ -88,8 +75,22 @@ function skipAddField(record, field, config = {}) {
     return true;
   }
 
-
   return false;
+}
+
+function addField2(record, field) {
+  // NB! Some subfields are never added. Strip them.
+  field.subfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code)); // eslint-disable-line functional/immutable-data
+
+  // NB! Subfieldless fields (and control fields (00X)) are not handled here.
+  if (field.subfields.length === 0) {
+    debug(`ERROR: No subfields in field-to-add`);
+    return record;
+  }
+  nvdebug(`Add as ${fieldToString(field)}`, debug);
+  // Do we need to sort unmerged subfields?
+  //return record.insertField(sortAdjacentSubfields(field));
+  return record.insertField(field);
 }
 
 export function addField(record, field, config = {}) {
