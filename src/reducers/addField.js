@@ -15,9 +15,10 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:ad
 
 const defaultDoNotCopyIfFieldPresentRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
 
-function getConfigDoNotCopyIfFieldPresentRegexp(config) {
-  if (config.doNotCopyIfFieldPresentRegexp) {
-    return new RegExp(`^${config.doNotCopyIfFieldPresentRegexp}`, 'u');
+function getConfigDoNotCopyIfFieldPresentAsRegexp(config) {
+  if (config.doNotCopyIfFieldPresent) {
+    nvdebug(`Regexpify: '${config.doNotCopyIfFieldPresent}'`);
+    return new RegExp(`^${config.doNotCopyIfFieldPresent}`, 'u');
   }
   return undefined;
 }
@@ -28,10 +29,8 @@ function recordHasOriginalFieldWithTag(record, tag) {
   return candidateFields.some(field => !field.added);
 }
 
+/*
 function repeatableTagIsNonAddable(record, tag, config) {
-  // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of tag.
-  // The original listing is from https://workgroups.helsinki.fi/x/K1ohCw .
-  // However, we might have deviated from the specs.
   // NB! DO WE WAN'T TO OVERRIDE THESE VIA CONFIG? Can't think of a case, so not implementing support for that.
   if (tag.match(getNonAddableRegexp(config))) {
     return recordHasOriginalFieldWithTag(record, tag);
@@ -45,18 +44,30 @@ function repeatableTagIsNonAddable(record, tag, config) {
     return configRegexp ? configRegexp : defaultDoNotCopyIfFieldPresentRegexp;
   }
 }
+*/
 
 function repetitionBlocksAdding(record, tag, config) {
   // It's not a repetition:
-  if (!recordHasField(record, tag)) {
+  if (!recordHasOriginalFieldWithTag(record, tag)) {
     return false;
   }
-  // It's a repetition:
+
+  // Non-repeatable marc field:
+  // NB! config.doNotCopyIfFieldPresent does not override this (as of 2022-08-10):
   if (!fieldIsRepeatable(tag)) {
     return true; // blocked
   }
-  // Semantics/logic prevents adding (can this be overridden via config?):
-  return repeatableTagIsNonAddable(record, tag, config);
+
+  // config.doNotCopyIfFieldPresent  overrides only default regexp of repeatable tags
+  const configRegexp = getConfigDoNotCopyIfFieldPresentAsRegexp(config);
+  if (configRegexp) {
+    return tag.match(configRegexp);
+  }
+
+  // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of the tag.
+  // The original listing is from https://workgroups.helsinki.fi/x/K1ohCw .
+  // However, we might have deviated from the specs.
+  return tag.match(defaultDoNotCopyIfFieldPresentRegexp);
 }
 
 function skipAddField(record, field, config = {}) {
@@ -65,7 +76,7 @@ function skipAddField(record, field, config = {}) {
     return true;
   }
 
-  // NB! NB! Required by specs. But should these be configured?
+  // NB! NB! Fields 240&830: these hacks are required by specs. But should these be configured?
   if (field.tag === '240' && recordHasField(record, '130')) {
     return true;
   }
@@ -74,8 +85,7 @@ function skipAddField(record, field, config = {}) {
   }
   // We could block 260/264 pairs here.
 
-  // Should we have something like config.forceAdd
-  // Skip duplicate field:
+  // Skip duplicate field (Should we have something like config.forceAdd):
   if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
     //debug(`addField(): field '${fieldToString(field)}' already exists! No action required!`);
     return true;
