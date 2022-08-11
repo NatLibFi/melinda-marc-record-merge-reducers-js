@@ -1,4 +1,0 @@
-{
-  "description":"61: Copy source's 100 -> Base's 100, as base has no 1XX fields",
-  "comment": "Note that source's 100 is added *after* base's 245. Not fixing it he/sorting re."
-}
