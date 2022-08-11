@@ -69,13 +69,14 @@ function swapIncomingSubfieldCodes(field, config) {
 
 }
 
-
+/*
 function mainEntryToAddedEntry(field) {
   if (field.tag === '100' || field.tag === '110' || field.tag === '111' || field.tag === '130') { // eslint-disable-line functional/no-conditional-statement
     debug(`  Convert source record's ${field.tag} to 7XX`);
     field.tag = `7${field.tag.substring(1)}`; // eslint-disable-line functional/immutable-data
   }
 }
+*/
 
 
 export function cloneAndPreprocessField(originalField, config) {
@@ -85,7 +86,7 @@ export function cloneAndPreprocessField(originalField, config) {
   swapIncomingSubfieldCodes(field, config);
 
   //convertOriginalToModifyingAgency(field); // 040$a => $040$d
-  mainEntryToAddedEntry(field); // 1XX => 7XX
+  //mainEntryToAddedEntry(field); // 1XX => 7XX
   //reindexSubfield6s(field, record); // field's $6 values start from record's max $6 value + 1
 
   return field;
