@@ -114,7 +114,7 @@ function addField2(record, field) {
 }
 
 export function addField(record, field, config = {}) {
-  const newField = cloneAndPreprocessField(field); // probably unnecessary cloning, but safer this way
+  const newField = cloneAndPreprocessField(field, config); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:
   if (skipAddField(record, newField, config)) {
