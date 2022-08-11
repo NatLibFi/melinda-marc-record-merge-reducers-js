@@ -159,6 +159,7 @@ export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
   // should we clone this?
   field.subfields.map(currSub => {
     if (currSub.code === origCode) {
+      nvdebug(`SUBFIELD SWAP: ${field.tag}${currSub.code} : ${origCode} => ${targetCode}`);
       currSub.code = targetCode; // eslint-disable-line functional/immutable-data
       return currSub;
     }
@@ -214,6 +215,11 @@ export function getEncodingLevelRanking(record) {
   debug(`LDR/19 VALUE '${ldr17}' NOT FOUND. USING DEFAULT RANKING 10.`);
   return 10;
   //return levelCodes.filter(level => level.levelValue === record.leader[17])[0].levelCode;
+}
+
+
+export function stringToRegex(string) { // easier to remember
+  return new RegExp(string, 'u');
 }
 
 /*
