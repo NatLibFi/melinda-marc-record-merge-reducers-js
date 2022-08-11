@@ -203,10 +203,14 @@ export function recordPreprocess(record) { // For both base and source record
 }
 
 function retagSource1XX(base, source) {
+  // Even if base hasn't got a 1XX, source's 1XX go to 7XX...
+  /*
   const base1XX = base.get(/^1..$/u);
   if (base1XX.length === 0) {
     return;
   }
+
+  */
   // Base has 1XX fields. Retag source's 1XX fields
   const source1XX = source.get(/^1..$/u);
   source1XX.forEach(field => retagField(field));
