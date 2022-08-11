@@ -76,7 +76,7 @@ function skipMergeField(record, field, config) {
 }
 
 export function mergeField(record, field, config) {
-  const newField = cloneAndPreprocessField(field); // probably unnecessary cloning, but safer this way
+  const newField = cloneAndPreprocessField(field, config); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:
   if (skipMergeField(record, newField, config)) {
