@@ -1,6 +1,6 @@
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
-import {fieldToString, isControlSubfieldCode} from './utils.js';
+import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 
 import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
 import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
@@ -202,12 +202,31 @@ export function recordPreprocess(record) { // For both base and source record
   return record;
 }
 
+function retagSource1XX(base, source) {
+  const base1XX = base.get(/^1..$/u);
+  if (base1XX.length === 0) {
+    return;
+  }
+  // Base has 1XX fields. Retag source's 1XX fields
+  const source1XX = source.get(/^1..$/u);
+  source1XX.forEach(field => retagField(field));
+
+  function retagField(field) {
+    const newTag = `7${field.tag.substring(1)}`;
+    nvdebug(`Retag ${field.tag} => ${newTag}`);
+    field.tag = newTag; // eslint-disable-line functional/immutable-data
+  }
+
+}
+
 export function sourceRecordPreprocess(baseRecord, sourceRecord) {
   const max6 = getMaxSubfield6(baseRecord);
   const max8 = getMaxSubfield8(baseRecord);
   //nvdebug(`MAX8 FROM BASE: ${max8}`);
   reindexSubfield6s(sourceRecord, max6);
   reindexSubfield8s(sourceRecord, max8);
+
+  retagSource1XX(baseRecord, sourceRecord);
   return sourceRecord;
 }
 
