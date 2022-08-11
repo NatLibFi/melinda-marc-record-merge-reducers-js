@@ -5,7 +5,12 @@
 
 export function initFieldMergeConfig(initData = {}) {
   const config = {
-    // Indicators are typically meaningful when comparing mergability of two fields. Override that here:
+    // doNotCopyIfFieldPresent prevenets copying of repeatable fields.
+    // Non-repe
+    doNotCopyIfFieldPresent: initData.doNotCopyIfFieldPresent, // string for regexp (mod), no validation here :(
+
+    // Indicators are typically meaningful when comparing mergability of two fields. Override that here.
+    // By default, base's indicator value is retained.
     ignoreIndicator1: initData.ignoreIndicator1 || false,
     ignoreIndicator2: initData.ignoreIndicator2 || false,
     // When fields are merged despite of difference in indicator value, typically base field's value is kept.
@@ -14,9 +19,15 @@ export function initFieldMergeConfig(initData = {}) {
     indicator2PreferredValues: initData.indicator2PreferredValues && typeof initData.indicator2PreferredValues === 'object' ? initData.indicator2PreferredValues : false,
 
     // skipAddTags: list of tags, that prevent adding. If empty, hard-coded defaults/educated guesses are used.
+    // NB! Should these be one regexp instead?
     skipAddTags: initData.skipAddTags && Array.isArray(initData.skipAddTags) ? initData.skipAddTags : [],
     // skipMergeTags: list of tags, that prevent merge. If empty, hard-coded defaults/education guesses will be used
+    // NB! Should these be one regexp instead?
     skipMergeTags: initData.skipMergeTags && Array.isArray(initData.skipMergeTags) ? initData.skipMergeTags : [],
+
+    // If undefined, defaults swaps (040$a -> 040$d) are performed. To disable defaults use
+    // initData.swapSubfieldCodes = []
+    swapSubfieldCodes: initData.swapSubfieldCodes ? initData.swapSubfieldCodes : undefined,
 
     tagPattern: initData.tagPattern && initData.tagPattern instanceof RegExp ? initData.tagPattern : false
   };
