@@ -1,7 +1,7 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldFixPunctuation} from './punctuation.js';
-import {fieldRenameSubfieldCodes} from './utils.js';
+import {fieldRenameSubfieldCodes, nvdebug, stringToRegex} from './utils.js';
 import {sortAdjacentSubfields} from './sortSubfields';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -36,6 +36,7 @@ export function postprocessRecord(record) {
   return record;
 }
 
+/*
 function convertOriginalToModifyingAgency(field) {
   // Convert source record's 040$a 040$d, since it can not be an $a of the base record.
   if (field.tag === '040' && field.subfields.some(sf => sf.code === 'a')) { // eslint-disable-line functional/no-conditional-statement
@@ -45,6 +46,29 @@ function convertOriginalToModifyingAgency(field) {
     sortAdjacentSubfields(field);
   }
 }
+*/
+
+
+const defaultSwapSubfieldCodes = [{'tagPattern': '^040$', 'from': 'a', 'to': 'd'}];
+
+
+function swapIncomingSubfieldCodes(field, config) {
+  const swapSubfieldCodes = config.swapSubfieldCodes ? config.swapSubfieldCodes : defaultSwapSubfieldCodes;
+  nvdebug(`SWAPS: ${JSON.stringify(swapSubfieldCodes)}`, debug);
+  swapSubfieldCodes.forEach((rule) => applyRule(field, rule));
+
+  function applyRule(field, rule) {
+    if (!field.tag.match(stringToRegex(rule.tagPattern))) {
+      return; // don't apply
+    }
+    fieldRenameSubfieldCodes(field, rule.from, rule.to);
+    // Since subfields were sorted, they may be in the wrong order now:
+    sortAdjacentSubfields(field);
+    return;
+  }
+
+}
+
 
 function mainEntryToAddedEntry(field) {
   if (field.tag === '100' || field.tag === '110' || field.tag === '111' || field.tag === '130') { // eslint-disable-line functional/no-conditional-statement
@@ -54,11 +78,13 @@ function mainEntryToAddedEntry(field) {
 }
 
 
-export function cloneAndPreprocessField(originalField) {
+export function cloneAndPreprocessField(originalField, config) {
   // source-only preprocessing:
   const field = cloneField(originalField);
 
-  convertOriginalToModifyingAgency(field); // 040$a => $040$d
+  swapIncomingSubfieldCodes(field, config);
+
+  //convertOriginalToModifyingAgency(field); // 040$a => $040$d
   mainEntryToAddedEntry(field); // 1XX => 7XX
   //reindexSubfield6s(field, record); // field's $6 values start from record's max $6 value + 1
 
