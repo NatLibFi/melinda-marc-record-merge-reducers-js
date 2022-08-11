@@ -1,0 +1,8 @@
+{
+  "description":"Copy 910 field, swap $c->$e, note that 040$a->$d does not happen now",
+  "config": {
+    "swapSubfieldCodes" : [
+      {"tagPattern": "^910$", "from": "c", "to": "e"}
+    ]
+  }
+}
