@@ -1,3 +1,4 @@
 {
-  "description":"880 (mainEntries): increment $6. Fail to merge almost identical fields -> add separately."
+  "description":"Update $6 subfield indexes from source",
+  "comment":"TODO: no indexes on LHS/RHS. Add tests for them?"
 }
