@@ -1,11 +1,15 @@
 //import createDebugLogger from 'debug';
 import clone from 'clone';
-import {fieldToString} from './utils';
 
 // Note that https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js contains
 // similar functionalities. It's less generic and lacks diacritic removal but has it advantages as well.
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers/reducers/normalizeEncoding');
+
+// See also https://github.com/NatLibFi/marc-record-validators-melinda/blob/master/src/unicode-decomposition.js .
+// It uses a list of convertable characters whilst this uses a generic stuff as well.
+// It handles various '.' and '©' type normalizations as well.
+// NB! This version has minor bug/feature issue regarding fixComposition()
 
 export default function () {
 
@@ -97,6 +101,16 @@ function fixComposition(value = '') {
   return precomposeFinnishLetters(String(value).normalize('NFD'));
 }
 
+function fieldToString(f) {
+  if ('subfields' in f) {
+    return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
+  }
+  return `${f.tag}    ${f.value}`;
+  function formatSubfields(field) {
+    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
+  }
+}
+
 export function fieldFixComposition(field) {
   if (!field.subfields) {
     return field;
@@ -127,16 +141,4 @@ export function fieldRemoveDecomposedDiacritics(field) {
     return String(value).replace(/\p{Diacritic}/gu, '');
   }
 }
-
-/*
-  export function recordFixComposition(record) {
-    if (!record.fields) {
-      return record;
-    }
-    record.fields.forEach((field, index) => {
-      record.fields[index] = fieldFixComposition(field); // eslint-disable-line functional/immutable-data
-    });
-    return record;
-  }
-  */
 
