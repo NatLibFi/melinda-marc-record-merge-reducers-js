@@ -2,7 +2,7 @@
 //import createDebugLogger from 'debug';
 //import {fieldToString, nvdebug} from './utils';
 
-import {nvdebug} from './utils';
+//import {nvdebug} from './utils';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -26,7 +26,7 @@ function skippableIndicator1ByDefault(tag) {
     return true;
   }
 
-  // There are bunch of indicators that should always be '#'. Should we include them here?
+  // NB! There are bunch of indicators that have only one way (typically '#'). Should we list meaningless indicators somewhere?
   return false;
 }
 
@@ -137,11 +137,11 @@ export function mergeIndicators(toField, fromField, config) {
     if (toField.ind2 === fromField.ind2) {
       return; // Do nothing
     }
-    nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`);
+    //nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`);
     const preferredValues = getIndicatorPreferredValues(toField.tag, 2, config);
 
     if (preferredValues) {
-      nvdebug(`  Try to merge indicator 2. Got preferred values '${preferredValues}'`);
+      //nvdebug(`  Try to merge indicator 2. Got preferred values '${preferredValues}'`);
       const preferredValue = getPreferredValue(preferredValues, fromField.ind2, toField.ind2);
       if (typeof preferredValue !== 'undefined') {
         toField.ind2 = preferredValue; // eslint-disable-line functional/immutable-data
