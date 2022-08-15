@@ -24,21 +24,21 @@ function removeEnnakkotieto(field) {
 }
 
 
-function mergeField2(record, targetField, sourceField, config) {
+function mergeField2(baseRecord, baseField, sourceField, config) {
   //// Identical fields
   // No need to check every subfield separately.
   // Also no need to postprocess the resulting field.
-  if (fieldToString(sourceField) === fieldToString(targetField)) {
-    return record;
+  if (fieldToString(baseField) === fieldToString(sourceField)) {
+    return baseRecord;
   }
 
   // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield:
-  if (fieldHasSubfield(targetField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) { // eslint-disable-line functional/no-conditional-statement
-    removeEnnakkotieto(targetField);
-    targetField.merged = 1; // eslint-disable-line functional/immutable-data
+  if (fieldHasSubfield(baseField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) { // eslint-disable-line functional/no-conditional-statement
+    removeEnnakkotieto(baseField);
+    baseField.merged = 1; // eslint-disable-line functional/immutable-data
   }
 
-  mergeIndicators(targetField, sourceField, config);
+  mergeIndicators(baseField, sourceField, config);
   // We want to add the incoming subfields without punctuation, and add puctuation later on.
   // (Cloning is harmless, but probably not needed.)
   const normalizedSourceField = cloneAndRemovePunctuation(sourceField);
@@ -46,9 +46,9 @@ function mergeField2(record, targetField, sourceField, config) {
 
   normalizedSourceField.subfields.forEach(candSubfield => {
     //sourceField.subfields.forEach(candSubfield => {
-    const originalValue = fieldToString(targetField);
-    mergeSubfield(record, targetField, candSubfield);
-    const newValue = fieldToString(targetField);
+    const originalValue = fieldToString(baseField);
+    mergeSubfield(baseRecord, baseField, candSubfield);
+    const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
       debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${originalValue}'`);
       debug(`   RESULT: '${newValue}'`);
@@ -57,42 +57,42 @@ function mergeField2(record, targetField, sourceField, config) {
     //else { debug(`  mergeSubfield() did not add '‡${candSubfield.code} ${candSubfield.value}' to '${originalValue}'`); }
 
   });
-  return record;
 }
 
 
-function skipMergeField(record, field, config) {
-  if (!mergableTag(field.tag, config)) {
-    nvdebug(`mergeField(): field '${fieldToString(field)}' listed as skippable!`, debug);
+function skipMergeField(baseRecord, sourceField, config) {
+  if (!mergableTag(sourceField.tag, config)) {
+    nvdebug(`mergeField(): field '${fieldToString(sourceField)}' listed as skippable!`, debug);
     return true;
   }
   // Skip duplicate field:
-  if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
-    nvdebug(`mergeField(): field '${fieldToString(field)}' already exists! No action required!`, debug);
+  if (baseRecord.fields.some(baseField => fieldsAreIdentical(sourceField, baseField))) {
+    nvdebug(`mergeField(): field '${fieldToString(sourceField)}' already exists! No action required!`, debug);
+    sourceField.delete = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
 
   return false;
 }
 
-export function mergeField(record, field, config) {
-  const newField = cloneAndPreprocessField(field, config); // probably unnecessary cloning, but safer this way
+export function mergeField(baseRecord, sourceField, config) {
+  const newField = cloneAndPreprocessField(sourceField, config); // probably unnecessary cloning, but safer this way
 
   // skip duplicates and special cases:
-  if (skipMergeField(record, newField, config)) {
-    nvdebug(`mergeField(): don't merge '${fieldToString(field)}'`, debug);
+  if (skipMergeField(baseRecord, newField, config)) {
+    nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debug);
     return false;
   }
-  nvdebug(`mergeField(): Try to merge '${fieldToString(field)}'.`, debug);
-  const counterpartField = getCounterpart(record, newField, config);
+  nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`, debug);
+  const counterpartField = getCounterpart(baseRecord, newField, config);
 
   if (counterpartField) {
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debug);
-
-    mergeField2(record, counterpartField, newField, config);
+    mergeField2(baseRecord, counterpartField, newField, config);
+    sourceField.delete = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  nvdebug(`mergeField(): No mergable counterpart found for '${fieldToString(field)}'.`, debug);
+  nvdebug(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`, debug);
   return false;
 }
