@@ -4,7 +4,9 @@ import createReducer from './reindexSubfield6';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
-describe('genericDatafields tests: ', () => {
+// import {nvdebug} from './utils';
+
+describe('subfield 6 reindexing tests: ', () => {
   generateTests({
     callback,
     path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'reindexSubfield6'],
