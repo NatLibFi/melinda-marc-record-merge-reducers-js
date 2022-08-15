@@ -7,6 +7,11 @@ import {mergeSubfield} from './mergeSubfield';
 import {mergeIndicators} from './compareIndicators';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
+import {MarcRecord} from '@natlibfi/marc-record';
+import {initFieldMergeConfig} from './fieldMergeConfig.js';
+import {recordPreprocess, sourceRecordPreprocess} from './normalize.js';
+import {addField} from './addField.js';
+import {postprocessRecord} from './mergePreAndPostprocess.js';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -14,6 +19,37 @@ import {getCounterpart} from './counterpartField';
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
+
+export default (config = {}) => (base, source) => {
+
+  const baseRecord = new MarcRecord(base, {subfieldValues: false});
+  const sourceRecord = new MarcRecord(source, {subfieldValues: false});
+
+  nvdebug(`OBJ: ${JSON.stringify(config)}`);
+  // How do we read the config? Config file? Parameters from calling function? Currently this just sets the defaults...
+  const processedConfig = initFieldMergeConfig(config);
+
+  // We should clone the records here and just here...
+  const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
+  const sourceRecord2 = sourceRecordPreprocess(baseRecord, recordPreprocess(sourceRecord)); // fix composition et al
+
+  const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
+
+  const candidateFields = sourceRecord2.get(processedConfig.tagPattern ? processedConfig.tagPattern : defCandFieldsRegexp);
+  //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
+
+  candidateFields.forEach(candField => {
+    nvdebug(`Now processing ${fieldToString(candField)}`, debug);
+    if (!mergeField(baseRecord2, candField, processedConfig)) { // eslint-disable-line functional/no-conditional-statement
+      addField(baseRecord2, candField, processedConfig);
+    }
+  });
+
+  postprocessRecord(baseRecord2);
+  postprocessRecord(sourceRecord2);
+
+  return [baseRecord2, sourceRecord2];
+};
 
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
@@ -68,7 +104,7 @@ function skipMergeField(baseRecord, sourceField, config) {
   // Skip duplicate field:
   if (baseRecord.fields.some(baseField => fieldsAreIdentical(sourceField, baseField))) {
     nvdebug(`mergeField(): field '${fieldToString(sourceField)}' already exists! No action required!`, debug);
-    sourceField.delete = 1; // eslint-disable-line functional/immutable-data
+    sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
 
@@ -89,7 +125,7 @@ export function mergeField(baseRecord, sourceField, config) {
   if (counterpartField) {
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debug);
     mergeField2(baseRecord, counterpartField, newField, config);
-    sourceField.delete = 1; // eslint-disable-line functional/immutable-data
+    sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
