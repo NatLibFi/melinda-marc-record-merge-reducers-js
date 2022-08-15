@@ -25,11 +25,12 @@ export function initFieldMergeConfig(initData = {}) {
     // NB! Should these be one regexp instead?
     skipMergeTags: initData.skipMergeTags && Array.isArray(initData.skipMergeTags) ? initData.skipMergeTags : [],
 
-    // If undefined, defaults swaps (040$a -> 040$d) are performed. To disable defaults use
-    // initData.swapSubfieldCodes = []
+    // If undefined, defaults swaps (040$a -> 040$d) are performed.
+    // To disable defaults use initData.swapSubfieldCodes = []
+    // Note that order matters, and rules can feed each other.
     swapSubfieldCodes: initData.swapSubfieldCodes ? initData.swapSubfieldCodes : undefined,
 
-    tagPattern: initData.tagPattern && initData.tagPattern instanceof RegExp ? initData.tagPattern : false
+    tagPattern: initData.tagPattern && initData.tagPattern instanceof RegExp ? initData.tagPattern : /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u
   };
   return config;
 }
