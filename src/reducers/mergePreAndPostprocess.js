@@ -33,6 +33,10 @@ export function postprocessRecord(record) {
       delete field.added; // eslint-disable-line functional/immutable-data
     }
   });
+
+  // remove fields that are marked as deleted:
+  record.fields.filter(f => !f.deleted); // eslint-disable-line functional/immutable-data
+
   return record;
 }
 
