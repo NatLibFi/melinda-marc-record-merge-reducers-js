@@ -13,6 +13,7 @@ import {addableTag} from './mergableTag';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 
+// Default list of (repeatable) fields that we don't copy if the field is already present in the base record
 const defaultDoNotCopyIfFieldPresentRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
 
 function getConfigDoNotCopyIfFieldPresentAsRegexp(config) {
