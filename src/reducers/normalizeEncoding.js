@@ -11,6 +11,9 @@ import clone from 'clone';
 // It handles various '.' and '©' type normalizations as well.
 // NB! This version has minor bug/feature issue regarding fixComposition()
 
+// NB! This version should be removed after my merge request
+// https://github.com/NatLibFi/marc-record-validators-melinda/tree/generic_fix_composition
+// gets approved.
 export default function () {
 
   return {
