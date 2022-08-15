@@ -1,9 +1,17 @@
 import createDebugLogger from 'debug';
-
+import {MarcRecord} from '@natlibfi/marc-record';
+import {nvdebug} from './utils';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-const debugData = debug.extend('data');
+
 
 const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
+
+export default () => (base, source) => {
+  const sourceRecord = new MarcRecord(source, {subfieldValues: false});
+  const baseMax = getMaxSubfield8(base);
+  reindexSubfield8s(sourceRecord, baseMax);
+  return [base, sourceRecord];
+};
 
 function subfield8Index(subfield) {
   const match = subfield.value.match(sf8Regexp);
@@ -18,7 +26,8 @@ export function getMaxSubfield8(record) {
   const vals = record.fields.map((field) => fieldSubfield8Index(field));
   return Math.max(...vals);
   function fieldSubfield8Index(field) {
-    debugData(`Checking subfields $8 from ${JSON.stringify(field)}`);
+    nvdebug(`Checking subfields $8 from ${JSON.stringify(field)}`, debug);
+
     const sf8s = field.subfields ? field.subfields.filter(subfield => subfield.code === '8') : [];
     if (sf8s.length === 0) {
       return 0;
