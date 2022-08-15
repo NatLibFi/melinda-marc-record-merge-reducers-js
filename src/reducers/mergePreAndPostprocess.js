@@ -17,7 +17,11 @@ function cloneField(field) {
   return JSON.parse(JSON.stringify(field));
 }
 
+
 export function postprocessRecord(record) {
+  // remove fields that are marked as deleted:
+  // record.fields.filter(f => !f.deleted); // eslint-disable-line functional/immutable-data
+
   record.fields.forEach(field => {
     // remove merge-specific information:
     if (field.merged) { // eslint-disable-line functional/no-conditional-statement
@@ -32,10 +36,11 @@ export function postprocessRecord(record) {
     if (field.added) { // eslint-disable-line functional/no-conditional-statement
       delete field.added; // eslint-disable-line functional/immutable-data
     }
+    if (field.deleted) { // eslint-disable-line functional/no-conditional-statement
+      delete field.deleted; // eslint-disable-line functional/immutable-data
+    }
   });
 
-  // remove fields that are marked as deleted:
-  record.fields.filter(f => !f.deleted); // eslint-disable-line functional/immutable-data
 
   return record;
 }
