@@ -2,6 +2,8 @@
 import clone from 'clone';
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeIdentifiers');
 
+// NB! This file will be moved under marc-record-validators-melinda as well.
+
 import {fieldToString} from './utils.js';
 //import { nvdebug} from './utils.js';
 
