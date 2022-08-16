@@ -8,6 +8,7 @@ import field008 from './field008';
 import genericDatafield from './genericDatafield';
 import reindexSubfield6 from './reindexSubfield6';
 import reindexSubfield8 from './reindexSubfield8';
+import hardcodedSourcePreprocessor from './hardcodedSourcePreprocessor';
 //import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -71,6 +72,7 @@ export const localCopyReducerConfigs = [
 ];
 
 export const localReducers = [
+  hardcodedSourcePreprocessor(),
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
   // We need a way to modify the source record's $6 and $8 and potential 1XX->7XX change.
