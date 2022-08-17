@@ -9,7 +9,7 @@ import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {initFieldMergeConfig} from './fieldMergeConfig.js';
-import {recordPreprocess, sourceRecordPreprocess} from './normalize.js';
+import {recordPreprocess/*, sourceRecordPreprocess*/} from './normalize.js';
 import {addField} from './addField.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 
@@ -31,7 +31,7 @@ export default (config = {}) => (base, source) => {
 
   // We should clone the records here and just here...
   const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
-  const sourceRecord2 = sourceRecordPreprocess(baseRecord, recordPreprocess(sourceRecord)); // fix composition et al
+  const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
 
   const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
