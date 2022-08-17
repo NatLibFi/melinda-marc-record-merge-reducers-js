@@ -10,10 +10,6 @@
       "state": "fixed"
     },
     {
-      "description": "Normalizes $9-chains",
-      "state": "valid"
-    },
-    {
       "description": "Checks that the record does not contain the configured fields",
       "state": "valid"
     },
