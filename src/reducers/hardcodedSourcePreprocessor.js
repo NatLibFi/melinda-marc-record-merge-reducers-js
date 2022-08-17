@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 //import {MarcRecord} from '@natlibfi/marc-record';
-//import {/*fieldToString,*/ nvdebug} from './utils';
+import {/*fieldToString,*/ nvdebug} from './utils';
 //import {initFieldMergeConfig} from './fieldMergeConfig';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -49,6 +49,24 @@ export default () => (base, source) => {
     await Punctuation(),
     await EndingPunctuation()
     */
+
+    //const max6 = getMaxSubfield6(baseRecord);
+    //const max8 = getMaxSubfield8(baseRecord);
+    //nvdebug(`MAX8 FROM BASE: ${max8}`);
+    //reindexSubfield6s(sourceRecord, max6);
+    //reindexSubfield8s(sourceRecord, max8);
+
+
+    // Base has 1XX fields. Retag source's 1XX fields
+    const source1XX = record.get(/^1..$/u);
+    source1XX.forEach(field => retagField(field));
+
+    function retagField(field) {
+      const newTag = `7${field.tag.substring(1)}`;
+      nvdebug(`Retag ${field.tag} => ${newTag}`);
+      field.tag = newTag; // eslint-disable-line functional/immutable-data
+    }
+
     return record;
   }
 };
