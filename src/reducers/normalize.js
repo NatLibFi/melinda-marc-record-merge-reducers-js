@@ -1,13 +1,12 @@
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
-import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
+import {fieldToString, isControlSubfieldCode} from './utils.js';
 
 import {default as normalizeEncoding, fieldFixComposition, fieldRemoveDecomposedDiacritics} from './normalizeEncoding';
 import {fieldNormalizePrefixes} from './normalizeIdentifier';
-import {getMaxSubfield6, reindexSubfield6s} from './reindexSubfield6.js';
-import {getMaxSubfield8, reindexSubfield8s} from './reindexSubfield8.js';
+//import {getMaxSubfield6, reindexSubfield6s} from './reindexSubfield6.js';
+//import {getMaxSubfield8, reindexSubfield8s} from './reindexSubfield8.js';
 import createDebugLogger from 'debug';
-import {recordNormalizeSubfield9Linkage} from './normalizeSubfield9Linkage.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
 /*
@@ -154,41 +153,8 @@ export function recordPreprocess(record) { // For both base and source record
 
   //record = result.record; // eslint-disable-line functional/immutable-data
   normalizeEncoding().fix(record);
-  recordNormalizeSubfield9Linkage(record);
   record.fields.forEach(field => fieldPreprocess(field));
   return record;
-}
-
-function retagSource1XX(base, source) {
-  // Even if base hasn't got a 1XX, source's 1XX go to 7XX...
-  /*
-  const base1XX = base.get(/^1..$/u);
-  if (base1XX.length === 0) {
-    return;
-  }
-
-  */
-  // Base has 1XX fields. Retag source's 1XX fields
-  const source1XX = source.get(/^1..$/u);
-  source1XX.forEach(field => retagField(field));
-
-  function retagField(field) {
-    const newTag = `7${field.tag.substring(1)}`;
-    nvdebug(`Retag ${field.tag} => ${newTag}`);
-    field.tag = newTag; // eslint-disable-line functional/immutable-data
-  }
-
-}
-
-export function sourceRecordPreprocess(baseRecord, sourceRecord) {
-  const max6 = getMaxSubfield6(baseRecord);
-  const max8 = getMaxSubfield8(baseRecord);
-  //nvdebug(`MAX8 FROM BASE: ${max8}`);
-  reindexSubfield6s(sourceRecord, max6);
-  reindexSubfield8s(sourceRecord, max8);
-
-  retagSource1XX(baseRecord, sourceRecord);
-  return sourceRecord;
 }
 
 
