@@ -1,0 +1,6 @@
+{
+  "description":"995: config.doNotcopyIfFieldPresent prevents copying",
+  "config": {
+    "doNotCopyIfFieldPresent" : "^(?:995)"
+  }
+}
