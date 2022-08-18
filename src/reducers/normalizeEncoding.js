@@ -16,6 +16,7 @@ import clone from 'clone';
 // https://github.com/NatLibFi/marc-record-validators-melinda/tree/generic_fix_composition
 // gets approved.
 
+import {nvdebug} from './utils.js';
 
 export default function () {
 
@@ -121,15 +122,15 @@ export function fieldFixComposition(field) {
   if (!field.subfields) {
     return field;
   }
-  //const originalValue = fieldToString(field);
+  const originalValue = fieldToString(field);
   //nvdebug(`fFC: '${originalValue}'`, debug);
   field.subfields.forEach((subfield, index) => {
     field.subfields[index].value = fixComposition(subfield.value); // eslint-disable-line functional/immutable-data
   });
-  //const newValue = fieldToString(field);
-  //if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
-  //  debug(`FIXCOMP: '${originalValue}' => '${newValue}'`);
-  //}
+  const newValue = fieldToString(field);
+  if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
+    nvdebug(`FIX COMPOSITION: '${originalValue}' => '${newValue}'`);
+  }
   return field;
 }
 
