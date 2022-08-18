@@ -182,7 +182,7 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
     return;
   }
 
-  nvdebug(`OP=${operation} ${tag}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debug);
+  //nvdebug(`OP=${operation} ${tag}: '${subfield1.code}: ${subfield1.value}' ??? '${subfield2 ? subfield2.code : '#'}'`, debug);
   const activeRules = ruleArray[tag].filter(rule => checkRule(rule, subfield1, subfield2));
 
   activeRules.forEach(rule => {

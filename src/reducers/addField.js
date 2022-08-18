@@ -1,7 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug, recordHasField} from './utils';
-import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {isSubfieldGoodForMerge} from './mergeSubfield';
 import {addableTag} from './mergableTag';
 
@@ -132,6 +131,14 @@ function skipAddField(record, field, config = {}) {
   return false;
 }
 
+
+function cloneField(field) {
+  // mark it as coming from source:
+  field.added = 1; // eslint-disable-line functional/immutable-data
+  return JSON.parse(JSON.stringify(field));
+}
+
+
 function addField2(record, field) {
   // NB! Some subfields are never added. Strip them.
   field.subfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code)); // eslint-disable-line functional/immutable-data
@@ -148,15 +155,14 @@ function addField2(record, field) {
 }
 
 export function addField(record, field, config = {}) {
-  const newField = cloneAndPreprocessField(field, config); // probably unnecessary cloning, but safer this way
-
   // skip duplicates and special cases:
-  if (skipAddField(record, newField, config)) {
+  if (skipAddField(record, field, config)) {
     nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
     return false;
   }
 
-  // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
+  const newField = cloneField(field, config); // clone (unnecessarily) + field.added = 1
+
   nvdebug(`addField(): Try to add '${fieldToString(field)}'.`, debug);
   return addField2(record, newField);
 }

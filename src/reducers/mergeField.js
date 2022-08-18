@@ -2,7 +2,6 @@
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 import {cloneAndRemovePunctuation} from './normalize';
-import {cloneAndPreprocessField} from './mergePreAndPostprocess';
 import {mergeSubfield} from './mergeSubfield';
 import {mergeIndicators} from './compareIndicators';
 import {mergableTag} from './mergableTag';
@@ -10,7 +9,6 @@ import {getCounterpart} from './counterpartField';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {initFieldMergeConfig} from './fieldMergeConfig.js';
 import {recordPreprocess} from './hardcodedPreprocessor.js';
-import {addField} from './addField.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
@@ -39,12 +37,11 @@ export default (config = {}) => (base, source) => {
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
   candidateFields.forEach(candField => {
-    nvdebug(`Now processing ${fieldToString(candField)}`, debug);
-    if (!mergeField(baseRecord2, candField, processedConfig)) { // eslint-disable-line functional/no-conditional-statement
-      addField(baseRecord2, candField, processedConfig);
-    }
+    nvdebug(`Now merging (or trying to) field ${fieldToString(candField)}`, debug);
+    mergeField(baseRecord2, candField, processedConfig);
   });
 
+  // Remove deleted fields and field.merged marks:
   postprocessRecord(baseRecord2);
   postprocessRecord(sourceRecord2);
 
@@ -112,19 +109,18 @@ function skipMergeField(baseRecord, sourceField, config) {
 }
 
 export function mergeField(baseRecord, sourceField, config) {
-  const newField = cloneAndPreprocessField(sourceField, config); // probably unnecessary cloning, but safer this way
-
   // skip duplicates and special cases:
-  if (skipMergeField(baseRecord, newField, config)) {
+  if (skipMergeField(baseRecord, sourceField, config)) {
     nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debug);
     return false;
   }
+
   nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`, debug);
-  const counterpartField = getCounterpart(baseRecord, newField, config);
+  const counterpartField = getCounterpart(baseRecord, sourceField, config);
 
   if (counterpartField) {
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debug);
-    mergeField2(baseRecord, counterpartField, newField, config);
+    mergeField2(baseRecord, counterpartField, sourceField, config);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
   }

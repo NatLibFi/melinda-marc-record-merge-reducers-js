@@ -120,24 +120,28 @@ function arePairedSubfieldsInBalance(field1, field2) {
 function mergablePair(baseField, sourceField, config) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
   if (!mergableIndicator1(baseField, sourceField, config) || !mergableIndicator2(baseField, sourceField, config)) {
+    nvdebug('non-mergable (reason: indicator)');
     return false;
   }
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
+    nvdebug('non-mergable (reason: control subfield)');
     return false;
   }
   //debug('mergablePair()... wp2');
   // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well. Thus check both:
   if (!areRequiredSubfieldsPresent(baseField) || !areRequiredSubfieldsPresent(sourceField)) {
+    nvdebug('non-mergable (reason: missing subfields)');
     return false;
   }
   //debug('mergablePair()... wp3');
   // Stuff of Hacks! Eg. require that both fields either have or have not X00$t:
   if (!arePairedSubfieldsInBalance(baseField, sourceField)) {
-    debug('required subfield pair check failed.');
+    nvdebug('required subfield pair check failed.');
     return false;
   }
   //debug('Test semantics...');
   if (!semanticallyMergablePair(baseField, sourceField)) {
+    nvdebug('non-mergable (reason: semantics)');
     return false;
   }
   return true;
@@ -206,7 +210,7 @@ function semanticallyMergablePair(baseField, sourceField) {
   // On rare occasions a field contains also a title part, name part and title part must
   // be checked separately:
   if (!titlePartsMatch(baseField, sourceField)) {
-    debug(` ${baseField.tag} is unmergable: Title part mismatch.`);
+    nvdebug(` ${baseField.tag} is unmergable: Title part mismatch.`);
     return false;
   }
 
@@ -214,7 +218,7 @@ function semanticallyMergablePair(baseField, sourceField) {
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
   if (!pairableName(baseField, sourceField)) {
-    debug('Unmergable: Name part mismatch');
+    nvdebug('Unmergable: Name part mismatch');
     return false;
   }
   //debug(' Semantic checks passed! We are MERGABLE!');
@@ -280,6 +284,7 @@ function titlePartsMatch(field1, field2) {
   // 100$a$t: remove $t and everything after that
   const subset1 = fieldToTitlePart(field1);
   const subset2 = fieldToTitlePart(field2);
+  // Easter Egg, ffs. Hardcoded exception
   return mandatorySubfieldComparison(subset1, subset2, 'dfhklmnoprstxvg');
 }
 
@@ -299,12 +304,13 @@ export function getCounterpart(record, field, config) {
   // Then find (the index of) the first mathing candidate field and return it.
   const index = counterpartCands.findIndex((currCand) => {
     if (mergablePair(currCand, field, config)) {
-      debug(`  OK pair found: '${fieldToString(currCand)}'. Returning it!`);
+      nvdebug(`  OK pair found: '${fieldToString(currCand)}'. Returning it!`);
       return true;
     }
-    debug(`  FAILED TO PAIR: '${fieldToString(currCand)}'. Skipping it!`);
+    nvdebug(`  FAILED TO PAIR: '${fieldToString(currCand)}'. Skipping it!`);
     return false;
   });
+
   if (index > -1) {
     return counterpartCands[index];
   }

@@ -4,10 +4,10 @@ import createReducer from './hardcodedSourcePreprocessor';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
-describe('genericDatafields tests: ', () => {
+describe('source preprocessor tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'hardcodedFixes'],
+    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'preprocessSource'],
     recurse: false,
     useMetadataFile: true,
     fixura: {

@@ -20,7 +20,6 @@ const excludeSubfieldsFromMerge = [
 const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
 
 // NB! These are X00 specific. Should we somehow parametrize them?
-//const notYear = /^\([1-9][0-9]*\)[,.]?$/u;
 const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
 const onlyDeathYear = /^-[1-9][0-9]*[,.]?$/u;
 const birthYearAndDeathYear = /^[1-9][0-9]*-[1-9][0-9]*[,.]?$/u;

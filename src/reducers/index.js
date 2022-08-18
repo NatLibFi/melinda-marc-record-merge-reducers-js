@@ -9,8 +9,8 @@ import field008 from './field008';
 import reindexSubfield6 from './reindexSubfield6';
 import reindexSubfield8 from './reindexSubfield8';
 import hardcodedSourcePreprocessor from './hardcodedSourcePreprocessor';
-//import {addField} from './addField';
-import mergeField from './mergeField';
+import {default as addDataFields} from './addField.js';
+import {default as mergeDataFields} from './mergeField';
 //import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -77,6 +77,6 @@ export const localReducers = [
   field008(), // Tests 06, 07, and 08
   //mainAndCorrespondingAddedEntry(),
   //genericDatafield(),
-  mergeField()
-  //addField()
+  mergeDataFields(),
+  addDataFields()
 ];
