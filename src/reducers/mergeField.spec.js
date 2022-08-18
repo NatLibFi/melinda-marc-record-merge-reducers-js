@@ -4,10 +4,10 @@ import createReducer from './mergeField';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
-describe('genericDatafields tests: ', () => {
+describe('merge data field tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'genericDatafields'],
+    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'mergeDataFields'],
     recurse: true,
     useMetadataFile: true,
     fixura: {
