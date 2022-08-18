@@ -1,0 +1,6 @@
+{
+  "description":"Field 773 IND1 differs: merge, take bigger ind1 value (reason: non-filing chars)",
+  "config": {
+    "ignoreIndicator1": true
+  }
+}

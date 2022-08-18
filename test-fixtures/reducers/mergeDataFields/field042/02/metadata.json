@@ -1,0 +1,5 @@
+{
+  "description":"Merge subfields (field 042)",
+  "comment": "Note that this is a rare case where no shared are required",
+  "commment2": "Note that semantically we might also remove field 042 if anything is added/removed."
+}

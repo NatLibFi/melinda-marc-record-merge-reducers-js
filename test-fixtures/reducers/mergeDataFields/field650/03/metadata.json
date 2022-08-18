@@ -1,0 +1,4 @@
+{
+  "description":"650: config prevents replication; test skipAddTags",
+  "config": { "skipAddTags": [ "650" ] }
+}

@@ -1,0 +1,16 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "246",
+      "ind1": "1",
+      "ind2": "2",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Kevätkiertolainen"
+        }
+      ]
+    }
+  ]
+}

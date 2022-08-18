@@ -1,0 +1,20 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "730",
+      "ind1": "1",
+      "ind2": "2",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Test IND2."
+        },
+        {
+          "code": "p",
+          "value": "Merge despite difference."
+        }
+      ]
+    }
+  ]
+}

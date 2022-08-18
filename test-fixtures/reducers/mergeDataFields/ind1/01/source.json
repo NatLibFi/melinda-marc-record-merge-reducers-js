@@ -1,0 +1,31 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "730",
+      "ind1": "0",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Jotain tähän"
+        }
+      ]
+    },
+    {
+      "tag": "240",
+      "ind1": "1",
+      "ind2": "4",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "The Headache"
+        },
+        {
+          "code": "l",
+          "value": "ruotsi"
+        }
+      ]
+    }
+  ]
+}

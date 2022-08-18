@@ -1,0 +1,38 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "035",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "(FI-MELINDA)000987654"
+        }
+      ]
+    },
+    {
+      "tag": "035",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "(FI-ASTERI-A)000000666"
+        }
+      ]
+    },
+    {
+      "tag": "035",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "(FI-ASTERI-W)000000666"
+        }
+      ]
+    }
+  ]
+}
