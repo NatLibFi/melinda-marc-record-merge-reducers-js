@@ -4,7 +4,7 @@ import {cloneAndRemovePunctuation} from './normalize.js';
 import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {
   fieldHasSubfield,
-  fieldToString, nvdebug,
+  fieldToString, isControlSubfieldCode, nvdebug,
   subfieldIsRepeatable, subfieldsAreIdentical
 } from './utils.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
@@ -214,6 +214,9 @@ function addSubfield(targetField, candSubfield) {
   nvdebug(` Added subfield ‡'${str}' to field`, debug);
   // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
   targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
+  if (!isControlSubfieldCode(candSubfield.code)) { // eslint-disable-line functional/no-conditional-statement
+    targetField.punctuate = 1; // eslint-disable-line functional/immutable-data
+  }
   targetField.merged = 1; // eslint-disable-line functional/immutable-data
   sortAdjacentSubfields(targetField);
 }
@@ -237,6 +240,7 @@ export function mergeSubfield(record, targetField, candSubfield) {
   if (replaceSubfieldWithBetterValue(targetField, candSubfield)) {
     nvdebug(`    A: Yes. Subfield '‡${candSubfield.code} ${candSubfield.value}' replaces and original subfield.`, debug);
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
+    targetField.punctuate = 1; // eslint-disable-line functional/immutable-data
     return;
   }
 

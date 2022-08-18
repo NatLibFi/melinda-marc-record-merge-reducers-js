@@ -13,6 +13,11 @@ export function postprocessRecord(record) {
       // - remove subsets?
       // - Fix X00 ind2 etc
     }
+
+    if (field.punctuate) { // eslint-disable-line functional/no-conditional-statement
+      delete field.punctuate; // eslint-disable-line functional/immutable-data
+    }
+
     if (field.added) { // eslint-disable-line functional/no-conditional-statement
       delete field.added; // eslint-disable-line functional/immutable-data
     }

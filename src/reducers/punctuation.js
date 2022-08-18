@@ -329,15 +329,19 @@ export function fieldStripPunctuation(field) {
 }
 
 export function fieldFixPunctuation(field) {
-  debug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`);
   if (!field.subfields) {
     return field;
   }
+  nvdebug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`);
+
   field.subfields.forEach((sf, i) => {
     subfieldFixPunctuation(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null);
   });
+
   // addFinalPunctuation(field); // local version. use shared code instead.
   // Use shared code for final punctuation (sadly this does not fix intermediate punc):
-  validateSingleField(field, false, true); // NB! Don't use field.tag as second argument! It's a string, not an int. 3rd arg must be true (=fix)
+  if (field.punctuate) { // eslint-disable-line functional/no-conditional-statement
+    validateSingleField(field, false, true); // NB! Don't use field.tag as second argument! It's a string, not an int. 3rd arg must be true (=fix)
+  }
   return field;
 }
