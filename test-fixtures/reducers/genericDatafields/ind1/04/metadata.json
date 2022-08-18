@@ -1,7 +1,0 @@
-{
-  "description":"Field 650 IND1 differs: merge, take better indicator1 '#' from source",
-  "config": {
-    "ignoreIndicator1": true,
-    "indicator1PreferredValues": { "650" : " 120" }
-  }
-}

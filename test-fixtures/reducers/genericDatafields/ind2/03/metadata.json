@@ -1,7 +1,0 @@
-{
-  "description":"Field 730 IND2 differs: merge (allow via config), use source IND2 as it is better (TODO)",
-  "config": {
-    "ignoreIndicator2":true,
-    "indicator2PreferredValues": { "730" : "2 " }
-  }
-}

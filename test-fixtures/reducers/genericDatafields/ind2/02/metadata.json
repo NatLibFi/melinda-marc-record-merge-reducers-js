@@ -1,4 +1,0 @@
-{
-  "description":"Field 730 IND2 differs: merge (allow via config), keep original indicator (default)",
-  "config": { "ignoreIndicator2":true}
-}
