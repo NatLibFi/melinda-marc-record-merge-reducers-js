@@ -34,8 +34,8 @@ export default () => (base, source) => {
 
     subfieldExcluder.fix(record);
 
+    // Not sure whether this should be done, or should we normalize ISBNs during comparison.
     const addHyphensToISBN = isbnIssn({hyphenateISBN: true});
-
     addHyphensToISBN.fix(record);
 
     /*
@@ -58,13 +58,15 @@ export default () => (base, source) => {
 
 
     // Base has 1XX fields. Retag source's 1XX fields
-    const source1XX = record.get(/^1..$/u);
-    source1XX.forEach(field => retagField(field));
+    retagSources1XXFields(record);
 
-    function retagField(field) {
-      const newTag = `7${field.tag.substring(1)}`;
-      //nvdebug(`Retag ${field.tag} => ${newTag}`);
-      field.tag = newTag; // eslint-disable-line functional/immutable-data
+    function retagSources1XXFields(record) {
+      const source1XX = record.get(/^1..$/u);
+      source1XX.forEach(field => {
+        const newTag = `7${field.tag.substring(1)}`;
+        //nvdebug(`Retag ${field.tag} => ${newTag}`);
+        field.tag = newTag; // eslint-disable-line functional/immutable-data
+      });
     }
 
     return record;
