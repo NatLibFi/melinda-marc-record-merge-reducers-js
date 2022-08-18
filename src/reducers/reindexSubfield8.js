@@ -13,7 +13,7 @@ export default () => (base, source) => {
   return [base, sourceRecord];
 };
 
-function subfield8Index(subfield) {
+function getSubfield8Index(subfield) {
   const match = subfield.value.match(sf8Regexp);
   if (match.length === 0) {
     return 0;
@@ -32,7 +32,7 @@ export function getMaxSubfield8(record) {
     if (sf8s.length === 0) {
       return 0;
     }
-    const vals = sf8s.map(sf => subfield8Index(sf));
+    const vals = sf8s.map(sf => getSubfield8Index(sf));
     return Math.max(...vals);
   }
 }
@@ -52,15 +52,14 @@ export function reindexSubfield8s(record, baseMax) {
   }
 
   function updateSubfield8(sf, max) {
-    if (sf.code === '8') { // eslint-disable-line functional/no-conditional-statement
-      const oldIndex = subfield8Index(sf);
-      if (oldIndex < 1) { // Unexpected crap
-        return;
-      }
-      const index = oldIndex + max;
-      const strindex = `${index}`;
-      sf.value = sf.value.replace(`${oldIndex}`, strindex); // eslint-disable-line functional/immutable-data
-      debug(`SF8 is now ${sf.value}`);
+    if (sf.code !== '8') {
+      return;
     }
+    const oldIndex = getSubfield8Index(sf);
+
+    const index = oldIndex + max;
+    const strindex = `${index}`;
+    sf.value = sf.value.replace(`${oldIndex}`, strindex); // eslint-disable-line functional/immutable-data
+    debug(`SF8 is now ${sf.value}`);
   }
 }
