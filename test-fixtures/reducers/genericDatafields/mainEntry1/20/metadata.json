@@ -1,3 +1,4 @@
 {
-  "description":"20"
+  "description":"20, merge fields, take $0 from source, but drop crappy $d (1)",
+  "comment": "d-clean up should be done earlier on"
 }

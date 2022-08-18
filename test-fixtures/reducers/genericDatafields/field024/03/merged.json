@@ -27,40 +27,6 @@
           "value": "Joku TestiArvo &!Tähän"
         }
       ]
-    },
-    {
-      "tag": "024",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "FILNM9500118"
-        },
-        {
-          "code": "q",
-          "value": "024_q1_source"
-        },
-        {
-          "code": "q",
-          "value": "024_q2_source"
-        }
-      ]
-    },
-    {
-      "tag": "024",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "FILNM9500117"
-        },
-        {
-          "code": "q",
-          "value": "024_q3_source"
-        }
-      ]
     }
   ]
 }

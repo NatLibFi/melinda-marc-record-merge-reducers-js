@@ -15,21 +15,6 @@
           "value": "Pappeinkokous."
         }
       ]
-    },
-    {
-      "tag": "711",
-      "ind1": "2",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Lapuan hiippakunta."
-        },
-        {
-          "code": "e",
-          "value": "Tuomiokapituli."
-        }
-      ]
     }
   ]
 }

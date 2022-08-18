@@ -27,33 +27,6 @@
           "value": "San Diego, Calif."
         }
       ]
-    },
-    {
-      "tag": "710",
-      "ind1": "2",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "International Communication Association."
-        },
-        {
-          "code": "b",
-          "value": "Conference"
-        },
-        {
-          "code": "d",
-          "value": "((2002 :"
-        },
-        {
-          "code": "c",
-          "value": "London, England),"
-        },
-        {
-          "code": "n",
-          "value": "London, England."
-        }
-      ]
     }
   ]
 }

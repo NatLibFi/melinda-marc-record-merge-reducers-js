@@ -15,21 +15,6 @@
           "value": "Copy, don't merge."
         }
       ]
-    },
-    {
-      "tag": "730",
-      "ind1": "1",
-      "ind2": "2",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Test IND2."
-        },
-        {
-          "code": "p",
-          "value": "Copy, don't merge."
-        }
-      ]
     }
   ]
 }

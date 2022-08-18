@@ -11,21 +11,6 @@
           "value": "Testing"
         }
       ]
-    },
-    {
-      "tag": "240",
-      "ind1": "1",
-      "ind2": "0",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Seitsemän veljestä"
-        },
-        {
-          "code": "l",
-          "value": "ruotsi"
-        }
-      ]
     }
   ]
 }

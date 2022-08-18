@@ -1,0 +1,9 @@
+{
+  "description":"Copy fields, swap 910$c->$e and 040$a->$d (latter requires explicit rule)",
+  "config": {
+    "swapSubfieldCodes" : [
+      {"tagPattern": "^040$", "from": "a", "to": "d"},
+      {"tagPattern": "^910$", "from": "c", "to": "e"}
+    ]
+  }
+}

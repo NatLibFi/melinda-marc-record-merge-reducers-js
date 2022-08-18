@@ -1,3 +1,3 @@
 {
-  "description":"Copy 040 field from source to base record (which does not have one)"
+  "description":"don't merge"
 }

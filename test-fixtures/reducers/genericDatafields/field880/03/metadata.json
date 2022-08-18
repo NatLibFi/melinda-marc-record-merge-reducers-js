@@ -1,3 +1,3 @@
 {
-  "description":"merge two 700 fields, one with $6 subfield (and corresponding 880 field) and the other one without, but otherwise similar"
+  "description":"merge two 700 fields, base with $6 subfield (and corresponding 880 field) and source without, but otherwise similar"
 }
