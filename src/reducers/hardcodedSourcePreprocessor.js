@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 //import {MarcRecord} from '@natlibfi/marc-record';
-import {/*fieldToString,*/ nvdebug} from './utils';
+//import {/*fieldToString,*/ nvdebug} from './utils';
 //import {initFieldMergeConfig} from './fieldMergeConfig';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -63,7 +63,7 @@ export default () => (base, source) => {
 
     function retagField(field) {
       const newTag = `7${field.tag.substring(1)}`;
-      nvdebug(`Retag ${field.tag} => ${newTag}`);
+      //nvdebug(`Retag ${field.tag} => ${newTag}`);
       field.tag = newTag; // eslint-disable-line functional/immutable-data
     }
 

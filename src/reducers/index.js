@@ -5,10 +5,12 @@ import field006 from './field006';
 import field007 from './field007';
 import field008 from './field008';
 //import field995 from './field995';
-import genericDatafield from './genericDatafield';
+//import genericDatafield from './genericDatafield';
 import reindexSubfield6 from './reindexSubfield6';
 import reindexSubfield8 from './reindexSubfield8';
 import hardcodedSourcePreprocessor from './hardcodedSourcePreprocessor';
+//import {addField} from './addField';
+import mergeField from './mergeField';
 //import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -46,18 +48,6 @@ const copySpecial4 = /^(?<tags>600|610|611|630|650|651|654|662)$/u; // Exclude s
 // Customized reducers still to be done for fields:
 // mainEntry: 100|110|111|130|700|710|711|730
 
-// Huom. tarkistettava missä järjestyksessä reducerit ajetaan
-// Ensin ajetaan ne joiden tuottama tulos vaikuttaa siihen mitä joillekin toisille kentille tehdään
-// eslint-disable-next-line
-const allReducers = [
-  //internalFields(), // LOW, CAT, SID. Nowadays part of genericDatafield(
-  leader(), // Test 01
-  field006(), // Tests 02 and 03
-  field007(), // Tests 04 and 05
-  field008(), // Tests 06, 07, and 08
-  genericDatafield()
-
-];
 
 export const localCopyReducerConfigs = [
 
@@ -86,6 +76,7 @@ export const localReducers = [
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
   //mainAndCorrespondingAddedEntry(),
-  genericDatafield()
-
+  //genericDatafield(),
+  mergeField()
+  //addField()
 ];

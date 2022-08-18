@@ -15,6 +15,8 @@ import clone from 'clone';
 // NB! This version should be removed after my merge request
 // https://github.com/NatLibFi/marc-record-validators-melinda/tree/generic_fix_composition
 // gets approved.
+
+
 export default function () {
 
   return {

@@ -2,15 +2,16 @@ import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
 import {fieldToString, isControlSubfieldCode} from './utils.js';
 
-import {default as normalizeEncoding, fieldFixComposition, fieldRemoveDecomposedDiacritics} from './normalizeEncoding';
+import {fieldRemoveDecomposedDiacritics} from './normalizeEncoding';
 import {fieldNormalizePrefixes} from './normalizeIdentifier';
+import {fieldPreprocess} from './hardcodedPreprocessor.js';
 //import {getMaxSubfield6, reindexSubfield6s} from './reindexSubfield6.js';
 //import {getMaxSubfield8, reindexSubfield8s} from './reindexSubfield8.js';
 import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
 /*
-// We might want something like this:
+// We might want something like this as:
 function normalizationExceptions(value = "") {
   // This is just a placeholder for now.
   // Possible normalizations include but are not limited to:
@@ -26,31 +27,6 @@ function normalizationExceptions(value = "") {
   return value;
 }
 */
-
-
-// NB! These are defined also in mergeSubfield.js. Do something...
-const notYear = /^\([1-9][0-9]*\)[,.]?$/u;
-
-function fieldRemoveDatesAssociatedWithName(field) {
-  // Skip irrelevant fields:
-  if (!field.tag.match(/^[1678]00$/u)) {
-    return field;
-  }
-  field.subfields = field.subfields.filter(sf => !isIndexNotDate(sf)); // eslint-disable-line functional/immutable-data
-  return field;
-
-  function isIndexNotDate(subfield) {
-    if (subfield.code !== 'd') {
-      return false;
-    }
-    debug(`INSPECT $d '${subfield.value}'`);
-    if (!notYear.test(subfield.value)) {
-      return false;
-    }
-    debug(`MATCH $d '${subfield.value}`);
-    return true;
-  }
-}
 
 /*
 function dontLowercase(tag, subfieldCode) {
@@ -73,34 +49,6 @@ function fieldLowercase(field) {
     }
     sf.value = sf.value.toLowerCase(); // eslint-disable-line functional/immutable-data
   });
-}
-
-function fieldPreprocess(field) {
-  // Do nothing for control fields or corrupted data fields:
-  if (!field.subfields) {
-    return field;
-  }
-
-  //// 1. Fix composition
-  // I don't want to use normalizeSync(). "åäö" => "aao". Utter crap! NB: Use something else later on!
-  fieldFixComposition(field);
-  //// 2. Fix other shit
-  // - remove crappy 100$d subfields:
-  fieldRemoveDatesAssociatedWithName(field); // eg. "100$d (1)"
-  field.subfields.forEach(sf => {
-    // Possible things to do:
-    // 2. Fix other issues
-    // - normalize non-breaking space etc whitespace characters
-    // - normalize various '-' letters in ISBN et al?
-    // - normalize various copyright signs
-    // - FIN01 vs (FI-MELINDA)? No... Probably should not be done here.
-    // - remove 020$c? This one would a bit tricky, since it often contains non-price information...
-    // 3. Trim
-    sf.value.replace(/\s+/gu, ' ').trim(); // eslint-disable-line functional/immutable-data
-    sf.value.replace(/^\s/u, '').trim(); // eslint-disable-line functional/immutable-data
-    sf.value.replace(/\s$/u, '').trim(); // eslint-disable-line functional/immutable-data
-  });
-  return field;
 }
 
 
@@ -142,19 +90,6 @@ export function cloneAndNormalizeField(field) {
   fieldComparison(field, clonedField);
 
   return clonedField;
-}
-
-
-export function recordPreprocess(record) { // For both base and source record
-  if (!record.fields) {
-    return record;
-  }
-  // externalFixes(record); // Fixes from outside this module
-
-  //record = result.record; // eslint-disable-line functional/immutable-data
-  normalizeEncoding().fix(record);
-  record.fields.forEach(field => fieldPreprocess(field));
-  return record;
 }
 
 

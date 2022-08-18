@@ -9,7 +9,7 @@ import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {initFieldMergeConfig} from './fieldMergeConfig.js';
-import {recordPreprocess/*, sourceRecordPreprocess*/} from './normalize.js';
+import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {addField} from './addField.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 
