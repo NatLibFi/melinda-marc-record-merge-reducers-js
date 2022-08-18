@@ -1,0 +1,4 @@
+{
+  "description": "Don't add field 240 since base has 130. Should modifiedSource.json  still contain the field 240?",
+  "comment": "https://workgroups.helsinki.fi/pages/viewpage.action?pageId=186735147#MARCkenttienk%C3%A4sittelykoodissa-240-kentt%C3%A4.1"
+}
