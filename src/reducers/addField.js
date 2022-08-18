@@ -109,10 +109,13 @@ function skipAddField(record, field, config = {}) {
     return true;
   }
 
+  // https://workgroups.helsinki.fi/pages/viewpage.action?pageId=186735147#MARCkenttienk%C3%A4sittelykoodissa-240-kentt%C3%A4.1
   // NB! NB! Fields 240&830: these hacks are required by specs. But should these be configured?
+  // NB! 240 is non-repeatable, so there no need to check the presence of a base-240 field separately.
   if (field.tag === '240' && recordHasField(record, '130')) {
     return true;
   }
+
   if (field.tag === '830' && !fieldHasSubfield(field, 'x')) {
     return true;
   }
