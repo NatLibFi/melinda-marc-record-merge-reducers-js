@@ -9,6 +9,7 @@ export function initFieldMergeConfig(initData = {}) {
     // Non-repe
     doNotCopyIfFieldPresent: initData.doNotCopyIfFieldPresent, // string for regexp (mod), no validation here :(
 
+
     // Indicators are typically meaningful when comparing mergability of two fields. Override that here.
     // By default, base's indicator value is retained.
     ignoreIndicator1: initData.ignoreIndicator1 || false,
@@ -18,6 +19,7 @@ export function initFieldMergeConfig(initData = {}) {
     indicator1PreferredValues: initData.indicator1PreferredValues && typeof initData.indicator1PreferredValues === 'object' ? initData.indicator1PreferredValues : false,
     indicator2PreferredValues: initData.indicator2PreferredValues && typeof initData.indicator2PreferredValues === 'object' ? initData.indicator2PreferredValues : false,
 
+    operations: initData.operations ? initData.operations : [],
     // skipAddTags: list of tags, that prevent adding. If empty, hard-coded defaults/educated guesses are used.
     // NB! Should these be one regexp instead?
     skipAddTags: initData.skipAddTags && Array.isArray(initData.skipAddTags) ? initData.skipAddTags : [],
