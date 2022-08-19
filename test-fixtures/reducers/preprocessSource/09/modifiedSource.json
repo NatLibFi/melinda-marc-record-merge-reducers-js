@@ -2,30 +2,20 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "040",
+      "tag": "245",
       "ind1": " ",
-      "ind2": " ",
+      "ind2": "0",
       "subfields": [
         {
           "code": "a",
-          "value": "org"
-        }
-      ]
-    },
-    {
-      "tag": "910",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Tyyppi, Joku"
+          "value": "Joulupukin julkaisuja"
         },
         {
-          "code": "e",
-          "value": "toimittaja."
+          "code": "x",
+          "value": "1234-5678"
         }
       ]
     }
+
   ]
 }

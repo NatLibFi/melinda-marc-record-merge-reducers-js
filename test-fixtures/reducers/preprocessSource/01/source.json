@@ -8,7 +8,7 @@
       "subfields": [
         {
           "code": "a",
-          "value": "lorum"
+          "value": "keep me"
         },
         { 
           "code": "2",
@@ -27,11 +27,11 @@
       "subfields": [
         {
           "code": "a",
-          "value": "javascript"
+          "value": "removable"
         },
         {
           "code": "x",
-          "value": "helvetti"
+          "value": "whatever"
         },
         { 
           "code": "2",

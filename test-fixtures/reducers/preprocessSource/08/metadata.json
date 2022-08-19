@@ -1,3 +1,3 @@
 {
-  "description":"Source 1XX: reindex to 7XX"
+  "description":"config: base has no 830, and one of source's 830 has an $x: keep it for now"
 }

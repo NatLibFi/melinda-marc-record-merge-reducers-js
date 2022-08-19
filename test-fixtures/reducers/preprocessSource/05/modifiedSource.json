@@ -2,36 +2,57 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "020",
+      "tag": "700",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-8"
-        },
-        {
-          "code": "q",
-          "value": "020_q1_source"
-        },
-        {
-          "code": "q",
-          "value": "020_q2_source"
+          "value": "Multiple"
         }
       ]
     },
     {
-      "tag": "020",
+      "tag": "710",
       "ind1": " ",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "951-861-386-7"
-        },
+          "value": "1XX fields"
+        }
+      ]
+    },
+    {
+      "tag": "711",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
         {
-          "code": "q",
-          "value": "020_q3_source"
+          "code": "a",
+          "value": "is illegal"
+        }
+      ]
+    },
+    {
+      "tag": "730",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "but who cares"
+        }
+      ]
+    },
+    {
+      "tag": "150",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "not handled"
         }
       ]
     }
