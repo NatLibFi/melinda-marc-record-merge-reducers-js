@@ -1,6 +1,9 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug, recordHasField} from './utils';
+//import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug, recordHasField} from './utils';
+
+import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
+
 import {isSubfieldGoodForMerge} from './mergeSubfield';
 import {addableTag} from './mergableTag';
 
@@ -112,13 +115,19 @@ function skipAddField(record, field, config = {}) {
   // https://workgroups.helsinki.fi/pages/viewpage.action?pageId=186735147#MARCkenttienk%C3%A4sittelykoodissa-240-kentt%C3%A4.1
   // NB! NB! Fields 240&830: these hacks are required by specs. But should these be configured?
   // NB! 240 is non-repeatable, so there no need to check the presence of a base-240 field separately.
+  /* // handled by configuration nowadays
   if (field.tag === '240' && recordHasField(record, '130')) {
     return true;
   }
+  */
 
+  // Handled by configuration
+  /*
   if (field.tag === '830' && !fieldHasSubfield(field, 'x')) {
     return true;
   }
+  */
+
   // We could block 260/264 pairs here.
 
   // Skip duplicate field (Should we have something like config.forceAdd):
