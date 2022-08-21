@@ -1,3 +1,3 @@
 {
-  "description":"add field: Move two 020 fields from source to base record as such"
+  "description":"add/copy two repeatable 020 fields from source to base, when base has none"
 }

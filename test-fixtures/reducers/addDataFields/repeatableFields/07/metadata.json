@@ -1,0 +1,4 @@
+{
+  "description": "Don't add field 240 despite base has 130. ",
+  "comment": "https://workgroups.helsinki.fi/pages/viewpage.action?pageId=186735147#MARCkenttienk%C3%A4sittelykoodissa-240-kentt%C3%A4.1 Specs don't allow this, but source 240 should be handled/removed earlier on"
+}

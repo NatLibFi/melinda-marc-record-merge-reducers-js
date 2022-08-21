@@ -1,0 +1,4 @@
+{
+  "description": "add/copy a near-duplicte (only subfield order differs: $ab vs $ba).",
+  "comment": "This near-duplicate field pair should have been handled by field merge though"
+}

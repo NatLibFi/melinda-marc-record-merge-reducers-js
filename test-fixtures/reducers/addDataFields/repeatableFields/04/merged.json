@@ -1,53 +1,28 @@
-{
-  "leader": "01331cam a22003494i 4500",
-  "fields": [
     {
-      "tag": "653",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
+      "leader": "01331cam a22003494i 4500",
+      "fields": [
         {
-          "code": "a",
-          "value": "asiasana"
-        }
-      ]
-    },
-    {
-      "tag": "666",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "alpha"
+          "tag": "666",
+          "ind1": " ",
+          "ind2": " ",
+          "subfields": [
+            {
+              "code": "a",
+              "value": "whatever"
+            }
+          ]
         },
         {
-          "code": "a",
-          "value": "beta"
+          "tag": "666",
+          "ind1": " ",
+          "ind2": " ",
+          "subfields": [
+            {
+              "code": "a",
+              "value": "whatever #2"
+            }
+          ]
         }
-      ]
-    },
-    {
-      "tag": "666",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "beta"
-        }
-      ]
-    },
-    {
-      "tag": "666",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "gamma"
-        }
+        
       ]
     }
-  ]
-}

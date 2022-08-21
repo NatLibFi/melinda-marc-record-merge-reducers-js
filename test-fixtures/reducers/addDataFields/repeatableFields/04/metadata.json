@@ -1,3 +1,4 @@
 {
-  "description":"666 is a non-standard field. However, nowadays we copy them as well."
+  "description":" add/copy a non-standard 666 field",
+  "comment": "non-stantard fields are considered repeatable by default"
 }

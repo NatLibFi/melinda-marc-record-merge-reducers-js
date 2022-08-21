@@ -2,59 +2,40 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "010",
-      "ind1": " ",
+      "tag": "700",
+      "ind1": "1",
       "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "1234567"
+          "value": "Frenckell, Ester-Margaret von,"
+        },
+        {
+          "code": "e",
+          "value": "kirjoittaja."
+        },
+        {
+          "code": "0",
+          "value": "(FIN11)000063920"
         }
       ]
     },
     {
-      "tag": "830",
-      "ind1": " ",
-      "ind2": "0",
+      "tag": "700",
+      "ind1": "1",
+      "ind2": " ",
       "subfields": [
         {
           "code": "a",
-          "value": "Turun kauppakorkeakoulun julkaisuja"
+          "value": "Frenckell, Ester-Margaret von,"
         },
         {
-          "code": "n",
-          "value": "Sarja A,"
+          "code": "e",
+          "value": "toimittaja."
         },
         {
-          "code": "x",
-          "value": "1459-4870"
-        },
-        {
-          "code": "v",
-          "value": "2:2009"
-        }
-      ]
-    },
-    {
-      "tag": "830",
-      "ind1": " ",
-      "ind2": "0",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Turun yliopiston julkaisuja"
-        },
-        {
-          "code": "n",
-          "value": "Sarja B,"
-        },
-        {
-          "code": "x",
-          "value": "2459-4870"
-        },
-        {
-          "code": "v",
-          "value": "2:2019"
+          "code": "0",
+          "value": "(FI-ASTERI-N)999999999"
         }
       ]
     }

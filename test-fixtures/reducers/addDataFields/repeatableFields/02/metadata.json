@@ -1,4 +1,3 @@
 {
-  "description":"add fields: move two new fields from source to base",
-  "comment": "Test had illogical/stupid 022$a contents. I've kept them as suck."
+  "description":"add/copy two repeatable 020 fields from source to base, when base has one 020"
 }

@@ -2,13 +2,13 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "666",
-      "ind1": " ",
-      "ind2": " ",
+      "tag": "240",
+      "ind1": "1",
+      "ind2": "0",
       "subfields": [
         {
           "code": "a",
-          "value": "whatever #2"
+          "value": "Seitsemän veljestä."
         }
       ]
     }

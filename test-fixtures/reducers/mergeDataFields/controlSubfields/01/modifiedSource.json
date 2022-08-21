@@ -2,13 +2,17 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "666",
+      "tag": "650",
       "ind1": " ",
-      "ind2": " ",
+      "ind2": "4",
       "subfields": [
         {
           "code": "a",
-          "value": "whatever #2"
+          "value": "taikasana"
+        },
+        {
+          "code": "5",
+          "value": "JOKU"
         }
       ]
     }
