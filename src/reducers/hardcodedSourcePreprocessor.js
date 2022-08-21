@@ -2,15 +2,15 @@
 //import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
 //import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
-import {fieldRenameSubfieldCodes, fieldToString, nvdebug, recordReplaceField, stringToRegex} from './utils.js';
-import {sortAdjacentSubfields} from './sortSubfields';
+import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug, recordReplaceField/*, stringToRegex*/} from './utils.js';
+//import {sortAdjacentSubfields} from './sortSubfields';
 
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 //import {initFieldMergeConfig} from './fieldMergeConfig';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
 
 // fieldSpecs
@@ -240,7 +240,7 @@ function filterOperation(base, source, operation) {
 
 
 export default (config = []) => (base, source) => {
-  filterOperations(base, source, config);
+  filterOperations(base, source, config.preprocessorDirectives);
 
   return [base, externalFixes(source, config)];
 
@@ -248,7 +248,7 @@ export default (config = []) => (base, source) => {
     config.forEach(operation => filterOperation(base, source, operation));
   }
 
-  function externalFixes(record, config) {
+  function externalFixes(record) {
 
 
     //externalFieldsPresent(record, [/^336$/u, /^337$/u], true); // Comps don't always have 338
@@ -312,15 +312,14 @@ export default (config = []) => (base, source) => {
     }
     */
 
-    record.fields.forEach(field => swapIncomingSubfieldCodes(field, config));
+    //record.fields.forEach(field => swapIncomingSubfieldCodes(field, config));
 
     return record;
   }
 };
 
-
+/*
 const defaultSwapSubfieldCodes = [{'tagPattern': '^040$', 'from': 'a', 'to': 'd'}];
-
 
 function swapIncomingSubfieldCodes(field, config) {
   const swapSubfieldCodes = config.swapSubfieldCodes ? config.swapSubfieldCodes : defaultSwapSubfieldCodes;
@@ -336,5 +335,5 @@ function swapIncomingSubfieldCodes(field, config) {
     sortAdjacentSubfields(field);
     return;
   }
-
 }
+*/
