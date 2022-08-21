@@ -113,5 +113,17 @@
             },
             "comment": "NB! Domain-specific. Not from specs, but we never want these from the source for semantical reasons."
         }
-    ]
+    ],
+
+    "mergeConfiguration" : {
+
+    },
+
+    "postMergeDirectives" : [
+
+    ],
+
+    "addConfiguration" : {
+
+    }
 }
