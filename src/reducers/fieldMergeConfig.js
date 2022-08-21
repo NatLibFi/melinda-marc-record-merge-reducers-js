@@ -5,6 +5,8 @@
 
 export function initFieldMergeConfig(initData = {}) {
   const config = {
+    // doNotCopyIfFieldPresent functionality should be removed eventually... (do it via configs)
+
     // doNotCopyIfFieldPresent prevenets copying of repeatable fields.
     // Non-repe
     doNotCopyIfFieldPresent: initData.doNotCopyIfFieldPresent, // string for regexp (mod), no validation here :(
@@ -20,11 +22,9 @@ export function initFieldMergeConfig(initData = {}) {
     indicator2PreferredValues: initData.indicator2PreferredValues && typeof initData.indicator2PreferredValues === 'object' ? initData.indicator2PreferredValues : false,
 
     operations: initData.operations ? initData.operations : [],
-    // skipAddTags: list of tags, that prevent adding. If empty, hard-coded defaults/educated guesses are used.
-    // NB! Should these be one regexp instead?
-    skipAddTags: initData.skipAddTags && Array.isArray(initData.skipAddTags) ? initData.skipAddTags : [],
+
     // skipMergeTags: list of tags, that prevent merge. If empty, hard-coded defaults/education guesses will be used
-    // NB! Should these be one regexp instead?
+    // NB! Should these be one regexp instead? NB! These should be set in config.json...
     skipMergeTags: initData.skipMergeTags && Array.isArray(initData.skipMergeTags) ? initData.skipMergeTags : [],
 
     // If undefined, defaults swaps (040$a -> 040$d) are performed.
