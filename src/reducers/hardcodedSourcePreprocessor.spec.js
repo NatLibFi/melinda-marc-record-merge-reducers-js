@@ -3,88 +3,10 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './hardcodedSourcePreprocessor';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
+import fs from 'fs';
+import path from 'path';
 
-
-// NB! fieldSpecification is for grepping the right fields!
-const defaultConfig = [ // Move this to a file eventually
-
-  {'operation': 'removeSubfield',
-    'recordType': 'source',
-    'fieldSpecification': {
-      'tagPattern': '^(?:020|024?)$',
-      'subfieldFilters': [{'code': 'c'}]
-    },
-    'deletableSubfieldFilter': {'code': 'c'}},
-
-  {
-    'operation': 'renameSubfield',
-    'recordType': 'source',
-    'fieldSpecification': {
-      'tag': '040',
-      'subfieldFilters': [{'code': 'a'}]
-    },
-    'renamableSubfieldFilter': {'code': 'a', 'newCode': 'd'}
-  },
-
-  {
-    'operation': 'removeSubfield',
-    'recordType': 'source',
-    'fieldSpecification': {
-      'tag': '041',
-      'subfieldFilters': [
-        {'code': 'a',
-          'value': 'zxx'}
-      ]
-    },
-    'deletableSubfieldFilter': {'code': 'a', 'value': 'zxx'}
-  },
-
-  {'operation': 'retag',
-    'recordType': 'source',
-    'fieldSpecification': {'tag': '100'},
-    'newTag': '700'},
-  {'operation': 'retag',
-    'recordType': 'source',
-    'fieldSpecification': {'tag': '110'},
-    'newTag': '710'},
-  {'operation': 'retag',
-    'recordType': 'source',
-    'fieldSpecification': {'tag': '111'},
-    'newTag': '711'},
-  {'operation': 'retag',
-    'recordType': 'source',
-    'fieldSpecification': {'tag': '130'},
-    'newTag': '730'},
-
-
-  {'operation': 'removeField',
-    'comment': 'this should be done after field merge and before copy',
-    'recordType': 'source',
-    'fieldSpecification': {
-      'tag': '240'
-    },
-    'requireBaseField': {
-      'tagPattern': '^(130|240)$'
-    }},
-
-  {'operation': 'removeField',
-    'recordType': 'source',
-    'fieldSpecification': {
-      'tagPattern': '^(?:648|650|651|655)$',
-      'subfieldFilters': [
-        {'code': '2',
-          'valuePattern': '^(allars|cilla|musa|ysa)$'}
-      ]
-    }},
-
-  {'operation': 'removeField',
-    'recordType': 'source',
-    'fieldSpecification': {
-      'tag': '830',
-      'subfieldFilters': [{'missingCode': 'x'}]
-    }}
-
-];
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 
 describe('source preprocessor tests: ', () => {
