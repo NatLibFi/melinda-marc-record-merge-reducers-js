@@ -103,6 +103,15 @@
                 "subfieldFilters": [{"missingCode": "x"}]
             },
             "comment": "NB! Domain-specific. As in specs."
+        },
+
+        {
+            "operation": "removeField",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tagPattern": "^(066|84[12345]|85[2345]|86[3-8]|87[6-8]|HLI)$"
+            },
+            "comment": "NB! Domain-specific. Not from specs, but we never want these from the source for semantical reasons."
         }
     ]
 }

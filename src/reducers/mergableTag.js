@@ -3,7 +3,6 @@
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const defaultNonMergableFields = [
-  '066',
   '382', // 382: merging would be madness... However, this will miss cases, where only $5 or $9 differs...
   // 59X: always copy, never merge. NB! No specs exist!
   '590',
@@ -41,25 +40,7 @@ const defaultNonMergableFields = [
   '786',
   '787',
   // Them 8XX fields are holdingds related fields:
-  '841',
-  '842',
-  '843',
-  '844',
-  '845',
-  '852',
-  '853',
-  '854',
-  '855',
   '856',
-  '863',
-  '864',
-  '865',
-  '866',
-  '867',
-  '868',
-  '876',
-  '877',
-  '878',
   '881',
   '882',
   '883',
@@ -75,8 +56,7 @@ const defaultNonMergableFields = [
   '995',
   'CAT',
   'LOW',
-  'SID',
-  'HLI'
+  'SID'
 ];
 
 export function mergableTag(tag, config) {
