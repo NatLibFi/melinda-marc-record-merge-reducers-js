@@ -5,7 +5,6 @@ import createDebugLogger from 'debug';
 import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 
 import {isSubfieldGoodForMerge} from './mergeSubfield';
-import {addableTag} from './mergableTag';
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {initFieldMergeConfig} from './fieldMergeConfig.js';
@@ -133,10 +132,6 @@ function skipAddField(record, field, config = {}) {
   // Skip duplicate field (Should we have something like config.forceAdd):
   if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
     //debug(`addField(): field '${fieldToString(field)}' already exists! No action required!`);
-    return true;
-  }
-
-  if (!addableTag(field.tag, config)) {
     return true;
   }
 

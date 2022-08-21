@@ -1,33 +1,9 @@
-import createDebugLogger from 'debug';
-import {nvdebug} from './utils';
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-
-
-const defaultNonMergableNonAddableFields = [
-  '066', // 066 - Character sets present (NR)
-  // Them 8XX fields are holdingds related fields:
-  '841',
-  '842',
-  '843',
-  '844',
-  '845',
-  '852',
-  '853',
-  '854',
-  '855',
-  '863',
-  '864',
-  '865',
-  '866',
-  '867',
-  '868',
-  '876',
-  '877',
-  '878',
-  'HLI' // Aleph internal noise
-];
+//import createDebugLogger from 'debug';
+//import {nvdebug} from './utils';
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const defaultNonMergableFields = [
+  '066',
   '382', // 382: merging would be madness... However, this will miss cases, where only $5 or $9 differs...
   // 59X: always copy, never merge. NB! No specs exist!
   '590',
@@ -64,7 +40,26 @@ const defaultNonMergableFields = [
   '785',
   '786',
   '787',
+  // Them 8XX fields are holdingds related fields:
+  '841',
+  '842',
+  '843',
+  '844',
+  '845',
+  '852',
+  '853',
+  '854',
+  '855',
   '856',
+  '863',
+  '864',
+  '865',
+  '866',
+  '867',
+  '868',
+  '876',
+  '877',
+  '878',
   '881',
   '882',
   '883',
@@ -80,7 +75,8 @@ const defaultNonMergableFields = [
   '995',
   'CAT',
   'LOW',
-  'SID'
+  'SID',
+  'HLI'
 ];
 
 export function mergableTag(tag, config) {
@@ -89,14 +85,5 @@ export function mergableTag(tag, config) {
     return !config.skipMergeTags.includes(tag);
   }
 
-  return !(defaultNonMergableFields.includes(tag) || defaultNonMergableNonAddableFields.includes(tag));
-}
-
-export function addableTag(tag, config) {
-  if (config.skipAddTags.length > 0) {
-    nvdebug(`NVD Tag ${tag} in ${config.skipAddTags.join(', ')}`, debug);
-    return !config.skipAddTags.includes(tag);
-  }
-
-  return !defaultNonMergableNonAddableFields.includes(tag);
+  return !defaultNonMergableFields.includes(tag);
 }
