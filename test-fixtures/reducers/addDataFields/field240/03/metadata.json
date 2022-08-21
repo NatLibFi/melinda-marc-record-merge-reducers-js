@@ -1,5 +1,0 @@
-{
-  "description": "Don't add field 240 since base has 240 (both NR and explicitly forbidden by specs)",
-  "comment": "https://workgroups.helsinki.fi/pages/viewpage.action?pageId=186735147#MARCkenttienk%C3%A4sittelykoodissa-240-kentt%C3%A4.1",
-  "comment2": "Remove field 240 from modifiedSource?"
-}
