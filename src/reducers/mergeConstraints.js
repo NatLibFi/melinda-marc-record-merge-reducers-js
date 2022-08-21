@@ -266,7 +266,7 @@ const mergeConstraints = [
   {'tag': '935', 'required': 'a', 'key': 'az'}, // Fono information at least
   {'tag': '940', 'required': ''},
   {'tag': '960', 'required': ''},
-  {'tag': '973', 'required': 'w', key: 'w'}, // Viola multi-hosts
+  {'tag': '973', 'required': 'w', 'key': 'w'}, // Viola multi-hosts
   {'tag': '995', 'required': ''},
   {'tag': 'CAT', 'required': ''},
   {'tag': 'LOW', 'required': ''},
