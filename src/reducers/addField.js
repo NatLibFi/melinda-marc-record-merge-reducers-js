@@ -10,7 +10,7 @@ import {addableTag} from './mergableTag';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {initFieldMergeConfig} from './fieldMergeConfig.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
-import {recordPreprocess/*, sourceRecordPreprocess*/} from './normalize.js';
+import {recordPreprocess/*, sourceRecordPreprocess*/} from './hardcodedPreprocessor.js';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -173,7 +173,8 @@ export function addField(record, field, config = {}) {
     return false;
   }
 
-  const newField = cloneField(field, config); // clone (unnecessarily) + field.added = 1
+  const newField = cloneField(field, config); // clone for base+ field.added = 1
+  field.deleted = 1; // eslint-disable-line functional/immutable-data
 
   nvdebug(`addField(): Try to add '${fieldToString(field)}'.`, debug);
   return addField2(record, newField);
