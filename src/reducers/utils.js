@@ -44,7 +44,7 @@ export function fieldToString(f) {
   }
   return `${f.tag}    ${f.value}`;
   function formatSubfields(field) {
-    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join('‡');
+    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join(' ‡');
   }
 }
 
@@ -155,6 +155,7 @@ export function fieldHasNSubfields(field, subfieldCode/*, subfieldValue = null*/
  * renameSubfieldCodes
  *
  * */
+/*
 export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
   // should we clone this?
   field.subfields.map(currSub => {
@@ -167,6 +168,7 @@ export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
   });
   return field;
 }
+*/
 
 export function recordHasField(record, tag) {
   const re = new RegExp(`^${tag}$`, 'u');
@@ -183,6 +185,8 @@ export function recordReplaceField(record, originalField, newField) {
     // Should this function return something for success or failure?
     return record;
   }
+  // I guess there's are reason for doing this like it
+  //record.fields[index] = newField; // eslint-disable-line functional/immutable-data
   record.removeField(originalField);
   record.insertField(newField);
   return record;
