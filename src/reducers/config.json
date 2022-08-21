@@ -1,0 +1,108 @@
+{ "preprocessorDirectives" :
+    [
+        {
+            "operation": "removeField",
+            "comment": "bunch of tags we always drop from the source",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tagPattern": "^(066|841|842|843|844|845|852|86[3-8]|876|877|878|HLI)$"
+            }
+        },
+
+        {
+            "operation": "removeSubfield",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tagPattern": "^(?:020|024?)$",
+                "subfieldFilters": [{"code": "c"}]
+            },
+            "deletableSubfieldFilter": {"code": "c"}
+        },
+
+        {
+            "operation": "renameSubfield",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tag": "040",
+                "subfieldFilters": [{"code": "a"}]
+            },
+            "renamableSubfieldFilter": {"code": "a", "newCode": "d"}
+        },
+
+        {
+            "operation": "removeSubfield",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tag": "041",
+                "subfieldFilters": [{
+                    "code": "a",
+                    "value": "zxx"
+                }]
+            },
+            "deletableSubfieldFilter": {"code": "a", "value": "zxx"}
+        },
+
+        {
+            "operation": "retag",
+            "recordType": "source",
+            "fieldSpecification": {"tag": "100"},
+            "newTag": "700"
+        },
+
+        {
+            "operation": "retag",
+            "recordType": "source",
+            "fieldSpecification": {"tag": "110"},
+            "newTag": "710"
+        },
+
+        {
+            "operation": "retag",
+            "recordType": "source",
+            "fieldSpecification": {"tag": "111"},
+            "newTag": "711"
+        },
+
+        {
+            "operation": "retag",
+            "recordType": "source",
+            "fieldSpecification": {"tag": "130"},
+            "newTag": "730"
+        },
+
+
+        {
+            "operation": "removeField",
+            "comment": "this should be done after field merge and before copy",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tag": "240"
+            },
+            "requireBaseField": {
+                "tagPattern": "^(130|240)$"
+            }
+        },
+
+        {
+            "operation": "removeField",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tagPattern": "^(?:648|650|651|655)$",
+                "subfieldFilters": [{
+                    "code": "2",
+                    "valuePattern": "^(allars|cilla|musa|ysa)$"
+                }]
+            }
+        },
+
+        {
+            "operation": "removeField",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tag": "830",
+                "subfieldFilters": [{"missingCode": "x"}]
+            },
+            "comment": "NB! Domain-specific. As in specs."
+        }
+    ]
+}
