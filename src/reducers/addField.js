@@ -6,14 +6,14 @@ import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './u
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
-import {recordPreprocess} from './hardcodedPreprocessor.js';
+//import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 import fs from 'fs';
 import path from 'path';
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
-
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
+
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 
@@ -33,23 +33,23 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   // How do we read the config? Config file? Parameters from calling function? Currently this just sets the defaults...
 
   // We should clone the records here and just here...
-  const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
-  const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
+  //const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
+  //const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
 
   const activeTagPattern = getTagPattern(config);
   nvdebug(`TAG PATTERN: ${JSON.stringify(activeTagPattern)}`);
-  const candidateFields = sourceRecord2.get(activeTagPattern);
+  const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
   candidateFields.forEach(candField => {
     nvdebug(`add field: Now processing ${fieldToString(candField)}`, debug);
-    addField(baseRecord2, candField, config);
+    addField(baseRecord, candField, config);
   });
 
-  postprocessRecord(baseRecord2);
-  postprocessRecord(sourceRecord2);
+  postprocessRecord(baseRecord);
+  postprocessRecord(sourceRecord);
 
-  return [baseRecord2, sourceRecord2];
+  return [baseRecord, sourceRecord];
 
   function getTagPattern(config) {
     if (config.tagPattern) {
