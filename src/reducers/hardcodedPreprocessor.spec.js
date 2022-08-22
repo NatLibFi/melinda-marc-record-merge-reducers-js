@@ -4,6 +4,12 @@ import createReducer from './hardcodedPreprocessor';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
+import fs from 'fs';
+import path from 'path';
+
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+
+
 describe('source preprocessor tests: ', () => {
   generateTests({
     callback,
@@ -17,7 +23,7 @@ describe('source preprocessor tests: ', () => {
   });
 
   function callback({getFixture,
-    config = [],
+    config = defaultConfig,
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
@@ -28,7 +34,7 @@ describe('source preprocessor tests: ', () => {
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
     expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
 
-    function generateReducers(tagPattern, config = {}) {
+    function generateReducers(tagPattern, config) {
       if (tagPattern) { // eslint-disable-line functional/no-conditional-statement
         config.tagPattern = tagPattern; // eslint-disable-line functional/immutable-data
       }
