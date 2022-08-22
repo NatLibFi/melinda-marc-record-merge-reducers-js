@@ -30,7 +30,7 @@ describe('merge data field tests: ', () => {
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
     expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
 
-    function generateReducers(tagPattern, config = {}) {
+    function generateReducers(tagPattern, config) {
 
 
       /*
