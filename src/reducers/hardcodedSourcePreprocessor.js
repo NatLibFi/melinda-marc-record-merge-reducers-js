@@ -2,7 +2,7 @@
 //import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
 //import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
-import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug, recordReplaceField/*, stringToRegex*/} from './utils.js';
+import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
 //import createDebugLogger from 'debug';
@@ -122,15 +122,20 @@ function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
 function getTargetRecordForOperation(base, source, recordType) {
   if (recordType === 'base') {
     nvdebug('Filter applies to BASE record');
-    return base;
+    return [base];
   }
+  if (recordType === 'both') {
+    nvdebug('Filter applies to BOTH record');
+    return [base, source];
+  }
+
   if (recordType === 'source') {
     nvdebug('Filter applies to SOURCE record');
-    return source;
+    return [source];
   }
   // Log warning/error here
   nvdebug('ERROR: no record for filter!');
-  return null;
+  return [];
 }
 
 function operationRemoveField(record, fieldSpecification) {
@@ -141,7 +146,7 @@ function operationRemoveField(record, fieldSpecification) {
 
 function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFilter) {
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
-  nvdebug(`operationRemoveSubfield() got ${relevantFields.length} field(s)`);
+  nvdebug(`operationRenameSubfield() got ${relevantFields.length} field(s)`);
   relevantFields.forEach(field => {
     /* const newField = */ renameSubfields(field, renamableSubfieldFilter);
 
@@ -166,18 +171,31 @@ function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFi
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
   nvdebug(`operationRemoveSubfield() got ${relevantFields.length} field(s)`);
   relevantFields.forEach(field => {
-    const newField = removeSubfields(field, deletableSubfieldFilter);
-    if (newField.subfields.length === 0) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug('Delete subfieldless field');
-      record.removeField(field);
+    nvdebug(`Try to remove subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`);
+    const remainingSubfields = field.subfields.filter(sf => !subfieldFilterMatches(sf, deletableSubfieldFilter));
+    if (remainingSubfields.length < field.subfields.length) {
+      nvdebug(` Got ${remainingSubfields.length}/${field.subfields.length} keepable subfield(s)`);
+
+      if (remainingSubfields.length === 0) { // eslint-disable-line functional/no-conditional-statement
+        nvdebug('Delete subfieldless field');
+        record.removeField(field);
+        return;
+      }
+      field.subfields = remainingSubfields; // eslint-disable-line functional/immutable-data
+      return;
     }
+
+    /*
     if (newField.subfields.length) { // eslint-disable-line functional/no-conditional-statement
-      recordReplaceField(record, field, newField);
+      field.value = newField.value; // eslint-disable-line functional/immutable-data
+      //recordReplaceField(record, field, newField);
     }
+    */
   });
 
+  /*
   function removeSubfields(field, deletableSubfieldFilter) {
-    nvdebug(`Try to remove subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`);
+
     const deletableSubfields = field.subfields.filter(sf => subfieldFilterMatches(sf, deletableSubfieldFilter));
     nvdebug(` Got ${deletableSubfields.length}/${field.subfields.length} deletable subfield(s)`);
     field.subfields = field.subfields.filter(sf => deletableSubfields.every(dsf => dsf !== sf)); // eslint-disable-line functional/immutable-data
@@ -185,6 +203,7 @@ function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFi
 
     return field;
   }
+  */
 }
 
 function operationRetag(record, fieldSpecification, newTag) {
@@ -195,37 +214,41 @@ function operationRetag(record, fieldSpecification, newTag) {
 }
 
 export function filterOperation(base, source, operation) {
-  const targetRecord = getTargetRecordForOperation(base, source, operation.recordType);
+  const targetRecords = getTargetRecordForOperation(base, source, operation.recordType);
 
-  if (!targetRecord) {
+  if (targetRecords.length === 0) {
     nvdebug('Failed to get the target record');
     return;
   }
 
-  const targetFields = getSpecifiedFieldsAndFilterThem(targetRecord, operation.fieldSpecification);
+  targetRecords.forEach(targetRecord => processOperationForTargetRecord(targetRecord, operation));
 
-  if (!targetFields) {
-    nvdebug(' No target fields found');
-    return;
-  }
+  function processOperationForTargetRecord(targetRecord, operation) {
+    const targetFields = getSpecifiedFieldsAndFilterThem(targetRecord, operation.fieldSpecification);
 
-  if (operation.requireBaseField) {
-    const baseFields = getSpecifiedFieldsAndFilterThem(base, operation.requireBaseField);
-    if (baseFields.length === 0) {
-      nvdebug(' Required base field not found!');
+    if (!targetFields) {
+      nvdebug(' No target fields found');
       return;
     }
+
+    if (operation.requireBaseField) {
+      const baseFields = getSpecifiedFieldsAndFilterThem(base, operation.requireBaseField);
+      if (baseFields.length === 0) {
+        nvdebug(' Required base field not found!');
+        return;
+      }
+    }
+
+    performActualOperation(targetRecord, operation);
   }
 
-  actualOperation(operation);
-
-  function actualOperation(operation) {
+  function performActualOperation(targetRecord, operation) {
     if (!operation.operation) {
       nvdebug('No operation defined');
       return;
     }
 
-    nvdebug(`current operation: ${operation.operation}`);
+    nvdebug(`current operation: ${operation.operation}, ${operation.comment ? operation.comment : 'no comment'}`);
     if (operation.operation === 'removeField') {
       operationRemoveField(targetRecord, operation.fieldSpecification);
       return;
@@ -248,7 +271,7 @@ export function filterOperation(base, source, operation) {
 
 
 export default (config = {}) => (base, source) => {
-  nvdebug(`HSP CONF ${config}`);
+  //nvdebug(`HSP CONF ${config}`);
   filterOperations(base, source, config.preprocessorDirectives);
 
   return [base, externalFixes(source, config)];
