@@ -4,12 +4,10 @@ import createDebugLogger from 'debug';
 
 import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 
-import {isSubfieldGoodForMerge} from './mergeSubfield';
-
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 import {recordPreprocess/*, sourceRecordPreprocess*/} from './hardcodedPreprocessor.js';
-import {filterOperations} from './hardcodedSourcePreprocessor.js';
+import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -56,16 +54,6 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
 
   return [baseRecord2, sourceRecord2];
 
-
-  function preprocessBeforeAdd(base, source, preprocessorDirectives) {
-    nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
-    if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
-      return;
-    }
-
-    filterOperations(base, source, preprocessorDirectives);
-  }
-
   function getTagPattern(config) {
     if (config.tagPattern) {
       return config.tagPattern;
@@ -89,22 +77,6 @@ function recordHasOriginalFieldWithTag(record, tag) {
   return candidateFields.some(field => !field.added);
 }
 
-/*
-function repeatableTagIsNonAddable(record, tag, config) {
-  // NB! DO WE WAN'T TO OVERRIDE THESE VIA CONFIG? Can't think of a case, so not implementing support for that.
-  if (tag.match(getNonAddableRegexp(config))) {
-    return recordHasOriginalFieldWithTag(record, tag);
-  }
-
-  // No reason to block:
-  return false;
-
-  function getNonAddableRegexp(config) {
-    const configRegexp = getConfigDoNotCopyIfFieldPresentRegexp(config);
-    return configRegexp ? configRegexp : defaultDoNotCopyIfFieldPresentRegexp;
-  }
-}
-*/
 
 function repetitionBlocksAdding(record, tag, config) {
   // It's not a repetition:
@@ -172,12 +144,9 @@ function cloneField(field) {
 
 
 function addField2(record, field) {
-  // NB! Some subfields are never added. Strip them.
-  field.subfields = field.subfields.filter(sf => isSubfieldGoodForMerge(field.tag, sf.code)); // eslint-disable-line functional/immutable-data
-
   // NB! Subfieldless fields (and control fields (00X)) are not handled here.
   if (field.subfields.length === 0) {
-    debug(`ERROR: No subfields in field-to-add`);
+    debug(`WARNING or ERROR: No subfields in field-to-add`);
     return record;
   }
   nvdebug(`Add as ${fieldToString(field)}`, debug);
@@ -187,12 +156,13 @@ function addField2(record, field) {
 }
 
 export function addField(record, field, config = {}) {
-  // skip duplicates and special cases:
+  // Skip duplicates and special cases:
   if (skipAddField(record, field, config)) {
     nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
     return false;
   }
 
+  // Normal situation: remove
   const newField = cloneField(field, config); // clone for base+ field.added = 1
   field.deleted = 1; // eslint-disable-line functional/immutable-data
 
