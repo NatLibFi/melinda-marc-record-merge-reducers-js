@@ -17,10 +17,6 @@
         {
           "code": "q",
           "value": "024_q2_source"
-        },
-        {
-          "code": "c",
-          "value": "024_cb_source"
         }
       ]
     },
@@ -44,10 +40,6 @@
         {
           "code": "q",
           "value": "Joku TestiArvo &!Tähän"
-        },
-        {
-          "code": "c",
-          "value": "024_c_source"
         }
       ]
     },
