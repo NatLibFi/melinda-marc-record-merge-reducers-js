@@ -9,7 +9,7 @@ import {isSubfieldGoodForMerge} from './mergeSubfield';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 import {recordPreprocess/*, sourceRecordPreprocess*/} from './hardcodedPreprocessor.js';
-import {filterOperation} from './hardcodedSourcePreprocessor.js';
+import {filterOperations} from './hardcodedSourcePreprocessor.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -32,14 +32,9 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
-  filterOperations(baseRecord, sourceRecord, config.preprocessorDirectives);
+  nvdebug(`CONFIG: ${JSON.stringify(config.preprocessorDirectives)}`);
+  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
-  function filterOperations(base, source, config) {
-    config.forEach(operation => filterOperation(base, source, operation));
-  }
-
-  preprocessBeforeAdd(base, source, config.preprocess);
-  nvdebug(`CONFIG: ${JSON.stringify(config.preprocess)}`);
   // How do we read the config? Config file? Parameters from calling function? Currently this just sets the defaults...
 
   // We should clone the records here and just here...
@@ -47,7 +42,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
 
   const activeTagPattern = getTagPattern(config);
-  nvdebug(`PATTERN: ${JSON.stringify(activeTagPattern)}`);
+  nvdebug(`TAG PATTERN: ${JSON.stringify(activeTagPattern)}`);
   const candidateFields = sourceRecord2.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
@@ -62,12 +57,13 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   return [baseRecord2, sourceRecord2];
 
 
-  function preprocessBeforeAdd(base, source, config) {
-    if (!config || !config.preprocess || !config.preprocess.isArray()) {
+  function preprocessBeforeAdd(base, source, preprocessorDirectives) {
+    nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
+    if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
       return;
     }
 
-    config.preprocess.forEach(operation => filterOperation(base, source, operation));
+    filterOperations(base, source, preprocessorDirectives);
   }
 
   function getTagPattern(config) {
