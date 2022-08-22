@@ -117,7 +117,130 @@
                 "requireBaseField": {
                     "tagPattern": "^(130|240)$"
                 }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 041 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "041"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(041)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 260 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "260"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(260)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 264 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "264"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(264)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 300 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "300"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(300)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 310 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "310"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(310)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 321 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "321"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(321)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 335 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "335"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(335)$"
+                }
+            },
+
+
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 336 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "336"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(336)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 337 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "337"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(337)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 338 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "338"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(338)$"
+                }
             }
+
         ]
     }
 }

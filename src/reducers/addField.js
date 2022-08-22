@@ -6,22 +6,19 @@ import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './u
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
-import {recordPreprocess/*, sourceRecordPreprocess*/} from './hardcodedPreprocessor.js';
+import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 import fs from 'fs';
 import path from 'path';
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
-//import {sortAdjacentSubfields} from './sortSubfields';
-// import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
-
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 
 // Default list of (repeatable) fields that we don't copy if the field is already present in the base record
-const defaultDoNotCopyIfFieldPresentRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
+//const defaultDoNotCopyIfFieldPresentRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
 
 const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
@@ -63,6 +60,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
 };
 
 
+/*
 function getConfigDoNotCopyIfFieldPresentAsRegexp(config) {
   if (config.doNotCopyIfFieldPresent) {
     nvdebug(`Regexpify: '${config.doNotCopyIfFieldPresent}'`);
@@ -70,6 +68,7 @@ function getConfigDoNotCopyIfFieldPresentAsRegexp(config) {
   }
   return undefined;
 }
+*/
 
 function recordHasOriginalFieldWithTag(record, tag) {
   const candidateFields = record.get(new RegExp(`^${tag}$`, 'u'));
@@ -78,7 +77,7 @@ function recordHasOriginalFieldWithTag(record, tag) {
 }
 
 
-function repetitionBlocksAdding(record, tag, config) {
+function repetitionBlocksAdding(record, tag) {
   // It's not a repetition:
   if (!recordHasOriginalFieldWithTag(record, tag)) {
     return false;
@@ -91,38 +90,25 @@ function repetitionBlocksAdding(record, tag, config) {
   }
 
   // config.doNotCopyIfFieldPresent  overrides only default regexp of repeatable tags
+  /*
   const configRegexp = getConfigDoNotCopyIfFieldPresentAsRegexp(config);
   if (configRegexp) {
     return tag.match(configRegexp);
   }
+  */
 
   // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of the tag.
   // The original listing is from https://workgroups.helsinki.fi/x/K1ohCw .
   // However, we might have deviated from the specs.
-  return tag.match(defaultDoNotCopyIfFieldPresentRegexp);
+  //return tag.match(defaultDoNotCopyIfFieldPresentRegexp);
+  return false;
 }
 
-function skipAddField(record, field, config = {}) {
-  if (repetitionBlocksAdding(record, field.tag, config)) {
+function skipAddField(record, field) {
+  if (repetitionBlocksAdding(record, field.tag)) {
     nvdebug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`, debug);
     return true;
   }
-
-  // https://workgroups.helsinki.fi/pages/viewpage.action?pageId=186735147#MARCkenttienk%C3%A4sittelykoodissa-240-kentt%C3%A4.1
-  // NB! NB! Fields 240&830: these hacks are required by specs. But should these be configured?
-  // NB! 240 is non-repeatable, so there no need to check the presence of a base-240 field separately.
-  /* // handled by configuration nowadays
-  if (field.tag === '240' && recordHasField(record, '130')) {
-    return true;
-  }
-  */
-
-  // Handled by configuration
-  /*
-  if (field.tag === '830' && !fieldHasSubfield(field, 'x')) {
-    return true;
-  }
-  */
 
   // We could block 260/264 pairs here.
 
@@ -134,7 +120,6 @@ function skipAddField(record, field, config = {}) {
 
   return false;
 }
-
 
 function cloneField(field) {
   // mark it as coming from source:
