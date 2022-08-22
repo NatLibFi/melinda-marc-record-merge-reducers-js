@@ -7,7 +7,6 @@ import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './u
 import {isSubfieldGoodForMerge} from './mergeSubfield';
 
 import {MarcRecord} from '@natlibfi/marc-record';
-//import {initFieldMergeConfig} from './fieldMergeConfig.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 import {recordPreprocess/*, sourceRecordPreprocess*/} from './hardcodedPreprocessor.js';
 import {filterOperation} from './hardcodedSourcePreprocessor.js';

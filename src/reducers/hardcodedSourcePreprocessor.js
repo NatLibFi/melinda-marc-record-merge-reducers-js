@@ -8,7 +8,6 @@ import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug, recordReplaceField
 //import createDebugLogger from 'debug';
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import {/*fieldToString,*/ nvdebug} from './utils';
-//import {initFieldMergeConfig} from './fieldMergeConfig';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');

@@ -7,7 +7,6 @@ import {mergeIndicators} from './compareIndicators';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 import {MarcRecord} from '@natlibfi/marc-record';
-//import {initFieldMergeConfig} from './fieldMergeConfig.js';
 import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 
