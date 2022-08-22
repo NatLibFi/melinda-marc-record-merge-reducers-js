@@ -17,7 +17,7 @@ describe('source preprocessor tests: ', () => {
   });
 
   function callback({getFixture,
-    config = {},
+    config = [],
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
