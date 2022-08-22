@@ -11,8 +11,6 @@ import {sortAdjacentSubfields} from './sortSubfields.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 
-const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
-
 // NB! These are X00 specific. Should we somehow parametrize them?
 const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
 const onlyDeathYear = /^-[1-9][0-9]*[,.]?$/u;
@@ -95,16 +93,6 @@ function replaceSubfieldWithBetterValue(targetField, candSubfield) {
   return false; // default to failure
 }
 
-/*
-// Commented out, as this is handled when preprocessing the source 040 field, and thus never happens.
-// This will probably be removed eventually.
-function okToInsertTagCode(tag, code) {
-  if (tag === '040' && code === 'a') { // It should be 040$d by now, anyway...
-    return false;
-  }
-  return true;
-}
-*/
 
 function insertSubfieldAllowed(targetField, candSubfield) {
   // NB! If insert is not allowed, the candicate subfield can still replace the original. (Not handled by this function though.)
@@ -115,34 +103,6 @@ function insertSubfieldAllowed(targetField, candSubfield) {
   }
   // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
   return subfieldIsRepeatable(targetField.tag, candSubfield.code);
-}
-
-function listSubfieldsWorthKeeping(tag) {
-  const entry = includeSubfields.filter(currEntry => tag === currEntry.tag);
-  if (entry.length > 0 && 'subfields' in entry[0]) {
-    debug(`keptables: ${entry[0].subfields}`);
-    return entry[0].subfields;
-  }
-  //debug(`NO KEEPABLE SUBFIELDS FOUND FOR ${tag}.`);
-  return null;
-}
-
-function isKeptableSubfield(tag, subfieldCode) {
-  const listOfSubfieldsAsString = listSubfieldsWorthKeeping(tag);
-  if (listOfSubfieldsAsString === null) {
-    return true;
-  }
-  // NB! If nothing is listed, this will return true (feature).
-  return listOfSubfieldsAsString.indexOf(subfieldCode) > -1;
-}
-
-
-export function isSubfieldGoodForMerge(tag, subfieldCode) {
-  if (!isKeptableSubfield(tag, subfieldCode)) {
-    debug(`BAD SF: ${tag}$${subfieldCode} is unkeptable.`);
-    return false;
-  }
-  return true;
 }
 
 function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
@@ -180,8 +140,8 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
   if (mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield)) {
     return true;
   }
-  // Check whether we really want this subfield:
-  return !isSubfieldGoodForMerge(targetField.tag, candSubfield.code);
+
+  return false; // (note that this is a double negation: not required is false)
 }
 
 function addSubfield(targetField, candSubfield) {
