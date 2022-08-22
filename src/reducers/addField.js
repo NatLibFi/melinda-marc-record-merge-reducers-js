@@ -28,13 +28,9 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
   nvdebug(`CONFIG: ${JSON.stringify(config.preprocessorDirectives)}`);
+  // There are bunch of rules we want to apply after field merge and before field add.
+  // They are run here.
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
-
-  // How do we read the config? Config file? Parameters from calling function? Currently this just sets the defaults...
-
-  // We should clone the records here and just here...
-  //const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
-  //const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
 
   const activeTagPattern = getTagPattern(config);
   nvdebug(`TAG PATTERN: ${JSON.stringify(activeTagPattern)}`);
