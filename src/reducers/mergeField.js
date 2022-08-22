@@ -9,6 +9,7 @@ import {getCounterpart} from './counterpartField';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
+import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 
 import fs from 'fs';
 import path from 'path';
@@ -31,6 +32,9 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   const activeTagPattern = getTagPattern(tagPattern, config);
 
+  nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
+  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
+
   // We should clone the records here and just here...
   const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
   const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
@@ -39,7 +43,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   const candidateFields = sourceRecord2.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
-  nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
+
   candidateFields.forEach(candField => {
     nvdebug(`Now merging (or trying to) field ${fieldToString(candField)}`, debug);
     mergeField(baseRecord2, candField, config);
