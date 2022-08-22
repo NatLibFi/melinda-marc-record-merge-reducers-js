@@ -105,10 +105,6 @@
         "ignoreIndicator2" : ["222", "240", "242", "243", "245", "830"]
     },
 
-    "postMergeDirectives" : [
-
-    ],
-
     "addConfiguration" : {
         "preprocessorDirectives" : [
             {
