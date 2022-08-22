@@ -1,4 +1,4 @@
-//import {MarcRecord} from '@natlibfi/marc-record';
+import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 import {cloneAndRemovePunctuation} from './normalize';
@@ -6,7 +6,6 @@ import {mergeSubfield} from './mergeSubfield';
 import {mergeIndicators} from './compareIndicators';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
-import {MarcRecord} from '@natlibfi/marc-record';
 import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
@@ -35,25 +34,24 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
-  // We should clone the records here and just here...
-  const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
-  const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
+  recordPreprocess(baseRecord); // fix composition et al
+  recordPreprocess(sourceRecord); // fix composition et al
 
 
-  const candidateFields = sourceRecord2.get(activeTagPattern);
+  const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
 
   candidateFields.forEach(candField => {
     nvdebug(`Now merging (or trying to) field ${fieldToString(candField)}`, debug);
-    mergeField(baseRecord2, candField, config);
+    mergeField(baseRecord, candField, config);
   });
 
   // Remove deleted fields and field.merged marks:
-  postprocessRecord(baseRecord2);
-  postprocessRecord(sourceRecord2);
+  postprocessRecord(baseRecord);
+  postprocessRecord(sourceRecord);
 
-  return [baseRecord2, sourceRecord2];
+  return [baseRecord, sourceRecord];
   //return {baseRecord2, sourceRecord2};
 
   function getTagPattern(tagPattern, config) {
@@ -128,6 +126,7 @@ function skipMergeField(baseRecord, sourceField, config) {
 }
 
 export function mergeField(baseRecord, sourceField, config) {
+  nvdebug(`mergeField: ${JSON.stringify(config)}`);
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
     nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debug);
