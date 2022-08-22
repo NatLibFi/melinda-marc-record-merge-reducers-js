@@ -186,7 +186,7 @@ function operationRetag(record, fieldSpecification, newTag) {
   });
 }
 
-function filterOperation(base, source, operation) {
+export function filterOperation(base, source, operation) {
   const targetRecord = getTargetRecordForOperation(base, source, operation.recordType);
 
   if (!targetRecord) {
@@ -239,7 +239,7 @@ function filterOperation(base, source, operation) {
 }
 
 
-export default (config = []) => (base, source) => {
+export default (config = {}) => (base, source) => {
   filterOperations(base, source, config.preprocessorDirectives);
 
   return [base, externalFixes(source, config)];
@@ -249,22 +249,6 @@ export default (config = []) => (base, source) => {
   }
 
   function externalFixes(record) {
-
-
-    //externalFieldsPresent(record, [/^336$/u, /^337$/u], true); // Comps don't always have 338
-    //await FieldsPresent([/^336$/u, /^337$/u, /^338$/u]), // Comps don't always have 338
-
-    /*
-    const fieldExcluder = fieldExclusion([
-      // /^(001|091|092|093|094|095|256|533|574|575|576|577|578|599)$/,
-      //{tag: /^264$/, subfields: [{code: /^a$/, value: /^\[.*\]$/}]}, // Not sure about this either
-      //{tag: /^650$/, subfields: [{code: /^a$/, value: /^overdrive$/i}]}, // Not sure what this is
-      //{tag: /^041$/u, dependencies: [{leader: /^.{6}[g|i]/u}]},
-      {tag: /^(?:648|650|651|655)$/u, subfields: [{code: /^2$/u, value: /^(?:ysa|musa|allars|cilla)$/u}]}
-    ]);
-
-    fieldExcluder.fix(record);
-    */
 
     /*
     const subfieldExcluder = subfieldExclusion([
@@ -282,34 +266,10 @@ export default (config = []) => (base, source) => {
     /*
     await EmptyFields(),
     await IsbnIssn({hyphenateISBN: true}),
-    await SubfieldExclusion([
-      {tag: /^041$/u, subfields: [{code: /^[ad]$/u, value: /^zxx$/u}]},
-      {tag: /^02[04]$/u, subfields: [{code: /^c$/u, value: /^.*(?:€|£|\$|FIM).*$/u}]} // price info
-    ]),
+
     //await FieldStructure([{tag: /^007$/u, dependencies: [{leader: /^.{6}[^at]/u}]}]),
     await Punctuation(),
     await EndingPunctuation()
-    */
-
-    //const max6 = getMaxSubfield6(baseRecord);
-    //const max8 = getMaxSubfield8(baseRecord);
-    //nvdebug(`MAX8 FROM BASE: ${max8}`);
-    //reindexSubfield6s(sourceRecord, max6);
-    //reindexSubfield8s(sourceRecord, max8);
-
-
-    /*
-    // Base has 1XX fields. Retag source's 1XX fields
-    retagSources1XXFields(record);
-
-    function retagSources1XXFields(record) {
-      const source1XX = record.get(/^1..$/u);
-      source1XX.forEach(field => {
-        const newTag = `7${field.tag.substring(1)}`;
-        //nvdebug(`Retag ${field.tag} => ${newTag}`);
-        field.tag = newTag; // eslint-disable-line functional/immutable-data
-      });
-    }
     */
 
     //record.fields.forEach(field => swapIncomingSubfieldCodes(field, config));

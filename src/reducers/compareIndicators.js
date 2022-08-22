@@ -2,7 +2,7 @@
 //import createDebugLogger from 'debug';
 //import {fieldToString, nvdebug} from './utils';
 
-//import {nvdebug} from './utils';
+import {nvdebug} from './utils';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -39,7 +39,7 @@ function skippableIndicator2ByDefault(tag) {
 }
 
 export function mergableIndicator1(field1, field2, config) {
-  if (config.ignoreIndicator1) {
+  if (config.ignoreIndicator1 && config.ignoreIndicator1.includes(field1.tag)) {
     return true;
   }
 
@@ -52,7 +52,7 @@ export function mergableIndicator1(field1, field2, config) {
 }
 
 export function mergableIndicator2(field1, field2, config) {
-  if (config.ignoreIndicator2) {
+  if (config.ignoreIndicator2 && config.ignoreIndicator2.includes(field1.tag)) {
     return true;
   }
 
@@ -80,7 +80,7 @@ export function mergeIndicators(toField, fromField, config) {
 
   function getIndicatorPreferredValues(tag, indicatorNumber, config) {
     const preferredValues = indicatorNumber === 1 ? config.indicator1PreferredValues : config.indicator2PreferredValues;
-    //nvdebug(`${tag} IND${indicatorNumber}: get preferred values...\nCONFIG: ${JSON.stringify(config)}`);
+    nvdebug(`${tag} IND${indicatorNumber}: get preferred values...\nCONFIG: ${JSON.stringify(config)}`);
     if (preferredValues) {
       //nvdebug(`${tag} PREF VALS: ${JSON.stringify(preferredValues)}`);
       if (tag in preferredValues) {

@@ -6,6 +6,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 //import {nvdebug} from './utils';
 
+
 export default () => (base, source) => {
   const base2 = recordPreprocess(base);
   const source2 = recordPreprocess(source);
@@ -20,6 +21,7 @@ export function recordPreprocess(record) { // For both base and source record
 
   //record = result.record; // eslint-disable-line functional/immutable-data
   normalizeEncoding().fix(record);
+
   record.fields.forEach(field => fieldPreprocess(field));
   return record;
 }

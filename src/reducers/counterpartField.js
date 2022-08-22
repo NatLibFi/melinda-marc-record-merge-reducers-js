@@ -120,7 +120,7 @@ function arePairedSubfieldsInBalance(field1, field2) {
 function mergablePair(baseField, sourceField, config) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
   if (!mergableIndicator1(baseField, sourceField, config) || !mergableIndicator2(baseField, sourceField, config)) {
-    nvdebug('non-mergable (reason: indicator)');
+    nvdebug(`non-mergable (reason: indicator): ${JSON.stringify(config)}`);
     return false;
   }
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {

@@ -7,7 +7,7 @@ export function initFieldMergeConfig(initData = {}) {
   const config = {
     // doNotCopyIfFieldPresent functionality should be removed eventually... (do it via configs)
 
-    // doNotCopyIfFieldPresent prevenets copying of repeatable fields.
+    // doNotCopyIfFieldPresent prevents copying of repeatable fields.
     // Non-repe
     doNotCopyIfFieldPresent: initData.doNotCopyIfFieldPresent, // string for regexp (mod), no validation here :(
 

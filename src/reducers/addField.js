@@ -7,9 +7,14 @@ import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './u
 import {isSubfieldGoodForMerge} from './mergeSubfield';
 
 import {MarcRecord} from '@natlibfi/marc-record';
-import {initFieldMergeConfig} from './fieldMergeConfig.js';
+//import {initFieldMergeConfig} from './fieldMergeConfig.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
 import {recordPreprocess/*, sourceRecordPreprocess*/} from './hardcodedPreprocessor.js';
+import {filterOperation} from './hardcodedSourcePreprocessor.js';
+import fs from 'fs';
+import path from 'path';
+
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -21,34 +26,59 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:ad
 // Default list of (repeatable) fields that we don't copy if the field is already present in the base record
 const defaultDoNotCopyIfFieldPresentRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
 
-export default (config = {}) => (base, source) => {
+const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
+
+export default (config = defaultConfig.addConfiguration) => (base, source) => {
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
-  //nvdebug(`OBJ: ${JSON.stringify(config)}`);
+  filterOperations(baseRecord, sourceRecord, config.preprocessorDirectives);
+
+  function filterOperations(base, source, config) {
+    config.forEach(operation => filterOperation(base, source, operation));
+  }
+
+  preprocessBeforeAdd(base, source, config.preprocess);
+  nvdebug(`CONFIG: ${JSON.stringify(config.preprocess)}`);
   // How do we read the config? Config file? Parameters from calling function? Currently this just sets the defaults...
-  const processedConfig = initFieldMergeConfig(config);
 
   // We should clone the records here and just here...
   const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
   const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
 
-  const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
-
-  const candidateFields = sourceRecord2.get(processedConfig.tagPattern ? processedConfig.tagPattern : defCandFieldsRegexp);
+  const activeTagPattern = getTagPattern(config);
+  nvdebug(`PATTERN: ${JSON.stringify(activeTagPattern)}`);
+  const candidateFields = sourceRecord2.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
   candidateFields.forEach(candField => {
     nvdebug(`add field: Now processing ${fieldToString(candField)}`, debug);
-    addField(baseRecord2, candField, processedConfig);
+    addField(baseRecord2, candField, config);
   });
 
   postprocessRecord(baseRecord2);
   postprocessRecord(sourceRecord2);
 
   return [baseRecord2, sourceRecord2];
+
+
+  function preprocessBeforeAdd(base, source, config) {
+    if (!config || !config.preprocess || !config.preprocess.isArray()) {
+      return;
+    }
+
+    config.preprocess.forEach(operation => filterOperation(base, source, operation));
+  }
+
+  function getTagPattern(config) {
+    if (config.tagPattern) {
+      return config.tagPattern;
+    }
+    return defCandFieldsRegexp;
+  }
 };
+
 
 function getConfigDoNotCopyIfFieldPresentAsRegexp(config) {
   if (config.doNotCopyIfFieldPresent) {

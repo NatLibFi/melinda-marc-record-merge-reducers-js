@@ -17,7 +17,7 @@ describe('add data field tests: ', () => {
   });
 
   function callback({getFixture,
-    config = {},
+    config = undefined,
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
@@ -28,8 +28,8 @@ describe('add data field tests: ', () => {
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
     expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
 
-    function generateReducers(tagPattern, config = {}) {
-      if (tagPattern) { // eslint-disable-line functional/no-conditional-statement
+    function generateReducers(tagPattern, config) {
+      if (config && tagPattern) { // eslint-disable-line functional/no-conditional-statement
         config.tagPattern = tagPattern; // eslint-disable-line functional/immutable-data
       }
 

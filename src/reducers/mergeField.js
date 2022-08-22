@@ -7,9 +7,14 @@ import {mergeIndicators} from './compareIndicators';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {initFieldMergeConfig} from './fieldMergeConfig.js';
+//import {initFieldMergeConfig} from './fieldMergeConfig.js';
 import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {postprocessRecord} from './mergePreAndPostprocess.js';
+
+import fs from 'fs';
+import path from 'path';
+
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -17,28 +22,28 @@ import {postprocessRecord} from './mergePreAndPostprocess.js';
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
+const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
-export default (config = {}) => (base, source) => {
+// Should this load default configuration?
+export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
-  nvdebug(`OBJ: ${JSON.stringify(config)}`);
-  // How do we read the config? Config file? Parameters from calling function? Currently this just sets the defaults...
-  const processedConfig = initFieldMergeConfig(config);
+  const activeTagPattern = getTagPattern(tagPattern, config);
 
   // We should clone the records here and just here...
   const baseRecord2 = recordPreprocess(baseRecord); // fix composition et al
   const sourceRecord2 = recordPreprocess(sourceRecord); // fix composition et al
 
-  const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
-  const candidateFields = sourceRecord2.get(processedConfig.tagPattern ? processedConfig.tagPattern : defCandFieldsRegexp);
+  const candidateFields = sourceRecord2.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
+  nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
   candidateFields.forEach(candField => {
     nvdebug(`Now merging (or trying to) field ${fieldToString(candField)}`, debug);
-    mergeField(baseRecord2, candField, processedConfig);
+    mergeField(baseRecord2, candField, config);
   });
 
   // Remove deleted fields and field.merged marks:
@@ -46,6 +51,17 @@ export default (config = {}) => (base, source) => {
   postprocessRecord(sourceRecord2);
 
   return [baseRecord2, sourceRecord2];
+  //return {baseRecord2, sourceRecord2};
+
+  function getTagPattern(tagPattern, config) {
+    if (tagPattern) {
+      return tagPattern;
+    }
+    if (config.tagPattern) {
+      return config.tagPattern;
+    }
+    return defCandFieldsRegexp;
+  }
 };
 
 function removeEnnakkotieto(field) {

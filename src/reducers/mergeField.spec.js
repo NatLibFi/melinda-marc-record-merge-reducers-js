@@ -4,6 +4,7 @@ import createReducer from './mergeField';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
+
 describe('merge data field tests: ', () => {
   generateTests({
     callback,
@@ -17,21 +18,20 @@ describe('merge data field tests: ', () => {
   });
 
   function callback({getFixture,
-    config = {},
-    tagPattern = false}) {
+    tagPattern = false,
+    config = undefined}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
     const expectedRecord = getFixture('merged.json');
     const expectedModifiedSourceRecord = getFixture('modifiedSource.json');
+
     const marcReducers = generateReducers(tagPattern, config);
     const [mergedRecord, modifiedSourceRecord] = marcReducers(base, source);
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
     expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
 
     function generateReducers(tagPattern, config = {}) {
-      if (tagPattern) { // eslint-disable-line functional/no-conditional-statement
-        config.tagPattern = tagPattern; // eslint-disable-line functional/immutable-data
-      }
+
 
       /*
       if (tagPattern) {
@@ -40,7 +40,7 @@ describe('merge data field tests: ', () => {
       return createReducer();
       */
 
-      return createReducer(config);
+      return createReducer(tagPattern, config);
     }
   }
 });
