@@ -243,9 +243,6 @@ export default (config = {}) => (base, source) => {
 
   return [base, externalFixes(source, config)];
 
-  function filterOperations(base, source, config) {
-    config.forEach(operation => filterOperation(base, source, operation));
-  }
 
   function externalFixes(record) {
 
@@ -276,6 +273,10 @@ export default (config = {}) => (base, source) => {
     return record;
   }
 };
+
+export function filterOperations(base, source, config) {
+  config.forEach(operation => filterOperation(base, source, operation));
+}
 
 /*
 const defaultSwapSubfieldCodes = [{'tagPattern': '^040$', 'from': 'a', 'to': 'd'}];
