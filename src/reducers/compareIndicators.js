@@ -11,8 +11,11 @@ import {nvdebug} from './utils';
 
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
 
+
 const ind1NonFilingChars = ['130', '630', '730', '740'];
 const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];
+
+/*
 
 function skippableIndicator1ByDefault(tag) {
   // When checking similarity of indicators, we are not interested in non-filing characters
@@ -37,15 +40,18 @@ function skippableIndicator2ByDefault(tag) {
   }
   return false;
 }
+*/
 
 export function mergableIndicator1(field1, field2, config) {
   if (config.ignoreIndicator1 && config.ignoreIndicator1.includes(field1.tag)) {
     return true;
   }
 
+  /*
   if (skippableIndicator1ByDefault(field1.tag)) {
     return true;
   }
+  */
 
   // Default: require that indicators match
   return field1.ind1 === field2.ind1;
@@ -56,9 +62,11 @@ export function mergableIndicator2(field1, field2, config) {
     return true;
   }
 
+  /*
   if (skippableIndicator2ByDefault(field1.tag)) {
     return true;
   }
+  */
 
   // Default: indicators must match
   return field1.ind2 === field2.ind2;
