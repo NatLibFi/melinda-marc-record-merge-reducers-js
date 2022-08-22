@@ -42,9 +42,18 @@ function getSpecifiedFields(record, fieldSpecs) {
 }
 
 function subfieldFilterMatches(subfield, subfieldFilter) {
+  nvdebug(`SF ${JSON.stringify(subfieldFilter)}`);
   if (subfieldFilter.code) { // Should we offer regexp as well?
     if (subfieldFilter.code !== subfield.code) {
       nvdebug(` REJECTED SUBFIELD. Reason: code`);
+      return false;
+    }
+  }
+
+  if (subfieldFilter.codePattern) {
+    const regExp = RegExp(`${subfieldFilter.codePattern}`, 'u');
+    if (!subfield.code.match(regExp)) {
+      nvdebug(` REJECTED SUBFIELD. Reason: code regexp`);
       return false;
     }
   }
@@ -143,8 +152,8 @@ function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFi
     */
   });
 
-  function renameSubfields(field, deletableSubfieldFilter) {
-    nvdebug(`Try to rename subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`);
+  function renameSubfields(field, renamableSubfieldFilter) {
+    nvdebug(`Try to rename subfields from ${fieldToString(field)} using ${JSON.stringify(renamableSubfieldFilter)}`);
     field.subfields.forEach(sf => {
       if (subfieldFilterMatches(sf, renamableSubfieldFilter)) { // eslint-disable-line functional/no-conditional-statement
         sf.code = renamableSubfieldFilter.newCode; // eslint-disable-line functional/immutable-data
@@ -239,6 +248,7 @@ export function filterOperation(base, source, operation) {
 
 
 export default (config = {}) => (base, source) => {
+  nvdebug(`HSP CONF ${config}`);
   filterOperations(base, source, config.preprocessorDirectives);
 
   return [base, externalFixes(source, config)];
@@ -297,3 +307,12 @@ function swapIncomingSubfieldCodes(field, config) {
   }
 }
 */
+
+export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
+  nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
+  if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
+    return;
+  }
+
+  filterOperations(base, source, preprocessorDirectives);
+}
