@@ -11,12 +11,6 @@ import {sortAdjacentSubfields} from './sortSubfields.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 
-const excludeSubfieldsFromMerge = [
-  {'tag': '020', 'subfields': 'c'},
-  // {'tag': '022'},
-  {'tag': '024', 'subfields': 'c'}
-];
-
 const includeSubfields = [{'tag': '040', 'subfields': 'abcde68'}]; // if we want only certain subfields to be included...
 
 // NB! These are X00 specific. Should we somehow parametrize them?
@@ -142,27 +136,8 @@ function isKeptableSubfield(tag, subfieldCode) {
   return listOfSubfieldsAsString.indexOf(subfieldCode) > -1;
 }
 
-function listDroppableSubfields(tag) {
-  // NB! Should we drop the here, or already on the preprocessor?
-  const entry = excludeSubfieldsFromMerge.filter(currEntry => tag === currEntry.tag);
-  if (entry.length > 0 && 'subfields' in entry[0]) {
-    //debug(`droppables: ${tag}‡${entry[0].subfields}`);
-    return entry[0].subfields;
-  }
-  //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${tag}.`);
-  return '';
-}
-
-function isDroppableSubfield(tag, subfieldCode) {
-  const droppings = listDroppableSubfields(tag);
-  return droppings.indexOf(subfieldCode) > -1;
-}
 
 export function isSubfieldGoodForMerge(tag, subfieldCode) {
-  if (isDroppableSubfield(tag, subfieldCode)) {
-    debug(`BAD SF: ${tag}$${subfieldCode} is droppable.`);
-    return false;
-  }
   if (!isKeptableSubfield(tag, subfieldCode)) {
     debug(`BAD SF: ${tag}$${subfieldCode} is unkeptable.`);
     return false;
