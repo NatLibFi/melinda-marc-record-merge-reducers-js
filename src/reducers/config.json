@@ -101,7 +101,7 @@
         "indicator1PreferredValues": { "650" : " 120" },
         "indicator2PreferredValues": { "730" : "2 " },
         
-        "ignoreIndicator1" : ["130", "630", "730", "740"],
+        "ignoreIndicator1" : ["130", "245", "630", "650", "651", "655", "730", "740"],
         "ignoreIndicator2" : ["222", "240", "242", "243", "245", "830"]
     },
 
