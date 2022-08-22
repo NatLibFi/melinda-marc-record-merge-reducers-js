@@ -1,7 +1,7 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import {default as normalizeEncoding} from './normalizeEncoding';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
 
 //import {nvdebug} from './utils';
@@ -35,7 +35,7 @@ export function fieldPreprocess(field) {
 
   //// Fix various shit
   // - remove crappy 100$d subfields:
-  fieldRemoveDatesAssociatedWithName(field); // eg. "100$d (1)"
+  //fieldRemoveDatesAssociatedWithName(field); // eg. "100$d (1)"
   field.subfields.forEach(sf => {
     // Possible things to do:
     // 2. Fix other issues
@@ -52,9 +52,10 @@ export function fieldPreprocess(field) {
   return field;
 }
 
+/*
 const notYear = /^\([1-9][0-9]*\)[,.]?$/u;
 
-function fieldRemoveDatesAssociatedWithName(field) {
+function fieldRemoveDatesAssociatedWithName(field) { // FIX: remove this, handle in config.json
   // Skip irrelevant fields:
   if (!field.tag.match(/^[1678]00$/u)) {
     return field;
@@ -74,5 +75,5 @@ function fieldRemoveDatesAssociatedWithName(field) {
     return true;
   }
 }
-
+*/
 
