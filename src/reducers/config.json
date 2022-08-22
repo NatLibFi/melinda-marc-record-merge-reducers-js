@@ -11,6 +11,17 @@
 
             {
                 "operation": "removeSubfield",
+                "comment": "remove X00$d with old and deprecated (1) style value",
+                "recordType": "both",
+                "fieldSpecification": {
+                    "tagPattern": "^[1678]00$",
+                    "subfieldFilters": [{"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$"}]
+                },
+                "deletableSubfieldFilter": {"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$" }
+            },        
+
+            {
+                "operation": "removeSubfield",
                 "comment": "remove price information",
                 "recordType": "source",
                 "fieldSpecification": {
