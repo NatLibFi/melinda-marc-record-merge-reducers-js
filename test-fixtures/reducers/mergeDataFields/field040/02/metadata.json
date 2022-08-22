@@ -1,3 +1,16 @@
 {
-  "description":"Copy missing $b, copy (repeatable) $d subfields, omit unwanted $x subfield"
+  "description":"Copy missing $b, copy (repeatable) $d subfields, omit unwanted $x subfield",
+  "comment": "Example for deleting extra/noisy subfields. Bad idea, though.",
+  "config": {
+      "preprocessorDirectives" : [{
+        "operation": "removeSubfield",
+        "comment": "remove noise",
+        "recordType": "source",
+        "fieldSpecification": {
+            "tag": "040"
+        },
+        "deletableSubfieldFilter": {"codePattern": "^[^abcde0-9]$"}
+      } ]
+    
+  }
 }
