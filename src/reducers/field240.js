@@ -9,9 +9,9 @@ import {postprocessRecord} from './mergePreAndPostprocess.js';
 import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 import {addField} from './addField';
 
-//import {sortAdjacentSubfields} from './sortSubfields';
-// import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
-
+// This reducer will take all 240 fields from source record, and then either merge them with host,
+// copy them or ignore/skip/drop them.
+//
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:field240');
