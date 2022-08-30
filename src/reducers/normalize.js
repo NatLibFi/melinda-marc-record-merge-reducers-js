@@ -1,6 +1,6 @@
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
-import {fieldToString, isControlSubfieldCode} from './utils.js';
+import {/*fieldToString,*/ isControlSubfieldCode} from './utils.js';
 
 import {fieldRemoveDecomposedDiacritics} from './normalizeEncoding';
 import {fieldNormalizePrefixes} from './normalizeIdentifier';
@@ -61,17 +61,17 @@ function normalizeField(field) {
   return field;
 }
 
-function fieldComparison(oldField, newField) {
-  if (oldField.subfields.length === newField.subfields.length) {
-    oldField.subfields.forEach((subfield, index) => {
-      const newValue = newField.subfields[index].value;
-      if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statement
-        debug(`NORMALIZE: '${subfield.value}' => '${newValue}'`);
-      }
-    });
-    return;
-  }
-  debug(`NORMALIZE: '${fieldToString(oldField)}' => '${fieldToString(newField)}'`);
+function fieldComparison(oldField, newField) { // NB: Debug-only function!
+  //if (oldField.subfields.length === newField.subfields.length) {
+  oldField.subfields.forEach((subfield, index) => {
+    const newValue = newField.subfields[index].value;
+    if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statement
+      debug(`NORMALIZE: '${subfield.value}' => '${newValue}'`);
+    }
+  });
+  return;
+  //}
+  //debug(`NORMALIZE: '${fieldToString(oldField)}' => '${fieldToString(newField)}'`);
 }
 
 export function cloneAndRemovePunctuation(field) {
@@ -91,5 +91,4 @@ export function cloneAndNormalizeField(field) {
 
   return clonedField;
 }
-
 
