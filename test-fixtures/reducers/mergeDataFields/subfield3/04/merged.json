@@ -7,8 +7,16 @@
       "ind2": " ",
       "subfields": [
         {
+          "code": "3",
+          "value": "sanoitus"
+        },
+        {
           "code": "d",
           "value": "Cop. Iso Paha Yhtiö"
+        },
+        {
+          "code": "e",
+          "value": "osoite"
         }
       ]
     }

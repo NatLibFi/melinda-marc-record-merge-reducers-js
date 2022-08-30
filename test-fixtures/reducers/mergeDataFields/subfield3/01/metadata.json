@@ -1,3 +1,3 @@
 {
-  "description":"merge two fields? control subfield $3 vs none -> don't merge"
+  "description":"Base has $3, source has not: don't merge"
 }

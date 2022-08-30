@@ -9,6 +9,14 @@
         {
           "code": "d",
           "value": "Cop. Iso Paha Yhtiö"
+        },
+        {
+          "code": "e",
+          "value": "osoite"
+        },
+        {
+          "code": "3",
+          "value": "sanoitus"
         }
       ]
     }
