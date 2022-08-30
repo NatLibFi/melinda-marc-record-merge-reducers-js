@@ -150,7 +150,7 @@ const mergeConstraints = [
   {'tag': '538', 'required': 'a', 'paired': 'aiu', 'key': 'aiu'},
   {'tag': '540', 'required': '', 'paired': 'abcdfgqu', 'key': 'abcdfgqu'},
   {'tag': '541', 'required': '', 'paired': 'abcdefhno', 'key': 'abcdefhno'},
-  {'tag': '542', 'required': '', 'paired': 'abcdefghijklmnopqrsu', 'key': 'abcdefghijklmnopqrsu'},
+  {'tag': '542', 'required': '', 'paired': 'abcdfghijklmopqrsu', 'key': 'abcdfghijklmopqrsu'},
   {'tag': '544', 'required': '', 'paired': 'abcden', 'key': 'abcden'},
   {'tag': '545', 'required': '', 'paired': 'abu', 'key': 'abu'},
   {'tag': '546', 'required': '', 'paired': 'ab', 'key': 'ab'},
