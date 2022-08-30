@@ -44,8 +44,6 @@ export default () => (base, source) => {
   recordPreprocess(sourceRecord); // fix composition et al
 
 
-  addField(baseRecord, sourceRecord, config);
-
   const activeTagPattern = /^240$/u;
   nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
@@ -55,7 +53,7 @@ export default () => (base, source) => {
   candidateFields.forEach(candField => {
     nvdebug(`Now merging (or trying to) field ${fieldToString(candField)}`, debug);
     if (!mergeField(baseRecord, candField, config)) {
-      addField(baseRecord, sourceRecord, config);
+      addField(baseRecord, candField, config);
       return;
     }
   });
