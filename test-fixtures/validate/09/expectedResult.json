@@ -2,7 +2,7 @@
   "failed": false,
   "messages": [
     {
-      "description": "Normalizes diacritics from latin characters",
+      "description": "Generic normalization of latin UTF-8 diacritics. Precompose Finnish å, ä and ö. Decompose others.",
       "state": "fixed"
     },
     {

@@ -37,11 +37,12 @@ import {
   EmptyFields,
   EndingPunctuation,
   IsbnIssn,
+  NormalizeUTF8Diacritics, // ex-./reducers/normalizeEncoding
   SubfieldExclusion
 } from '@natlibfi/marc-record-validators-melinda';
 //import {recordPreprocess} from './reducers/normalize';
 
-import NormalizeEncoding from './reducers/normalizeEncoding';
+//import NormalizeEncoding from './reducers/normalizeEncoding';
 import NormalizeControlNumber from './reducers/normalizeIdentifier';
 // import normalizeSubfield9Linkage from './reducers/normalizeSubfield9Linkage';
 
@@ -56,7 +57,7 @@ export default async () => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   debug(`### testing`);
   const validate = validateFactory([
-    await NormalizeEncoding(), // procompose å & ä & ö. Decompose the rest.
+    await NormalizeUTF8Diacritics(), // procompose å & ä & ö. Decompose the rest.
     await NormalizeControlNumber(), // (FI-MELINDA)/FCC/(FIN01) normalizations
     //await normalizeSubfield9Linkage(), // merge linkage done by subfield $9 ^^ chains
     //await FieldsPresent([/^100$/u]), // not required by merge
