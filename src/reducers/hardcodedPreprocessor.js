@@ -1,5 +1,5 @@
 //import createDebugLogger from 'debug';
-import {default as normalizeEncoding} from './normalizeEncoding';
+import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
