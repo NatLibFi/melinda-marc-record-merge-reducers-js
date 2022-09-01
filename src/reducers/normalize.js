@@ -2,7 +2,6 @@ import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
 import {/*fieldToString,*/ isControlSubfieldCode} from './utils.js';
 
-import {fieldRemoveDecomposedDiacritics} from './normalizeEncoding';
 import {fieldNormalizePrefixes} from './normalizeIdentifier';
 import {fieldPreprocess} from './hardcodedPreprocessor.js';
 //import {getMaxSubfield6, reindexSubfield6s} from './reindexSubfield6.js';
@@ -90,5 +89,21 @@ export function cloneAndNormalizeField(field) {
   fieldComparison(field, clonedField);
 
   return clonedField;
+}
+
+
+function fieldRemoveDecomposedDiacritics(field) {
+  // Raison d'être/motivation: "Sirén" and diacriticless "Siren" might refer to a same surname, so this normalization
+  // allows us to compare authors and avoid duplicate fields.
+  field.subfields.forEach((sf) => {
+    sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
+  });
+
+  function removeDecomposedDiacritics(value = '') {
+    // NB #1: Does nothing to precomposed letters. Do String.normalize('NFD') first, if you want to handle them.
+    // NB #2: Finnish letters 'å', 'ä', 'ö', 'Å', Ä', and 'Ö' should be handled (=precomposed) before calling this. (= keep them as is)
+    // NB #3: Calling our very own fixComposition() before this function handles both #1 and #2.
+    return String(value).replace(/\p{Diacritic}/gu, '');
+  }
 }
 
