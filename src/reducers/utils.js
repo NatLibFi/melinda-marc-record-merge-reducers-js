@@ -65,6 +65,46 @@ export function copyFields(record, fields) {
 const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
 
 
+function marc21GetTagsLegalIndicators(tag) {
+  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  if (fieldSpecs.length === 0) {
+    return undefined;
+  }
+  return fieldSpecs[0].indicators;
+}
+
+export function marc21GetTagsLegalInd1Value(tag) {
+  const indicator = marc21GetTagsLegalIndicators(tag);
+  if (indicator === undefined) {
+    return undefined;
+  }
+  return indicator.ind1;
+}
+
+export function marc21GetTagsLegalInd2Value(tag) {
+  const indicator = marc21GetTagsLegalIndicators(tag);
+  if (indicator === undefined) {
+    return undefined;
+  }
+  return indicator.ind2;
+}
+
+export function marc21NoNeedToCheckInd1(tag) {
+  const cands = marc21GetTagsLegalInd1Value(tag);
+  if (typeof cands === 'string') { // single cand
+    return true;
+  }
+  return false;
+}
+
+export function marc21NoNeedToCheckInd2(tag) {
+  const cands = marc21GetTagsLegalInd2Value(tag);
+  if (typeof cands === 'string') { // single cand
+    return true;
+  }
+  return false;
+}
+
 export function subfieldIsRepeatable(tag, subfieldCode) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
