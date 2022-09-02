@@ -143,7 +143,7 @@
       "tag": "022",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": [" ", "0", "1"], "ind2": [" "]},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "l", "repeatable": false},
