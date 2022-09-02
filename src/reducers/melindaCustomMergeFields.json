@@ -39,7 +39,7 @@
       "tag": "010",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -51,7 +51,7 @@
       "tag": "013",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -67,7 +67,7 @@
       "tag": "015",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "q", "repeatable": true},
@@ -81,7 +81,7 @@
       "tag": "016",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "7"], "ind2": ""},
+      "indicators": {"ind1": [" ", "7"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": true},
@@ -93,7 +93,7 @@
       "tag": "017",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["", "8"]},
+      "indicators": {"ind1": " ", "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -109,7 +109,7 @@
       "tag": "018",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -120,7 +120,7 @@
       "tag": "019",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -129,7 +129,7 @@
       "tag": "020",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": false},
@@ -143,7 +143,7 @@
       "tag": "022",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": [""]},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": [" "]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "l", "repeatable": false},
@@ -174,7 +174,7 @@
       "tag": "025",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "8", "repeatable": true}
@@ -184,7 +184,7 @@
       "tag": "026",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -201,7 +201,7 @@
       "tag": "027",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "q", "repeatable": true},
@@ -227,7 +227,7 @@
       "tag": "030",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": true},
@@ -239,7 +239,7 @@
       "tag": "031",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -267,7 +267,7 @@
       "tag": "032",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -279,7 +279,7 @@
       "tag": "033",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ["", "0", "1", "2"]},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": [" ", "0", "1", "2"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -297,7 +297,7 @@
       "tag": "034",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "3"], "ind2": ["", "0", "1"]},
+      "indicators": {"ind1": ["0", "1", "3"], "ind2": [" ", "0", "1"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -330,7 +330,7 @@
       "tag": "035",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": true},
@@ -343,7 +343,7 @@
       "tag": "036",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -355,7 +355,7 @@
       "tag": "037",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "2", "3"], "ind2": ""},
+      "indicators": {"ind1": [" ", "2", "3"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -373,7 +373,7 @@
       "tag": "038",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -384,7 +384,7 @@
       "tag": "039",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -400,7 +400,7 @@
       "tag": "040",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -415,7 +415,7 @@
       "tag": "041",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "1", "2"], "ind2": ["", "7"]},
+      "indicators": {"ind1": [" ", "1", "2"], "ind2": [" ", "7"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -442,7 +442,7 @@
       "tag": "042",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true}
       ]
@@ -451,7 +451,7 @@
       "tag": "043",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -467,7 +467,7 @@
       "tag": "044",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -481,7 +481,7 @@
       "tag": "045",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -494,7 +494,7 @@
       "tag": "046",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -517,7 +517,7 @@
       "tag": "047",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["", "7"]},
+      "indicators": {"ind1": " ", "ind2": [" ", "7"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "2", "repeatable": false},
@@ -528,7 +528,7 @@
       "tag": "048",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["", "7"]},
+      "indicators": {"ind1": " ", "ind2": [" ", "7"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -540,7 +540,7 @@
       "tag": "049",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -554,7 +554,7 @@
       "tag": "050",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ["0", "4"]},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": ["0", "4"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -569,7 +569,7 @@
       "tag": "051",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -581,7 +581,7 @@
       "tag": "052",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "1", "7"], "ind2": ""},
+      "indicators": {"ind1": [" ", "1", "7"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -597,7 +597,7 @@
       "tag": "055",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -612,7 +612,7 @@
       "tag": "060",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "1", "2"], "ind2": ["0", "4"]},
+      "indicators": {"ind1": [" ", "1", "2"], "ind2": ["0", "4"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -625,7 +625,7 @@
       "tag": "061",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -637,7 +637,7 @@
       "tag": "066",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -648,7 +648,7 @@
       "tag": "070",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -661,7 +661,7 @@
       "tag": "071",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -673,7 +673,7 @@
       "tag": "072",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["0", "7"]},
+      "indicators": {"ind1": " ", "ind2": ["0", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "x", "repeatable": true},
@@ -686,7 +686,7 @@
       "tag": "074",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": true},
@@ -697,7 +697,7 @@
       "tag": "080",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -713,7 +713,7 @@
       "tag": "082",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "7"], "ind2": ["", "0", "4"]},
+      "indicators": {"ind1": ["0", "1", "7"], "ind2": [" ", "0", "4"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -728,7 +728,7 @@
       "tag": "083",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "7"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "7"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -745,7 +745,7 @@
       "tag": "084",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "9"], "ind2": ""},
+      "indicators": {"ind1": [" ", "9"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -761,7 +761,7 @@
       "tag": "085",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -785,7 +785,7 @@
       "tag": "086",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": true},
@@ -800,7 +800,7 @@
       "tag": "088",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": true},
@@ -812,7 +812,7 @@
       "tag": "090",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -821,7 +821,7 @@
       "tag": "091",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -830,7 +830,7 @@
       "tag": "092",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -839,7 +839,7 @@
       "tag": "093",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -848,7 +848,7 @@
       "tag": "094",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -857,7 +857,7 @@
       "tag": "095",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -866,7 +866,7 @@
       "tag": "096",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -875,7 +875,7 @@
       "tag": "097",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -884,7 +884,7 @@
       "tag": "098",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -893,7 +893,7 @@
       "tag": "099",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -902,7 +902,7 @@
       "tag": "100",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "3"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "3"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -931,7 +931,7 @@
       "tag": "110",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -958,7 +958,7 @@
       "tag": "111",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": true},
@@ -986,7 +986,7 @@
       "tag": "130",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "ind2": ["", "9"]},
+      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "ind2": [" ", "9"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "d", "repeatable": true},
@@ -1013,7 +1013,7 @@
       "tag": "210",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "0"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "0"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1026,7 +1026,7 @@
       "tag": "222",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
+      "indicators": {"ind1": " ", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1124,7 +1124,7 @@
       "tag": "246",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "3"], "ind2": ["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]},
+      "indicators": {"ind1": ["0", "1", "2", "3"], "ind2": [" ", "0", "1", "2", "3", "4", "5", "6", "7", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1161,7 +1161,7 @@
       "tag": "250",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1174,7 +1174,7 @@
       "tag": "250",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1187,7 +1187,7 @@
       "tag": "251",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "0", "repeatable": true},
@@ -1202,7 +1202,7 @@
       "tag": "254",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -1213,7 +1213,7 @@
       "tag": "255",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1230,7 +1230,7 @@
       "tag": "256",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -1241,7 +1241,7 @@
       "tag": "257",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "6", "repeatable": false},
@@ -1252,7 +1252,7 @@
       "tag": "258",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1264,7 +1264,7 @@
       "tag": "260",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "2", "3"], "ind2": ""},
+      "indicators": {"ind1": [" ", "2", "3"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1281,7 +1281,7 @@
       "tag": "263",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -1292,7 +1292,7 @@
       "tag": "264",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "2", "3"], "ind2": ["0", "1", "2", "3", "4"]},
+      "indicators": {"ind1": [" ", "2", "3"], "ind2": ["0", "1", "2", "3", "4"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1306,7 +1306,7 @@
       "tag": "270",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "1", "2"], "ind2": ["", "0", "7"]},
+      "indicators": {"ind1": [" ", "1", "2"], "ind2": [" ", "0", "7"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -1334,7 +1334,7 @@
       "tag": "300",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -1351,7 +1351,7 @@
       "tag": "306",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "6", "repeatable": false},
@@ -1362,7 +1362,7 @@
       "tag": "307",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1374,7 +1374,7 @@
       "tag": "310",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1389,7 +1389,7 @@
       "tag": "321",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1404,7 +1404,7 @@
       "tag": "335",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1420,7 +1420,7 @@
       "tag": "336",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1436,7 +1436,7 @@
       "tag": "337",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1452,7 +1452,7 @@
       "tag": "338",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1468,7 +1468,7 @@
       "tag": "340",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1497,7 +1497,7 @@
       "tag": "341",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -1548,7 +1548,7 @@
       "tag": "343",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1567,7 +1567,7 @@
       "tag": "344",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1589,7 +1589,7 @@
       "tag": "345",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1607,7 +1607,7 @@
       "tag": "346",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1623,7 +1623,7 @@
       "tag": "347",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1643,7 +1643,7 @@
       "tag": "348",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1659,7 +1659,7 @@
       "tag": "351",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1673,7 +1673,7 @@
       "tag": "352",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -1692,7 +1692,7 @@
       "tag": "355",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "8"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -1711,7 +1711,7 @@
       "tag": "357",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -1725,7 +1725,7 @@
       "tag": "362",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": false},
@@ -1737,7 +1737,7 @@
       "tag": "363",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ["", "0", "1"]},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": [" ", "0", "1"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1764,7 +1764,7 @@
       "tag": "365",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1787,7 +1787,7 @@
       "tag": "366",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -1808,7 +1808,7 @@
       "tag": "370",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "c", "repeatable": true},
         {"code": "f", "repeatable": true},
@@ -1831,7 +1831,7 @@
       "tag": "377",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["", "7"]},
+      "indicators": {"ind1": " ", "ind2": [" ", "7"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "l", "repeatable": true},
@@ -1847,7 +1847,7 @@
       "tag": "380",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "0", "repeatable": true},
@@ -1862,7 +1862,7 @@
       "tag": "381",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "u", "repeatable": true},
@@ -1879,7 +1879,7 @@
       "tag": "382",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ["", "0", "1"]},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": [" ", "0", "1"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1903,7 +1903,7 @@
       "tag": "383",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1920,7 +1920,7 @@
       "tag": "384",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "0", "repeatable": true},
@@ -1934,7 +1934,7 @@
       "tag": "385",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1952,7 +1952,7 @@
       "tag": "386",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -1972,7 +1972,7 @@
       "tag": "388",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": [" ", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "0", "repeatable": true},
@@ -1987,7 +1987,7 @@
       "tag": "490",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "l", "repeatable": false},
@@ -2002,7 +2002,7 @@
       "tag": "500",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "3", "repeatable": false},
@@ -2015,7 +2015,7 @@
       "tag": "501",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": false},
@@ -2027,7 +2027,7 @@
       "tag": "502",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2043,7 +2043,7 @@
       "tag": "504",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2055,7 +2055,7 @@
       "tag": "505",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "8"], "ind2": ["", "0"]},
+      "indicators": {"ind1": ["0", "1", "2", "8"], "ind2": [" ", "0"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "g", "repeatable": true},
@@ -2070,7 +2070,7 @@
       "tag": "506",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2092,7 +2092,7 @@
       "tag": "507",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2104,7 +2104,7 @@
       "tag": "508",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2115,7 +2115,7 @@
       "tag": "509",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": false},
@@ -2129,7 +2129,7 @@
       "tag": "510",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "3", "4"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2", "3", "4"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2145,7 +2145,7 @@
       "tag": "511",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2156,7 +2156,7 @@
       "tag": "513",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2168,7 +2168,7 @@
       "tag": "514",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2192,7 +2192,7 @@
       "tag": "515",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2203,7 +2203,7 @@
       "tag": "516",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2214,7 +2214,7 @@
       "tag": "518",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "d", "repeatable": true},
@@ -2232,7 +2232,7 @@
       "tag": "520",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2", "3", "4", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1", "2", "3", "4", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2248,7 +2248,7 @@
       "tag": "521",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2", "3", "4", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1", "2", "3", "4", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -2261,7 +2261,7 @@
       "tag": "522",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2272,7 +2272,7 @@
       "tag": "524",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "2", "repeatable": false},
@@ -2285,7 +2285,7 @@
       "tag": "525",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2296,7 +2296,7 @@
       "tag": "526",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "8"], "ind2": ""},
+      "indicators": {"ind1": ["0", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2314,7 +2314,7 @@
       "tag": "530",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2330,7 +2330,7 @@
       "tag": "532",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "8"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2341,7 +2341,7 @@
       "tag": "533",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2362,7 +2362,7 @@
       "tag": "534",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2387,7 +2387,7 @@
       "tag": "535",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["1", "2"], "ind2": ""},
+      "indicators": {"ind1": ["1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2403,7 +2403,7 @@
       "tag": "536",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2421,7 +2421,7 @@
       "tag": "538",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "i", "repeatable": false},
@@ -2436,7 +2436,7 @@
       "tag": "540",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2457,7 +2457,7 @@
       "tag": "541",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2478,7 +2478,7 @@
       "tag": "542",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2509,7 +2509,7 @@
       "tag": "544",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -2526,7 +2526,7 @@
       "tag": "545",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2539,7 +2539,7 @@
       "tag": "546",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2552,7 +2552,7 @@
       "tag": "547",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2563,7 +2563,7 @@
       "tag": "550",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2574,7 +2574,7 @@
       "tag": "552",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2602,7 +2602,7 @@
       "tag": "555",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2618,7 +2618,7 @@
       "tag": "556",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": true},
@@ -2630,7 +2630,7 @@
       "tag": "561",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "u", "repeatable": true},
@@ -2644,7 +2644,7 @@
       "tag": "562",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -2661,7 +2661,7 @@
       "tag": "563",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "u", "repeatable": true},
@@ -2675,7 +2675,7 @@
       "tag": "565",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2691,7 +2691,7 @@
       "tag": "567",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2706,7 +2706,7 @@
       "tag": "579",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false}
@@ -2716,7 +2716,7 @@
       "tag": "580",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -2727,7 +2727,7 @@
       "tag": "581",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "z", "repeatable": true},
@@ -2740,7 +2740,7 @@
       "tag": "583",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2769,7 +2769,7 @@
       "tag": "584",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -2783,7 +2783,7 @@
       "tag": "585",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "3", "repeatable": false},
@@ -2796,7 +2796,7 @@
       "tag": "586",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "8"], "ind2": ""},
+      "indicators": {"ind1": [" ", "8"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "3", "repeatable": false},
@@ -2808,7 +2808,7 @@
       "tag": "588",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": false},
@@ -2820,7 +2820,7 @@
       "tag": "600",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "3"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
+      "indicators": {"ind1": [" ", "0", "1", "3"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -2860,7 +2860,7 @@
       "tag": "610",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -2898,7 +2898,7 @@
       "tag": "611",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": true},
@@ -2968,7 +2968,7 @@
       "tag": "647",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
+      "indicators": {"ind1": " ", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": true},
@@ -2990,7 +2990,7 @@
       "tag": "648",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
+      "indicators": {"ind1": " ", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "v", "repeatable": true},
@@ -3009,7 +3009,7 @@
       "tag": "650",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3034,7 +3034,7 @@
       "tag": "651",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
+      "indicators": {"ind1": " ", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "e", "repeatable": true},
@@ -3056,7 +3056,7 @@
       "tag": "653",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ["0", "1", "2", "3", "4", "5", "6"]},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": ["0", "1", "2", "3", "4", "5", "6"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "6", "repeatable": false},
@@ -3068,7 +3068,7 @@
       "tag": "654",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -3090,7 +3090,7 @@
       "tag": "655",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
+      "indicators": {"ind1": [" ", "0"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -3112,7 +3112,7 @@
       "tag": "656",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": "7"},
+      "indicators": {"ind1": " ", "ind2": "7"},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "k", "repeatable": false},
@@ -3132,7 +3132,7 @@
       "tag": "657",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": "7"},
+      "indicators": {"ind1": " ", "ind2": "7"},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "v", "repeatable": true},
@@ -3151,7 +3151,7 @@
       "tag": "658",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -3166,7 +3166,7 @@
       "tag": "662",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -3188,7 +3188,7 @@
       "tag": "668",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["", "7"]},
+      "indicators": {"ind1": " ", "ind2": [" ", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "e", "repeatable": true},
@@ -3206,7 +3206,7 @@
       "tag": "700",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "3"], "ind2": ["", "2"]},
+      "indicators": {"ind1": ["0", "1", "3"], "ind2": [" ", "2"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3246,7 +3246,7 @@
       "tag": "710",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2"], "ind2": ["", "2"]},
+      "indicators": {"ind1": ["0", "1", "2"], "ind2": [" ", "2"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -3283,7 +3283,7 @@
       "tag": "711",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2"], "ind2": ["", "2"]},
+      "indicators": {"ind1": ["0", "1", "2"], "ind2": [" ", "2"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": true},
@@ -3318,7 +3318,7 @@
       "tag": "720",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": [" ", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "e", "repeatable": true},
@@ -3331,7 +3331,7 @@
       "tag": "730",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "ind2": ["", "2"]},
+      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "ind2": [" ", "2"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "d", "repeatable": true},
@@ -3363,7 +3363,7 @@
       "tag": "740",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "ind2": ["", "2"]},
+      "indicators": {"ind1": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "ind2": [" ", "2"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "h", "repeatable": false},
@@ -3378,7 +3378,7 @@
       "tag": "751",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "e", "repeatable": true},
@@ -3396,7 +3396,7 @@
       "tag": "752",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -3418,7 +3418,7 @@
       "tag": "753",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3434,7 +3434,7 @@
       "tag": "754",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "c", "repeatable": true},
@@ -3452,7 +3452,7 @@
       "tag": "758",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "i", "repeatable": true},
@@ -3470,7 +3470,7 @@
       "tag": "760",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3497,7 +3497,7 @@
       "tag": "762",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3524,7 +3524,7 @@
       "tag": "765",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3555,7 +3555,7 @@
       "tag": "767",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3586,7 +3586,7 @@
       "tag": "770",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3617,7 +3617,7 @@
       "tag": "772",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3648,7 +3648,7 @@
       "tag": "773",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3681,7 +3681,7 @@
       "tag": "774",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3712,7 +3712,7 @@
       "tag": "775",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3745,7 +3745,7 @@
       "tag": "776",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3776,7 +3776,7 @@
       "tag": "777",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3869,7 +3869,7 @@
       "tag": "786",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3903,7 +3903,7 @@
       "tag": "787",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1"], "ind2": ["", "8"]},
+      "indicators": {"ind1": ["0", "1"], "ind2": [" ", "8"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3935,7 +3935,7 @@
       "tag": "790",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "x", "repeatable": false}
@@ -3945,7 +3945,7 @@
       "tag": "800",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2", "3"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2", "3"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -3986,7 +3986,7 @@
       "tag": "810",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -4025,7 +4025,7 @@
       "tag": "811",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": true},
@@ -4062,7 +4062,7 @@
       "tag": "830",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ]},
+      "indicators": {"ind1": " ", "ind2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9" ]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "d", "repeatable": true},
@@ -4095,7 +4095,7 @@
       "tag": "841",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4106,7 +4106,7 @@
       "tag": "842",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -4117,7 +4117,7 @@
       "tag": "843",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -4137,7 +4137,7 @@
       "tag": "844",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "6", "repeatable": false},
@@ -4148,7 +4148,7 @@
       "tag": "845",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4169,7 +4169,7 @@
       "tag": "850",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "8", "repeatable": true}
@@ -4179,7 +4179,7 @@
       "tag": "852",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "1", "2", "3", "4", "5", "6", "7", "8"], "ind2": ["", "0", "1", "2"]},
+      "indicators": {"ind1": [" ", "1", "2", "3", "4", "5", "6", "7", "8"], "ind2": [" ", "0", "1", "2"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -4211,7 +4211,7 @@
       "tag": "853",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4222,7 +4222,7 @@
       "tag": "854",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4233,7 +4233,7 @@
       "tag": "855",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4244,7 +4244,7 @@
       "tag": "856",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2", "3", "4", "7"], "ind2": ["0", "1", "2", "8"]},
+      "indicators": {"ind1": [" ", "0", "1", "2", "3", "4", "7"], "ind2": ["0", "1", "2", "8"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -4281,7 +4281,7 @@
       "tag": "863",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "3", "4", "5"], "ind2": ["", "0", "1", "2", "3", "4"]},
+      "indicators": {"ind1": [" ", "3", "4", "5"], "ind2": [" ", "0", "1", "2", "3", "4"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4314,7 +4314,7 @@
       "tag": "863",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "3", "4", "5"], "ind2": ["", "0", "1", "2", "3", "4"]},
+      "indicators": {"ind1": [" ", "3", "4", "5"], "ind2": [" ", "0", "1", "2", "3", "4"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4347,7 +4347,7 @@
       "tag": "863",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "3", "4", "5"], "ind2": ["", "0", "1", "2", "3", "4"]},
+      "indicators": {"ind1": [" ", "3", "4", "5"], "ind2": [" ", "0", "1", "2", "3", "4"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4380,7 +4380,7 @@
       "tag": "866",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "3", "4", "5"], "ind2": ["", "0", "1", "2", "7"]},
+      "indicators": {"ind1": [" ", "3", "4", "5"], "ind2": [" ", "0", "1", "2", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "x", "repeatable": true},
@@ -4394,7 +4394,7 @@
       "tag": "867",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "3", "4", "5"], "ind2": ["", "0", "1", "2", "7"]},
+      "indicators": {"ind1": [" ", "3", "4", "5"], "ind2": [" ", "0", "1", "2", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "x", "repeatable": true},
@@ -4408,7 +4408,7 @@
       "tag": "868",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "3", "4", "5"], "ind2": ["", "0", "1", "2", "7"]},
+      "indicators": {"ind1": [" ", "3", "4", "5"], "ind2": [" ", "0", "1", "2", "7"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "x", "repeatable": true},
@@ -4422,7 +4422,7 @@
       "tag": "876",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -4446,7 +4446,7 @@
       "tag": "877",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -4470,7 +4470,7 @@
       "tag": "878",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -4494,7 +4494,7 @@
       "tag": "880",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "ind2": ["", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
+      "indicators": {"ind1": [" ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "ind2": [" ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -4538,7 +4538,7 @@
       "tag": "881",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": true},
@@ -4563,7 +4563,7 @@
       "tag": "882",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "i", "repeatable": true},
@@ -4576,7 +4576,7 @@
       "tag": "883",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": false},
@@ -4594,7 +4594,7 @@
       "tag": "884",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "g", "repeatable": false},
@@ -4607,7 +4607,7 @@
       "tag": "885",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4626,7 +4626,7 @@
       "tag": "886",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["0", "1", "2"], "ind2": ""},
+      "indicators": {"ind1": ["0", "1", "2"], "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4673,7 +4673,7 @@
       "tag": "887",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "2", "repeatable": false}
@@ -4683,7 +4683,7 @@
       "tag": "900",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "3"], "ind2": ["", "1"]},
+      "indicators": {"ind1": [" ", "0", "1", "3"], "ind2": [" ", "1"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": false},
@@ -4698,7 +4698,7 @@
       "tag": "901",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4709,7 +4709,7 @@
       "tag": "902",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -4719,7 +4719,7 @@
       "tag": "903",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -4729,7 +4729,7 @@
       "tag": "904",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -4739,7 +4739,7 @@
       "tag": "905",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -4749,7 +4749,7 @@
       "tag": "906",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -4759,7 +4759,7 @@
       "tag": "907",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -4769,7 +4769,7 @@
       "tag": "908",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -4779,7 +4779,7 @@
       "tag": "909",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4791,7 +4791,7 @@
       "tag": "910",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "0", "1", "2"], "ind2": ["", "1"]},
+      "indicators": {"ind1": [" ", "0", "1", "2"], "ind2": [" ", "1"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": true},
@@ -4809,7 +4809,7 @@
       "tag": "911",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ["", "1"]},
+      "indicators": {"ind1": " ", "ind2": [" ", "1"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": false},
@@ -4827,7 +4827,7 @@
       "tag": "920",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": false},
@@ -4841,7 +4841,7 @@
       "tag": "921",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -4850,7 +4850,7 @@
       "tag": "923",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "b", "repeatable": false},
@@ -4866,7 +4866,7 @@
       "tag": "924",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4880,7 +4880,7 @@
       "tag": "929",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -4889,7 +4889,7 @@
       "tag": "930",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -4898,7 +4898,7 @@
       "tag": "931",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -4907,7 +4907,7 @@
       "tag": "932",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": false}
@@ -4917,7 +4917,7 @@
       "tag": "933",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "c", "repeatable": false}
@@ -4927,7 +4927,7 @@
       "tag": "935",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true}
       ]
@@ -4936,7 +4936,7 @@
       "tag": "940",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": ["", "1"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
+      "indicators": {"ind1": [" ", "1"], "ind2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "y", "repeatable": false},
@@ -4948,7 +4948,7 @@
       "tag": "960",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -4958,7 +4958,7 @@
       "tag": "961",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": "8"},
+      "indicators": {"ind1": " ", "ind2": "8"},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "u", "repeatable": false},
@@ -4971,7 +4971,7 @@
       "tag": "971",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -4997,7 +4997,7 @@
       "tag": "972",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "5", "repeatable": true}
@@ -5007,7 +5007,7 @@
       "tag": "974",
       "repeatable": false,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -5018,7 +5018,7 @@
       "tag": "976",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false}
@@ -5028,7 +5028,7 @@
       "tag": "977",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -5037,7 +5037,7 @@
       "tag": "979",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -5055,7 +5055,7 @@
       "tag": "995",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": true},
         {"code": "5", "repeatable": true}
@@ -5065,7 +5065,7 @@
       "tag": "CAT",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false},
         {"code": "b", "repeatable": false},
@@ -5078,7 +5078,7 @@
       "tag": "LOW",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "a", "repeatable": false}
       ]
@@ -5087,7 +5087,7 @@
       "tag": "SID",
       "repeatable": true,
       "fieldType": "dataField",
-      "indicators": {"ind1": "", "ind2": ""},
+      "indicators": {"ind1": " ", "ind2": " "},
       "subfields": [
         {"code": "c", "repeatable": false},
         {"code": "b", "repeatable": false}
