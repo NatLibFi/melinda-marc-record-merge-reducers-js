@@ -9,8 +9,9 @@ import {fieldToString} from './utils.js';
 
 export default function () {
 
+  // NB! We should and could handle ISNIs here as well.
   return {
-    description: 'Normalizes control number identifiers characters',
+    description: "Normalizes control number identifier's prefixes",
     validate, fix
   };
 
@@ -29,7 +30,7 @@ export default function () {
     record.fields.forEach(field => {
       //nvdebug(` NORMALIZE CONTROL NUMBER FIX ${fieldToString(field)}`, debug);
 
-      fieldNormalizePrefixes(field);
+      fieldNormalizeControlNumbers(field);
       //validateField(field, true, message);
     });
 
@@ -62,7 +63,7 @@ export default function () {
     }
 
     const normalizedField = clone(field);
-    fieldNormalizePrefixes(normalizedField);
+    fieldNormalizeControlNumbers(normalizedField);
 
     const orig = fieldToString(field);
     const mod = fieldToString(normalizedField);
@@ -80,6 +81,9 @@ const defaultFIN10 = '(FIN10)';
 const defaultFIN11 = '(FIN11)';
 const defaultFIN12 = '(FIN12)';
 const defaultFIN13 = '(FIN13)';
+
+// Using default consts allow us to change the default value trivially.
+// Note that som mappings map to themselves, for example, '(FIN01)' maps to itself '(FIN01)' on purpose.
 
 const prefixMappings = {
   'FCC': defaultFIN01,
@@ -132,9 +136,9 @@ export function mayContainControlNumberIdentifier(tag, sf) {
   return false;
 }
 
-export function fieldNormalizePrefixes(field) {
+export function fieldNormalizeControlNumbers(field) {
   // Rename "Prefixes" as "ControlNumberIdentifiers"?
-  // No, sinee isni etc...  however, just "ControlNumber" would do...
+  // No, since isni etc...  however, just "ControlNumber" would do...
   if (!field.subfields) {
     return;
   }

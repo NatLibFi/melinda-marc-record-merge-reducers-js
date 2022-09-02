@@ -2,7 +2,7 @@ import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
 import {/*fieldToString,*/ isControlSubfieldCode} from './utils.js';
 
-import {fieldNormalizePrefixes} from './normalizeIdentifier';
+import {fieldNormalizeControlNumbers} from './normalizeIdentifier';
 import {fieldPreprocess} from './hardcodedPreprocessor.js';
 //import {getMaxSubfield6, reindexSubfield6s} from './reindexSubfield6.js';
 //import {getMaxSubfield8, reindexSubfield8s} from './reindexSubfield8.js';
@@ -56,7 +56,7 @@ function normalizeField(field) {
   //sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
   fieldStripPunctuation(field);
   fieldLowercase(field);
-  fieldNormalizePrefixes(field);
+  fieldNormalizeControlNumbers(field); // FIN11 vs FI-MELINDA etc.
   return field;
 }
 
