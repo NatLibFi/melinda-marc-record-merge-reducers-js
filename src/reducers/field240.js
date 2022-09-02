@@ -22,6 +22,11 @@ export default () => (base, source) => {
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
+
+  // This condition allow merging of base's field 240 with source's field 240, but before add-stage,
+  // rule remove's source field 240 if base has either 130 and 240. (The latter is irrelevant, since
+  // marc21 specs prevents copying of a non-repeatable field 240. However, we have it here, as for educational
+  // reasons + specs wanted this functionality.)
   const config = {'config': {'tagPattern': '^240$',
     'addConfiguration': {
       'preprocessorDirectives': [
