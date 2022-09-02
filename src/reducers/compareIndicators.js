@@ -2,7 +2,7 @@
 //import createDebugLogger from 'debug';
 //import {fieldToString, nvdebug} from './utils';
 
-import {nvdebug} from './utils';
+import {marc21NoNeedToCheckInd1, marc21NoNeedToCheckInd2, marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -15,6 +15,7 @@ import {nvdebug} from './utils';
 const ind1NonFilingChars = ['130', '630', '730', '740'];
 const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];
 
+// (010|013|015)
 /*
 
 function skippableIndicator1ByDefault(tag) {
@@ -43,33 +44,39 @@ function skippableIndicator2ByDefault(tag) {
 */
 
 export function mergableIndicator1(field1, field2, config) {
-  if (config.ignoreIndicator1 && config.ignoreIndicator1.includes(field1.tag)) {
+  // Indicators are identical:
+  if (field1.ind1 === field2.ind1) {
     return true;
   }
-
-  /*
-  if (skippableIndicator1ByDefault(field1.tag)) {
+  const {tag} = field1;
+  // Indicator has but one legal value or is a non-fliing indicator (NB: can not be overridden via config...):
+  if (marc21NoNeedToCheckInd1(tag) || ind1NonFilingChars.includes(tag)) {
     return true;
   }
-  */
-
-  // Default: require that indicators match
-  return field1.ind1 === field2.ind1;
+  // Override via config:
+  if (config.ignoreIndicator1 && config.ignoreIndicator1.includes(tag)) {
+    return true;
+  }
+  // Fail:
+  return false;
 }
 
 export function mergableIndicator2(field1, field2, config) {
-  if (config.ignoreIndicator2 && config.ignoreIndicator2.includes(field1.tag)) {
+  // Indicators are identical:
+  if (field1.ind2 === field2.ind2) {
     return true;
   }
-
-  /*
-  if (skippableIndicator2ByDefault(field1.tag)) {
+  const {tag} = field1;
+  // Indicator has but one legal value or is a non-fliing indicator (NB: can not be overridden via config...):
+  if (marc21NoNeedToCheckInd2(tag) || ind2NonFilingChars.includes(tag)) {
     return true;
   }
-  */
-
-  // Default: indicators must match
-  return field1.ind2 === field2.ind2;
+  // Override via config:
+  if (config.ignoreIndicator2 && config.ignoreIndicator2.includes(tag)) {
+    return true;
+  }
+  // Fail:
+  return false;
 }
 
 export function mergeIndicators(toField, fromField, config) {
@@ -102,6 +109,13 @@ export function mergeIndicators(toField, fromField, config) {
     if (indicatorNumber === 2 && ind2NonFilingChars.includes(tag)) {
       return '9876543210 ';
     }
+
+    // Marc21 standard allows just one value:
+    const cands = indicatorNumber === 1 ? marc21GetTagsLegalInd1Value(tag) : marc21GetTagsLegalInd2Value(tag);
+    if (typeof cands === 'string' && cands.length === 1) { // single cand
+      return cands;
+    }
+
     return undefined;
   }
 
