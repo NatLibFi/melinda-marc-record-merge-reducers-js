@@ -11,7 +11,7 @@ export default function () {
 
   // NB! We should and could handle ISNIs here as well.
   return {
-    description: "Normalizes control number identifier's prefixes",
+    description: 'Normalizes control number identifiers',
     validate, fix
   };
 
