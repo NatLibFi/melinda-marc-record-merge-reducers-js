@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import createDebugLogger from 'debug';
-//import {fieldToString, nvdebug} from './utils';
+//import {/*fieldToString,*/ nvdebug} from './utils';
 
 import {marc21NoNeedToCheckInd1, marc21NoNeedToCheckInd2, marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
 
@@ -93,10 +93,11 @@ export function mergeIndicators(toField, fromField, config) {
   mergeIndicator1(toField, fromField, config);
   mergeIndicator2(toField, fromField, config);
 
-  function getIndicatorPreferredValuesArray(tag, indicatorNumber, config) {
+  function getIndicatorPreferredValues(tag, indicatorNumber, config) {
+
 
     const cands = getIndicatorPreferredValuesWhatever(tag, indicatorNumber, config);
-    if (Array.isArray(cands)) {
+    if (Array.isArray(cands) || typeof cands === 'object') {
       return cands;
     }
     if (typeof cands === 'string') { // single cand as string (seen in json in the past)
@@ -138,9 +139,9 @@ export function mergeIndicators(toField, fromField, config) {
     }
   }
 
-  function getPreferredValue(preferenceString, val1, val2) {
-    const i1 = preferenceString.indexOf(val1);
-    const i2 = preferenceString.indexOf(val2);
+  function getPreferredValue(preferences, val1, val2) {
+    const i1 = scoreValue(preferences, val1);
+    const i2 = scoreValue(preferences, val2);
     if (i1 === -1) {
       return i2 === -1 ? undefined : val2;
     }
@@ -149,6 +150,17 @@ export function mergeIndicators(toField, fromField, config) {
     }
     // The sooner, the better:
     return i1 < i2 ? val1 : val2;
+
+    function scoreValue(preferences, val) {
+      if (Array.isArray(preferences)) {
+        return preferences.indexOf(val);
+      }
+      // Object: diffent values can return same value (eg. 506 ind1 values '0' and '1' are equal but better than '#')
+      if (!(val in preferences)) {
+        return -1;
+      }
+      return preferences[val];
+    }
   }
 
   function mergeIndicator1(toField, fromField, config) {
@@ -156,7 +168,7 @@ export function mergeIndicators(toField, fromField, config) {
       return; // Do nothing
     }
 
-    const preferredValues = getIndicatorPreferredValuesArray(toField.tag, 1, config);
+    const preferredValues = getIndicatorPreferredValues(toField.tag, 1, config);
 
     if (preferredValues) {
       //nvdebug(`Try to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}'`);
@@ -179,7 +191,7 @@ export function mergeIndicators(toField, fromField, config) {
       return; // Do nothing
     }
     //nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`);
-    const preferredValues = getIndicatorPreferredValuesArray(toField.tag, 2, config);
+    const preferredValues = getIndicatorPreferredValues(toField.tag, 2, config);
 
     if (preferredValues) {
       //nvdebug(`  Try to merge indicator 2. Got preferred values '${preferredValues}'`);
