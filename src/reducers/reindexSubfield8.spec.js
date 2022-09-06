@@ -3,7 +3,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './reindexSubfield8';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import {nvdebug} from './utils';
+//import {nvdebug} from './utils';
 
 describe('subfield 8 reindexing tests: ', () => {
   generateTests({
@@ -22,14 +22,14 @@ describe('subfield 8 reindexing tests: ', () => {
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
-    nvdebug('SF8 WP8');
+    //nvdebug('SF8 WP8');
     const expectedRecord = getFixture('modifiedSource.json');
-    nvdebug('SF8 WP9');
+    //nvdebug('SF8 WP9');
     const marcReducers = generateReducers(tagPattern, config);
-    nvdebug('SF8 WP10');
+    //nvdebug('SF8 WP10');
     const modBaseAndSource = marcReducers(base, source);
-    nvdebug('SF8 WP11');
-    const modifiedSource = modBaseAndSource[modBaseAndSource.length - 1];
+    //nvdebug('SF8 WP11');
+    const modifiedSource = modBaseAndSource.source; //modBaseAndSource[modBaseAndSource.length - 1];
     expect(modifiedSource.toObject()).to.eql(expectedRecord);
 
     function generateReducers(tagPattern, config = {}) {
