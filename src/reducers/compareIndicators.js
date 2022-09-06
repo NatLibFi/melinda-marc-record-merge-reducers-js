@@ -93,30 +93,49 @@ export function mergeIndicators(toField, fromField, config) {
   mergeIndicator1(toField, fromField, config);
   mergeIndicator2(toField, fromField, config);
 
-  function getIndicatorPreferredValues(tag, indicatorNumber, config) {
-    const preferredValues = indicatorNumber === 1 ? config.indicator1PreferredValues : config.indicator2PreferredValues;
-    nvdebug(`${tag} IND${indicatorNumber}: get preferred values...\nCONFIG: ${JSON.stringify(config)}`);
-    if (preferredValues) {
-      //nvdebug(`${tag} PREF VALS: ${JSON.stringify(preferredValues)}`);
-      if (tag in preferredValues) {
-        return preferredValues[tag];
-      }
-    }
+  function getIndicatorPreferredValuesArray(tag, indicatorNumber, config) {
 
-    if (indicatorNumber === 1 && ind1NonFilingChars.includes(tag)) {
-      return '9876543210 ';
-    }
-    if (indicatorNumber === 2 && ind2NonFilingChars.includes(tag)) {
-      return '9876543210 ';
-    }
-
-    // Marc21 standard allows just one value:
-    const cands = indicatorNumber === 1 ? marc21GetTagsLegalInd1Value(tag) : marc21GetTagsLegalInd2Value(tag);
-    if (typeof cands === 'string' && cands.length === 1) { // single cand
+    const cands = getIndicatorPreferredValuesWhatever(tag, indicatorNumber, config);
+    if (Array.isArray(cands)) {
       return cands;
     }
+    if (typeof cands === 'string') { // single cand as string (seen in json in the past)
+      return cands.split('');
+    }
 
-    return undefined;
+    return [];
+
+    function getIndicatorPreferredValuesWhatever(tag, indicatorNumber, config) {
+      const preferredValues = indicatorNumber === 1 ? config.indicator1PreferredValues : config.indicator2PreferredValues;
+      nvdebug(`${tag} IND${indicatorNumber}: get preferred values...\nCONFIG: ${JSON.stringify(config)}`);
+      if (preferredValues) {
+        //nvdebug(`${tag} PREF VALS: ${JSON.stringify(preferredValues)}`);
+        if (tag in preferredValues) {
+          return preferredValues[tag];
+        }
+      }
+
+      // Easter Egg #1: Use good hard-coded defaults as not defined by user:
+      if (indicatorNumber === 1 && ind1NonFilingChars.includes(tag)) {
+        return '9876543210 ';
+      }
+      if (indicatorNumber === 2 && ind2NonFilingChars.includes(tag)) {
+        return '9876543210 ';
+      }
+
+      // Easter Egg #2: Marc21 standard allows just one value:
+      const cands = indicatorNumber === 1 ? marc21GetTagsLegalInd1Value(tag) : marc21GetTagsLegalInd2Value(tag);
+      if (cands) {
+        if (typeof cands === 'string' && cands.length === 1) { // single cand
+          return [cands];
+        }
+        if (Array.isArray(cands) && cands.length === 1) {
+          return cands;
+        }
+      }
+
+      return [];
+    }
   }
 
   function getPreferredValue(preferenceString, val1, val2) {
@@ -137,7 +156,7 @@ export function mergeIndicators(toField, fromField, config) {
       return; // Do nothing
     }
 
-    const preferredValues = getIndicatorPreferredValues(toField.tag, 1, config);
+    const preferredValues = getIndicatorPreferredValuesArray(toField.tag, 1, config);
 
     if (preferredValues) {
       //nvdebug(`Try to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}'`);
@@ -160,7 +179,7 @@ export function mergeIndicators(toField, fromField, config) {
       return; // Do nothing
     }
     //nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`);
-    const preferredValues = getIndicatorPreferredValues(toField.tag, 2, config);
+    const preferredValues = getIndicatorPreferredValuesArray(toField.tag, 2, config);
 
     if (preferredValues) {
       //nvdebug(`  Try to merge indicator 2. Got preferred values '${preferredValues}'`);
