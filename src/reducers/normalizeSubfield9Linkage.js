@@ -4,12 +4,12 @@ import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeSubfield9Linkage');
 
 export default () => (base, source) => {
-  nvdebug(' IN1');
+  //nvdebug(' IN1');
   recordNormalizeSubfield9Linkage(base);
-  nvdebug(' IN2');
+  //nvdebug(' IN2');
   recordNormalizeSubfield9Linkage(source);
-  nvdebug(' IN3');
-  return [base, source];
+  //nvdebug(' IN3');
+  return {base, source};
 };
 
 /*

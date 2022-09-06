@@ -27,7 +27,9 @@ describe('normalizeSubfield9Linkage tests: ', () => {
     const expectedModifiedSourceRecord = getFixture('modifiedSource.json');
     const marcReducers = generateReducers(tagPattern, config);
     nvdebug('FFS WP 663');
-    const [mergedRecord, modifiedSourceRecord] = marcReducers(base, source);
+    const both = marcReducers(base, source);
+    const mergedRecord = both.base;
+    const modifiedSourceRecord = both.source;
     nvdebug('FFS WP 664');
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
     nvdebug('FFS WP 666');
