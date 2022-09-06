@@ -19,7 +19,7 @@ export default () => (base, source) => {
   if (baseFields.length === 1 && sourceFields.length === 1) {
     if (allowMerge(baseFields[0].value, sourceFields[0].value)) {
       mergeControlFields(baseFields[0], sourceFields[0]); // eslint-disable-line functional/immutable-data
-      return baseRecord;
+      return {base: baseRecord, source};
     }
   }
 
@@ -27,12 +27,12 @@ export default () => (base, source) => {
   if (baseFields.length === 0 && sourceFields.length > 0) {
     debug(`Copy ${sourceFields.length} source field(s), since host has no 007`);
     copyFields(baseRecord, sourceFields);
-    return baseRecord;
+    return {base: baseRecord, source};
   }
 
   // Defy specs: don't copy non-identical fields. Typically we should have only one 007 field.
   // And don't merge them either, as it is too risky. Let's just trust base record.
-  return baseRecord;
+  return {base: baseRecord, source};
 
   function allowMerge(baseValue, sourceValue) {
     // Too short. Definitely crap:

@@ -25,7 +25,6 @@ const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
 // Should this load default configuration?
 export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
-
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
@@ -36,7 +35,6 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   recordPreprocess(baseRecord); // fix composition et al
   recordPreprocess(sourceRecord); // fix composition et al
-
 
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
@@ -51,7 +49,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   postprocessRecord(baseRecord);
   postprocessRecord(sourceRecord);
 
-  return [baseRecord, sourceRecord];
+  return {base: baseRecord, source: sourceRecord};
   //return {baseRecord2, sourceRecord2};
 
   function getTagPattern(tagPattern, config) {

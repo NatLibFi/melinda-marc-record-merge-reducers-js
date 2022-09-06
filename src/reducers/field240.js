@@ -67,7 +67,7 @@ export default () => (base, source) => {
   postprocessRecord(baseRecord);
   postprocessRecord(sourceRecord);
 
-  return [baseRecord, sourceRecord];
+  return {base: baseRecord, source: sourceRecord};
   //return {baseRecord2, sourceRecord2};
 
 };

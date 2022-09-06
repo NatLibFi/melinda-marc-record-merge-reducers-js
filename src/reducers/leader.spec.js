@@ -20,8 +20,8 @@ function callback({getFixture, expectedError = false}) {
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const expectedRecord = getFixture('merged.json');
   try {
-    const mergedRecord = createReducer()(base, source);
-    expect(mergedRecord.toObject()).to.eql(expectedRecord);
+    const bothRecords = createReducer()(base, source);
+    expect(bothRecords.source.toObject()).to.eql(expectedRecord);
   } catch (error) {
     if (expectedError) {
       expect(() => createReducer.to.throw(Error, 'LDR'));

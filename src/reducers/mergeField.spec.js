@@ -26,9 +26,10 @@ describe('merge data field tests: ', () => {
     const expectedModifiedSourceRecord = getFixture('modifiedSource.json');
 
     const marcReducers = generateReducers(tagPattern, config);
-    const [mergedRecord, modifiedSourceRecord] = marcReducers(base, source);
-    expect(mergedRecord.toObject()).to.eql(expectedRecord);
-    expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
+    const bothRecords = marcReducers(base, source);
+
+    expect(bothRecords.base.toObject()).to.eql(expectedRecord);
+    expect(bothRecords.source.toObject()).to.eql(expectedModifiedSourceRecord);
 
     function generateReducers(tagPattern, config) {
 

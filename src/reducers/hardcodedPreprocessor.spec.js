@@ -30,7 +30,10 @@ describe('source preprocessor tests: ', () => {
     const expectedRecord = getFixture('merged.json');
     const expectedModifiedSourceRecord = getFixture('modifiedSource.json');
     const marcReducers = generateReducers(tagPattern, config);
-    const [mergedRecord, modifiedSourceRecord] = marcReducers(base, source);
+    // const [mergedRecord, modifiedSourceRecord]
+    const bothRecords = marcReducers(base, source);
+    const mergedRecord = bothRecords.base;
+    const modifiedSourceRecord = bothRecords.source;
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
     expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
 

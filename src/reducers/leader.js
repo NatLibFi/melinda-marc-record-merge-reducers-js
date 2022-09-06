@@ -21,5 +21,5 @@ export default () => (base, source) => {
   if (source.leader[6] !== base.leader[6] || source.leader[7] !== base.leader[7]) {
     throw new Error(`LDR 000/06 or 07 is different in base and source`);
   }
-  return base;
+  return {base, source};
 };

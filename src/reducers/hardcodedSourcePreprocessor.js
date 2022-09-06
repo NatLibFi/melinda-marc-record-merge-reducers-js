@@ -274,7 +274,7 @@ export default (config = {}) => (base, source) => {
   //nvdebug(`HSP CONF ${config}`);
   filterOperations(base, source, config.preprocessorDirectives);
 
-  return [base, externalFixes(source, config)];
+  return {base, source: externalFixes(source, config)};
 
 
   function externalFixes(record) {

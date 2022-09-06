@@ -53,10 +53,10 @@ export default () => (base, source) => {
     // Replace base field 008 with field 008 from source
     debug(`Replacing base field ${baseFields[0].tag}`);
     // Field 008 is non-repeatable. This [0] is/should be a safe approach:
-    return recordReplaceField(baseRecord, baseFields[0], sourceFields[0]);
+    return {base: recordReplaceField(baseRecord, baseFields[0], sourceFields[0]), source};
   }
   // Test 07: If the level code of the base record is better or the same, keep existing 008
   // Test 08: If the character positions for year, language and country are not the same, keep existing 008
   debug('Keeping base field 008');
-  return base;
+  return {base, source};
 };
