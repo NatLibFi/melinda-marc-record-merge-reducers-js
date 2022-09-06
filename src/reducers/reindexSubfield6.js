@@ -12,7 +12,7 @@ export default () => (base, source) => {
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
   const baseMax = getMaxSubfield6(base);
   reindexSubfield6s(sourceRecord, baseMax);
-  return [base, sourceRecord];
+  return {base, source: sourceRecord};
 };
 
 function subfield6Index(subfield) {

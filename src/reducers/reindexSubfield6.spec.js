@@ -26,7 +26,7 @@ describe('subfield 6 reindexing tests: ', () => {
     const expectedRecord = getFixture('modifiedSource.json');
     const marcReducers = generateReducers(tagPattern, config);
     const modBaseAndSource = marcReducers(base, source);
-    const modifiedSource = modBaseAndSource[modBaseAndSource.length - 1];
+    const modifiedSource = modBaseAndSource.source; // modBaseAndSource[modBaseAndSource.length - 1];
     expect(modifiedSource.toObject()).to.eql(expectedRecord);
 
     function generateReducers(tagPattern, config = {}) {
