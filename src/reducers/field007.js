@@ -6,61 +6,46 @@ import {copyFields /*, fieldToString, getEncodingLevelRanking*/} from './utils.j
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-// NB: handle merging better.ns
 export default () => (base, source) => {
+  // NB! This implementation differs from the specs. However, that's because the specs are bad. See comments for details.
 
-  /*
-  // NV: Nah, enc level is prolly irrelevant here. We have already chosen base somewhere. Let's trust that decision instead.
-  if (getEncodingLevelRanking(base) < getEncodingLevelRanking(source)) { // smaller is better!
-    // The original version is better than the alternative version.
-    return base;
-  }
-  */
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
   const baseFields = baseRecord.get(/^007$/u);
   const sourceFields = sourceRecord.get(/^007$/u);
 
+  // If both sides contain exactly 1 entry, let's try to merge them:
+  if (baseFields.length === 1 && sourceFields.length === 1) {
+    if (allowMerge(baseFields[0].value, sourceFields[0].value)) {
+      mergeControlFields(baseFields[0], sourceFields[0]); // eslint-disable-line functional/immutable-data
+      return baseRecord;
+    }
+  }
+
+  // If and only if base contains no 007 fields, we *copy* what base has:
   if (baseFields.length === 0 && sourceFields.length > 0) {
     debug(`Copy ${sourceFields.length} source field(s), since host has no 007`);
     copyFields(baseRecord, sourceFields);
     return baseRecord;
   }
 
-  // NV: added this
-  if (baseFields.length === 1) {
-    if (sourceFields.length === 1) {
-      if (allowMerge(baseFields[0].value, sourceFields[0].value)) {
-        mergeControlFields(baseFields[0], sourceFields[0]); // eslint-disable-line functional/immutable-data
-
-        return baseRecord;
-      }
-    }
-  }
-  // The rest is someone else's code. Complies with specs, which are bad. Not doing them :D
-  /*
-  const mergableFields = sourceFields.filter(sf => baseFields.every(bf => allowCopy(bf, sf)));
-
-  //const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
-
-  if (mergableFields.length > 0) {
-    debug(`${mergableFields.length} copyable field(s)`);
-    return copyFields(baseRecord, mergableFields);
-  }
-  */
-  return base;
+  // Defy specs: don't copy non-identical fields. Typically we should have only one 007 field.
+  // And don't merge them either, as it is too risky. Let's just trust base record.
+  return baseRecord;
 
   function allowMerge(baseValue, sourceValue) {
-    // Copy
+    // Too short. Definitely crap:
     if (baseValue.length < 2 || sourceValue.length < 2) {
       return false;
     }
 
+    // 007/00 values must be equal:
     if (baseValue.charAt(0) !== sourceValue.charAt(0)) {
       return false;
     }
 
+    // 007/01 values must match or contain '|' (undefined):
     if (baseValue.charAt(1) === sourceValue.charAt(1) ||
         sourceValue.charAt(1) === '|' ||
         baseValue.charAt(1) === '|') {
