@@ -3,7 +3,6 @@ import {fieldStripPunctuation} from './punctuation.js';
 import {/*fieldToString,*/ isControlSubfieldCode} from './utils.js';
 
 import {fieldNormalizeControlNumbers} from './normalizeIdentifier';
-import {fieldPreprocess} from './hardcodedPreprocessor.js';
 //import {getMaxSubfield6, reindexSubfield6s} from './reindexSubfield6.js';
 //import {getMaxSubfield8, reindexSubfield8s} from './reindexSubfield8.js';
 import createDebugLogger from 'debug';
@@ -52,7 +51,6 @@ function fieldLowercase(field) {
 
 
 function normalizeField(field) {
-  fieldPreprocess(field); // spacing, composition, diacritics, remap wrong utf-8 characters (eg. various - characters)
   //sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
   fieldStripPunctuation(field);
   fieldLowercase(field);
@@ -75,7 +73,6 @@ function fieldComparison(oldField, newField) { // NB: Debug-only function!
 
 export function cloneAndRemovePunctuation(field) {
   const clonedField = clone(field);
-  fieldPreprocess(clonedField);
   fieldStripPunctuation(clonedField);
   debug('PUNC');
   fieldComparison(field, clonedField);
