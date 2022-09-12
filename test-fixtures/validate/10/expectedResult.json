@@ -6,7 +6,7 @@
       "state": "fixed"
     },
     {
-      "description": "Normalizes control number identifiers",
+      "description": "Normalizes identifiers such as subfield $0 values",
       "state": "fixed"
     },
     {
