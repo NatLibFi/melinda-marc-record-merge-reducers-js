@@ -114,27 +114,21 @@ function skipAddField(record, field) {
     return true;
   }
 
+  // NB! Subfieldless fields (and control fields (00X)) are not handled here.
+  if (field.subfields.length === 0) {
+    debug(`WARNING or ERROR: No subfields in field-to-add`);
+    return true;
+  }
+
   return false;
 }
 
-function cloneField(field) {
+function cloneAddableField(field) {
   // mark it as coming from source:
   field.added = 1; // eslint-disable-line functional/immutable-data
   return JSON.parse(JSON.stringify(field));
 }
 
-
-function addField2(record, field) {
-  // NB! Subfieldless fields (and control fields (00X)) are not handled here.
-  if (field.subfields.length === 0) {
-    debug(`WARNING or ERROR: No subfields in field-to-add`);
-    return record;
-  }
-  nvdebug(`Add as ${fieldToString(field)}`, debug);
-  // Do we need to sort unmerged subfields?
-  //return record.insertField(sortAdjacentSubfields(field));
-  return record.insertField(field);
-}
 
 export function addField(record, field, config = {}) {
   // Skip duplicates and special cases:
@@ -143,10 +137,11 @@ export function addField(record, field, config = {}) {
     return false;
   }
 
-  // Normal situation: remove
-  const newField = cloneField(field, config); // clone for base+ field.added = 1
+  // Normal situation: marc field as deleted from source
+  const newField = cloneAddableField(field, config); // clone for base + set field.added = 1
   field.deleted = 1; // eslint-disable-line functional/immutable-data
 
-  nvdebug(`addField(): Try to add '${fieldToString(field)}'.`, debug);
-  return addField2(record, newField);
+  nvdebug(`Add as ${fieldToString(field)}`, debug);
+  // NB! We don't we sort subfields in added fields.
+  return record.insertField(newField);
 }
