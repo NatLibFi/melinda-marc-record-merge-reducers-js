@@ -5,7 +5,8 @@ import {
   fieldToString
 } from './utils.js';
 
-import {normalizeControlSubfieldValue} from './normalizeIdentifier';
+//import {normalizeControlSubfieldValue} from './normalizeIdentifier';
+import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -73,9 +74,9 @@ function controlSubfield9PermitsMerge(field1, field2) {
   if (subfieldsAreEmpty(field1, field2, '9')) {
     return true;
   }
-  // NB! We ignote $9s that aren't keeps or drops.
+  // NB! We ignote checks on $9s that aren't keeps or drops. Maybe they should trigger false?
   // NB: If we have "whatever" and "whatever + DROP", the result should be "whatever + DROP"?
-  // What should we check here anyway? Never merge FOO<KEEP> and FOO<DROP>?
+  // What should we check here anyway? Never merge FOO<KEEP> and FOO<DROP>? (not implemented)
   const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2); // NB! Do we need to sort them subfields?
@@ -147,6 +148,7 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
 const controlSubfieldsContainingIdentifier = ['w', '0', '1', '2']; // 2 ain't identifier, but the logic can be applied here as well
 
 export function controlSubfieldsPermitMerge(field1, field2) {
+  // Check $w, $0, $1, $2 (which isn't an identifier per se, but the sama logic can be applied)
   if (!controlSubfieldsContainingIdentifier.every(subfieldCode => controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode))) {
     //debug(' control subfields with identifiers failed');
     return false;
@@ -160,10 +162,12 @@ export function controlSubfieldsPermitMerge(field1, field2) {
   if (!controlSubfield5PermitsMerge(field1, field2) || !controlSubfield6PermitsMerge(field1, field2) || !controlSubfield9PermitsMerge(field1, field2)) {
     return false;
   }
-  // We don't handle $8 subfields here at all, as they affect multiple fields! Also these would get screwed:
+  // We fully prevent merging $8 subfields here, as they affect multiple fields! Also these would get screwed:
   // 38211 |8 3\u |a kuoro |2 seko
-  // 38211 |8 6\u |a kuoro |2 seko |9 VIOLA<KEEP>
+  // 38211 |8 6\u |a kuoro |2 seko |9 VIOLA<DROP>
+  // Thus only copy works with $8...
   if (!subfieldsAreEmpty(field1, field2, '8')) {
+    // We could alleviate this a bit esp. for non-repeatable fields
 
     //debug(' csf8 failed');
     return false;

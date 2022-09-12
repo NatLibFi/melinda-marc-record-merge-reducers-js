@@ -2,7 +2,8 @@ import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
 import {/*fieldToString,*/ isControlSubfieldCode} from './utils.js';
 
-import {fieldNormalizeControlNumbers} from './normalizeIdentifier';
+//import {fieldNormalizeControlNumbers} from './normalizeIdentifier';
+import {fieldNormalizeControlNumbers} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 //import {getMaxSubfield6, reindexSubfield6s} from './reindexSubfield6.js';
 //import {getMaxSubfield8, reindexSubfield8s} from './reindexSubfield8.js';
 import createDebugLogger from 'debug';

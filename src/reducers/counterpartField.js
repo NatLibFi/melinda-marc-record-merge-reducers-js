@@ -3,7 +3,8 @@
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldToString, nvdebug} from './utils';
 import {cloneAndNormalizeField} from './normalize';
-import {normalizeControlSubfieldValue} from './normalizeIdentifier';
+import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
+
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {mergableIndicator1, mergableIndicator2} from './compareIndicators';

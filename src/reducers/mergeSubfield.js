@@ -1,7 +1,8 @@
 import createDebugLogger from 'debug';
 import clone from 'clone';
 import {cloneAndRemovePunctuation} from './normalize.js';
-import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
+//import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
+import {normalizeAs, normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import {
   fieldHasSubfield,
   fieldToString, isControlSubfieldCode, nvdebug,
@@ -119,9 +120,12 @@ function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
     return true;
   }
   // Don't add $0 subfields that mean the same even if they look different:
-  if (mayContainControlNumberIdentifier(targetField.tag, candSubfield) &&
-      targetField.subfields.some(sf => normalizeControlSubfieldValue(sf.value) === normalizeControlSubfieldValue(candSubfield.value))) {
-    return true;
+  const alephIdentifierType = normalizeAs(targetField.tag, candSubfield.code);
+  if (alephIdentifierType !== undefined) {
+    const normalizedSubfieldValue = normalizeControlSubfieldValue(candSubfield.value, alephIdentifierType);
+    if (targetField.subfields.some(sf => normalizeControlSubfieldValue(sf.value) === normalizedSubfieldValue && sf.code === candSubfield.code)) {
+      return true;
+    }
   }
   return false;
 }

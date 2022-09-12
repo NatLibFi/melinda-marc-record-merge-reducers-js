@@ -43,7 +43,8 @@ import {
 //import {recordPreprocess} from './reducers/normalize';
 
 //import NormalizeEncoding from './reducers/normalizeEncoding';
-import NormalizeControlNumber from './reducers/normalizeIdentifier';
+import NormalizeControlNumber from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
+
 // import normalizeSubfield9Linkage from './reducers/normalizeSubfield9Linkage';
 
 import createDebugLogger from 'debug';
