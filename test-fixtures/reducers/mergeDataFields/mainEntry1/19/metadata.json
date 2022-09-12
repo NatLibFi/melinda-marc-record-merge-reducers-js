@@ -1,0 +1,4 @@
+{
+  "description":"19: isni tests: realize that difference $0 subfields mean the same: don't copy $0 from source",
+  "note":"source's value is actually better, but we stick with base's value here"
+}
