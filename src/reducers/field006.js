@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {/*getNonIdenticalFields,*/ copyFields} from './utils.js';
+import {/*getNonIdenticalFields,*/ copyFields, nvdebug} from './utils.js';
 import {fillControlFieldGaps, isFillableControlFieldPair} from './controlFieldUtils.js';
 
 // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field (2x)
@@ -32,7 +32,7 @@ export default () => (base, source) => {
 
   // If and only if base contains no 006 fields, we *copy* what source has:
   if (baseFields.length === 0 && sourceFields.length > 0) {
-    debug(`Copy ${sourceFields.length} source field(s), since host has no 006`);
+    nvdebug(`Copy ${sourceFields.length} source field(s), since host has no 006`, debug);
     copyFields(baseRecord, sourceFields);
     return {base: baseRecord, source};
   }
