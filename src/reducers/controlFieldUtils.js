@@ -1,3 +1,5 @@
+import {nvdebug} from './utils';
+
 function fieldPositionValueContainsInformation(val) {
   if (val === '' || val === '|' || val === ' ' || val === '#') {
     return false;
@@ -15,6 +17,9 @@ function getBetterControlFieldPositionValue(c1, c2) {
   return c1;
 }
 
+
+const f007Lengths = {a: 8, c: 14, d: 6, f: 10, g: 9, h: 13, k: 6, m: 23, o: 2, q: 2, r: 11, s: 14, t: 2, v: 9, z: 2};
+
 function hasLegalLength(field) {
   if (field.tag === '006') {
     return field.value.length === 18;
@@ -22,10 +27,13 @@ function hasLegalLength(field) {
 
   // 007 length depends on 007/00. Add more checks later here.
   if (field.tag === '007') {
-    if (field.length < 2) {
-      return false;
+    const c0 = field.value.charAt(0);
+    if (c0 in f007Lengths) {
+      nvdebug(`${c0}: COMPARE ${f007Lengths[c0]} vs ${field.value.length}`);
+      return field.value.length === f007Lengths[c0];
     }
-    return true;
+
+    return false;
   }
 
   if (field.tag === '008') {
@@ -36,7 +44,10 @@ function hasLegalLength(field) {
 }
 
 export function isFillableControlFieldPair(baseField, sourceField) {
-  if (baseField.value.length !== sourceField.value.length || !hasLegalLength(baseField)) {
+  if (baseField.value.length !== sourceField.value.length) {
+    return false;
+  }
+  if (!hasLegalLength(baseField)) {
     return false;
   }
 
