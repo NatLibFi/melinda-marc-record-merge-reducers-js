@@ -1,3 +1,3 @@
 {
-  "description":"If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field (2x)"
+  "description":"If base has no 006 fields, they can be copied from source"
 }

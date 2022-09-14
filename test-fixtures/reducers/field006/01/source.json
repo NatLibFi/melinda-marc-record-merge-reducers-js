@@ -3,11 +3,11 @@
   "fields": [
     {
       "tag": "006",
-      "value": "006_source1"
+      "value": "sw||n|^|||||||||b0"
     },
     {
       "tag": "006",
-      "value": "006_source2"
-    }
+      "value": "m||||||||d||||||||"
+    }  
   ]
 }

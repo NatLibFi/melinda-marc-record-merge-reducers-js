@@ -3,19 +3,17 @@
   "fields": [
     {
       "tag": "006",
-      "value": "006_base1"
+      "value": "sw||n|^|||||||||b0"
     },
     {
       "tag": "006",
-      "value": "006_base2"
+      "value": "m||||||||d||||||||"
     },
     {
-      "tag": "006",
-      "value": "006_source1"
-    },
-    {
-      "tag": "006",
-      "value": "006_source2"
-    }
+      "tag": "245",
+      "ind1": " ",
+      "ind2": " ",
+      "value": "Title"
+    } 
   ]
 }
