@@ -1,0 +1,4 @@
+{
+  "description":"Don't merge two 007 fields as they are too long.",
+  "comment": "Same as 01, but with illegal length in both base's and source's 007"
+}
