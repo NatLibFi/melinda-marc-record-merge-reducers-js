@@ -243,7 +243,7 @@ export function nvdebug(message, func) {
   if (func) { // eslint-disable-line functional/no-conditional-statement
     func(message);
   }
-  console.info(message); // eslint-disable-line no-console
+  //console.info(message); // eslint-disable-line no-console
 }
 
 // base record level codes from highest (1) to lowest (10)
