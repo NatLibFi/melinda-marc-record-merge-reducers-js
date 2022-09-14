@@ -5,7 +5,7 @@ import {mergeField} from './mergeField';
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {recordPreprocess} from './hardcodedPreprocessor.js';
-import {postprocessRecord} from './mergePreAndPostprocess.js';
+import {postprocessRecord} from './mergePostprocess.js';
 import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 import {addField} from './addField';
 
