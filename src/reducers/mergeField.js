@@ -7,7 +7,7 @@ import {mergeIndicators} from './compareIndicators';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 import {recordPreprocess} from './hardcodedPreprocessor.js';
-import {postprocessRecord} from './mergePreAndPostprocess.js';
+import {postprocessRecord} from './mergePostprocess.js';
 import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 
 import fs from 'fs';
