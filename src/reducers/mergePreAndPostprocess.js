@@ -5,13 +5,12 @@ export function postprocessRecord(record) {
   record.fields.forEach(field => {
     // remove merge-specific information:
     if (field.merged) { // eslint-disable-line functional/no-conditional-statement
-
+      // Field level ideas about things that could be done here:
+      // - Fix indicators?
+      // Record level fixes should be implemented as validators/fixers
+      // in marc-record-validators-melinda and ust called from here.
       fieldFixPunctuation(field); // NB! This will fix only fields with merged content
-      // DO YOUR SHIT
       delete field.merged; // eslint-disable-line functional/immutable-data
-      // NB! We could
-      // - remove subsets?
-      // - Fix X00 ind2 etc
     }
 
     if (field.punctuate) { // eslint-disable-line functional/no-conditional-statement
