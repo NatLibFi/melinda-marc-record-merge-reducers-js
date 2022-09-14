@@ -1,6 +1,6 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {mergeControlFields} from './controlFieldUtils.js';
+import {fillControlFieldGaps, isFillableControlFieldPair} from './controlFieldUtils.js';
 import {copyFields /*, fieldToString, getEncodingLevelRanking*/} from './utils.js';
 
 
@@ -15,15 +15,17 @@ export default () => (base, source) => {
   const baseFields = baseRecord.get(/^007$/u);
   const sourceFields = sourceRecord.get(/^007$/u);
 
-  // If both sides contain exactly 1 entry, let's try to merge them:
-  if (baseFields.length === 1 && sourceFields.length === 1) {
-    if (allowMerge(baseFields[0].value, sourceFields[0].value)) {
-      mergeControlFields(baseFields[0], sourceFields[0]); // eslint-disable-line functional/immutable-data
-      return {base: baseRecord, source};
+  // If both sides have same number of entries,
+  // and they apparently are in the same order,
+  // let's try to fill the gaps:
+  if (baseFields.length > 0 && baseFields.length === sourceFields.length) {
+    if (baseFields.every((baseField, i) => isFillableControlFieldPair(baseField, sourceFields[i]))) { // eslint-disable-line functional/no-conditional-statement
+      baseFields.forEach((baseField, i) => fillControlFieldGaps(baseField, sourceFields[i]));
     }
+    return {base: baseRecord, source};
   }
 
-  // If and only if base contains no 007 fields, we *copy* what base has:
+  // If and only if base contains no 007 fields, we *source* what base has:
   if (baseFields.length === 0 && sourceFields.length > 0) {
     debug(`Copy ${sourceFields.length} source field(s), since host has no 007`);
     copyFields(baseRecord, sourceFields);
@@ -34,7 +36,8 @@ export default () => (base, source) => {
   // And don't merge them either, as it is too risky. Let's just trust base record.
   return {base: baseRecord, source};
 
-  function allowMerge(baseValue, sourceValue) {
+/*
+  function allowFieldMerge(baseValue, sourceValue) {
     // Too short. Definitely crap:
     if (baseValue.length < 2 || sourceValue.length < 2) {
       return false;
@@ -53,4 +56,5 @@ export default () => (base, source) => {
     }
     return false;
   }
+  */
 };
