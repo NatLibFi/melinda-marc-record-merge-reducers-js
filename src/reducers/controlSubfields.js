@@ -167,8 +167,12 @@ export function controlSubfieldsPermitMerge(field1, field2) {
   // 38211 |8 6\u |a kuoro |2 seko |9 VIOLA<DROP>
   // Thus only copy works with $8...
   if (!subfieldsAreEmpty(field1, field2, '8')) {
-    // We could alleviate this a bit esp. for non-repeatable fields
-
+    // We could alleviate this a bit esp. for non-repeatable fields.
+    // At least, if the source has '8' and otherwise the two fields are identical...
+    const subsetOfField2 = {'tag': field2.tag, 'ind1': field2.ind1, 'ind2': field2.ind2, subfields: field2.subfields.filter(sf => sf.code !== '8')};
+    if (fieldToString(field1) === fieldToString(subsetOfField2)) {
+      return true;
+    }
     //debug(' csf8 failed');
     return false;
   }
