@@ -15,40 +15,13 @@ import {marc21NoNeedToCheckInd1, marc21NoNeedToCheckInd2, marc21GetTagsLegalInd1
 const ind1NonFilingChars = ['130', '630', '730', '740'];
 const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];
 
-// (010|013|015)
-/*
-
-function skippableIndicator1ByDefault(tag) {
-  // When checking similarity of indicators, we are not interested in non-filing characters
-  if (ind1NonFilingChars.includes(tag)) {
-    return true;
-  }
-
-  // Exceptions:
-  // 245: value is based on the presence of a 1XX field, which may vary
-  if (['245'].includes(tag)) {
-    return true;
-  }
-
-  // NB! There are bunch of indicators that have only one way (typically '#'). Should we list meaningless indicators somewhere?
-  return false;
-}
-
-function skippableIndicator2ByDefault(tag) {
-  // When checking similarity of indicators, we are not interested in non-filing characters
-  if (ind2NonFilingChars.includes(tag)) {
-    return true;
-  }
-  return false;
-}
-*/
 
 export function mergableIndicator1(field1, field2, config) {
   // Indicators are identical:
   if (field1.ind1 === field2.ind1) {
     return true;
   }
-  const {tag} = field1;
+  const {tag} = field1; // means "tag = field1.tag"
   // Indicator has but one legal value or is a non-fliing indicator (NB: can not be overridden via config...):
   if (marc21NoNeedToCheckInd1(tag) || ind1NonFilingChars.includes(tag)) {
     return true;
@@ -124,7 +97,7 @@ export function mergeIndicators(toField, fromField, config) {
         return '9876543210 ';
       }
 
-      // Easter Egg #2: Marc21 standard allows just one value:
+      // Easter Egg #2: Marc21 standard has just one value for given indicator, so prefer it:
       const cands = indicatorNumber === 1 ? marc21GetTagsLegalInd1Value(tag) : marc21GetTagsLegalInd2Value(tag);
       if (cands) {
         if (typeof cands === 'string' && cands.length === 1) { // single cand
@@ -155,7 +128,8 @@ export function mergeIndicators(toField, fromField, config) {
       if (Array.isArray(preferences)) {
         return preferences.indexOf(val);
       }
-      // Object: diffent values can return same value (eg. 506 ind1 values '0' and '1' are equal but better than '#')
+      // preferences may be an object, since diffent values can return same score
+      // (eg. 506 ind1 values '0' and '1' are equal but better than '#')
       if (!(val in preferences)) {
         return -1;
       }
