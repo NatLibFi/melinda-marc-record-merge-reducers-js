@@ -1,0 +1,4 @@
+{
+  "description":"Two 880 fields: one with only $6 (gets deleted), and one with no $6 (kept)",
+  "comment": "A 880 field without a $6 is an anomaly, but not this reducers problem"
+}
