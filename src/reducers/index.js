@@ -12,6 +12,7 @@ import hardcodedPreprocessor from './hardcodedPreprocessor';
 import hardcodedSourcePreprocessor from './hardcodedSourcePreprocessor';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
+import {default as postprocessSubfield6} from './postprocessSubfield6';
 //import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -82,5 +83,6 @@ export const localReducers = [
   //mainAndCorrespondingAddedEntry(),
   //genericDatafield(),
   mergeDataFields(),
-  addDataFields()
+  addDataFields(),
+  postprocessSubfield6()
 ];
