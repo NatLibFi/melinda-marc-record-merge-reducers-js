@@ -1,4 +1,5 @@
-{ "preprocessorDirectives" :
+{
+    "preprocessorDirectives" :
         [
             {
                 "operation": "removeField",
@@ -11,7 +12,7 @@
 
             {
                 "operation": "removeSubfield",
-                "comment": "remove X00$d with old and deprecated (1) style value",
+                "comment": "Remove X00$d with old and deprecated (1) style value. (1) ... (99) are removed.",
                 "recordType": "both",
                 "fieldSpecification": {
                     "tagPattern": "^[1678]00$",
@@ -106,12 +107,22 @@
 
         ],
     "mergeConfiguration" :
-    {
-
-        "comment" : "Non-filing indicators do not affect merge. Meaningless indicator could be listed as well.",
-        "indicator1PreferredValues": { "650" : [ " ", "1", "2", "0" ] },
+    {   
+        "comment #1" : "Meaningless indicators (=indicators having but one legal value) are derived from melindaCustomMergeFields.",
+        "comment #2" : "Meaningless indicators and non-filing indicators never prevent merge. (Hard-coded in mergableIndicator.js)",
+        "comment #3" : "When merging, indicator preference has set defaults in mergeIndicator.js. However, these can be overridden here.",       
+        "indicator1PreferredValues": {
+            "541" : {"0": 1, "1": 1, " ": 2},
+            "542" : {"0": 1, "1": 1, " ": 2},
+            "544" : {"0": 1, "1": 1, " ": 2},
+            "545" : {"0": 1, "1": 1, " ": 2},
+            "561" : {"0": 1, "1": 1, " ": 2},
+            "583" : {"0": 1, "1": 1, " ": 2},
+            "588" : {"0": 1, "1": 1, " ": 2},
+            "650" : [ " ", "1", "2", "0" ]
+        },
         "indicator2PreferredValues": { "730" : [ "2", " " ] },
-        
+        "comment #4" : "Non-filing indicators do not prevent merge. They are mainly listed here as an example.",
         "ignoreIndicator1" : ["130", "245", "630", "650", "651", "655", "730", "740"],
         "ignoreIndicator2" : ["222", "240", "242", "243", "245", "830"]
     },
