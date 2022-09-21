@@ -84,7 +84,7 @@ const defaultNonMergableFields = [
 ];
 
 export function mergableTag(tag, config) {
-  if (config.skipMergeTags && config.skipMergeTags.length > 0) {
+  if (config.skipMergeTags && Array.isArray(config.skipMergeTags)) {
 
     return !config.skipMergeTags.includes(tag);
   }
