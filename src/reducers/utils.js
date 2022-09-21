@@ -89,21 +89,6 @@ export function marc21GetTagsLegalInd2Value(tag) {
   return indicator.ind2;
 }
 
-export function marc21NoNeedToCheckInd1(tag) {
-  const cands = marc21GetTagsLegalInd1Value(tag);
-  if (typeof cands === 'string') { // single cand
-    return true;
-  }
-  return false;
-}
-
-export function marc21NoNeedToCheckInd2(tag) {
-  const cands = marc21GetTagsLegalInd2Value(tag);
-  if (typeof cands === 'string') { // single cand
-    return true;
-  }
-  return false;
-}
 
 export function subfieldIsRepeatable(tag, subfieldCode) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
