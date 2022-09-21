@@ -7,7 +7,7 @@ import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-me
 
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
-import {mergableIndicator1, mergableIndicator2} from './compareIndicators';
+import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 

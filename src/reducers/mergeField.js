@@ -3,7 +3,7 @@ import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 import {cloneAndRemovePunctuation} from './normalize';
 import {mergeSubfield} from './mergeSubfield';
-import {mergeIndicators} from './compareIndicators';
+import {mergeIndicators} from './mergeIndicator';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 import {recordPreprocess} from './hardcodedPreprocessor.js';
@@ -63,6 +63,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   }
 };
 
+// NB! Can be do this via config.json?
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
   // remove only iff some other subfield remains
