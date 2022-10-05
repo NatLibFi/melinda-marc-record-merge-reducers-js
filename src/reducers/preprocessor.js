@@ -2,6 +2,7 @@
 //import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
 //import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
+import {resetCorrespondingField880} from './postprocessSubfield6.js';
 import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
@@ -210,7 +211,9 @@ function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFi
 function operationRetag(record, fieldSpecification, newTag) {
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
   relevantFields.forEach(field => {
+    resetCorrespondingField880(field, record, field.tag, newTag);
     field.tag = newTag; // eslint-disable-line functional/immutable-data
+
   });
 }
 
