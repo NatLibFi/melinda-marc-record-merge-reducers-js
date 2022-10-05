@@ -18,6 +18,10 @@
       "ind2": " ",
       "subfields": [
         {
+          "code": "6",
+          "value": "880-01"
+        },
+        {
           "code": "a",
           "value": "1XX fields"
         }
@@ -55,6 +59,22 @@
           "value": "not handled"
         }
       ]
+    },
+    {
+      "tag": "880",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "110-01"
+        },
+        {
+          "code": "a",
+          "value": "lagelli si"
+        }
+      ]
     }
+
   ]
 }
