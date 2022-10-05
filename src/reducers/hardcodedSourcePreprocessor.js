@@ -43,7 +43,8 @@ function getSpecifiedFields(record, fieldSpecs) {
 
 function subfieldFilterMatches(subfield, subfieldFilter) {
   nvdebug(`SF ${JSON.stringify(subfieldFilter)}`);
-  if (subfieldFilter.code) { // Should we offer regexp as well?
+  // Check subfield code as a string:
+  if (subfieldFilter.code) {
     if (subfieldFilter.code !== subfield.code) {
       nvdebug(` REJECTED SUBFIELD. Reason: code`);
       return false;
@@ -119,7 +120,7 @@ function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
 }
 
 
-function getTargetRecordForOperation(base, source, recordType) {
+function getTargetRecordsForOperation(base, source, recordType) {
   if (recordType === 'base') {
     nvdebug('Filter applies to BASE record');
     return [base];
@@ -214,7 +215,7 @@ function operationRetag(record, fieldSpecification, newTag) {
 }
 
 export function filterOperation(base, source, operation) {
-  const targetRecords = getTargetRecordForOperation(base, source, operation.recordType);
+  const targetRecords = getTargetRecordsForOperation(base, source, operation.recordType);
 
   if (targetRecords.length === 0) {
     nvdebug('Failed to get the target record');
