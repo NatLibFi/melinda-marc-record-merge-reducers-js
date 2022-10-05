@@ -5,9 +5,9 @@ import {mergeField} from './mergeField';
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
-//import {recordPreprocess} from './hardcodedPreprocessor.js';
+
 import {postprocessRecord} from './mergePostprocess.js';
-import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
+import {preprocessBeforeAdd} from './preprocessor.js';
 import {addField} from './addField';
 
 // This reducer will take all 240 fields from source record, and then either merge them with host,

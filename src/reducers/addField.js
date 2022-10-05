@@ -6,7 +6,7 @@ import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './u
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecord} from './mergePostprocess.js';
-import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
+import {preprocessBeforeAdd} from './preprocessor.js';
 import fs from 'fs';
 import path from 'path';
 

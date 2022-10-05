@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './hardcodedSourcePreprocessor';
+import createReducer from './preprocessor';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import fs from 'fs';
