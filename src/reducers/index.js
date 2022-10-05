@@ -8,7 +8,7 @@ import field008 from './field008';
 //import genericDatafield from './genericDatafield';
 import reindexSubfield6 from './reindexSubfield6';
 import reindexSubfield8 from './reindexSubfield8';
-import hardcodedPreprocessor from './hardcodedPreprocessor';
+//import hardcodedPreprocessor from './hardcodedPreprocessor';
 import hardcodedSourcePreprocessor from './hardcodedSourcePreprocessor';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
@@ -66,7 +66,7 @@ export const localCopyReducerConfigs = [
 ];
 
 export const localReducers = [
-  hardcodedPreprocessor(), // UTF-8...
+  //hardcodedPreprocessor(), // UTF-8...
   hardcodedSourcePreprocessor(),
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.

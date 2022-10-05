@@ -4,7 +4,8 @@ import {fieldToString, nvdebug} from './utils';
 import {mergeField} from './mergeField';
 
 import {MarcRecord} from '@natlibfi/marc-record';
-import {recordPreprocess} from './hardcodedPreprocessor.js';
+import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
+//import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {postprocessRecord} from './mergePostprocess.js';
 import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 import {addField} from './addField';
@@ -45,9 +46,10 @@ export default () => (base, source) => {
     }}};
 
   // We should clone the records here and just here...
-  recordPreprocess(baseRecord); // fix composition et al
-  recordPreprocess(sourceRecord); // fix composition et al
-
+  //recordPreprocess(baseRecord); // fix composition et al
+  //recordPreprocess(sourceRecord); // fix composition et al
+  normalizeEncoding().fix(baseRecord);
+  normalizeEncoding().fix(sourceRecord);
 
   const activeTagPattern = /^240$/u;
   nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);

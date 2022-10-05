@@ -6,7 +6,8 @@ import {mergeSubfield} from './mergeSubfield';
 import {mergeIndicators} from './mergeIndicator';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
-import {recordPreprocess} from './hardcodedPreprocessor.js';
+import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
+//import {recordPreprocess} from './hardcodedPreprocessor.js';
 import {postprocessRecord} from './mergePostprocess.js';
 import {preprocessBeforeAdd} from './hardcodedSourcePreprocessor.js';
 
@@ -33,8 +34,10 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
-  recordPreprocess(baseRecord); // fix composition et al
-  recordPreprocess(sourceRecord); // fix composition et al
+  //recordPreprocess(baseRecord); // fix composition et al
+  //recordPreprocess(sourceRecord); // fix composition et al
+  normalizeEncoding().fix(baseRecord);
+  normalizeEncoding().fix(sourceRecord);
 
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
