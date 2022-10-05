@@ -1,6 +1,6 @@
 //import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {/*fieldToString,*/ fieldHasNSubfields, fieldHasSubfield/*, nvdebug*/} from './utils';
+import {/*fieldToString, fieldHasNSubfields,*/ fieldHasSubfield/*, nvdebug*/} from './utils';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
@@ -33,10 +33,29 @@ function subfieldApplies(subfield, lookFor) {
   return subfield.value.substring(0, 6) === lookFor;
 }
 
+/*
+function findSubfield6Pair(subfield6, myTag, fields) {
+    // We keep the crap!
+    if (!subfield6.value.match(sf6Regexp)) {
+      return undefined;
+    }
+    // Only valid $6 value that fails to map to another field is iffy...
+    const referredTag = subfield6.value.substring(0, 3);
+    const index = subfield6.value.substring(4, 6);
+    const lookFor = `${ownTag}-${index}`;
+    const relevantFields = fields.filter(field => field.tag === referredTag && field.subfields.some(sf => subfieldApplies(sf, lookFor)));
+    if (relevantFields.length === 0) {
+      return 0;
+    }
+    // This should always return just one (not sanity checking this for now):
+    return relevantFields[0];
+}
+*/
+
 function subfield6HasNoPair(subfield6, ownTag, fields) {
   // We keep the crap!
   if (!subfield6.value.match(sf6Regexp)) {
-    return fieldHasNSubfields;
+    return true; // huh!?!, had function name there: fieldHasNSubfields;
   }
   // Only valid $6 value that fails to map to another field is iffy...
   const referredTag = subfield6.value.substring(0, 3);
