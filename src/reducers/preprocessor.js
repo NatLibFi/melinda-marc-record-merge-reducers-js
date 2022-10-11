@@ -43,18 +43,18 @@ function getSpecifiedFields(record, fieldSpecs) {
 }
 
 
-function subfieldFilterMatchesCode(subfield, subfieldFilter) {
+function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterCodePattern = undefined) {
   // Check subfield code as a string:
-  if (subfieldFilter.code) {
-    if (subfieldFilter.code !== subfield.code) {
+  if (filterCode) {
+    if (filterCode !== subfieldCode) {
       nvdebug(` REJECTED SUBFIELD. Reason: code`);
       return false;
     }
   }
 
-  if (subfieldFilter.codePattern) {
-    const regExp = RegExp(`${subfieldFilter.codePattern}`, 'u');
-    if (!subfield.code.match(regExp)) {
+  if (filterCodePattern) {
+    const regExp = RegExp(`${filterCodePattern}`, 'u');
+    if (!subfieldCode.match(regExp)) {
       nvdebug(` REJECTED SUBFIELD. Reason: code regexp`);
       return false;
     }
@@ -63,17 +63,17 @@ function subfieldFilterMatchesCode(subfield, subfieldFilter) {
   return true;
 }
 
-function subfieldFilterMatchesValue(subfield, subfieldFilter) {
+function subfieldFilterMatchesValue(subfieldValue, subfieldFilter) {
   if (subfieldFilter.valuePattern) {
     const valueRegExp = RegExp(`${subfieldFilter.valuePattern}`, 'u');
-    if (!subfield.value.match(valueRegExp)) {
+    if (!subfieldValue.match(valueRegExp)) {
       nvdebug(` REJECTED SUBFIELD. Reason: value regexp`);
       return false;
     }
   }
 
   if (subfieldFilter.value) { // eg. 041$a 'zxx' removal
-    if (subfield.value !== subfieldFilter.value) {
+    if (subfieldValue !== subfieldFilter.value) {
       nvdebug(` REJECTED SUBFIELD. Reason: value string`);
       return false;
     }
@@ -84,21 +84,11 @@ function subfieldFilterMatchesValue(subfield, subfieldFilter) {
 function subfieldFilterMatches(subfield, subfieldFilter) {
   nvdebug(`SF ${JSON.stringify(subfieldFilter)}`);
 
-  if (!subfieldFilterMatchesCode(subfield, subfieldFilter)) {
+  if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.code, subfieldFilter.codePattern)) {
     return false;
   }
 
-  if (subfieldFilter.missingCode) {
-    if (subfieldFilter.missingCode === subfield.code) {
-      if (subfieldFilterMatchesValue(subfield, subfieldFilter)) {
-        nvdebug(` REJECTED SUBFIELD. Reason: missingCode '${subfield.code}' found`);
-        return false;
-      }
-    }
-    return true;
-  }
-
-  if (!subfieldFilterMatchesValue(subfield, subfieldFilter)) {
+  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter)) {
     return false;
   }
 
@@ -106,27 +96,46 @@ function subfieldFilterMatches(subfield, subfieldFilter) {
   return true;
 }
 
-function subfieldsFilterMatches(subfields, subfieldFilter) {
-  // Sanity check
+function subfieldFilterUnwantedMatches(subfield, subfieldFilter) {
+  if (!subfieldFilter.missingCode) {
+    return false;
+  }
+  if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.missingCode, subfieldFilter.missingCodePattern)) {
+    return false;
+  }
+  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter)) {
+    return false;
+  }
+  return true;
+}
+
+function subfieldsFilterMatches(subfields, subfieldFilter) { // Field-level filter check
+  // Sanity check:
   if (!subfields) {
     return false;
   }
 
-  // If missingCode is found, filter fails. Eg. we might want to keep only those 830 fields that have $x.
-  if (subfieldFilter.missingCode) {
-    if (subfields.some(sf => sf.code === subfieldFilter.missingCode)) {
-      return false;
-    }
+  if (!getMatches(subfields, subfieldFilter)) {
+    return false;
   }
 
-  const matchingSubfields = subfields.filter(sf => subfieldFilterMatches(sf, subfieldFilter));
+  return !getNegativeMatches(subfields, subfieldFilter);
 
-  return matchingSubfields.length > 0;
+  function getMatches(subfields, subfieldFilter) {
+    const matchingSubfields = subfields.filter(sf => subfieldFilterMatches(sf, subfieldFilter));
+    return matchingSubfields.length > 0;
+  }
+
+  function getNegativeMatches(subfields, subfieldFilter) {
+    const matchingSubfields = subfields.filter(sf => subfieldFilterUnwantedMatches(sf, subfieldFilter));
+    return matchingSubfields.length > 0;
+  }
 }
 
 
 // Each subfield filter matches the field...
 function subfieldFiltersMatch(field, subfieldFilters) {
+
   return subfieldFilters.every(subfieldFilter => subfieldsFilterMatches(field.subfields, subfieldFilter));
 }
 
@@ -141,6 +150,9 @@ function filterFields(fields, subfieldFilters) {
 
 function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
   const targetFields = getSpecifiedFields(record, fieldSpecs);
+  if (targetFields.length === 0) {
+    return targetFields;
+  }
   nvdebug(`Got ${targetFields.length} fields. Filter them...`);
   const filteredFields = filterFields(targetFields, fieldSpecs.subfieldFilters);
   nvdebug(`${filteredFields.length} field(s) remain after filtering...`);
