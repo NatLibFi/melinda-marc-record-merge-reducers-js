@@ -63,17 +63,17 @@ function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterC
   return true;
 }
 
-function subfieldFilterMatchesValue(subfieldValue, subfieldFilter) {
-  if (subfieldFilter.valuePattern) {
-    const valueRegExp = RegExp(`${subfieldFilter.valuePattern}`, 'u');
+function subfieldFilterMatchesValue(subfieldValue, targetValue, targetValuePattern) {
+  if (targetValuePattern) {
+    const valueRegExp = RegExp(`${targetValuePattern}`, 'u');
     if (!subfieldValue.match(valueRegExp)) {
       nvdebug(` REJECTED SUBFIELD. Reason: value regexp`);
       return false;
     }
   }
 
-  if (subfieldFilter.value) { // eg. 041$a 'zxx' removal
-    if (subfieldValue !== subfieldFilter.value) {
+  if (targetValue) { // eg. 041$a 'zxx' removal
+    if (subfieldValue !== targetValue) {
       nvdebug(` REJECTED SUBFIELD. Reason: value string`);
       return false;
     }
@@ -88,7 +88,7 @@ function subfieldFilterMatches(subfield, subfieldFilter) {
     return false;
   }
 
-  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter)) {
+  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter.value, subfieldFilter.valuePattern)) {
     return false;
   }
 
@@ -103,7 +103,7 @@ function subfieldFilterUnwantedMatches(subfield, subfieldFilter) {
   if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.missingCode, subfieldFilter.missingCodePattern)) {
     return false;
   }
-  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter)) {
+  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter.value, subfieldFilter.valuePattern)) {
     return false;
   }
   return true;
