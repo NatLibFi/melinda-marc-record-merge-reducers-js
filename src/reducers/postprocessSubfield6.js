@@ -56,7 +56,7 @@ function findPairForSubfield6(subfield6, myTag, fields) {
   return relevantFields[0];
 }
 
-
+/*
 export function resetCorrespondingField880(field, record, oldTag, newTag) {
   const sixes = get6s(field);
   if (sixes.length === 0) { // speed things up
@@ -78,7 +78,7 @@ export function resetCorrespondingField880(field, record, oldTag, newTag) {
     }
   }
 }
-
+*/
 
 /*
 function subfield6HasNoPair(subfield6, ownTag, fields) {
