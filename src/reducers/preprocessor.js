@@ -2,7 +2,7 @@
 //import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
 //import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
-import {resetCorrespondingField880} from './postprocessSubfield6.js';
+import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
@@ -42,8 +42,8 @@ function getSpecifiedFields(record, fieldSpecs) {
   }
 }
 
-function subfieldFilterMatches(subfield, subfieldFilter) {
-  nvdebug(`SF ${JSON.stringify(subfieldFilter)}`);
+
+function subfieldFilterMatchesCode(subfield, subfieldFilter) {
   // Check subfield code as a string:
   if (subfieldFilter.code) {
     if (subfieldFilter.code !== subfield.code) {
@@ -60,6 +60,10 @@ function subfieldFilterMatches(subfield, subfieldFilter) {
     }
   }
 
+  return true;
+}
+
+function subfieldFilterMatchesValue(subfield, subfieldFilter) {
   if (subfieldFilter.valuePattern) {
     const valueRegExp = RegExp(`${subfieldFilter.valuePattern}`, 'u');
     if (!subfield.value.match(valueRegExp)) {
@@ -73,6 +77,29 @@ function subfieldFilterMatches(subfield, subfieldFilter) {
       nvdebug(` REJECTED SUBFIELD. Reason: value string`);
       return false;
     }
+  }
+  return true;
+}
+
+function subfieldFilterMatches(subfield, subfieldFilter) {
+  nvdebug(`SF ${JSON.stringify(subfieldFilter)}`);
+
+  if (!subfieldFilterMatchesCode(subfield, subfieldFilter)) {
+    return false;
+  }
+
+  if (subfieldFilter.missingCode) {
+    if (subfieldFilter.missingCode === subfield.code) {
+      if (subfieldFilterMatchesValue(subfield, subfieldFilter)) {
+        nvdebug(` REJECTED SUBFIELD. Reason: missingCode '${subfield.code}' found`);
+        return false;
+      }
+    }
+    return true;
+  }
+
+  if (!subfieldFilterMatchesValue(subfield, subfieldFilter)) {
+    return false;
   }
 
   nvdebug(` SUBFIELD ACCEPTED $${subfield.code} ${subfield.value}`);
