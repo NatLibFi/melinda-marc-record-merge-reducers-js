@@ -1,3 +1,4 @@
 {
-  "description":"config: base has no 830, and one of source's 830 has an $x: keep it for now"
+  "description":"config: base has no 830, and one of source's 830 has an $x: keep it for now",
+  "comment": "follows specs but might be mighty stoopid"
 }
