@@ -78,7 +78,7 @@ function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfi
   return false;
 }
 
-function replaceSubfieldWithBetterValue(targetField, candSubfield) {
+function mergeSubfield(targetField, candSubfield) {
   // Return true, if replace succeeds.
   // However, replacing/succeeding requires a sanity check, that the new value is a better one...
   // Thus, typically this function fails...
@@ -105,7 +105,7 @@ function insertSubfieldAllowed(targetField, candSubfield) {
 }
 
 
-function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
+function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   // Add hard-coded exceptions here
   if (targetField.tag === '040' && candSubfield.code === 'd' &&
       targetField.subfields.some(sf => sf.code === 'a' && sf.value === candSubfield.value)) {
@@ -129,7 +129,7 @@ function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   return false;
 }
 
-function mergeSubfieldNotRequired(targetField, candSubfield) {
+function mergeOrAddSubfieldNotRequired(targetField, candSubfield) {
   // candSubfield has been stripped of punctuation.
   const normalizedTargetField = cloneAndRemovePunctuation(targetField);
 
@@ -140,7 +140,8 @@ function mergeSubfieldNotRequired(targetField, candSubfield) {
     // Not ideal 382‡n subfields, I guess... Nor 505‡trg repetitions... These need to be fixed...
     return true;
   }
-  if (mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield)) {
+
+  if (mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield)) {
     return true;
   }
 
@@ -160,24 +161,24 @@ function addSubfield(targetField, candSubfield) {
 }
 
 export function mergeOrAddSubfield(record, targetField, candSubfield) {
-  nvdebug(`   Q: mergeSubfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
+  nvdebug(`   Q: mergeOrAddSubfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
   nvdebug(`      with field '${fieldToString(targetField)}'?`, debug);
-  if (mergeSubfieldNotRequired(targetField, clone(candSubfield))) {
-    nvdebug(`    A: No. No need to merge subfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
+  if (mergeOrAddSubfieldNotRequired(targetField, clone(candSubfield))) {
+    nvdebug(`    A: No. No need to merge nor to add the subfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
     return;
   }
 
   // Currently only X00$d 1984- => 1984-2000 type of changes.
   // It all other cases the original subfield is kept.
   const original = fieldToString(targetField);
-  if (replaceSubfieldWithBetterValue(targetField, candSubfield)) {
+  if (mergeSubfield(targetField, candSubfield)) {
     if (original !== fieldToString(targetField)) {
-      nvdebug(`    A: Yes. Subfield '‡${candSubfield.code} ${candSubfield.value}' replaces the original subfield.`, debug);
+      nvdebug(`    A: Merge. Subfield '‡${candSubfield.code} ${candSubfield.value}' replaces the original subfield.`, debug);
       targetField.merged = 1; // eslint-disable-line functional/immutable-data
       targetField.punctuate = 1; // eslint-disable-line functional/immutable-data
       return;
     }
-    nvdebug(`      A: No. Field ${original} had a better candidate tahn subfield '‡${candSubfield.code} ${candSubfield.value}' replace.`, debug);
+    nvdebug(`      A: No. Field ${original} had a better merge candidate than our subfield '‡${candSubfield.code} ${candSubfield.value}' replace.`, debug);
     return;
   }
 
