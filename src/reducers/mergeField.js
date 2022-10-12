@@ -2,7 +2,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 import {cloneAndRemovePunctuation} from './normalize';
-import {mergeSubfield} from './mergeSubfield';
+import {mergeOrAddSubfield} from './mergeOrAddSubfield';
 import {mergeIndicators} from './mergeIndicator';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
@@ -98,14 +98,14 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
   normalizedSourceField.subfields.forEach(candSubfield => {
     //sourceField.subfields.forEach(candSubfield => {
     const originalValue = fieldToString(baseField);
-    mergeSubfield(baseRecord, baseField, candSubfield);
+    mergeOrAddSubfield(baseRecord, baseField, candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
       debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${originalValue}'`);
       debug(`   RESULT: '${newValue}'`);
       //debug(`   TODO: sort subfields, handle punctuation...`);
     }
-    //else { debug(`  mergeSubfield() did not add '‡${candSubfield.code} ${candSubfield.value}' to '${originalValue}'`); }
+    //else { debug(`  mergeOrAddSubfield() did not add '‡${candSubfield.code} ${candSubfield.value}' to '${originalValue}'`); }
 
   });
 }
