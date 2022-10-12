@@ -106,6 +106,7 @@ function insertSubfieldAllowed(targetField, candSubfield) {
   return subfieldIsRepeatable(targetField.tag, candSubfield.code);
 }
 
+
 function mergeSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   // Add hard-coded exceptions here
   if (targetField.tag === '040' && candSubfield.code === 'd' &&
@@ -168,13 +169,6 @@ export function mergeSubfield(record, targetField, candSubfield) {
     return;
   }
 
-  if (insertSubfieldAllowed(targetField, candSubfield)) {
-    nvdebug(`    A: Yes. Add subfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
-
-    addSubfield(targetField, candSubfield);
-    return;
-  }
-
   // Currently only X00$d 1984- => 1984-2000 type of changes.
   // It all other cases the original subfield is kept.
   if (replaceSubfieldWithBetterValue(targetField, candSubfield)) {
@@ -183,6 +177,14 @@ export function mergeSubfield(record, targetField, candSubfield) {
     targetField.punctuate = 1; // eslint-disable-line functional/immutable-data
     return;
   }
+
+  if (insertSubfieldAllowed(targetField, candSubfield)) {
+    nvdebug(`    A: Yes. Add subfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
+
+    addSubfield(targetField, candSubfield);
+    return;
+  }
+
 
   // Didn't do anything, but thinks something should have been done:
   nvdebug(`    A: Could not decide. Add decision rules. 'Til then, do nothing to '‡${candSubfield.code} ${candSubfield.value}'`, debug);
