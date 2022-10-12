@@ -1,6 +1,3 @@
-
-//import fieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/field-exclusion';
-//import subfieldExclusion from '@natlibfi/marc-record-validators-melinda/dist/subfield-exclusion';
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
@@ -189,13 +186,7 @@ function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFi
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
   nvdebug(`operationRenameSubfield() got ${relevantFields.length} field(s)`);
   relevantFields.forEach(field => {
-    /* const newField = */ renameSubfields(field, renamableSubfieldFilter);
-
-    /*
-    if (0 && newField && newField.subfields.length) { // eslint-disable-line functional/no-conditional-statement
-      recordReplaceField(record, field, newField);
-    }
-    */
+    renameSubfields(field, renamableSubfieldFilter);
   });
 
   function renameSubfields(field, renamableSubfieldFilter) {
@@ -216,35 +207,17 @@ function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFi
     const remainingSubfields = field.subfields.filter(sf => !subfieldFilterMatches(sf, deletableSubfieldFilter));
     if (remainingSubfields.length < field.subfields.length) {
       nvdebug(` Got ${remainingSubfields.length}/${field.subfields.length} keepable subfield(s)`);
-
+      // Delete the whole field as last subfield gets deleted:
       if (remainingSubfields.length === 0) { // eslint-disable-line functional/no-conditional-statement
         nvdebug('Delete subfieldless field');
         record.removeField(field);
         return;
       }
+
       field.subfields = remainingSubfields; // eslint-disable-line functional/immutable-data
       return;
     }
-
-    /*
-    if (newField.subfields.length) { // eslint-disable-line functional/no-conditional-statement
-      field.value = newField.value; // eslint-disable-line functional/immutable-data
-      //recordReplaceField(record, field, newField);
-    }
-    */
   });
-
-  /*
-  function removeSubfields(field, deletableSubfieldFilter) {
-
-    const deletableSubfields = field.subfields.filter(sf => subfieldFilterMatches(sf, deletableSubfieldFilter));
-    nvdebug(` Got ${deletableSubfields.length}/${field.subfields.length} deletable subfield(s)`);
-    field.subfields = field.subfields.filter(sf => deletableSubfields.every(dsf => dsf !== sf)); // eslint-disable-line functional/immutable-data
-    nvdebug(` ${field.subfields.length} subfield(s) remain in the field`);
-
-    return field;
-  }
-  */
 }
 
 function operationRetag(record, fieldSpecification, newTag) {
@@ -321,16 +294,6 @@ export default (config = {}) => (base, source) => {
 
 
   function externalFixes(record) {
-
-    /*
-    const subfieldExcluder = subfieldExclusion([
-      {tag: /^041$/u, subfields: [{code: /^[ad]$/u, value: /^zxx$/u}]},
-      {tag: /^02[04]$/u, subfields: [{code: /^c$/u, value: /^.*(?:€|£|\$|FIM).*$/u}]} // price info
-    ]);
-
-    subfieldExcluder.fix(record);
-    */
-
     // Not sure whether this should be done, or should we normalize ISBNs during comparison.
     const addHyphensToISBN = isbnIssn({hyphenateISBN: true});
     addHyphensToISBN.fix(record);
@@ -354,25 +317,6 @@ export function filterOperations(base, source, config) {
   config.forEach(operation => filterOperation(base, source, operation));
 }
 
-/*
-const defaultSwapSubfieldCodes = [{'tagPattern': '^040$', 'from': 'a', 'to': 'd'}];
-
-function swapIncomingSubfieldCodes(field, config) {
-  const swapSubfieldCodes = config.swapSubfieldCodes ? config.swapSubfieldCodes : defaultSwapSubfieldCodes;
-  nvdebug(`SWAPS: ${JSON.stringify(swapSubfieldCodes)}`, debug);
-  swapSubfieldCodes.forEach((rule) => applyRule(field, rule));
-
-  function applyRule(field, rule) {
-    if (!field.tag.match(stringToRegex(rule.tagPattern))) {
-      return; // don't apply
-    }
-    fieldRenameSubfieldCodes(field, rule.from, rule.to);
-    // Since subfields were sorted, they may be in the wrong order now:
-    sortAdjacentSubfields(field);
-    return;
-  }
-}
-*/
 
 export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
   nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
