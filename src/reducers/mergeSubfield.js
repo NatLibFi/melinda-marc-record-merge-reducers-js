@@ -161,7 +161,8 @@ function addSubfield(targetField, candSubfield) {
 }
 
 export function mergeSubfield(record, targetField, candSubfield) {
-  nvdebug(`   Q: mergeSubfield '‡${candSubfield.code} ${candSubfield.value}' to field '${fieldToString(targetField)}'?`, debug);
+  nvdebug(`   Q: mergeSubfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
+  nvdebug(`      with field '${fieldToString(targetField)}'?`, debug);
   if (mergeSubfieldNotRequired(targetField, clone(candSubfield))) {
     nvdebug(`    A: No. No need to merge subfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
     return;
