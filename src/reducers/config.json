@@ -3,7 +3,8 @@
         [
             {
                 "operation": "removeField",
-                "comment": "bunch of tags we always drop from the source (semantic reason; holdings data etc)",
+                "comment": "Bunch of tags we always drop from the source (semantic reason; holdings data etc)",
+                "comment2": "As per specs (except 852 was removed). Not sure whether this is a good idea.",
                 "recordType": "source",
                 "fieldSpecification": {
                     "tagPattern": "^(066|841|842|843|844|845|86[3-8]|876|877|878|HLI)$"
@@ -129,6 +130,7 @@
         "indicator1PreferredValues": {
             "022" : {"0": 1, "1": 1, " ": 2},
             "041" : {"0": 1, "1": 1, " ": 2},
+            "490" : [ "1", "0" ],
             "541" : {"0": 1, "1": 1, " ": 2},
             "542" : {"0": 1, "1": 1, " ": 2},
             "544" : {"0": 1, "1": 1, " ": 2},
@@ -143,9 +145,9 @@
             "033" : {"0": 1, "1": 1, "2": 1, " ": 2},
             "730" : [ "2", " " ]
         },
-        "comment #4" : "Non-filing indicators do not prevent merge. They are mainly listed here as an example.",
+        "comment #4" : "Non-filing indicators do not prevent field merge (their support is hard-coded). They are mainly listed here as an example.",
         "ignoreIndicator1" : ["130", "245", "490", "630", "650", "651", "655", "730", "740"],
-        "ignoreIndicator2" : ["222", "240", "242", "243", "245", "830"]
+        "ignoreIndicator2" : ["017", "222", "240", "242", "243", "245", "830"]
     },
 
     "addConfiguration" : {
