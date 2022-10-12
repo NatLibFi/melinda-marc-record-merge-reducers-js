@@ -56,6 +56,7 @@ const cleanCrappyPunctuationRules = {
     {'code': 'ab', 'followedBy': '!c', 'remove': / ;$/u},
     {'code': 'abc', 'followedBy': '!e', 'remove': / \+$/u}
   ],
+  '490': [{'code': 'a', 'followedBy': 'x', 'remove': / ;$/u}],
   '110': [removeX00Comma, cleanX00aDot, cleanX00eDot]
 };
 
@@ -83,6 +84,10 @@ const cleanValidPunctuationRules = {
     {'code': 'ab', 'followedBy': 'c', 'remove': / ;$/u},
     {'code': 'abc', 'followedBy': 'e', 'remove': / \+$/u}
   ],
+  '490': [
+    {'code': 'a', 'followedBy': 'x', 'remove': /,$/u},
+    {'code': 'ax', 'followedBy': 'v', 'remove': / ;$/u}
+  ],
   '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'remove': field773NeedsPunc}]
 };
@@ -99,6 +104,10 @@ const addPairedPunctuationRules = {
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': field300NeedsPunc},
     {'code': 'ab', 'followedBy': 'c', 'add': ' ;', 'context': field300NeedsPunc},
     {'code': 'abc', 'followedBy': 'e', 'add': ' +', 'context': field300NeedsPunc}
+  ],
+  '490': [
+    {'code': 'a', 'followedBy': 'x', 'add': ',', 'content': defaultNeedsPuncAfter},
+    {'code': 'ax', 'followedBy': 'v', 'add': ' ;', 'content': defaultNeedsPuncAfter}
   ],
   '700': [addX00aComma, addX00aDot],
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'add': '. -', 'context': /[^-]$/u}]
@@ -188,7 +197,7 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
   activeRules.forEach(rule => {
     const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(`    REMOVAL TO BE PERFORMED FOR \${subfield1.code} '${subfield1.value}'`, debug);
+      nvdebug(`    REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
       nvdebug(`    REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
     }
