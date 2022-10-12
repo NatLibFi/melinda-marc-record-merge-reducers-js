@@ -1,0 +1,43 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "490",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Suomalaisen Kirjallisuuden Seuran toimituksia,"
+        },
+        {
+          "code": "x",
+          "value": "0355-1768 ;"
+        },
+        {
+          "code": "v",
+          "value": "1481."
+        }
+      ]
+    },
+    {
+      "tag": "490",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Jyväskylän ammattikorkeakoulun julkaisuja,"
+        },
+        {
+          "code": "x",
+          "value": "1456-2332 ;"
+        },
+        {
+          "code": "v",
+          "value": "220."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "description":"02 Field 490: MET-104: ind1 diff + missing ISSN should not prevent merge",
+  "comment": "Note that source's IND1=1 wins over base's IND1=0. It could be handled by postprocessing rules as well."
+}
