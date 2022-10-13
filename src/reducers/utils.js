@@ -38,13 +38,18 @@ export function getNonIdenticalFields(baseFields, sourceFields) {
   }
 }
 
+export function subfieldToString(sf) {
+  return `‡${sf.code} ${sf.value}`;
+}
+
 export function fieldToString(f) {
   if ('subfields' in f) {
-    return `${f.tag} ${f.ind1}${f.ind2} ‡${formatSubfields(f)}`;
+    return `${f.tag} ${f.ind1}${f.ind2}${formatSubfields(f)}`;
   }
   return `${f.tag}    ${f.value}`;
+
   function formatSubfields(field) {
-    return field.subfields.map(sf => `${sf.code}${sf.value || ''}`).join(' ‡');
+    return field.subfields.map(sf => ` ${subfieldToString(sf)}`).join('');
   }
 }
 
@@ -126,7 +131,7 @@ export function subfieldsAreIdentical(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
 }
 
-/* // subfield sorting is done in mergeSubfield.js
+/* // subfield sorting is done in/after mergeOrAddSubfield.js
 // Default subfield sort order if no custom order is given (use string first to improve readablility and compactness)
 const sortDefaultString = '8673abcdefghijklmnopqrstuvwxyz420159';
 const sortDefault = sortDefaultString.split('');
