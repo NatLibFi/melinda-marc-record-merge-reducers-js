@@ -6,7 +6,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
 
-export default () => (base, source) => {
+export default () => ({base, source}) => {
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
   const baseMax = getMaxSubfield8(base);
   reindexSubfield8s(sourceRecord, baseMax);

@@ -1,7 +1,7 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 
-export default () => (base, source) => {
+export default () => ({base, source}) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
   //debug(`********* We have base: **********`);
   //debug(base.constructor.name);

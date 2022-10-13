@@ -2,6 +2,7 @@ import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 import fs from 'fs';
 import path from 'path';
+//import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
@@ -258,6 +259,13 @@ export function filterOperation(base, source, operation) {
       }
     }
 
+    /*
+    if (operation.requireOtherField) {
+      // Does base === targetRecord work or do I need to clone this?
+      const otherFields = getSpecifiedFieldsAndFilterThem(base === targetRecord ? source : base, operation.requireOtherField);
+    }
+    */
+
     performActualOperation(targetRecord, operation);
   }
 
@@ -289,7 +297,12 @@ export function filterOperation(base, source, operation) {
 }
 
 
-export default (config = defaultConfig) => (base, source) => {
+export default (config = defaultConfig) => ({base, source}) => {
+  nvdebug('555a');
+  nvdebug(JSON.stringify(base));
+  nvdebug(JSON.stringify(source));
+
+  //const baseRecord = new MarcRecord(base, {subfieldValues: false});
   //nvdebug(`HSP CONF ${config}`);
   filterOperations(base, source, config.preprocessorDirectives);
 

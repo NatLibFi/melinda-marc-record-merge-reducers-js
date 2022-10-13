@@ -8,9 +8,16 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
 
-export default () => (base, source) => {
+export default () => ({base, source}) => {
+  nvdebug('666');
+  nvdebug(JSON.stringify(base));
+  nvdebug(JSON.stringify(source));
+  const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
-  const baseMax = getMaxSubfield6(base);
+  nvdebug('666');
+  nvdebug(JSON.stringify(baseRecord));
+  const baseMax = getMaxSubfield6(baseRecord);
+
   reindexSubfield6s(sourceRecord, baseMax);
   return {base, source: sourceRecord};
 };
