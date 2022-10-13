@@ -56,7 +56,7 @@ const cleanCrappyPunctuationRules = {
     {'code': 'ab', 'followedBy': '!c', 'remove': / ;$/u},
     {'code': 'abc', 'followedBy': '!e', 'remove': / \+$/u}
   ],
-  '490': [{'code': 'a', 'followedBy': 'x', 'remove': / ;$/u}],
+  '490': [{'code': 'a', 'followedBy': 'xy', 'remove': / ;$/u}],
   '110': [removeX00Comma, cleanX00aDot, cleanX00eDot]
 };
 
@@ -85,8 +85,8 @@ const cleanValidPunctuationRules = {
     {'code': 'abc', 'followedBy': 'e', 'remove': / \+$/u}
   ],
   '490': [
-    {'code': 'a', 'followedBy': 'x', 'remove': /,$/u},
-    {'code': 'ax', 'followedBy': 'v', 'remove': / ;$/u}
+    {'code': 'axy', 'followedBy': 'xy', 'remove': /,$/u},
+    {'code': 'axy', 'followedBy': 'v', 'remove': / ;$/u}
   ],
   '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'remove': field773NeedsPunc}]
@@ -106,8 +106,8 @@ const addPairedPunctuationRules = {
     {'code': 'abc', 'followedBy': 'e', 'add': ' +', 'context': field300NeedsPunc}
   ],
   '490': [
-    {'code': 'a', 'followedBy': 'x', 'add': ',', 'content': defaultNeedsPuncAfter},
-    {'code': 'ax', 'followedBy': 'v', 'add': ' ;', 'content': defaultNeedsPuncAfter}
+    {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'content': defaultNeedsPuncAfter},
+    {'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'content': defaultNeedsPuncAfter}
   ],
   '700': [addX00aComma, addX00aDot],
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'add': '. -', 'context': /[^-]$/u}]
