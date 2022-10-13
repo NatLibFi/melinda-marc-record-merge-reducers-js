@@ -200,12 +200,13 @@ export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
 }
 */
 
+/*
 export function recordHasField(record, tag) {
   const re = new RegExp(`^${tag}$`, 'u');
   const yeOldeFields = record.get(re);
   return yeOldeFields.length > 0;
 }
-
+*/
 
 // should this go to marc_record
 export function recordReplaceField(record, originalField, newField) {
@@ -215,7 +216,7 @@ export function recordReplaceField(record, originalField, newField) {
     // Should this function return something for success or failure?
     return record;
   }
-  // I guess there's are reason for doing this like it
+  // I guess there are reasons for doing this like it...
   //record.fields[index] = newField; // eslint-disable-line functional/immutable-data
   record.removeField(originalField);
   record.insertField(newField);
