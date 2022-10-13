@@ -1,17 +1,17 @@
 import createDebugLogger from 'debug';
-import clone from 'clone';
-import {cloneAndRemovePunctuation} from './normalize.js';
+//import clone from 'clone';
+import {cloneAndNormalizeField} from './normalize.js';
 //import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeAs, normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import {
   fieldHasSubfield,
   fieldToString, isControlSubfieldCode, nvdebug,
-  subfieldIsRepeatable, subfieldsAreIdentical
+  subfieldIsRepeatable, subfieldsAreIdentical, subfieldToString
 } from './utils.js';
 import {mergeSubfield} from './mergeSubfield.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeOrAddSubfield');
 
 
 function insertSubfieldAllowed(targetField, candSubfield) {
@@ -26,6 +26,7 @@ function insertSubfieldAllowed(targetField, candSubfield) {
 
 function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   // Add hard-coded exceptions here
+  nvdebug(`not required? '${subfieldToString(candSubfield)}' vs '${fieldToString(targetField)}'`);
   if (targetField.tag === '040' && candSubfield.code === 'd' &&
       targetField.subfields.some(sf => sf.code === 'a' && sf.value === candSubfield.value)) {
     debug('040‡d matched 040‡a');
@@ -50,7 +51,7 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
 
 function mergeOrAddSubfieldNotRequired(targetField, candSubfield) {
   // candSubfield has been stripped of punctuation.
-  const normalizedTargetField = cloneAndRemovePunctuation(targetField);
+  const normalizedTargetField = cloneAndNormalizeField(targetField);
 
   nvdebug(`     Look for identical subfields in '${fieldToString(normalizedTargetField)}'`);
 
@@ -79,36 +80,38 @@ function addSubfield(targetField, candSubfield) {
   sortAdjacentSubfields(targetField);
 }
 
-export function mergeOrAddSubfield(record, targetField, candSubfield) {
-  nvdebug(`   Q: mergeOrAddSubfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
+export function mergeOrAddSubfield(record, targetField, normalizedCandSubfield, punctlessCandSubfield) {
+  const normalizedTargetField = cloneAndNormalizeField(targetField);
+
+  nvdebug(`   Q: mergeOrAddSubfield '‡{subfieldToString(punctlessCandSubfield)}'`, debug);
   nvdebug(`      with field '${fieldToString(targetField)}'?`, debug);
-  if (mergeOrAddSubfieldNotRequired(targetField, clone(candSubfield))) {
-    nvdebug(`    A: No. No need to merge nor to add the subfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
+  if (mergeOrAddSubfieldNotRequired(normalizedTargetField, normalizedCandSubfield)) {
+    nvdebug(`    A: No. No need to merge nor to add the subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
     return;
   }
 
   // Currently only X00$d 1984- => 1984-2000 type of changes.
   // It all other cases the original subfield is kept.
   const original = fieldToString(targetField);
-  if (mergeSubfield(targetField, candSubfield)) {
+  if (mergeSubfield(targetField, punctlessCandSubfield)) { // We might need the normalizedCandSubfield later on
     if (original !== fieldToString(targetField)) {
-      nvdebug(`    A: Merge. Subfield '‡${candSubfield.code} ${candSubfield.value}' replaces the original subfield.`, debug);
+      nvdebug(`    A: Merge. Subfield '${subfieldToString(punctlessCandSubfield)}' replaces the original subfield.`, debug);
       targetField.merged = 1; // eslint-disable-line functional/immutable-data
       targetField.punctuate = 1; // eslint-disable-line functional/immutable-data
       return;
     }
-    nvdebug(`      A: No. Field ${original} had a better merge candidate than our subfield '‡${candSubfield.code} ${candSubfield.value}' replace.`, debug);
+    nvdebug(`      A: No. Field ${original} had a better merge candidate than our subfield '${subfieldToString(punctlessCandSubfield)}' replace.`, debug);
     return;
   }
 
-  if (insertSubfieldAllowed(targetField, candSubfield)) {
-    nvdebug(`    A: Yes. Add subfield '‡${candSubfield.code} ${candSubfield.value}'`, debug);
+  if (insertSubfieldAllowed(targetField, normalizedCandSubfield)) {
+    nvdebug(`    A: Yes. Add subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
 
-    addSubfield(targetField, candSubfield);
+    addSubfield(targetField, punctlessCandSubfield);
     return;
   }
 
 
   // Didn't do anything, but thinks something should have been done:
-  nvdebug(`    A: Could not decide. Add decision rules. 'Til then, do nothing to '‡${candSubfield.code} ${candSubfield.value}'`, debug);
+  nvdebug(`    A: Could not decide. Add decision rules. 'Til then, do nothing to '${subfieldToString(punctlessCandSubfield)}'`, debug);
 }
