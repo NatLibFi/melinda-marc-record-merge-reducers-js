@@ -21,7 +21,7 @@ function getSubfield8Index(subfield) {
   return parseInt(match[0], 10);
 }
 
-export function getMaxSubfield8(record) {
+function getMaxSubfield8(record) {
   // Should we cache the value here?
   const vals = record.fields.map((field) => fieldSubfield8Index(field));
   return Math.max(...vals);

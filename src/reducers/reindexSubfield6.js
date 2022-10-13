@@ -25,7 +25,7 @@ function subfield6Index(subfield) {
   return result;
 }
 
-export function getMaxSubfield6(record) {
+function getMaxSubfield6(record) {
   // Should we cache the value here?
   const vals = record.fields.map((field) => fieldSubfield6Index(field));
   return Math.max(...vals);
