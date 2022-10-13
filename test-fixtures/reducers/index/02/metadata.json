@@ -1,3 +1,3 @@
 {
-  "description":"Identical leaders should pass without issues"
+  "description":"Reducers should run after each another"
 }
