@@ -1,5 +1,7 @@
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
+import fs from 'fs';
+import path from 'path';
 import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
@@ -17,6 +19,7 @@ import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceFiel
 //   - code
 //   - valuePattern or value
 
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 function getSpecifiedFields(record, fieldSpecs) {
   const regexp = regexpifyFieldSpecs(fieldSpecs);
@@ -286,7 +289,7 @@ export function filterOperation(base, source, operation) {
 }
 
 
-export default (config = {}) => (base, source) => {
+export default (config = defaultConfig) => (base, source) => {
   //nvdebug(`HSP CONF ${config}`);
   filterOperations(base, source, config.preprocessorDirectives);
 
