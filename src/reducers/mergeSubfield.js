@@ -1,15 +1,4 @@
 import createDebugLogger from 'debug';
-//import clone from 'clone';
-//import {cloneAndRemovePunctuation} from './normalize.js';
-//import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
-//import {normalizeAs, normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
-/*
-import {
-  fieldHasSubfield,
-  fieldToString, isControlSubfieldCode, nvdebug,
-  subfieldIsRepeatable, subfieldsAreIdentical
-} from './utils.js';
-*/
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 
@@ -80,7 +69,13 @@ function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfi
 }
 
 export function mergeSubfield(targetField, candSubfield) {
-  // Return true, if replace succeeds.
+  // Replace existing subfield with the incoming field. These replacements are by name rather hacky...
+  // Currenty we only select the better X00$d.
+  // In future we might do more things here. Examples:
+  // - "FOO" gets replaced by "Foo" in certain fields.
+  // - "Etunimi Sukunimi" might lose to "Sukunimi, Etunimi" in X00 fields.
+  // - [put your ideas here]
+  // Return true, if replace is done.
   // However, replacing/succeeding requires a sanity check, that the new value is a better one...
   // Thus, typically this function fails...
   const relevantSubfields = targetField.subfields.filter(subfield => subfield.code === candSubfield.code);
