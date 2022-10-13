@@ -26,7 +26,7 @@ describe('merge data field tests: ', () => {
     const expectedModifiedSourceRecord = getFixture('modifiedSource.json');
 
     const marcReducers = generateReducers(tagPattern, config);
-    const bothRecords = marcReducers(base, source);
+    const bothRecords = marcReducers({base, source});
     const mergedRecord = bothRecords.base;
     const modifiedSourceRecord = bothRecords.source;
     //const [mergedRecord, modifiedSourceRecord] = marcReducers(base, source);

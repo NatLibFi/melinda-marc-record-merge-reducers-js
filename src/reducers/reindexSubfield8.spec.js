@@ -27,7 +27,7 @@ describe('subfield 8 reindexing tests: ', () => {
     //nvdebug('SF8 WP9');
     const marcReducers = generateReducers(tagPattern, config);
     //nvdebug('SF8 WP10');
-    const modBaseAndSource = marcReducers(base, source);
+    const modBaseAndSource = marcReducers({base, source});
     //nvdebug('SF8 WP11');
     const modifiedSource = modBaseAndSource.source; //modBaseAndSource[modBaseAndSource.length - 1];
     expect(modifiedSource.toObject()).to.eql(expectedRecord);
