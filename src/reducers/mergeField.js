@@ -1,7 +1,7 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
-import {cloneAndRemovePunctuation} from './normalize';
+import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize';
 import {mergeOrAddSubfield} from './mergeOrAddSubfield';
 import {mergeIndicators} from './mergeIndicator';
 import {mergableTag} from './mergableTag';
@@ -23,6 +23,7 @@ const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..'
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
 const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
+
 // Should this load default configuration?
 export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
@@ -30,7 +31,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   const activeTagPattern = getTagPattern(tagPattern, config);
 
-  nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
+  //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
 
   normalizeEncoding().fix(baseRecord);
   normalizeEncoding().fix(sourceRecord);
@@ -65,6 +66,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   }
 };
 
+
 // NB! Can be do this via config.json?
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
@@ -73,7 +75,6 @@ function removeEnnakkotieto(field) {
     field.subfields = tmp; // eslint-disable-line functional/immutable-data
   }
 }
-
 
 function mergeField2(baseRecord, baseField, sourceField, config) {
   //// Identical fields
@@ -92,13 +93,16 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
   mergeIndicators(baseField, sourceField, config);
   // We want to add the incoming subfields without punctuation, and add puctuation later on.
   // (Cloning is harmless, but probably not needed.)
-  const normalizedSourceField = cloneAndRemovePunctuation(sourceField);
+  // NEW: we also drag the normalized version along. It is needed for the merge-or-add decision
+  const normalizedSourceField = cloneAndNormalizeField(sourceField); //cloneAndRemovePunctuation(sourceField);
+  const strippedSourceField = cloneAndRemovePunctuation(sourceField);
+
   nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`, debug);
 
-  normalizedSourceField.subfields.forEach(candSubfield => {
+  normalizedSourceField.subfields.forEach((candSubfield, index) => {
     //sourceField.subfields.forEach(candSubfield => {
     const originalValue = fieldToString(baseField);
-    mergeOrAddSubfield(baseRecord, baseField, candSubfield);
+    mergeOrAddSubfield(baseRecord, baseField, candSubfield, strippedSourceField.subfields[index]); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
       debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${originalValue}'`);
@@ -109,7 +113,6 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
 
   });
 }
-
 
 function skipMergeField(baseRecord, sourceField, config) {
   if (!mergableTag(sourceField.tag, config)) {
@@ -127,7 +130,7 @@ function skipMergeField(baseRecord, sourceField, config) {
 }
 
 export function mergeField(baseRecord, sourceField, config) {
-  nvdebug(`mergeField: ${JSON.stringify(config)}`);
+  //nvdebug(`mergeField config: ${JSON.stringify(config)}`);
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
     nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debug);
@@ -147,3 +150,4 @@ export function mergeField(baseRecord, sourceField, config) {
   nvdebug(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`, debug);
   return false;
 }
+
