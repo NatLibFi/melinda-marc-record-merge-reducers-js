@@ -141,12 +141,22 @@ function subfieldFiltersMatch(field, subfieldFilters) {
 }
 
 
-function filterFields(fields, subfieldFilters) {
+function filterFieldsUsingSubfieldFilters(fields, subfieldFilters) {
   if (!subfieldFilters) {
     return fields;
   }
-
   return fields.filter(field => subfieldFiltersMatch(field, subfieldFilters));
+}
+
+function filterFieldsUsingFieldToString(fields, value) {
+  if (value === undefined) {
+    return fields;
+  }
+  nvdebug(`Looking for value '${value}'`);
+  return fields.filter(field => {
+    nvdebug(`              got '${fieldToString(field)}'`);
+    return fieldToString(field) === value;
+  });
 }
 
 function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
@@ -155,9 +165,11 @@ function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
     return targetFields;
   }
   nvdebug(`Got ${targetFields.length} fields. Filter them...`);
-  const filteredFields = filterFields(targetFields, fieldSpecs.subfieldFilters);
-  nvdebug(`${filteredFields.length} field(s) remain after filtering...`);
-  return filteredFields;
+  const filteredFields1 = filterFieldsUsingSubfieldFilters(targetFields, fieldSpecs.subfieldFilters);
+  nvdebug(`${filteredFields1.length} field(s) remain after subfield filters...`);
+  const filteredFields2 = filterFieldsUsingFieldToString(filteredFields1, fieldSpecs.value);
+  nvdebug(`${filteredFields2.length} field(s) remain after whole value filtering...`);
+  return filteredFields2;
 }
 
 
