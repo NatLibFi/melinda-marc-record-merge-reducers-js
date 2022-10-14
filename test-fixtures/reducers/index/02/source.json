@@ -19,6 +19,22 @@
           "value": "010b_base"
         }
       ]
+    },
+    {
+      "tag": "650",
+      "ind1": " ",
+      "ind2": "7",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "poista mut"
+        },
+        {
+          "code": "2",
+          "value": "ysa"
+        }
+      ]
     }
+
   ]
 }
