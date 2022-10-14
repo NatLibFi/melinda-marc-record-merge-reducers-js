@@ -18,7 +18,7 @@ import {addField} from './addField';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:field240');
 
 // Should this load default configuration?
-export default () => ({base, source}) => {
+export default () => (base, source) => {
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});

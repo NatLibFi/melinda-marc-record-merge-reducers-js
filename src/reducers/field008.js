@@ -41,7 +41,7 @@ function requiresModification(baseRecord, sourceRecord) {
   return yearLanguageAndCountryAgree(baseFields[0], sourceFields[0]);
 }
 
-export default () => ({base, source}) => {
+export default () => (base, source) => {
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});

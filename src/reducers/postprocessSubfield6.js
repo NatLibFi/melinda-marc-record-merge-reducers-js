@@ -1,7 +1,7 @@
 //import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {/*fieldToString, fieldHasNSubfields,*/ fieldHasSubfield,/*, nvdebug*/
-nvdebug} from './utils';
+import {/*fieldToString, fieldHasNSubfields,*/ fieldHasSubfield, /*, nvdebug*/
+  nvdebug} from './utils';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');

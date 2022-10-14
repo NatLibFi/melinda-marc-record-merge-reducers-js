@@ -3,7 +3,7 @@ import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeSubfield9Linkage');
 
-export default () => ({base, source}) => {
+export default () => (base, source) => {
   //nvdebug(' IN1');
   recordNormalizeSubfield9Linkage(base);
   //nvdebug(' IN2');
@@ -13,7 +13,7 @@ export default () => ({base, source}) => {
 };
 
 /*
-export default function () {
+export default function () { // (commented) validator/fixer style default function
 
   return {
     description: 'Normalizes $9-chains',

@@ -21,7 +21,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:ad
 
 const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
-export default (config = defaultConfig.addConfiguration) => ({base, source}) => {
+export default (config = defaultConfig.addConfiguration) => (base, source) => {
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});

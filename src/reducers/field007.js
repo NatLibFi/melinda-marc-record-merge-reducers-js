@@ -6,7 +6,7 @@ import {copyFields /*, fieldToString, getEncodingLevelRanking*/} from './utils.j
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-export default () => ({base, source}) => {
+export default () => (base, source) => {
   // NB! This implementation differs from the specs. However, that's because the specs are bad. See comments for details.
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});

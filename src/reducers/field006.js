@@ -10,7 +10,7 @@ import {fillControlFieldGaps, isFillableControlFieldPair} from './controlFieldUt
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 
-export default () => ({base, source}) => {
+export default () => (base, source) => {
   // NB! This implementation differs from the specs. https://workgroups.helsinki.fi/x/K1ohCw
   // However, that's because the specs are bad. See comments for details.
 

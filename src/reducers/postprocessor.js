@@ -7,8 +7,8 @@ import {filterOperations} from './preprocessor.js';
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
-export default (config = defaultConfig) => ({base, source}) => {
-  nvdebug('555a');
+export default (config = defaultConfig) => (base, source) => {
+  nvdebug('ENTERIN preprocessor.js');
   nvdebug(JSON.stringify(base));
   nvdebug(JSON.stringify(source));
 

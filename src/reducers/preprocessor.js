@@ -309,16 +309,16 @@ export function filterOperation(base, source, operation) {
 }
 
 
-export default (config = defaultConfig) => ({base, source}) => {
-  nvdebug('555a');
-  nvdebug(JSON.stringify(base));
-  nvdebug(JSON.stringify(source));
-
+export default (config = defaultConfig) => (base, source) => {
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
-  //nvdebug(`HSP CONF ${config}`);
+
   filterOperations(base, source, config.preprocessorDirectives);
 
-  return {base, source: externalFixes(source, config)};
+  const source2 = externalFixes(source, config);
+
+  const result = {base, source: source2};
+  //nvdebug(JSON.stringify(result));
+  return result;
 
 
   function externalFixes(record) {
@@ -347,7 +347,7 @@ export function filterOperations(base, source, config) {
 
 
 export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
-  nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
+  // nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
   if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
     return;
   }

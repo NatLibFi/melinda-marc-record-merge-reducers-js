@@ -25,12 +25,15 @@ const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
 
 // Should this load default configuration?
-export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => ({base, source}) => {
+export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
+  // nvdebug(`ENTERING mergeField.js`);
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
   const activeTagPattern = getTagPattern(tagPattern, config);
 
+  //nvdebug(JSON.stringify(baseRecord));
+  //nvdebug(JSON.stringify(sourceRecord));
   //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
 
   normalizeEncoding().fix(baseRecord);
