@@ -166,6 +166,9 @@ function sortSubfields(subfields, order = sortDefault, orderedSubfields = []) {
 
 // NVOLK's marc record modifications
 export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
+  if (!field.subfields) {
+    return false;
+  }
   if (subfieldValue === null) {
     return field.subfields.some(sf => sf.code === subfieldCode);
   }
@@ -234,7 +237,7 @@ export function nvdebug(message, func) {
   if (func) { // eslint-disable-line functional/no-conditional-statement
     func(message);
   }
-  console.info(message); // eslint-disable-line no-console
+  //console.info(message); // eslint-disable-line no-console
 }
 
 // base record level codes from highest (1) to lowest (10)
