@@ -3,7 +3,7 @@
   "fields": [
     {
       "tag": "001",
-      "value": "001_base"
+      "value": "001_sorsa"
     },
     {
       "tag": "010",
@@ -12,11 +12,11 @@
       "subfields": [
         {
           "code": "a",
-          "value": "010a_base"
+          "value": "010a_sorsa"
         },
         {
           "code": "b",
-          "value": "010b_base"
+          "value": "010b_sorsa"
         }
       ]
     },
