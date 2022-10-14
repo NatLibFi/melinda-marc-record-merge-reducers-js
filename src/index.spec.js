@@ -38,6 +38,8 @@ function callback({getFixture}) {
 
   debug(`Merge result is: ${result.constructor.name}`);
   debugData(`${JSON.stringify(result)}`);
-  expect(result.base.toObject()).to.eql(expectedRecord);
+  //expect(result.base.toObject()).to.eql(expectedRecord);
+  expect(result.toObject()).to.eql(expectedRecord);
+
 
 }
