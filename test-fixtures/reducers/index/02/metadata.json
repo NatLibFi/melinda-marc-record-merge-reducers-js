@@ -1,3 +1,4 @@
 {
-  "description":"Reducers should run after each another"
+  "description":"Reducers should run after each another",
+  "skip": true
 }
