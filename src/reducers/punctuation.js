@@ -47,6 +47,7 @@ const REMOVE_AND_ADD = 3;
 // We strip crap for merge decisions. We are not trying to actively remove crap here.
 const cleanCrappyPunctuationRules = {
   '100': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket],
+  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
   '600': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
   '700': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket, cleanRHS],
   '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
@@ -56,8 +57,8 @@ const cleanCrappyPunctuationRules = {
     {'code': 'ab', 'followedBy': '!c', 'remove': / ;$/u},
     {'code': 'abc', 'followedBy': '!e', 'remove': / \+$/u}
   ],
-  '490': [{'code': 'a', 'followedBy': 'xy', 'remove': / ;$/u}],
-  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot]
+  '490': [{'code': 'a', 'followedBy': 'xy', 'remove': / ;$/u}]
+
 };
 
 const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
