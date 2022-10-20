@@ -9,6 +9,7 @@ import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-me
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
+import {partsAgree} from './normalizePart';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
@@ -18,21 +19,16 @@ const counterpartRegexps = {
 };
 
 function pairableValue(tag, subfieldCode, value1, value2) {
-  // Return better value...
-  if (tag === '490') {
-    if (subfieldCode === 'v') {
-      // Stupid placeholder:
-      if (value1 === 'osa 1' && value2 === '1') {
-        return value1;
-      }
-      // We need a generic solution ("osa 1" equal "del I")
-    }
+  if (partsAgree(value1, value2, tag, subfieldCode)) {
+    // Pure baseness: here we assume that base's value1 is better than source's value2.
+    return value1;
   }
 
   return undefined;
 }
 
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
+  // Here optional subfield means a subfield, that needs not to be present, but if present, it must be identical...
   // We use clones here, since these changes done below are not intented to appear on the actual records.
   const field1 = cloneAndNormalizeField(originalBaseField);
   const field2 = cloneAndNormalizeField(originalSourceField);
@@ -41,6 +37,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     // When everything is the string, the strings need to be (practically) identical.
     // (NB! Here order matters. We should probably make it matter everywhere.)
     // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
+    // TEE: SKIPPAA INDIKAATTORIT!
     return fieldToString(field1) === fieldToString(field2);
   }
   const subfieldArray = keySubfieldsAsString.split('');
@@ -213,7 +210,7 @@ function pairableName(baseField, sourceField) {
   // Compare the remaining subsets...
   // First check that name matches...
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
-    //nvdebug(`    name match: '${fieldToString(reducedField1)}'`);
+    nvdebug(`    name match: '${fieldToString(reducedField1)}'`);
     return true;
   }
 
