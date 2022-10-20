@@ -5,6 +5,7 @@ import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 //import {fieldNormalizeControlNumbers} from './normalizeIdentifier';
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import createDebugLogger from 'debug';
+import {normalizePartData} from './normalizePart.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
@@ -146,6 +147,8 @@ function removeDecomposedDiacritics(value = '') {
 
 function normalizeSubfieldValue(value, subfieldCode, tag) {
   const intermediateValue1 = subfieldValueLowercase(value, subfieldCode, tag);
+  // Normalize: s. = sivut = pp.:
+  const intermediateValue2 = normalizePartData(intermediateValue1, subfieldCode, tag);
   // Not going to do these in the foreseeable future, but keeping them here for discussion:
   // Possible normalizations include but are not limited to:
   // ø => ö? Might be language dependent: 041 $a fin => ö, 041 $a eng => o?
@@ -157,7 +160,7 @@ function normalizeSubfieldValue(value, subfieldCode, tag) {
   // ü => y (probably not, though this correlates with Finnish letter-to-sound rules)
   // w => v (OK for Finnish sorting in certain cases, but we are not here, are we?)
   // I guess we should use decomposed values in code here. (Not sure what composition my examples above use.)
-  return intermediateValue1;
+  return intermediateValue2;
 }
 
 export function cloneAndRemovePunctuation(field) {
