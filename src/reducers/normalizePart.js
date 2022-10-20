@@ -45,7 +45,7 @@ function normalizePartNumber(value) {
     nvdebug(` MAP ${value} to ${arabicValue}`);
     return arabicValue;
   }
-  return value;
+  return value.toLowerCase();
 }
 
 function splitAndNormalizePartData(value) {
