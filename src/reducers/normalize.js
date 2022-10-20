@@ -5,7 +5,7 @@ import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 //import {fieldNormalizeControlNumbers} from './normalizeIdentifier';
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import createDebugLogger from 'debug';
-import {normalizePartData} from './normalizePart.js';
+import {normalizePartData, subfieldContainsPartData} from './normalizePart.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
@@ -58,6 +58,11 @@ function skipAllSubfieldNormalizations(value, subfieldCode, tag) {
 }
 
 function skipSubfieldLowercase(value, subfieldCode, tag) {
+  // These may contain Roman Numerals...
+  if (subfieldContainsPartData(tag, subfieldCode)) {
+    return true;
+  }
+
   return skipAllSubfieldNormalizations(value, subfieldCode, tag);
 }
 
