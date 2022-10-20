@@ -83,7 +83,7 @@ function addSubfield(targetField, candSubfield) {
 export function mergeOrAddSubfield(record, targetField, normalizedCandSubfield, punctlessCandSubfield) {
   const normalizedTargetField = cloneAndNormalizeField(targetField);
 
-  nvdebug(`   Q: mergeOrAddSubfield '‡{subfieldToString(punctlessCandSubfield)}'`, debug);
+  nvdebug(`   Q: mergeOrAddSubfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
   nvdebug(`      with field '${fieldToString(targetField)}'?`, debug);
   if (mergeOrAddSubfieldNotRequired(normalizedTargetField, normalizedCandSubfield)) {
     nvdebug(`    A: No. No need to merge nor to add the subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
