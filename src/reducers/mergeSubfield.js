@@ -1,4 +1,5 @@
 import createDebugLogger from 'debug';
+import {partsAgree, subfieldContainsPartData} from './normalizePart';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 
@@ -86,6 +87,15 @@ export function mergeSubfield(targetField, candSubfield) {
 
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields)) {
     return true;
+  }
+
+  // Mark 490$v "osa 1" vs "1" as merged (2nd part of MET-53).
+  // NB! Keeps the original value and drops the incoming value. (Just preventing it from going to add-part...)
+  // NB! We could improve this and choose the longer value later on.
+  if (subfieldContainsPartData(targetField.tag, candSubfield.code)) {
+    if (relevantSubfields.some(sf => partsAgree(sf.value, candSubfield.value, targetField.tag, candSubfield.code))) {
+      return true;
+    }
   }
   return false; // default to failure
 }
