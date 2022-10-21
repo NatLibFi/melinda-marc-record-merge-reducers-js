@@ -1,0 +1,4 @@
+{
+  "description":"Add/move non-numeric field tags: Add LOW field from source to base, and remove it from source.",
+  "comment": "Note that LOWs are sorted (by marc-record-js) alphabetically"
+}

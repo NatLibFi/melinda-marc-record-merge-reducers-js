@@ -3,6 +3,11 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from './addField';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField:test');
+const debugData = debug.extend('data');
+
 
 describe('add data field tests: ', () => {
   generateTests({
@@ -27,6 +32,10 @@ describe('add data field tests: ', () => {
     const bothRecords = marcReducers(base, source);
     const mergedRecord = bothRecords.base;
     const modifiedSourceRecord = bothRecords.source;
+
+    debugData(mergedRecord);
+    //debugData(modifiedSourceRecord);
+
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
     expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
 

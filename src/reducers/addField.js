@@ -1,8 +1,8 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-//import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug, recordHasField} from './utils';
+//import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, debug, recordHasField} from './utils';
 
-import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
+import {fieldIsRepeatable, fieldToString, fieldsAreIdentical} from './utils';
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecord} from './mergePostprocess.js';
@@ -15,6 +15,7 @@ import path from 'path';
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
+const debugData = debug.extend('data');
 
 // Default list of (repeatable) fields that we don't copy if the field is already present in the base record
 //const defaultDoNotCopyIfFieldPresentRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
@@ -26,23 +27,30 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
-  nvdebug(`CONFIG: ${JSON.stringify(config.preprocessorDirectives)}`);
+  debugData(`Base: ${JSON.stringify(base)}`);
+  debugData(`Source: ${JSON.stringify(source)}`);
+
+  debug(`CONFIG: ${JSON.stringify(config.preprocessorDirectives)}`);
   // There are bunch of rules we want to apply after field merge and before field add.
   // They are run here.
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
   const activeTagPattern = getTagPattern(config);
-  nvdebug(`TAG PATTERN: ${JSON.stringify(activeTagPattern)}`);
+  debug(`TAG PATTERN: ${JSON.stringify(activeTagPattern)}`);
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
   candidateFields.forEach(candField => {
-    nvdebug(`add field: Now processing ${fieldToString(candField)}`, debug);
+    debug(`add field: Now processing ${fieldToString(candField)}`);
     addField(baseRecord, candField, config);
   });
 
   postprocessRecord(baseRecord);
   postprocessRecord(sourceRecord);
+
+  debugData(`Base after addField: ${JSON.stringify(baseRecord)}`);
+  debugData(`Source after addField: ${JSON.stringify(sourceRecord)}`);
+
 
   return {base: baseRecord, source: sourceRecord};
 
@@ -58,7 +66,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
 /*
 function getConfigDoNotCopyIfFieldPresentAsRegexp(config) {
   if (config.doNotCopyIfFieldPresent) {
-    nvdebug(`Regexpify: '${config.doNotCopyIfFieldPresent}'`);
+    debug(`Regexpify: '${config.doNotCopyIfFieldPresent}'`);
     return new RegExp(`^${config.doNotCopyIfFieldPresent}`, 'u');
   }
   return undefined;
@@ -101,7 +109,7 @@ function repetitionBlocksAdding(record, tag) {
 
 function skipAddField(record, field) {
   if (repetitionBlocksAdding(record, field.tag)) {
-    nvdebug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`, debug);
+    debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
     return true;
   }
 
@@ -132,7 +140,7 @@ function cloneAddableField(field) {
 export function addField(record, field, config = {}) {
   // Skip duplicates and special cases:
   if (skipAddField(record, field, config)) {
-    nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
+    debug(`addField(): don't add '${fieldToString(field)}'`);
     return false;
   }
 
@@ -140,7 +148,7 @@ export function addField(record, field, config = {}) {
   const newField = cloneAddableField(field, config); // clone for base + set field.added = 1
   field.deleted = 1; // eslint-disable-line functional/immutable-data
 
-  nvdebug(`Add as ${fieldToString(field)}`, debug);
+  debug(`Add as ${fieldToString(field)}`);
   // NB! We don't we sort subfields in added fields.
   return record.insertField(newField);
 }

@@ -21,20 +21,22 @@ const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..'
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
+const debugData = debug.extend('data');
+
 const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
 
 // Should this load default configuration?
 export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
-  // nvdebug(`ENTERING mergeField.js`);
+  debug(`ENTERING mergeField.js`);
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
   const activeTagPattern = getTagPattern(tagPattern, config);
 
-  //nvdebug(JSON.stringify(baseRecord));
-  //nvdebug(JSON.stringify(sourceRecord));
-  //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`);
+  debugData(JSON.stringify(baseRecord));
+  debugData(JSON.stringify(sourceRecord));
+  debug(`MERGE CONFIG: ${JSON.stringify(config)}`);
 
   normalizeEncoding().fix(baseRecord);
   normalizeEncoding().fix(sourceRecord);
@@ -47,7 +49,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
 
   candidateFields.forEach(candField => {
-    nvdebug(`Now merging (or trying to) field ${fieldToString(candField)}`, debug);
+    debug(`Now merging (or trying to) field ${fieldToString(candField)}`);
     mergeField(baseRecord, candField, config);
   });
 
@@ -100,7 +102,7 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
   const normalizedSourceField = cloneAndNormalizeField(sourceField); //cloneAndRemovePunctuation(sourceField);
   const strippedSourceField = cloneAndRemovePunctuation(sourceField);
 
-  nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`, debug);
+  nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`);
 
   normalizedSourceField.subfields.forEach((candSubfield, index) => {
     //sourceField.subfields.forEach(candSubfield => {
@@ -119,12 +121,12 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
 
 function skipMergeField(baseRecord, sourceField, config) {
   if (!mergableTag(sourceField.tag, config)) {
-    nvdebug(`mergeField(): field '${fieldToString(sourceField)}' listed as skippable!`, debug);
+    debug(`mergeField(): field '${fieldToString(sourceField)}' listed as skippable!`);
     return true;
   }
   // Skip duplicate field:
   if (baseRecord.fields.some(baseField => fieldsAreIdentical(sourceField, baseField))) {
-    nvdebug(`mergeField(): field '${fieldToString(sourceField)}' already exists! No action required!`, debug);
+    debug(`mergeField(): field '${fieldToString(sourceField)}' already exists! No action required!`);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
@@ -136,21 +138,21 @@ export function mergeField(baseRecord, sourceField, config) {
   //nvdebug(`mergeField config: ${JSON.stringify(config)}`);
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
-    nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debug);
+    debug(`mergeField(): don't merge '${fieldToString(sourceField)}'`);
     return false;
   }
 
-  nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`, debug);
+  nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`);
   const counterpartField = getCounterpart(baseRecord, sourceField, config);
 
   if (counterpartField) {
-    nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debug);
+    debug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
     mergeField2(baseRecord, counterpartField, sourceField, config);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  nvdebug(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`, debug);
+  debug(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`);
   return false;
 }
 
