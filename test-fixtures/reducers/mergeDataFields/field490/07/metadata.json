@@ -1,0 +1,4 @@
+{
+  "description":"07 Field 490: MET-22: handle whitespaces",
+  "comment": "Field merge happens. Base's value will win, with or without extra puncs"
+}
