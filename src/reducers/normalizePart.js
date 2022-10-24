@@ -1,10 +1,12 @@
 import {nvdebug} from './utils';
 
+// Normalizes at least 490$v and 773
+
 export function subfieldContainsPartData(tag, subfieldCode) {
   if (tag === '490' && subfieldCode === 'v') {
     return true;
   }
-  if (tag === '773' && subfieldCode === 'w') {
+  if (tag === '773' && subfieldCode === 'g') {
     return true;
   }
   return false;
