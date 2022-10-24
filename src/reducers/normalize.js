@@ -133,6 +133,28 @@ function normalizeField(field) {
   return field;
 }
 
+function hack490SubfieldA(field) {
+  if (field.tag !== '490') {
+    return;
+  }
+  field.subfields.forEach(sf => removeSarja(sf));
+
+  // NB! This won't work, if the punctuation has not been stripped beforehand!
+  function removeSarja(subfield) {
+    if (subfield.code !== 'a') {
+      return;
+    }
+    const tmp = subfield.value.replace(/ ?-(?:[a-z]|ä|ö)*sarja$/u, '');
+    if (tmp.length > 0) {
+      subfield.value = tmp; // eslint-disable-line functional/immutable-data
+      return;
+    }
+  }
+}
+
+function fieldSpecificHacks(field) {
+  hack490SubfieldA(field);
+}
 
 function fieldRemoveDecomposedDiacritics(field) {
   // Raison d'être/motivation: "Sirén" and diacriticless "Siren" might refer to a same surname, so this normalization
@@ -183,6 +205,7 @@ export function cloneAndNormalizeField(field) {
   const clonedField = normalizeField(clone(field));
   fieldStripPunctuation(clonedField);
   fieldRemoveDecomposedDiacritics(clonedField);
+  fieldSpecificHacks(clonedField);
 
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
     sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag); // eslint-disable-line functional/immutable-data
