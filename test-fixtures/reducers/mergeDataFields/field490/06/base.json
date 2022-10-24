@@ -1,0 +1,31 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "490",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Kadonnut ääni -kirjasarja ;"
+        },
+        {
+          "code": "v",
+          "value": "Osa 1"
+        }
+      ]
+    },
+    {
+      "tag": "490",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Kadonnut ääni 2"
+        }
+      ]
+    }
+  ]
+}

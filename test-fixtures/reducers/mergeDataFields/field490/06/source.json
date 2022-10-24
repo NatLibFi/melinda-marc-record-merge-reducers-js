@@ -1,0 +1,50 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "490",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Kadonnut ääni -jämäsarja ;"
+        },
+        {
+          "code": "v",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "tag": "490",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Kadonnut ääni 2 -sarja ;"
+        },
+        {
+          "code": "v",
+          "value": "I"
+        }
+      ]
+    },
+    {
+      "tag": "490",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Kadonnut ääni 3 -sarja ;"
+        },
+        {
+          "code": "v",
+          "value": "I"
+        }
+      ]
+    }
+  ]
+}
