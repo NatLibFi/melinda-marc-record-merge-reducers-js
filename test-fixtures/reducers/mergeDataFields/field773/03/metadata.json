@@ -1,0 +1,4 @@
+{
+  "description":"773/03: same as test 02, but with different $g's that mean the same",
+  "comment": "note that base's worse value '1' wins over source's better value 'Raita 1'"
+}
