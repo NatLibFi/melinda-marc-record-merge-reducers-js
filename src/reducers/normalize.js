@@ -161,6 +161,14 @@ function fieldSpecificHacks(field) {
   hack490SubfieldA(field);
 }
 
+function fieldTrimSubfieldValues(field) {
+  field.subfields.forEach((sf) => {
+    sf.value = sf.value.replace(/^[ \t\n]+/u, ''); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/[ \t\n]+$/u, ''); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/[ \t\n]+/gu, ' '); // eslint-disable-line functional/immutable-data
+  });
+}
+
 function fieldRemoveDecomposedDiacritics(field) {
   // Raison d'être/motivation: "Sirén" and diacriticless "Siren" might refer to a same surname, so this normalization
   // allows us to compare authors and avoid duplicate fields.
@@ -198,6 +206,7 @@ function normalizeSubfieldValue(value, subfieldCode, tag) {
 export function cloneAndRemovePunctuation(field) {
   const clonedField = clone(field);
   fieldStripPunctuation(clonedField);
+  fieldTrimSubfieldValues(clonedField);
   debug('PUNC');
   debugFieldComparison(field, clonedField);
 
@@ -211,7 +220,7 @@ export function cloneAndNormalizeField(field) {
   fieldStripPunctuation(clonedField);
   fieldRemoveDecomposedDiacritics(clonedField);
   fieldSpecificHacks(clonedField);
-
+  fieldTrimSubfieldValues(clonedField);
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
     sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag); // eslint-disable-line functional/immutable-data
   });
