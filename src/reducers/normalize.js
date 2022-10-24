@@ -1,3 +1,8 @@
+/*
+  Note that this file contains very powerful normalizations and spells that are:
+  - meant for comparing mergability of two fields (clone, normalize, compare),
+  - and NOT for modifying the actual data!
+*/
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
 import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
