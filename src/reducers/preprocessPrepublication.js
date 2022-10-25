@@ -1,7 +1,7 @@
 // Implements MET-33
 
 import {nvdebug} from './utils';
-import {baseHasEqualOrHigherEncodingLevel, encodingLevelIsBetterThanPrepublication,
+import {encodingLevelIsBetterThanPrepublication,
   fieldRefersToEnnakkotieto, fieldRefersToTarkistettuEnnakkotieto,
   fieldRefersToKoneellisestiTuotettuTietue, getEncodingLevel, getPrepublicationLevel,
   isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto} from './prepublicationUtils';
@@ -13,7 +13,7 @@ export default () => (base, source) => {
   deleteWorse500(source);
   handleField263(base, source); // Do this before tampering with LDR/17...
   handleSource6XX(base, source);
-  setBaseEncodingLevel(base, source); // Change's LDR/17 so source 263 should be handled before this
+  //setBaseEncodingLevel(base, source); // Change's LDR/17 so source 263 should be handled before this
   /*
   const baseEncodingLevel = getEncodingLevel(base);
   const baseFennicaEncodingLevel = getFennicaEncodingLevel(base);
@@ -82,16 +82,6 @@ function handleSource6XX(base, source) {
   }
 }
 
-function setBaseEncodingLevel(base, source) {
-  const baseEncodingLevel = getEncodingLevel(base);
-  const sourceEncodingLevel = getEncodingLevel(source);
-
-  if (baseHasEqualOrHigherEncodingLevel(baseEncodingLevel, sourceEncodingLevel)) {
-    return; // No action required
-  }
-  // Source's LDR/17 is copied to base's LDR/17:
-  base.leader = base.leader.substring(0, 17) + sourceEncodingLevel + base.leader.substring(18); // eslint-disable-line functional/immutable-data
-}
 
 // Very similar to getPrepublicationLevel() in melinda-record-match-validator's getPrepublicationLevel()...
 // We should use that and not have a copy here...
