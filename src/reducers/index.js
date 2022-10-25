@@ -9,7 +9,7 @@ import field008 from './field008';
 import reindexSubfield6 from './reindexSubfield6';
 import reindexSubfield8 from './reindexSubfield8';
 
-import sourcePreprocessor from './preprocessor.js';
+import genericPreprocessor from './preprocessor.js';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
 import {default as postprocessSubfield6} from './postprocessSubfield6';
@@ -67,7 +67,7 @@ export const localCopyReducerConfigs = [
 
 export const localReducers = [
   // UTF-8 normalization: if wanted, see mergeField.js for an example
-  sourcePreprocessor(),
+  genericPreprocessor(),
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
   // We need a way to modify the source record's $6 and $8 and potential 1XX->7XX change.
