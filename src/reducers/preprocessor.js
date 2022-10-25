@@ -314,28 +314,17 @@ export default (config = defaultConfig) => (base, source) => {
 
   filterOperations(base, source, config.preprocessorDirectives);
 
-  const source2 = externalFixes(source, config);
+  const source2 = hyphenateISBN(source, config); // Should these be done to base as well?
 
   const result = {base, source: source2};
   //nvdebug(JSON.stringify(result));
   return result;
 
 
-  function externalFixes(record) {
+  function hyphenateISBN(record) {
     // Not sure whether this should be done, or should we normalize ISBNs during comparison.
     const addHyphensToISBN = isbnIssn({hyphenateISBN: true});
     addHyphensToISBN.fix(record);
-
-    /*
-    await EmptyFields(),
-    await IsbnIssn({hyphenateISBN: true}),
-
-    //await FieldStructure([{tag: /^007$/u, dependencies: [{leader: /^.{6}[^at]/u}]}]),
-    await Punctuation(),
-    await EndingPunctuation()
-    */
-
-    //record.fields.forEach(field => swapIncomingSubfieldCodes(field, config));
 
     return record;
   }
