@@ -4,6 +4,7 @@ import path from 'path';
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldRenameSubfieldCodes, fieldToString,*/ nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
 import {filterOperations} from './preprocessor.js';
+import {deleteWorsePrepublicationFields500, deleteWorsePrepublicationFields594} from './preprocessPrepublication.js';
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
@@ -16,6 +17,8 @@ export default (config = defaultConfig) => (base, source) => {
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
   //nvdebug(`HSP CONF ${config}`);
   filterOperations(base, source, config.postprocessorDirectives); // declared in preprocessor
+  deleteWorsePrepublicationFields500(base);
+  deleteWorsePrepublicationFields594(base);
   return {base, source};
 };
 
