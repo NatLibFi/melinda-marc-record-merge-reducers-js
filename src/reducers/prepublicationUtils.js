@@ -1,9 +1,9 @@
-import {fieldHasSubfield} from './utils';
+//import {fieldHasSubfield} from './utils';
 
 const KONEELLISESTI_TUOTETTU_TIETUE = 1; // Best
 const TARKISTETTU_ENNAKKOTIETO = 2;
 const ENNAKKOTIETO = 3;
-const EI_TASOA = 4;
+//const EI_TASOA = 4;
 
 const encodingLevelPreferenceArray = [' ', '1', '3', '4', '5', '2', '7', 'u', 'z', '8']; // MET-145
 const prepublicationLevelIndex = encodingLevelPreferenceArray.indexOf('8');
@@ -47,8 +47,9 @@ export function isPrepublicationField6XX(field) {
 }
 
 
-function getRelevant5XXFields(record, natLibFiOnly = false) {
+export function getRelevant5XXFields(record, natLibFiOnly = false) {
   if (!natLibFiOnly) {
+    // NB! Does not check $5, $9 etc...
     return record.get(/^(?:500|594)$/u).filter(field => hasInterestringSubfieldA(field));
   }
   const candFields = record.get(/^594$/u);
@@ -59,17 +60,19 @@ function getRelevant5XXFields(record, natLibFiOnly = false) {
   }
 
   function hasInterestringSubfield5(field) {
-    return field.subsfields.some(sf => sf.code === '5' && ['FENNI', 'FIKKA', 'VIOLA'].includes(sf.value));
+    return field.subfields.some(sf => sf.code === '5' && ['FENNI', 'FIKKA', 'VIOLA'].includes(sf.value));
   }
 
 }
 
+// Very similar to getPrepublicationLevel() in melinda-record-match-validator's getPrepublicationLevel()...
+// We should use that and not have a copy here...
 export function getPrepublicationLevel(record, natLibFiOnly) {
   // Smaller return value is better
   const fields = getRelevant5XXFields(record, natLibFiOnly);
 
   if (!fields) {
-    return EI_TASOA;
+    return null;
   }
   if (fields.some(f => fieldRefersToKoneellisestiTuotettuTietue(f))) {
     return KONEELLISESTI_TUOTETTU_TIETUE;
@@ -84,22 +87,9 @@ export function getPrepublicationLevel(record, natLibFiOnly) {
     return ENNAKKOTIETO;
   }
 
-  return EI_TASOA;
+  return null;
 }
 
-export function getFennicaPrepublicationLevel(record) {
-  if (!hasFikkaLOW(record)) {
-    return null;
-  }
-  if (!hasNatLibFi041(record)) {
-    return null;
-  }
-  // MH wrote Fennica encoding level specs into MET-33 comments.
-  return getPrepublicationLevel(record, true);
-  // "Jos tietueessa ei ole Fennican tunnuksia, sillä ei ole Fennica-tasoa lainkaan"
-  //nvdebug('getFennicaEncodingLevel() not implemented yet!');
-  //return 0;
-}
 
 export function baseHasEqualOrHigherEncodingLevel(baseEncodingLevel, sourceEncodingLevel) {
   const baseIndex = encodingLevelPreferenceArray.indexOf(baseEncodingLevel);
@@ -112,7 +102,7 @@ export function baseHasEqualOrHigherEncodingLevel(baseEncodingLevel, sourceEncod
   return baseIndex <= sourceIndex;
 }
 
-
+/*
 function hasFikkaLOW(record) {
   return record.fields.some(field => field.tag === 'LOW' && fieldHasSubfield(field, 'a', 'FIKKA'));
 }
@@ -120,7 +110,7 @@ function hasFikkaLOW(record) {
 function hasNatLibFi041(record) {
   return record.fields.some(field => field.tag === '041' && (fieldHasSubfield(field, 'a', 'finb') || fieldHasSubfield(field, 'a', 'finbd')));
 }
-
+*/
 
 export function getEncodingLevel(record) {
   return record.leader.substring(17, 18);
