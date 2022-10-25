@@ -1,0 +1,4 @@
+{
+  "description":"263/03, MET-33: don't remove field 263 from source, as base's LDR/17='8' and prepublication level is bad enough",
+  "comment": "We should remove base's 263 field in some contexts..."
+}
