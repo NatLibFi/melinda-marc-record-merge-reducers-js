@@ -259,27 +259,3 @@ export function getEncodingLevelRanking(record) {
 export function stringToRegex(string) { // easier to remember
   return new RegExp(string, 'u');
 }
-
-/*
-export function isMainOrCorrespondingAddedEntryFieldTag(tag) {
-  const tags = ['100', '110', '111', '130', '700', '710', '711', '730'];
-  return tags.includes(tag);
-}
-
-export function isMainOrCorrespondingAddedEntryField(field) {
-  if (isMainOrCorrespondingAddedEntryFieldTag(field.tag)) {
-    return true;
-  }
-  // A bit more theoretical:
-  if (field.tag === '880') {
-    const sf8 = field.subfields.filter(sf => sf.code === '6');
-    if (sf8.length) {
-      const referredTag = sf8[0].value.slice(0, 3);
-      return isMainOrCorrespondingAddedEntryFieldTag(referredTag);
-    }
-  }
-
-  return 0;
-}
-*/
-
