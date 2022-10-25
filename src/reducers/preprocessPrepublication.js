@@ -8,6 +8,8 @@ const ENNAKKOTIETO_TAI_EOS = 3;
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
 export default () => (base, source) => {
+  //deleteWorse500(base);
+  deleteWorse500(source);
   handleField263(base, source); // Do this before tampering with LDR/17...
   setBaseEncodingLevel(base, source); // Change's LDR/17 so source 263 should be handled before this
   /*
@@ -66,9 +68,42 @@ function setBaseEncodingLevel(base, source) {
 // Very similar to getPrepublicationLevel() in melinda-record-match-validator's getPrepublicationLevel()...
 // We should use that and not have a copy here...
 
+
 function containsSubstringInSubfieldA(field, substring) {
   return field.subfields.some(sf => sf.code === 'a' && sf.value.includes(substring));
 }
+
+function fieldRefersToKoneellisestiTuotettuTietue(field) {
+  return containsSubstringInSubfieldA(field, 'Koneellisesti tuotettu tietue');
+}
+
+function fieldRefersToTarkistettuEnnakkotieto(field) {
+  return containsSubstringInSubfieldA(field, 'TARKISTETTU ENNAKKOTIETO');
+}
+
+function fieldRefersToEnnakkotieto(field) {
+  return containsSubstringInSubfieldA(field, 'ENNAKKOTIETO');
+}
+
+function deleteWorse500(record) {
+  const f500 = record.get(/^500$/u);
+
+  const koneellisestiTuotetutTietueet = f500.filter(f => fieldRefersToKoneellisestiTuotettuTietue(f));
+  const tarkistetutEnnakkotiedot = f500.filter(f => fieldRefersToTarkistettuEnnakkotieto(f));
+  const ennakkotiedot = f500.filter(f => fieldRefersToEnnakkotieto(f) && !fieldRefersToTarkistettuEnnakkotieto(f));
+
+  if (koneellisestiTuotetutTietueet.length > 0) {
+    tarkistetutEnnakkotiedot.forEach(field => record.removeField(field));
+    ennakkotiedot.forEach(field => record.removeField(field));
+    return;
+  }
+
+  if (tarkistetutEnnakkotiedot.length > 0) {
+    ennakkotiedot.forEach(field => record.removeField(field));
+    return;
+  }
+}
+
 
 function getPrepublicationLevel(record, natLibFiOnly = false) {
   const fields = getRelevantFields();
@@ -76,16 +111,16 @@ function getPrepublicationLevel(record, natLibFiOnly = false) {
   if (!fields) {
     return ENNAKKOTIETO_TAI_EOS;
   }
-  if (fields.some(f => containsSubstringInSubfieldA(f, 'Koneellisesti tuotettu tietue'))) {
+  if (fields.some(f => fieldRefersToKoneellisestiTuotettuTietue(f))) {
     return KONEELLISESTI_TUOTETTU_TIETUE;
   }
 
-  if (fields.some(f => containsSubstringInSubfieldA(f, 'TARKISTETTU ENNAKKOTIETO'))) {
+  if (fields.some(f => fieldRefersToTarkistettuEnnakkotieto(f))) {
     return TARKISTETTU_ENNAKKOTIETO;
   }
 
   /*
-    if (fields.some(f => containsSubstringInSubfieldA(f, 'ENNAKKOTIETO'))) {
+    if (fields.some(f => ieldRefersToTarkistettuEnnakkotieto(f))) {
         return ENNAKKOTIETO_TAI_EOS;
     }
     */
