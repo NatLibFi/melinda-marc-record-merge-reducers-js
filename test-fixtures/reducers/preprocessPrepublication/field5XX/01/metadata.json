@@ -1,3 +1,4 @@
 {
-  "description":"5XX/01, MET-33: remove all field 500 ennakkotieto rows as better field 500 /koneelllisesti tuotettu tietue/ exists"
+  "description":"5XX/01, MET-33: remove all field 5XX ennakkotieto rows as better field 5XX /koneellisesti tuotettu tietue/ exists",
+  "comment": "NB! 500 and 594 are treated separately"
 }

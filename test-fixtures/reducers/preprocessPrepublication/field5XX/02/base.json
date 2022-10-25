@@ -12,6 +12,47 @@
           "value": "202212"
         }
       ]
+    },
+    {
+      "tag": "594",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Koneellisesti tuotettu tietue"
+        }
+      ]
+    },
+    {
+      "tag": "594",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "TARKISTETTU ENNAKKOTIETO"
+        },
+        {
+          "code": "5",
+          "value": "FIKKA"
+        }
+      ]
+    },
+    {
+      "tag": "594",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "ENNAKKOTIETO"
+        },
+        {
+          "code": "5",
+          "value": "VIOLA"
+        }
+      ]
     }
   ]
 }
