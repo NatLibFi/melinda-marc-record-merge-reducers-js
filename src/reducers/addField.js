@@ -107,11 +107,27 @@ function repetitionBlocksAdding(record, tag) {
   return false;
 }
 
+/* // Handled by config.json
+function skipCertainRepeatableFieldsIfFieldAlreadyExists(record, tag) {
+  if (!['336', '337', '338'].includes(tag)) {
+    return false;
+  }
+  const originalFields = record.get(tag).filter(field => field.added);
+  return originalFields.length > 0;
+}
+*/
+
 function skipAddField(record, field) {
   if (repetitionBlocksAdding(record, field.tag)) {
     debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
     return true;
   }
+
+  /*
+  if (skipCertainRepeatableFieldsIfFieldAlreadyExists(record, field.tag)) {
+    return true;
+  }
+  */
 
   // We could block 260/264 pairs here.
 
