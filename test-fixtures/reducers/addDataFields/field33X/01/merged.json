@@ -19,7 +19,7 @@
           "value": "txt"
         },
         {
-          "code": "c",
+          "code": "2",
           "value": "rdacontent"
         }
       ]
@@ -38,7 +38,7 @@
           "value": "n"
         },
         {
-          "code": "c",
+          "code": "2",
           "value": "rdamedia"
         }
       ]
@@ -57,7 +57,7 @@
           "value": "nc"
         },
         {
-          "code": "c",
+          "code": "2",
           "value": "rdacarrier"
         }
       ]
