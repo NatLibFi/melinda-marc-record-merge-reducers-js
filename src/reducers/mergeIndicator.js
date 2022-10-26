@@ -54,7 +54,7 @@ export function mergeIndicators(toField, fromField, config) {
         }
       }
 
-      // Easter Egg #1: Use-ish good hard-coded defaults as not defined by user:
+      // Easter Egg #1: Use good-ish hard-coded defaults as not defined by user:
       if (indicatorNumber === 1 && ind1NonFilingChars.includes(tag)) {
         return '9876543210 ';
       }
