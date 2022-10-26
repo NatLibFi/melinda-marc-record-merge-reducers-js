@@ -1,0 +1,67 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "001",
+      "value": "000123456"
+    },
+    {
+      "tag": "336",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "text"
+        },
+        {
+          "code": "b",
+          "value": "txt"
+        },
+        {
+          "code": "c",
+          "value": "rdacontent"
+        }
+      ]
+    },
+    {
+      "tag": "337",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "omediaerad"
+        },
+        {
+          "code": "b",
+          "value": "n"
+        },
+        {
+          "code": "c",
+          "value": "rdamedia"
+        }
+      ]
+    },
+    {
+      "tag": "338",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "volym"
+        },
+        {
+          "code": "b",
+          "value": "nc"
+        },
+        {
+          "code": "c",
+          "value": "rdacarrier"
+        }
+      ]
+    }
+
+  ]
+}

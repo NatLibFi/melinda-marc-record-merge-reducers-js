@@ -1,0 +1,4 @@
+{
+  "description":"Same 33X$b and $2, different $a: don't copy fields (they shouldn't merge earlier on either)",
+  "comment": "Source's 33X fields are removed by default config.json's addField preprocessor"
+}
