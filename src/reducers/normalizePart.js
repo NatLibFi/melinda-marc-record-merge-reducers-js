@@ -1,6 +1,6 @@
 import {nvdebug} from './utils';
 
-// Normalizes at least 490$v and 773
+// Normalizes at least 490$v and 773$g which contain information such as "Raita 5" vs "5", and "Osa 3" vs "Osa III".
 
 export function subfieldContainsPartData(tag, subfieldCode) {
   if (tag === '490' && subfieldCode === 'v') {
