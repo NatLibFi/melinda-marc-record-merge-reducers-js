@@ -88,9 +88,9 @@ const mergeConstraints = [
   {'tag': '310', 'required': 'a', 'key': 'ab'},
   {'tag': '321', 'required': 'a', 'key': 'ab'},
   {'tag': '335', 'required': 'a', 'key': 'ab'}, // Melinda N=1 (a test field). M might increase?
-  {'tag': '336', 'required': 'b2', 'key': 'b'},
-  {'tag': '337', 'required': 'b2', 'key': 'b'},
-  {'tag': '338', 'required': 'b2', 'key': 'b'},
+  {'tag': '336', 'required': 'b2', 'key': 'ab2'}, // MET-88: don't merge different $a subfields
+  {'tag': '337', 'required': 'b2', 'key': 'ab2'}, // MET-88: don't merge different $a subfields
+  {'tag': '338', 'required': 'b2', 'key': 'ab2'}, // / MET-88: don't merge different $a subfields
   {'tag': '340', 'required': '', 'paired': 'abcdefghijkmnop', 'key': 'abcdefghijkmnop'},
   {'tag': '341', 'required': '', 'paired': 'abcde', 'key': 'abcde'}, // SKIP 341. NOT SEEN!
   {'tag': '342', 'required': '', 'paired': 'abcdefghijklmnopqrstuvw', 'key': 'abcdefghijklmnopqrstuvw'}, // SKIP 342. NOT SEEN!
