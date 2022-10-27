@@ -2,7 +2,7 @@
 import createDebugLogger from 'debug';
 //import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, debug, recordHasField} from './utils';
 
-import {fieldIsRepeatable, fieldToString, fieldsAreIdentical} from './utils';
+import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecord} from './mergePostprocess.js';
@@ -41,7 +41,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
   candidateFields.forEach(candField => {
-    debug(`add field: Now processing ${fieldToString(candField)}`);
+    nvdebug(`add field: Now processing ${fieldToString(candField)}`, debug);
     addField(baseRecord, candField, config);
   });
 
@@ -119,7 +119,7 @@ function skipCertainRepeatableFieldsIfFieldAlreadyExists(record, tag) {
 
 function skipAddField(record, field) {
   if (repetitionBlocksAdding(record, field.tag)) {
-    debug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`);
+    nvdebug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`, nvdebug);
     return true;
   }
 
@@ -139,7 +139,7 @@ function skipAddField(record, field) {
 
   // NB! Subfieldless fields (and control fields (00X)) are not handled here.
   if (field.subfields.length === 0) {
-    debug(`WARNING or ERROR: No subfields in field-to-add`);
+    nvdebug(`WARNING or ERROR: No subfields in field-to-add`, debug);
     return true;
   }
 
@@ -156,7 +156,7 @@ function cloneAddableField(field) {
 export function addField(record, field, config = {}) {
   // Skip duplicates and special cases:
   if (skipAddField(record, field, config)) {
-    debug(`addField(): don't add '${fieldToString(field)}'`);
+    nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
     return false;
   }
 
@@ -164,7 +164,7 @@ export function addField(record, field, config = {}) {
   const newField = cloneAddableField(field, config); // clone for base + set field.added = 1
   field.deleted = 1; // eslint-disable-line functional/immutable-data
 
-  debug(`Add as ${fieldToString(field)}`);
+  nvdebug(`Add as '${fieldToString(field)}'`, debug);
   // NB! We don't we sort subfields in added fields.
   return record.insertField(newField);
 }
