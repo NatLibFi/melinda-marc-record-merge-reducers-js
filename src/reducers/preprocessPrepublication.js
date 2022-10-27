@@ -1,5 +1,32 @@
 // Implements MET-33
 
+// MET-33 (comment) by MH:
+//
+// Ennakkotietokenttä / prePublicationNote:
+// ========================================
+//
+// "500 jossa ENNAKKOTIETO/TARKISTETTU ENNAKKOTIETO/KONEELLISESTI TUOTETTU TIETUE
+// KEEP fromSource if baseRecordLevel/mergedRecordLevel === prePub,
+// merge by keeping the most advanced prePublicationNote (or keep all first?).
+// DROP fromSource if baseRecordLevel/mergedRecordLevel > prePub"
+//
+// Implementation:
+// 1) LDR/17 is better than '8' (prepub): call deleteAllPrepublicationNotesFromField500(mergedRecord)
+// 2) LDR/17 is '8' (prepub) (or theoretically something worse): call deleteWorsePrepublicationLevelFields(mergedRecord, fields500)
+//
+// Fennican ennakkotietokenttä / natBibPrePublicationNote
+// ======================================================
+//
+// "(594, ennakkotietohuomautus, $5 FENNI/FIKKA/VIOLA)
+// (Sanity check - if sourceRecord !== natBibRecord, these could be DROPped)
+// KEEP fromSource if baseRecordLevel/mergedRecordLevel > prePub && (baseRecord !== natBibRecord || baseRecordNatBibPrePublicationNote), keep all in merged or keep the mostAdvanced prePublicationNote
+// DROP fromSource if baseRecordLevel/mergedRecordLevel > prePub && !baseRecordNatBibPrePublicationNote && baseRecord === natBibRecord"
+//
+// Implementation:
+// 1) LDR/17 is '8' (prepub) (or theoretically something worse): call deleteWorsePrepublicationLevelFields(mergedRecord, fields594 with $5 FENNI/FIKKA/VIOLA)
+//
+
+
 import {nvdebug} from './utils';
 import {encodingLevelIsBetterThanPrepublication,
   fieldRefersToEnnakkotieto, fieldRefersToTarkistettuEnnakkotieto,
@@ -9,6 +36,11 @@ import {encodingLevelIsBetterThanPrepublication,
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
 export default () => (base, source) => {
+  nvdebug('BASE');
+  nvdebug(JSON.stringify(base));
+  nvdebug('SOURCE');
+  nvdebug(JSON.stringify(source));
+
   deleteWorsePrepublicationFields500(base);
   deleteWorsePrepublicationFields594(base);
   deleteWorsePrepublicationFields500(source);
@@ -95,17 +127,18 @@ function deleteWorsePrepublicationLevelFields(record, fields) {
   const tarkistetutEnnakkotiedot = fields.filter(f => fieldRefersToTarkistettuEnnakkotieto(f));
   const ennakkotiedot = fields.filter(f => fieldRefersToEnnakkotieto(f) && !fieldRefersToTarkistettuEnnakkotieto(f));
 
-  nvdebug(` N=${koneellisestiTuotetutTietueet.length} Koneellisesti tuotettu tietue`);
-  nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO`);
-  nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu)`);
-
   if (koneellisestiTuotetutTietueet.length > 0) {
+    nvdebug(` N=${koneellisestiTuotetutTietueet.length} Koneellisesti tuotettu tietue`);
+    nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO => REMOVE`);
+    nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu) => REMOVE`);
     tarkistetutEnnakkotiedot.forEach(field => record.removeField(field));
     ennakkotiedot.forEach(field => record.removeField(field));
     return;
   }
 
   if (tarkistetutEnnakkotiedot.length > 0) {
+    nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO`);
+    nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu) => REMOVE`);
     ennakkotiedot.forEach(field => record.removeField(field));
     return;
   }
