@@ -1,6 +1,4 @@
 {
-  "description":"5XX/01, MET-33: remove field 5XX ennakkotieto rows, keep /tarkistettu ennakkotieto/",
-  "comment": "NB! Base has 594 without $5. It is not currently affected by this reducer",
-  "skip": true,
-  "comment 2": "No longer done in preprocessor. Remove eventually"
+  "description":"5XX/02, MET-33: filter source's 594 since base belongs to FIKKA, has LDR/17=4 and it has no Fennica encoding level",
+  "skip": false
 }
