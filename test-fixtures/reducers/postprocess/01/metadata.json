@@ -1,3 +1,4 @@
 {
-  "description":"MET-113: postprocess base: TARKISTETTU ENNAKKOTIETO deletes plain ENNAKKOTIETO in 500 and 594"
+  "description":"MET-113: postprocess base: TARKISTETTU ENNAKKOTIETO deletes plain ENNAKKOTIETO in 500 and 594",
+  "comment": "NB: Feature: postprocess does nothing to source record"
 }
