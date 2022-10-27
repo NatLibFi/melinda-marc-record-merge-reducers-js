@@ -1,7 +1,6 @@
 //import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {/*fieldToString, fieldHasNSubfields,*/ fieldHasSubfield, /*, nvdebug*/
-  nvdebug} from './utils';
+import {/*fieldToString, fieldHasNSubfields,*/ fieldHasSubfield /*, nvdebug*/} from './utils';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
@@ -11,9 +10,9 @@ const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
 
 // Remove unpaired
 export default () => (base, source) => {
-  nvdebug(`ENTERING postprocessSubfield6.js`);
-  nvdebug(JSON.stringify(base));
-  nvdebug(JSON.stringify(source));
+  //nvdebug(`ENTERING postprocessSubfield6.js`);
+  //nvdebug(JSON.stringify(base));
+  //nvdebug(JSON.stringify(source));
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   recordRemovePairlessFields(baseRecord, false);
   return {base: baseRecord, source};
