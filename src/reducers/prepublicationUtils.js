@@ -1,6 +1,5 @@
-//import {fieldHasSubfield} from './utils';
+import {fieldHasSubfield, nvdebug} from './utils';
 
-import {nvdebug} from './utils';
 
 const KONEELLISESTI_TUOTETTU_TIETUE = 1; // Best
 const TARKISTETTU_ENNAKKOTIETO = 2;
@@ -19,6 +18,7 @@ export function encodingLevelIsBetterThanPrepublication(encodingLevel) {
   return index > -1 && index < prepublicationLevelIndex;
 }
 
+
 function containsSubstringInSubfieldA(field, substring) {
   return field.subfields.some(sf => sf.code === 'a' && sf.value.includes(substring));
 }
@@ -35,6 +35,26 @@ export function fieldRefersToTarkistettuEnnakkotieto(field) {
 export function fieldRefersToEnnakkotieto(field) {
   // NB! This matches also 'TARKISTETTU ENNAKKOTIETO' case!
   return containsSubstringInSubfieldA(field, 'ENNAKKOTIETO');
+}
+
+export function secondFieldDoesNotHaveBetterFennicaEncodingLevel(field1, field2) {
+  // Could be optimized...
+  if (fieldRefersToKoneellisestiTuotettuTietue(field1)) {
+    return true;
+  }
+  if (fieldRefersToKoneellisestiTuotettuTietue(field2)) {
+    return false;
+  }
+  if (fieldRefersToTarkistettuEnnakkotieto(field1)) {
+    return true;
+  }
+  if (fieldRefersToTarkistettuEnnakkotieto(field2)) {
+    return false;
+  }
+  if (fieldRefersToEnnakkotieto(field1)) {
+    return true;
+  }
+  return !fieldRefersToEnnakkotieto(field2);
 }
 
 function hasEnnakkotietoSubfield(field) {
@@ -104,15 +124,18 @@ export function baseHasEqualOrHigherEncodingLevel(baseEncodingLevel, sourceEncod
   return baseIndex <= sourceIndex;
 }
 
-/*
+
 function hasFikkaLOW(record) {
   return record.fields.some(field => field.tag === 'LOW' && fieldHasSubfield(field, 'a', 'FIKKA'));
 }
 
-function hasNatLibFi041(record) {
-  return record.fields.some(field => field.tag === '041' && (fieldHasSubfield(field, 'a', 'finb') || fieldHasSubfield(field, 'a', 'finbd')));
+function hasNatLibFi042(record) {
+  return record.fields.some(field => field.tag === '042' && (fieldHasSubfield(field, 'a', 'finb') || fieldHasSubfield(field, 'a', 'finbd')));
 }
-*/
+
+export function isFikkaRecord(record) {
+  return hasFikkaLOW(record) && hasNatLibFi042(record);
+}
 
 export function getEncodingLevel(record) {
   return record.leader.substring(17, 18);

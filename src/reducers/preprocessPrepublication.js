@@ -29,7 +29,10 @@
 
 import {nvdebug} from './utils';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel, getPrepublicationLevel,
-  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto} from './prepublicationUtils';
+  getRelevant5XXFields,
+  isFikkaRecord,
+  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto,
+  secondFieldDoesNotHaveBetterFennicaEncodingLevel} from './prepublicationUtils';
 
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
@@ -39,9 +42,7 @@ export default () => (base, source) => {
   nvdebug('SOURCE');
   nvdebug(JSON.stringify(source));
 
-  // NB! We should actually do this during postprocessing after merge and add seps...
-  // NB! 500 and 594 are treated separately, which is a bit iffy...
-  //     Should 594 trigger deletion of 500?
+  preprocessSourceField594(base, source);
 
   handleField263(base, source); // Do this before tampering with LDR/17...
   handleSource6XX(base, source);
@@ -57,6 +58,50 @@ export default () => (base, source) => {
   const result = {base, source};
   return result;
 };
+
+function removeUnwantedSourceField594s(base, source) {
+  const baseFields594 = getRelevant5XXFields(base, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
+  if (keepSource594()) {
+    return;
+  }
+
+  const sourceFields594 = getRelevant5XXFields(source, true);
+  sourceFields594.forEach(field => source.removeField(field));
+
+  function keepSource594() {
+    // Start with a sanity check:
+    if (!isFikkaRecord(source)) {
+      return false; // Remove, though there's shouldn't be anything to remove...
+    }
+
+    const baseEncodingLevel = getEncodingLevel(base);
+    if (isFikkaRecord(base) && encodingLevelIsBetterThanPrepublication(baseEncodingLevel) && baseFields594.length === 0) {
+      return false;
+    }
+    return true;
+  }
+}
+
+function removeUninterestingSourceField594s(base, source) {
+  // Remove them source 594 fields that already have same or better base 594 source field
+  const baseFields594 = getRelevant5XXFields(base, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
+  if (baseFields594.length === 0) {
+    return;
+  }
+  const sourceFields594 = getRelevant5XXFields(source, true);
+
+  const deletableFields = sourceFields594.filter(sourceField => survivable(sourceField));
+  deletableFields.forEach(field => source.removeField(field));
+
+  function survivable(sourceField) {
+    return baseFields594.some(baseField => secondFieldDoesNotHaveBetterFennicaEncodingLevel(baseField, sourceField));
+  }
+}
+
+function preprocessSourceField594(base, source) {
+  removeUnwantedSourceField594s(base, source);
+  removeUninterestingSourceField594s(base, source);
+}
 
 function removeField263(record) {
   const deletableFields = record.get(/^263$/u);
