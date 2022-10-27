@@ -5,7 +5,7 @@ import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
 
-describe('merge data field tests: ', () => {
+describe('merge preprocess prepublication tests: ', () => {
   generateTests({
     callback,
     path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'preprocessPrepublication'],

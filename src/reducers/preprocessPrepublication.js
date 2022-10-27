@@ -28,9 +28,7 @@
 
 
 import {nvdebug} from './utils';
-import {encodingLevelIsBetterThanPrepublication,
-  fieldRefersToEnnakkotieto, fieldRefersToTarkistettuEnnakkotieto,
-  fieldRefersToKoneellisestiTuotettuTietue, getEncodingLevel, getPrepublicationLevel, getRelevant5XXFields,
+import {encodingLevelIsBetterThanPrepublication, getEncodingLevel, getPrepublicationLevel,
   isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto} from './prepublicationUtils';
 
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
@@ -41,10 +39,6 @@ export default () => (base, source) => {
   nvdebug('SOURCE');
   nvdebug(JSON.stringify(source));
 
-  deleteWorsePrepublicationFields500(base);
-  deleteWorsePrepublicationFields594(base);
-  deleteWorsePrepublicationFields500(source);
-  deleteWorsePrepublicationFields594(source);
   // NB! We should actually do this during postprocessing after merge and add seps...
   // NB! 500 and 594 are treated separately, which is a bit iffy...
   //     Should 594 trigger deletion of 500?
@@ -118,58 +112,6 @@ function handleSource6XX(base, source) {
     nvdebug(`removeFields6XX() got ${deletableFields.length} deletable field(s)`);
     deletableFields.forEach(field => record.removeField(field));
   }
-}
-
-
-function deleteWorsePrepublicationLevelFields(record, fields) {
-  // Keeps only the most advanced prepublication level field(s)
-  const koneellisestiTuotetutTietueet = fields.filter(f => fieldRefersToKoneellisestiTuotettuTietue(f));
-  const tarkistetutEnnakkotiedot = fields.filter(f => fieldRefersToTarkistettuEnnakkotieto(f));
-  const ennakkotiedot = fields.filter(f => fieldRefersToEnnakkotieto(f) && !fieldRefersToTarkistettuEnnakkotieto(f));
-
-  if (koneellisestiTuotetutTietueet.length > 0) {
-    nvdebug(` N=${koneellisestiTuotetutTietueet.length} Koneellisesti tuotettu tietue`);
-    nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO => REMOVE`);
-    nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu) => REMOVE`);
-    tarkistetutEnnakkotiedot.forEach(field => record.removeField(field));
-    ennakkotiedot.forEach(field => record.removeField(field));
-    return;
-  }
-
-  if (tarkistetutEnnakkotiedot.length > 0) {
-    nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO`);
-    nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu) => REMOVE`);
-    ennakkotiedot.forEach(field => record.removeField(field));
-    return;
-  }
-}
-
-// This should probably used only via base's postprocessing...
-export function deleteWorsePrepublicationFields500(record) {
-  // NB! Not checking $5 nor $9 etc...
-  const f500 = record.get(/^500$/u);
-  nvdebug(`deleteWorsePrepublicationFields500() will inspect ${f500.length} field(s)`);
-  deleteWorsePrepublicationLevelFields(record, f500);
-}
-
-export function deleteWorsePrepublicationFields594(record) {
-  const relevantFields = getRelevant5XXFields(record, true); // returns only tag=594
-  nvdebug(`deleteWorsePrepublicationFields594() will inspect ${relevantFields.length} field(s)`);
-  deleteWorsePrepublicationLevelFields(record, relevantFields);
-
-  /*
-  if (!hasFikkaLOW(record)) {
-    return null;
-  }
-  if (!hasNatLibFi041(record)) {
-    return null;
-  }
-  // MH wrote Fennica encoding level specs into MET-33 comments.
-  return getPrepublicationLevel(record, true);
-  // "Jos tietueessa ei ole Fennican tunnuksia, sillä ei ole Fennica-tasoa lainkaan"
-  //nvdebug('getFennicaEncodingLevel() not implemented yet!');
-  //return 0;
-  */
 }
 
 

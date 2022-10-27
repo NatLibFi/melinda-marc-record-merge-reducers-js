@@ -3,7 +3,7 @@ import path from 'path';
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldRenameSubfieldCodes, fieldToString,*/ nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
 import {filterOperations} from './preprocessor.js';
-import {deleteWorsePrepublicationFields500, deleteWorsePrepublicationFields594} from './preprocessPrepublication.js';
+import {deleteWorsePrepublicationFields500, deleteWorsePrepublicationFields594} from './prepublicationUtils';
 
 import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melinda/dist/indicator-fixes';
 import {deleteAllPrepublicationNotesFromField500} from './prepublicationUtils.js';

@@ -140,3 +140,41 @@ export function deleteAllPrepublicationNotesFromField500(record) {
 }
 
 
+function deleteWorsePrepublicationLevelFields(record, fields) {
+  // Keeps only the most advanced prepublication level field(s)
+  const koneellisestiTuotetutTietueet = fields.filter(f => fieldRefersToKoneellisestiTuotettuTietue(f));
+  const tarkistetutEnnakkotiedot = fields.filter(f => fieldRefersToTarkistettuEnnakkotieto(f));
+  const ennakkotiedot = fields.filter(f => fieldRefersToEnnakkotieto(f) && !fieldRefersToTarkistettuEnnakkotieto(f));
+
+  if (koneellisestiTuotetutTietueet.length > 0) {
+    nvdebug(` N=${koneellisestiTuotetutTietueet.length} Koneellisesti tuotettu tietue`);
+    nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO => REMOVE`);
+    nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu) => REMOVE`);
+    tarkistetutEnnakkotiedot.forEach(field => record.removeField(field));
+    ennakkotiedot.forEach(field => record.removeField(field));
+    return;
+  }
+
+  if (tarkistetutEnnakkotiedot.length > 0) {
+    nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO`);
+    nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu) => REMOVE`);
+    ennakkotiedot.forEach(field => record.removeField(field));
+    return;
+  }
+}
+
+// This should probably used only via base's postprocessing...
+export function deleteWorsePrepublicationFields500(record) {
+  // NB! Not checking $5 nor $9 etc...
+  const f500 = record.get(/^500$/u);
+  nvdebug(`deleteWorsePrepublicationFields500() will inspect ${f500.length} field(s)`);
+  deleteWorsePrepublicationLevelFields(record, f500);
+}
+
+export function deleteWorsePrepublicationFields594(record) {
+  const relevantFields = getRelevant5XXFields(record, true); // returns only tag=594
+  nvdebug(`deleteWorsePrepublicationFields594() will inspect ${relevantFields.length} field(s)`);
+  deleteWorsePrepublicationLevelFields(record, relevantFields);
+}
+
+
