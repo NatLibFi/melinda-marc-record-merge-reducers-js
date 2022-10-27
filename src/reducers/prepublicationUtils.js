@@ -1,5 +1,7 @@
 //import {fieldHasSubfield} from './utils';
 
+import {nvdebug} from './utils';
+
 const KONEELLISESTI_TUOTETTU_TIETUE = 1; // Best
 const TARKISTETTU_ENNAKKOTIETO = 2;
 const ENNAKKOTIETO = 3;
@@ -115,4 +117,26 @@ function hasNatLibFi041(record) {
 export function getEncodingLevel(record) {
   return record.leader.substring(17, 18);
 }
+
+export function deleteAllPrepublicationNotesFromField500(record) {
+  const encodingLevel = getEncodingLevel(record);
+  // Skip prepublication (or theoretically even worse) records:
+  if (!encodingLevelIsBetterThanPrepublication(encodingLevel)) {
+    return;
+  }
+
+  const f500 = record.get(/^500$/u);
+  if (f500.length === 0) {
+    return;
+  }
+
+  nvdebug(`Delete all ${f500.length} instance(s) of field 500`);
+  f500.forEach(field => {
+    if (fieldRefersToKoneellisestiTuotettuTietue(field) || fieldRefersToEnnakkotieto(field)) {
+      record.removeField(field);
+      return;
+    }
+  });
+}
+
 
