@@ -31,11 +31,11 @@ function getSpecifiedFields(record, fieldSpecs) {
 
   function regexpifyFieldSpecs(fieldSpecs) {
     if (fieldSpecs.tagPattern) {
-      nvdebug(`TAG Regexp: /${fieldSpecs.tagPattern}/`);
+      //nvdebug(`Tag pattern to regexp: /${fieldSpecs.tagPattern}/`);
       return new RegExp(`${fieldSpecs.tagPattern}`, 'u');
     }
     if (fieldSpecs.tag) {
-      nvdebug(`TAG Regexp: /^${fieldSpecs.tag}$/`);
+      //nvdebug(`Tag to egexp: /^${fieldSpecs.tag}$/`);
       return new RegExp(`^${fieldSpecs.tag}$`, 'u');
     }
     nvdebug(`TAG Regexp: NULL`);
@@ -173,22 +173,30 @@ function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
 }
 
 
+function logRecordType(recordType) {
+  if (['base', 'both', 'source'].includes(recordType)) {
+    nvdebug(`Filter applies to record type ${recordType.toUpperCase()}`);
+    return;
+  }
+  // Log warning/error here
+  nvdebug(`ERROR: record type ${recordType} is not defined!`);
+}
+
 function getTargetRecordsForOperation(base, source, recordType) {
+  logRecordType(recordType);
+
   if (recordType === 'base') {
-    nvdebug('Filter applies to BASE record');
     return [base];
   }
+
   if (recordType === 'both') {
-    nvdebug('Filter applies to BOTH record');
     return [base, source];
   }
 
   if (recordType === 'source') {
-    nvdebug('Filter applies to SOURCE record');
     return [source];
   }
-  // Log warning/error here
-  nvdebug('ERROR: no record for filter!');
+
   return [];
 }
 
@@ -246,6 +254,10 @@ function operationRetag(record, fieldSpecification, newTag) {
 }
 
 export function filterOperation(base, source, operation) {
+  if (operation.skip) {
+    // Log?
+    return;
+  }
   const targetRecords = getTargetRecordsForOperation(base, source, operation.recordType);
 
   if (targetRecords.length === 0) {
