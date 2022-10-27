@@ -14,6 +14,7 @@ import prepublicationPreprocessor from './preprocessPrepublication';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
 import {default as postprocessSubfield6} from './postprocessSubfield6';
+import postprocessor from './postprocessor';
 //import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -86,5 +87,6 @@ export const localReducers = [
   //genericDatafield(),
   mergeDataFields(),
   addDataFields(),
-  postprocessSubfield6()
+  postprocessSubfield6(), // Should this be part of generic postprocessor? Probably...
+  postprocessor()
 ];
