@@ -27,12 +27,13 @@ function getMaxSubfield8(record) {
   const vals = record.fields.map((field) => fieldSubfield8Index(field));
   return Math.max(...vals);
   function fieldSubfield8Index(field) {
-    nvdebug(`Checking subfields $8 from ${JSON.stringify(field)}`, debug);
+    //nvdebug(`Checking subfields $8 from ${JSON.stringify(field)}`, debug);
 
     const sf8s = field.subfields ? field.subfields.filter(subfield => subfield.code === '8') : [];
     if (sf8s.length === 0) {
       return 0;
     }
+    nvdebug(`Got ${field.subfields} $8-subfield(s) from ${JSON.stringify(field)}`);
     const vals = sf8s.map(sf => getSubfield8Index(sf));
     return Math.max(...vals);
   }

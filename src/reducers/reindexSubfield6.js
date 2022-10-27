@@ -37,11 +37,12 @@ function getMaxSubfield6(record) {
   return Math.max(...vals);
 
   function fieldSubfield6Index(field) {
-    nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
+    //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
     const sf6s = field.subfields ? field.subfields.filter(subfield => subfield.code === '6') : [];
     if (sf6s.length === 0) {
       return 0;
     }
+    nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`);
     const vals = sf6s.map(sf => subfield6Index(sf));
     return Math.max(...vals);
   }
