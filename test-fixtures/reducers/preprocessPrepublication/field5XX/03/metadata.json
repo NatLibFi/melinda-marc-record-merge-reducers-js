@@ -1,0 +1,5 @@
+{
+  "description":"5XX/01, MET-33: do nothing (=don't filter source's 594)",
+  "comment": "LDR/17='8' ",
+  "skip": false
+}

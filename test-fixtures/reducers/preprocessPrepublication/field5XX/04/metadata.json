@@ -1,0 +1,5 @@
+{
+  "description":"5XX/01, MET-33: base has a better/equal Fennica encoding level, thus remove source's 594",
+  "comment": "Both LDR/17='8', FIKKA and have 594",
+  "skip": false
+}
