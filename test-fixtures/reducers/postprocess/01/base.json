@@ -1,5 +1,5 @@
 {
-  "leader": "01331cam a22003494i 4500",
+  "leader": "01331cam a22003498i 4500",
   "fields": [
     {
       "tag": "010",
@@ -44,8 +44,8 @@
           "value": "ENNAKKOTIETO / KIRJAVÄLITYS"
         },
         {
-          "code": "9",
-          "value": "FENNI<KEEP>"
+          "code": "5",
+          "value": "FENNI"
         }
       ]
     },
@@ -59,8 +59,8 @@
           "value": "TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS"
         },
         {
-          "code": "9",
-          "value": "FENNI<KEEP>"
+          "code": "5",
+          "value": "FENNI"
         }
       ]
     }
