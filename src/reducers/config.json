@@ -292,6 +292,7 @@
         [
             {
                 "operation": "removeField",
+                "skip": true,
                 "comment": "MET-113 (partial): delete 500 if better sister field exists",
                 "recordType": "base",
                 "fieldSpecification": {
@@ -306,6 +307,7 @@
             },
             {
                 "operation": "removeField",
+                "skip": true,
                 "comment": "MET-113 (partial): delete 594 if better sister field exists",
                 "recordType": "base",
                 "fieldSpecification": {
