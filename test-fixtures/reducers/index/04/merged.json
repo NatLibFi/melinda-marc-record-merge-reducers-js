@@ -1,6 +1,7 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
+    { "tag": "042", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "finb" } ] },
     { "tag": "245", "ind1": "0", "ind2": "0", "subfields": [ { "code": "a", "value": "Title." } ] },
     {
       "tag": "594",
@@ -9,7 +10,7 @@
       "subfields": [
         {
           "code": "a",
-          "value": "Koneellisesti tuotettu tietue 594"
+          "value": "Koneellisesti tuotettu tietue 594 base"
         },
         {
           "code": "5",
@@ -24,7 +25,7 @@
       "subfields": [
         {
           "code": "a",
-          "value": "Koneellisesti tuotettu tietue 594"
+          "value": "Koneellisesti tuotettu tietue 594 source"
         },
         {
           "code": "5",
@@ -39,13 +40,14 @@
       "subfields": [
         {
           "code": "a",
-          "value": "ENNAKKOTIETO 594"
+          "value": "ENNAKKOTIETO 594 source"
         },
         {
           "code": "5",
           "value": "WHATEVER"
         }
       ]
-    }
+    },
+    { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "FIKKA" } ] }
   ]
 }
