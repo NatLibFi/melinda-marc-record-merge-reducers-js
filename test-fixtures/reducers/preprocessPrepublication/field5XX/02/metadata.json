@@ -1,4 +1,6 @@
 {
   "description":"5XX/01, MET-33: remove field 5XX ennakkotieto rows, keep /tarkistettu ennakkotieto/",
-  "comment": "NB! Base has 594 without $5. It is not currently affected by this reducer"
+  "comment": "NB! Base has 594 without $5. It is not currently affected by this reducer",
+  "skip": true,
+  "comment 2": "No longer done in preprocessor. Remove eventually"
 }
