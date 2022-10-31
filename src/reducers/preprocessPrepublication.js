@@ -28,9 +28,12 @@
 
 
 import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
+import {handleField6XX} from './preprocessPrepublicationField6XX';
 import {encodingLevelIsBetterThanPrepublication, firstFieldHasBetterPrepubEncodingLevel, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
-  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto} from './prepublicationUtils';
+  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto,
+  removeWorsePrepubField594s} from './prepublicationUtils';
+
 
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
@@ -43,7 +46,7 @@ export default () => (base, source) => {
   preprocessSourceField594(base, source);
 
   handleField263(base, source); // Do this before tampering with LDR/17...
-  handleSource6XX(base, source);
+  handleField6XX(base, source);
   //setBaseEncodingLevel(base, source); // Change's LDR/17 so source 263 should be handled before this
   /*
   const baseEncodingLevel = getEncodingLevel(base);
@@ -58,16 +61,23 @@ export default () => (base, source) => {
 };
 
 
-function removeWorsePrepubField594s(record) {
-  // Remove lower-level entries:
-  const fields594 = getRelevant5XXFields(record, false, true); // 500=false, 594=true
-  nvdebugFieldArray(fields594, '  Candidates for non-best 594 b4 filtering: ');
-  const nonBest = fields594.filter(field => fields594.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
-  nvdebugFieldArray(nonBest, '  Remove non-best 594: ');
-  nonBest.forEach(field => record.removeField(field));
+function removeUnwantedSourceField500s(base, source) {
+  // See MET-33 for details.
+  // No action required:
+  const baseEncodingLevel = getEncodingLevel(base);
+  if (!encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
+    return;
+  }
+
+  const sourceFields500 = getRelevant5XXFields(source, true, false);
+
+  nvdebugFieldArray(sourceFields500, '  Remove unneeded source 500: ');
+  sourceFields500.forEach(field => source.removeField(field));
 }
 
+
 function removeUnwantedSourceField594s(base, source) {
+  // See MET-33 for details
   const baseFields594 = getRelevant5XXFields(base, false, true);
 
   if (keepSource594()) { // Require FIKKA LOW etc
@@ -80,7 +90,8 @@ function removeUnwantedSourceField594s(base, source) {
 
   function keepSource594() {
     // Start with a sanity check:
-    if (!isFikkaRecord(source)) {
+    if (!isFikkaRecord(source)) { // LOW $a FIKKA AND 042$a finb/finbd
+      // (NV: I wouldn't count on all the FIKKA stuff actually having a proper 042$a...)
       return false; // Remove, though there's shouldn't be anything to remove...
     }
 
@@ -136,7 +147,8 @@ function copySource594ToSource500(record) {
 
 
 function preprocessSourceField594(base, source) {
-  removeWorsePrepubField594s(source); // Keeps only the best prepub field 594. (Keep/remove them in/from base?)
+  removeWorsePrepubField594s(source); // Keeps only the best prepub field(s) 594. (Keep/remove them in/from base?)
+  removeUnwantedSourceField500s(base, source);
   removeUnwantedSourceField594s(base, source); // Source needs to keep only better prepub levels
   removeUninterestingSourceField594s(base, source); // Should we do this to 500 as well?
 
@@ -177,28 +189,4 @@ function handleField263(base, source) {
 
   // If baseRecordLevel < prePub/tarkistettu ennakkotieto && baseRecord === databaseRecord && sourceRecord === incomingRecord && incomingCataloger === IMP_ENNAKK || IMP_VPKPK || ???  -> KEEP fromSource & DROP fromBase
 }
-
-function handleSource6XX(base, source) {
-  const baseEncodingLevel = getEncodingLevel(base);
-  const baseFields6XX = getFields6XX(base);
-  // If base record is good enough, remove 263 from source:
-  if (encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
-    if (baseFields6XX.length) {
-      removeFields6XX(source);
-      return;
-    }
-    return;
-  }
-
-  function getFields6XX(record) {
-    return record.get(/^6(?:[0-4][0-9]|5[0-5])$/u);
-  }
-
-  function removeFields6XX(record) {
-    const deletableFields = record.get(/^6(?:[0-4][0-9]|5[0-5])$/u);
-    nvdebug(`removeFields6XX() got ${deletableFields.length} deletable field(s)`);
-    deletableFields.forEach(field => record.removeField(field));
-  }
-}
-
 
