@@ -1,4 +1,4 @@
-import {fieldHasSubfield, nvdebug} from './utils';
+import {fieldHasSubfield, nvdebug, nvdebugFieldArray} from './utils';
 
 
 const KONEELLISESTI_TUOTETTU_TIETUE = 1; // Best
@@ -13,6 +13,7 @@ export function isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublic
   return prepublicationLevel === KONEELLISESTI_TUOTETTU_TIETUE || prepublicationLevel === TARKISTETTU_ENNAKKOTIETO;
 }
 
+
 export function encodingLevelIsBetterThanPrepublication(encodingLevel) {
   const index = encodingLevelPreferenceArray.indexOf(encodingLevel);
   return index > -1 && index < prepublicationLevelIndex;
@@ -23,21 +24,48 @@ function containsSubstringInSubfieldA(field, substring) {
   return field.subfields.some(sf => sf.code === 'a' && sf.value.includes(substring));
 }
 
+
 // These three functions below all refer to field 500:
 export function fieldRefersToKoneellisestiTuotettuTietue(field) {
   return containsSubstringInSubfieldA(field, 'Koneellisesti tuotettu tietue');
 }
 
+
 export function fieldRefersToTarkistettuEnnakkotieto(field) {
   return containsSubstringInSubfieldA(field, 'TARKISTETTU ENNAKKOTIETO');
 }
+
 
 export function fieldRefersToEnnakkotieto(field) {
   // NB! This matches also 'TARKISTETTU ENNAKKOTIETO' case!
   return containsSubstringInSubfieldA(field, 'ENNAKKOTIETO');
 }
 
-export function secondFieldDoesNotHaveBetterPrepubEncodingLevel(field1, field2) {
+
+export function firstFieldHasBetterPrepubEncodingLevel(field1, field2) {
+  if (fieldRefersToKoneellisestiTuotettuTietue(field2)) {
+    return false;
+  }
+  if (fieldRefersToKoneellisestiTuotettuTietue(field1)) {
+    return true;
+  }
+  if (fieldRefersToTarkistettuEnnakkotieto(field2)) {
+    return false;
+  }
+  if (fieldRefersToTarkistettuEnnakkotieto(field1)) {
+    return true;
+  }
+  if (fieldRefersToEnnakkotieto(field2)) {
+    return false;
+  }
+  if (fieldRefersToEnnakkotieto(field1)) {
+    return true;
+  }
+  return false;
+}
+
+
+export function firstFieldHasEqualOrBetterPrepubEncodingLevel(field1, field2) {
   // Could be optimized...
   if (fieldRefersToKoneellisestiTuotettuTietue(field1)) {
     return true;
@@ -57,9 +85,11 @@ export function secondFieldDoesNotHaveBetterPrepubEncodingLevel(field1, field2) 
   return !fieldRefersToEnnakkotieto(field2);
 }
 
+
 function hasEnnakkotietoSubfield(field) {
   return field.subfields.some(sf => ['g', '9'].includes(sf.code) && sf.value.includes('ENNAKKOTIETO'));
 }
+
 
 export function isPrepublicationField6XX(field) {
   if (!field.tag.match(/^6(?:[0-4][0-9]|5[0-5])$/u)) { // Not within 600 ... 655 range
@@ -69,29 +99,48 @@ export function isPrepublicationField6XX(field) {
 }
 
 
-export function getRelevant5XXFields(record, natLibFiOnly = false) {
-  if (!natLibFiOnly) {
-    // NB! Does not check $5, $9 etc...
-    return record.get(/^(?:500|594)$/u).filter(field => hasInterestringSubfieldA(field));
-  }
-  const candFields = record.get(/^594$/u);
-  return candFields.filter(field => hasInterestringSubfieldA(field) && hasInterestringSubfield5(field));
+export function getRelevant5XXFields(record, f500 = false, f594 = false) {
+  const cands = actualGetFields();
+  nvdebugFieldArray(cands, 'gR5XXa: ');
+  const filtered = cands.filter(field => hasRelevantPrepubData(field));
+  nvdebugFieldArray(filtered, 'gR5XXb: ');
+  return filtered;
 
-  function hasInterestringSubfieldA(field) {
-    return fieldRefersToKoneellisestiTuotettuTietue(field) || fieldRefersToEnnakkotieto(field);
-  }
+  //return actualGetFields().filter(field => hasRelevantPrepubData(field));
 
-  function hasInterestringSubfield5(field) {
+  function hasRelevantPrepubData(field) {
+    // Check prepub ($a):
+    if (!fieldRefersToKoneellisestiTuotettuTietue(field) && !fieldRefersToEnnakkotieto(field)) {
+      return false;
+    }
+    // Check relevance (594$5):
+    if (field.tag !== '594') {
+      return true;
+    }
     return field.subfields.some(sf => sf.code === '5' && ['FENNI', 'FIKKA', 'VIOLA'].includes(sf.value));
+  }
+
+  function actualGetFields() {
+    if (f500 && f594) {
+      return record.get(/^(?:500|594)$/u);
+    }
+    if (f500) {
+      return record.get(/^500$/u);
+    }
+    if (f594) {
+      return record.get(/^594$/u);
+    }
+    return [];
   }
 
 }
 
+
 // Very similar to getPrepublicationLevel() in melinda-record-match-validator's getPrepublicationLevel()...
 // We should use that and not have a copy here...
-export function getPrepublicationLevel(record, natLibFiOnly) {
+export function getPrepublicationLevel(record, f500 = false, f594 = false) {
   // Smaller return value is better
-  const fields = getRelevant5XXFields(record, natLibFiOnly);
+  const fields = getRelevant5XXFields(record, f500, f594);
 
   if (!fields) {
     return null;
@@ -103,7 +152,6 @@ export function getPrepublicationLevel(record, natLibFiOnly) {
   if (fields.some(f => fieldRefersToTarkistettuEnnakkotieto(f))) {
     return TARKISTETTU_ENNAKKOTIETO;
   }
-
 
   if (fields.some(f => fieldRefersToEnnakkotieto(f))) {
     return ENNAKKOTIETO;
@@ -129,17 +177,21 @@ function hasFikkaLOW(record) {
   return record.fields.some(field => field.tag === 'LOW' && fieldHasSubfield(field, 'a', 'FIKKA'));
 }
 
+
 function hasNatLibFi042(record) {
   return record.fields.some(field => field.tag === '042' && (fieldHasSubfield(field, 'a', 'finb') || fieldHasSubfield(field, 'a', 'finbd')));
 }
+
 
 export function isFikkaRecord(record) {
   return hasFikkaLOW(record) && hasNatLibFi042(record);
 }
 
+
 export function getEncodingLevel(record) {
   return record.leader.substring(17, 18);
 }
+
 
 export function deleteAllPrepublicationNotesFromField500(record) {
   const encodingLevel = getEncodingLevel(record);
@@ -163,41 +215,23 @@ export function deleteAllPrepublicationNotesFromField500(record) {
 }
 
 
-function deleteWorsePrepublicationLevelFields(record, fields) {
-  // Keeps only the most advanced prepublication level field(s)
-  const koneellisestiTuotetutTietueet = fields.filter(f => fieldRefersToKoneellisestiTuotettuTietue(f));
-  const tarkistetutEnnakkotiedot = fields.filter(f => fieldRefersToTarkistettuEnnakkotieto(f));
-  const ennakkotiedot = fields.filter(f => fieldRefersToEnnakkotieto(f) && !fieldRefersToTarkistettuEnnakkotieto(f));
-
-  if (koneellisestiTuotetutTietueet.length > 0) {
-    nvdebug(` N=${koneellisestiTuotetutTietueet.length} Koneellisesti tuotettu tietue`);
-    nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO => REMOVE`);
-    nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu) => REMOVE`);
-    tarkistetutEnnakkotiedot.forEach(field => record.removeField(field));
-    ennakkotiedot.forEach(field => record.removeField(field));
-    return;
-  }
-
-  if (tarkistetutEnnakkotiedot.length > 0) {
-    nvdebug(` N=${tarkistetutEnnakkotiedot.length} TARKISTETTU ENNAKKOTIETO`);
-    nvdebug(` N=${ennakkotiedot.length} ENNAKKOTIETO (ei-tarkistettu) => REMOVE`);
-    ennakkotiedot.forEach(field => record.removeField(field));
-    return;
-  }
+export function removeWorsePrepubField500s(record) {
+  // Remove lower-level entries:
+  const fields594 = getRelevant5XXFields(record, true, false); // 500=false, 594=true
+  nvdebugFieldArray(fields594, '  Candidates for non-best 500 b4 filtering: ');
+  const nonBest = fields594.filter(field => fields594.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
+  nvdebugFieldArray(nonBest, '  Remove non-best 500: ');
+  nonBest.forEach(field => record.removeField(field));
 }
 
-// This should probably used only via base's postprocessing...
-export function deleteWorsePrepublicationFields500(record) {
-  // NB! Not checking $5 nor $9 etc...
-  const f500 = record.get(/^500$/u);
-  nvdebug(`deleteWorsePrepublicationFields500() will inspect ${f500.length} field(s)`);
-  deleteWorsePrepublicationLevelFields(record, f500);
-}
 
-export function deleteWorsePrepublicationFields594(record) {
-  const relevantFields = getRelevant5XXFields(record, true); // returns only tag=594
-  nvdebug(`deleteWorsePrepublicationFields594() will inspect ${relevantFields.length} field(s)`);
-  deleteWorsePrepublicationLevelFields(record, relevantFields);
+export function removeWorsePrepubField594s(record) {
+  // Remove lower-level entries:
+  const fields594 = getRelevant5XXFields(record, false, true); // 500=false, 594=true
+  nvdebugFieldArray(fields594, '  Candidates for non-best 594 b4 filtering: ');
+  const nonBest = fields594.filter(field => fields594.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
+  nvdebugFieldArray(nonBest, '  Remove non-best 594: ');
+  nonBest.forEach(field => record.removeField(field));
 }
 
 
