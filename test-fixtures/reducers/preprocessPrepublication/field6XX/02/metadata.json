@@ -1,0 +1,4 @@
+{
+  "description":"MET-33 (part): Remove source's 6XX prepub subfields, since base is a prepublication",
+  "skip": false
+}
