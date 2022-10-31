@@ -32,7 +32,7 @@ import {encodingLevelIsBetterThanPrepublication, getEncodingLevel, getPrepublica
   getRelevant5XXFields,
   isFikkaRecord,
   isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto,
-  secondFieldDoesNotHaveBetterFennicaEncodingLevel} from './prepublicationUtils';
+  secondFieldDoesNotHaveBetterPrepubEncodingLevel} from './prepublicationUtils';
 
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
@@ -82,6 +82,10 @@ function removeUnwantedSourceField594s(base, source) {
   }
 }
 
+function candidateForElimination(field, opposingFields) {
+  return opposingFields.some(opposingField => secondFieldDoesNotHaveBetterPrepubEncodingLevel(opposingField, field));
+}
+
 function removeUninterestingSourceField594s(base, source) {
   // Remove them source 594 fields that already have same or better base 594 source field
   const baseFields594 = getRelevant5XXFields(base, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
@@ -90,17 +94,35 @@ function removeUninterestingSourceField594s(base, source) {
   }
   const sourceFields594 = getRelevant5XXFields(source, true);
 
-  const deletableFields = sourceFields594.filter(sourceField => survivable(sourceField));
+  const deletableFields = sourceFields594.filter(sourceField => candidateForElimination(sourceField, baseFields594));
   deletableFields.forEach(field => source.removeField(field));
 
-  function survivable(sourceField) {
-    return baseFields594.some(baseField => secondFieldDoesNotHaveBetterFennicaEncodingLevel(baseField, sourceField));
-  }
+
 }
+
+function copySource594ToSource500(record) {
+  const fields594 = getRelevant5XXFields(record, true);
+  const fields500 = getRelevant5XXFields(record, false);
+  const addables = fields594.filter(field594 => !candidateForElimination(field594, fields500));
+  // NB: FIX LATER: there should be just one addable (even if 594 had many)
+  addables.forEach(field => {
+    const subfieldA = field.subfields.find(sf => sf.code === 'a');
+    if (!subfieldA) { // unneeded sanity check
+      return;
+    }
+    const newField = {'tag': '500', 'ind1': '0', 'ind2': '0', 'subfields': [{'code': 'a', 'value': subfieldA.value}]};
+    record.insertField(newField);
+  });
+}
+
 
 function preprocessSourceField594(base, source) {
   removeUnwantedSourceField594s(base, source);
-  removeUninterestingSourceField594s(base, source);
+  removeUninterestingSourceField594s(base, source); // Should we do this to 500 as well?
+
+  // Prepub encoding level can't be worse that Fennica prepub level.
+  // Apply to source, but how about base?
+  copySource594ToSource500(source); 
 }
 
 function removeField263(record) {
