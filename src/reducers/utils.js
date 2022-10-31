@@ -233,11 +233,15 @@ export function isControlSubfieldCode(subfieldCode) {
   return false;
 }
 
-export function nvdebug(message, func) {
+export function nvdebug(message, func = undefined) {
   if (func) { // eslint-disable-line functional/no-conditional-statement
     func(message);
   }
   //console.info(message); // eslint-disable-line no-console
+}
+
+export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
+  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`), func);
 }
 
 // base record level codes from highest (1) to lowest (10)
