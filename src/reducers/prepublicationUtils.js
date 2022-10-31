@@ -37,7 +37,7 @@ export function fieldRefersToEnnakkotieto(field) {
   return containsSubstringInSubfieldA(field, 'ENNAKKOTIETO');
 }
 
-export function secondFieldDoesNotHaveBetterFennicaEncodingLevel(field1, field2) {
+export function secondFieldDoesNotHaveBetterPrepubEncodingLevel(field1, field2) {
   // Could be optimized...
   if (fieldRefersToKoneellisestiTuotettuTietue(field1)) {
     return true;
