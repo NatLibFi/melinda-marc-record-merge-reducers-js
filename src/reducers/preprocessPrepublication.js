@@ -27,12 +27,10 @@
 //
 
 
-import {nvdebug} from './utils';
-import {encodingLevelIsBetterThanPrepublication, getEncodingLevel, getPrepublicationLevel,
-  getRelevant5XXFields,
-  isFikkaRecord,
-  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto,
-  secondFieldDoesNotHaveBetterPrepubEncodingLevel} from './prepublicationUtils';
+import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
+import {encodingLevelIsBetterThanPrepublication, firstFieldHasBetterPrepubEncodingLevel, getEncodingLevel,
+  getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
+  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto} from './prepublicationUtils';
 
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
@@ -59,13 +57,25 @@ export default () => (base, source) => {
   return result;
 };
 
+
+function removeWorsePrepubField594s(record) {
+  // Remove lower-level entries:
+  const fields594 = getRelevant5XXFields(record, false, true); // 500=false, 594=true
+  nvdebugFieldArray(fields594, '  Candidates for non-best 594 b4 filtering: ');
+  const nonBest = fields594.filter(field => fields594.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
+  nvdebugFieldArray(nonBest, '  Remove non-best 594: ');
+  nonBest.forEach(field => record.removeField(field));
+}
+
 function removeUnwantedSourceField594s(base, source) {
-  const baseFields594 = getRelevant5XXFields(base, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
-  if (keepSource594()) {
+  const baseFields594 = getRelevant5XXFields(base, false, true);
+
+  if (keepSource594()) { // Require FIKKA LOW etc
     return;
   }
 
-  const sourceFields594 = getRelevant5XXFields(source, true);
+  const sourceFields594 = getRelevant5XXFields(source, false, true);
+  nvdebugFieldArray(sourceFields594, '  Remove unwanted source 594: ');
   sourceFields594.forEach(field => source.removeField(field));
 
   function keepSource594() {
@@ -82,47 +92,57 @@ function removeUnwantedSourceField594s(base, source) {
   }
 }
 
-function candidateForElimination(field, opposingFields) {
-  return opposingFields.some(opposingField => secondFieldDoesNotHaveBetterPrepubEncodingLevel(opposingField, field));
+
+function isKingOfTheHill(field, opposingFields) {
+  // Field is no better than at least one of the opposing fields
+  return opposingFields.every(opposingField => firstFieldHasBetterPrepubEncodingLevel(field, opposingField));
 }
 
 function removeUninterestingSourceField594s(base, source) {
   // Remove them source 594 fields that already have same or better base 594 source field
-  const baseFields594 = getRelevant5XXFields(base, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
+  const baseFields594 = getRelevant5XXFields(base, false, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
   if (baseFields594.length === 0) {
     return;
   }
-  const sourceFields594 = getRelevant5XXFields(source, true);
+  const sourceFields594 = getRelevant5XXFields(source, false, true);
 
-  const deletableFields = sourceFields594.filter(sourceField => candidateForElimination(sourceField, baseFields594));
+  const deletableFields = sourceFields594.filter(sourceField => !isKingOfTheHill(sourceField, baseFields594));
+  nvdebugFieldArray(deletableFields, '  Remove uninteresting source 594: ');
   deletableFields.forEach(field => source.removeField(field));
 
 
 }
 
 function copySource594ToSource500(record) {
-  const fields594 = getRelevant5XXFields(record, true);
-  const fields500 = getRelevant5XXFields(record, false);
-  const addables = fields594.filter(field594 => !candidateForElimination(field594, fields500));
+  const fields594 = getRelevant5XXFields(record, false, true);
+  const fields500 = getRelevant5XXFields(record, true, false);
+  const addables = fields594.filter(field594 => isKingOfTheHill(field594, fields500));
+  nvdebugFieldArray(fields594, 'CAND4ADD: ');
+  nvdebugFieldArray(addables, 'ADDABLE: ');
   // NB: FIX LATER: there should be just one addable (even if 594 had many)
   addables.forEach(field => {
     const subfieldA = field.subfields.find(sf => sf.code === 'a');
+
+    /*
     if (!subfieldA) { // unneeded sanity check
       return;
     }
-    const newField = {'tag': '500', 'ind1': '0', 'ind2': '0', 'subfields': [{'code': 'a', 'value': subfieldA.value}]};
+    */
+    const newField = {'tag': '500', 'ind1': ' ', 'ind2': ' ', 'subfields': [{'code': 'a', 'value': subfieldA.value}]};
     record.insertField(newField);
+    nvdebug(`Added ${fieldToString(newField)}`);
   });
 }
 
 
 function preprocessSourceField594(base, source) {
-  removeUnwantedSourceField594s(base, source);
+  removeWorsePrepubField594s(source); // Keeps only the best prepub field 594. (Keep/remove them in/from base?)
+  removeUnwantedSourceField594s(base, source); // Source needs to keep only better prepub levels
   removeUninterestingSourceField594s(base, source); // Should we do this to 500 as well?
 
   // Prepub encoding level can't be worse that Fennica prepub level.
   // Apply to source, but how about base?
-  copySource594ToSource500(source); 
+  copySource594ToSource500(source);
 }
 
 function removeField263(record) {
@@ -146,8 +166,8 @@ function handleField263(base, source) {
   }
   // NB! Here smaller is better. Skips only ENNAKKO_TIETO_OR_EOS.
   if (baseEncodingLevel === '8') { // LDR/17='8'
-    const prepublicationLevel = getPrepublicationLevel(base, false);
-    nvdebug(`Prepublication level is ${prepublicationLevel}`);
+    const prepublicationLevel = getPrepublicationLevel(base, true, true); // NB! Any prepub info is used here!
+    nvdebug(`handleField263: Prepublication level is ${prepublicationLevel}`);
     if (isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublicationLevel)) {
       removeField263(source);
       return;
