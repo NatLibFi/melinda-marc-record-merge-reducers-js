@@ -231,3 +231,23 @@ export function removeWorsePrepubField594s(record) {
 }
 
 
+export function isEnnakkotietoSubfield(subfield) {
+  if (subfield.code !== '9' && subfield.code !== 'g') {
+    return false;
+  }
+  // Length <= 13 allows punctuation, but does not require it:
+  if (subfield.value.substr(0, 12) === 'ENNAKKOTIETO' && subfield.value.length <= 13) {
+    return true;
+  }
+  return false;
+}
+
+export function isEnnakkotietoField(field) {
+  return field.subfields.some(sf => isEnnakkotietoSubfield(sf));
+}
+
+export function isKingOfTheHill(field, opposingFields) {
+  // Field is no better than at least one of the opposing fields
+  return opposingFields.every(opposingField => firstFieldHasBetterPrepubEncodingLevel(field, opposingField));
+}
+

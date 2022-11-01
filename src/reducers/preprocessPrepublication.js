@@ -29,9 +29,9 @@
 
 import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
 import {handleField6XX} from './preprocessPrepublicationField6XX';
-import {encodingLevelIsBetterThanPrepublication, firstFieldHasBetterPrepubEncodingLevel, getEncodingLevel,
+import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
-  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto,
+  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
   removeWorsePrepubField594s} from './prepublicationUtils';
 
 
@@ -104,11 +104,6 @@ function removeUnwantedSourceField594s(base, source) {
   }
 }
 
-
-function isKingOfTheHill(field, opposingFields) {
-  // Field is no better than at least one of the opposing fields
-  return opposingFields.every(opposingField => firstFieldHasBetterPrepubEncodingLevel(field, opposingField));
-}
 
 function removeUninterestingSourceField594s(base, source) {
   // Remove them source 594 fields that already have same or better base 594 source field

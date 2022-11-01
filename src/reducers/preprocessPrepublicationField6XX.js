@@ -1,4 +1,4 @@
-import {getEncodingLevel} from './prepublicationUtils';
+import {getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from './prepublicationUtils';
 import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
 
 /* // MET-33 (comments):
@@ -19,6 +19,7 @@ export function handleField6XX(base, source) {
     handle6XXWhenBaseIsPrepublication(base, source);
     return;
   }
+
   // Default_ remove stuff
   handleSource6XXWhenBaseIsNotPrepublication(base, source);
   return;
@@ -72,19 +73,6 @@ export function handleField6XX(base, source) {
     return record.get(/^6(?:[0-4][0-9]|5[0-5])$/u);
   }
 
-  function isEnnakkotietoField(field) {
-    return field.subfields.some(sf => isEnnakkotietoSubfield(sf));
-  }
-
-  function isEnnakkotietoSubfield(subfield) {
-    if (subfield.code !== '9' && subfield.code !== 'g') {
-      return false;
-    }
-    if (subfield.value.substr(0, 12) === 'ENNAKKOTIETO' && subfield.value.length <= 13) {
-      return true;
-    }
-    return false;
-  }
 }
 
 
