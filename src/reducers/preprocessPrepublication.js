@@ -11,7 +11,7 @@
 // DROP fromSource if baseRecordLevel/mergedRecordLevel > prePub"
 //
 // Implementation:
-// 1) LDR/17 is better than '8' (prepub): call deleteAllPrepublicationNotesFromField500(mergedRecord)
+// 1) LDR/17 is better than '8' (prepub): call deleteAllPrepublicationNotesFromField500InNonPubRecord(mergedRecord)
 // 2) LDR/17 is '8' (prepub) (or theoretically something worse): call deleteWorsePrepublicationLevelFields(mergedRecord, fields500)
 //
 // Fennican ennakkotietokenttä / natBibPrePublicationNote
@@ -62,6 +62,8 @@ export default () => (base, source) => {
 
 
 function removeUnwantedSourceField500s(base, source) {
+  // Removes prepub 500 fields, if base is not a prepub
+
   // See MET-33 for details.
   // No action required:
   const baseEncodingLevel = getEncodingLevel(base);
@@ -78,8 +80,6 @@ function removeUnwantedSourceField500s(base, source) {
 
 function removeUnwantedSourceField594s(base, source) {
   // See MET-33 for details
-  const baseFields594 = getRelevant5XXFields(base, false, true);
-
   if (keepSource594()) { // Require FIKKA LOW etc
     return;
   }
@@ -96,6 +96,7 @@ function removeUnwantedSourceField594s(base, source) {
     }
 
     const baseEncodingLevel = getEncodingLevel(base);
+    const baseFields594 = getRelevant5XXFields(base, false, true);
     if (isFikkaRecord(base) && encodingLevelIsBetterThanPrepublication(baseEncodingLevel) && baseFields594.length === 0) {
       return false;
     }
@@ -120,13 +121,18 @@ function removeUninterestingSourceField594s(base, source) {
   const deletableFields = sourceFields594.filter(sourceField => !isKingOfTheHill(sourceField, baseFields594));
   nvdebugFieldArray(deletableFields, '  Remove uninteresting source 594: ');
   deletableFields.forEach(field => source.removeField(field));
-
-
 }
 
+
 function copySource594ToSource500(record) {
+  const encodingLevel = getEncodingLevel(record);
+  if (encodingLevel !== '8') {
+    return;
+  }
   const fields594 = getRelevant5XXFields(record, false, true);
   const fields500 = getRelevant5XXFields(record, true, false);
+  // Add if field 594 is better than anything in fields 500.
+  // NB! This adds all the better values, not just the best.
   const addables = fields594.filter(field594 => isKingOfTheHill(field594, fields500));
   nvdebugFieldArray(fields594, 'CAND4ADD: ');
   nvdebugFieldArray(addables, 'ADDABLE: ');
@@ -134,11 +140,11 @@ function copySource594ToSource500(record) {
   addables.forEach(field => {
     const subfieldA = field.subfields.find(sf => sf.code === 'a');
 
-    /*
+
     if (!subfieldA) { // unneeded sanity check
       return;
     }
-    */
+
     const newField = {'tag': '500', 'ind1': ' ', 'ind2': ' ', 'subfields': [{'code': 'a', 'value': subfieldA.value}]};
     record.insertField(newField);
     nvdebug(`Added ${fieldToString(newField)}`);
@@ -148,11 +154,11 @@ function copySource594ToSource500(record) {
 
 function preprocessSourceField594(base, source) {
   removeWorsePrepubField594s(source); // Keeps only the best prepub field(s) 594. (Keep/remove them in/from base?)
-  removeUnwantedSourceField500s(base, source);
+  removeUnwantedSourceField500s(base, source); // Base > prepub, drop sources prepub fields
   removeUnwantedSourceField594s(base, source); // Source needs to keep only better prepub levels
   removeUninterestingSourceField594s(base, source); // Should we do this to 500 as well?
 
-  // Prepub encoding level can't be worse that Fennica prepub level.
+  // Prepub encoding level can't be worse that Fennica prepub level, can it?
   // Apply to source, but how about base?
   copySource594ToSource500(source);
 }
