@@ -2,7 +2,7 @@ import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 import fs from 'fs';
 import path from 'path';
-//import {MarcRecord} from '@natlibfi/marc-record';
+import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
@@ -324,9 +324,12 @@ export function filterOperation(base, source, operation) {
 export default (config = defaultConfig) => (base, source) => {
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
 
-  filterOperations(base, source, config.preprocessorDirectives);
+  //const clonedSource = clone(source); // MRA-72
+  const clonedSource = new MarcRecord(source, {subfieldValues: false});
 
-  const source2 = hyphenateISBN(source, config); // Should these be done to base as well?
+  filterOperations(base, clonedSource, config.preprocessorDirectives);
+
+  const source2 = hyphenateISBN(clonedSource, config); // Should these be done to base as well?
 
   const result = {base, source: source2};
   //nvdebug(JSON.stringify(result));
