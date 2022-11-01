@@ -1,6 +1,0 @@
-{
-  "description":"5XX/01, MET-33: don't filter source's 594 since base's LDR/17=8, it has no Fennica prepub level",
-  "comment": "LDR/17='8', NB! source 594 is copied to source 500 ",
-  "skip": false,
-  "comment 2": "No longer done in preprocessor. Remove eventually"
-}
