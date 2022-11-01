@@ -33,6 +33,7 @@ import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
   isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
   removeWorsePrepubField594s} from './prepublicationUtils';
+import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries';
 
 
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
@@ -43,6 +44,7 @@ export default () => (base, source) => {
   nvdebug('SOURCE');
   nvdebug(JSON.stringify(source));
 
+  handlePrepublicationNameEntries(base, source);
   preprocessSourceField594(base, source);
 
   handleField263(base, source); // Do this before tampering with LDR/17...
