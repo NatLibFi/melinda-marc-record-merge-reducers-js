@@ -34,7 +34,7 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   }
   if (candSubfield.code === 'g' && candSubfield.value === 'ENNAKKOTIETO.') {
     // Skip just ‡g subfield or the whole field?
-    // We decided to skip just this subfield. We want at least $0 and maybe more even from ennakkotieto.
+    // We decided to skip just this subfield. We want at least $0 and maybe even more from ennakkotieto.
     debug('Skip ‡g ENNAKKOTIETO.');
     return true;
   }

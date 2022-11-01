@@ -90,6 +90,8 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
   }
 
   // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield:
+  // (If our prepub normalizations are ok, this should not be needed.
+  //  However, it's simple and works well enough, so let's keep it here.)
   if (fieldHasSubfield(baseField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) { // eslint-disable-line functional/no-conditional-statement
     removeEnnakkotieto(baseField);
     baseField.merged = 1; // eslint-disable-line functional/immutable-data

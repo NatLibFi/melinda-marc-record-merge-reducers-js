@@ -48,9 +48,12 @@ function containsCorporateName(tag = '???', subfieldCode = undefined) {
 }
 
 function skipAllSubfieldNormalizations(value, subfieldCode, tag) {
+
+
   if (subfieldCode === 'g' && value === 'ENNAKKOTIETO.') {
     return true;
   }
+
 
   if (tag === '035' && ['a', 'z'].includes(subfieldCode)) { // A
     return true;
