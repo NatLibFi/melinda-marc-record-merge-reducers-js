@@ -114,8 +114,8 @@ export function getRelevant5XXFields(record, f500 = false, f594 = false) {
       return false;
     }
     // Check relevance (594$5):
-    if (field.tag !== '594') {
-      return true;
+    if (field.tag === '500') {
+      return field.subfields.every(sf => sf.code !== '5'); //true;
     }
     return field.subfields.some(sf => sf.code === '5' && ['FENNI', 'FIKKA', 'VIOLA'].includes(sf.value));
   }
@@ -184,6 +184,7 @@ function hasNatLibFi042(record) {
 
 
 export function isFikkaRecord(record) {
+  // NB! Does not include Humaniora. Pienpainatteet (not that they'd have duplicates)?
   return hasFikkaLOW(record) && hasNatLibFi042(record);
 }
 
@@ -193,33 +194,28 @@ export function getEncodingLevel(record) {
 }
 
 
-export function deleteAllPrepublicationNotesFromField500(record) {
+export function deleteAllPrepublicationNotesFromField500InNonPubRecord(record) {
   const encodingLevel = getEncodingLevel(record);
   // Skip prepublication (or theoretically even worse) records:
   if (!encodingLevelIsBetterThanPrepublication(encodingLevel)) {
     return;
   }
 
-  const f500 = record.get(/^500$/u);
+  const f500 = getRelevant5XXFields(record, true, false);
   if (f500.length === 0) {
     return;
   }
 
   nvdebug(`Delete all ${f500.length} instance(s) of field 500`);
-  f500.forEach(field => {
-    if (fieldRefersToKoneellisestiTuotettuTietue(field) || fieldRefersToEnnakkotieto(field)) {
-      record.removeField(field);
-      return;
-    }
-  });
+  f500.forEach(field => record.removeField(field));
 }
 
 
 export function removeWorsePrepubField500s(record) {
   // Remove lower-level entries:
-  const fields594 = getRelevant5XXFields(record, true, false); // 500=false, 594=true
-  nvdebugFieldArray(fields594, '  Candidates for non-best 500 b4 filtering: ');
-  const nonBest = fields594.filter(field => fields594.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
+  const fields = getRelevant5XXFields(record, true, false); // 500=false, 594=true
+  nvdebugFieldArray(fields, '  Candidates for non-best 500 b4 filtering: ');
+  const nonBest = fields.filter(field => fields.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
   nvdebugFieldArray(nonBest, '  Remove non-best 500: ');
   nonBest.forEach(field => record.removeField(field));
 }
