@@ -5,7 +5,7 @@ import {/*fieldRenameSubfieldCodes, fieldToString,*/ nvdebug /*recordReplaceFiel
 import {filterOperations} from './preprocessor.js';
 
 import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melinda/dist/indicator-fixes';
-import {deleteAllPrepublicationNotesFromField500, removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
+import {deleteAllPrepublicationNotesFromField500InNonPubRecord, removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
@@ -19,7 +19,7 @@ export default (config = defaultConfig) => (base, source) => {
   //nvdebug(`HSP CONF ${config}`);
   filterOperations(base, source, config.postprocessorDirectives); // declared in preprocessor
 
-  deleteAllPrepublicationNotesFromField500(base);
+  deleteAllPrepublicationNotesFromField500InNonPubRecord(base);
   removeWorsePrepubField500s(base);
   removeWorsePrepubField594s(base);
 
