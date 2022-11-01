@@ -1,0 +1,12 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "012345678" },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Source2, Etunimi." },
+      { "code": "g", "value": "ENNAKKOTIETO."},
+      { "code": "0", "value": "https://isni.org/isni/0000111100001111" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "description":"MET-33: toimijakirjaus: don't remove toimijakirjaus field as it contains isni",
+  "only": false
+}
