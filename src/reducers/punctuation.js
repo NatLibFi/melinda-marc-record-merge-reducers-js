@@ -198,9 +198,9 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
   activeRules.forEach(rule => {
     const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(`    REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
+      nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
-      nvdebug(`    REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
+      nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statement
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
