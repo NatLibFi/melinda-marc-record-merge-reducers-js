@@ -1,0 +1,5 @@
+{
+  "description":"03 Field 490: MET-51: $a case mismatch (brackets vs none) should not prevent field-merge",
+  "only": false
+
+}
