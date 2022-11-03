@@ -206,7 +206,7 @@ function pairableName(baseField, sourceField) {
   // 100$a$t: remove $t and everything after that
   const reducedField1 = fieldToNamePart(baseField);
   const reducedField2 = fieldToNamePart(sourceField);
-  nvdebug(`IN: name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
+  nvdebug(`IN: pairableName():\n '${fieldToString(reducedField1)}' vs\n '${fieldToString(reducedField2)}'`);
   // Compare the remaining subsets...
   // First check that name matches...
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
