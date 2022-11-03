@@ -12,7 +12,8 @@ export function subfieldContainsPartData(tag, subfieldCode) {
   return false;
 }
 
-function splitPartData(value) {
+function splitPartData(originalValue) {
+  const value = originalValue.replace(/^\[([0-9]+)\]$/u, '$1'); // eslint-disable-line prefer-named-capture-group
   const splitPoint = value.lastIndexOf(' ');
   if (splitPoint === -1) {
     return [undefined, value];
