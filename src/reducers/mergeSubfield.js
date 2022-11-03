@@ -123,7 +123,7 @@ function findCounterpartForCoverType(coverType, candidateSubfields) {
 
 
 function mapBindingToCoverType(field, candSubfield, relevantSubfields) {
-  if (field.tag !== '020' || candSubfield.code !== 'q') {
+  if (candSubfield.code !== 'q' || !['015', '020', '024', '028'].includes(field.tag)) {
     return false;
   }
   // See if base's field has a binding and source subfield has a cover. If so, replace subfield value:
