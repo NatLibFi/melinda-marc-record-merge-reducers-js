@@ -16,7 +16,7 @@ export default () => (base, source) => {
 
 function getSubfield8Index(subfield) {
   const match = subfield.value.match(sf8Regexp);
-  if (match.length === 0) {
+  if (!match || match.length === 0) {
     return 0;
   }
   return parseInt(match[0], 10);
