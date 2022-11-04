@@ -162,14 +162,22 @@ function preprocessSourceField594(base, source) {
 
 function removeField263(record) {
   const deletableFields = record.get(/^263$/u);
-
-  /*
-    if (deletableFields.length === 0) {
-        return;
-    }
-    */
   nvdebug(`removeField263() got ${deletableFields.length} deletable field(s)`);
   deletableFields.forEach(field => record.removeField(field));
+}
+
+function removeEiVielaIlmestynyt500(record) {
+
+  const deletableFields = record.get(/^500$/u).filter(field => isEVI(field));
+  nvdebugFieldArray(deletableFields, 'remove500(): ');
+  deletableFields.forEach(field => record.removeField(field));
+
+  function isEVI(field) {
+    if (field.subfields.some(sf => sf.code === '5')) {
+      return false;
+    }
+    return field.subfields.some(sf => sf.code === 'a' && sf.value.includes('EI VIELÄ ILMESTYNYT'));
+  }
 }
 
 function handleField263(base, source) {
@@ -177,6 +185,7 @@ function handleField263(base, source) {
   // If base record is good enough, remove 263 from source:
   if (encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
     removeField263(source);
+    removeEiVielaIlmestynyt500(source);
     return;
   }
   // NB! Here smaller is better. Skips only ENNAKKO_TIETO_OR_EOS.
