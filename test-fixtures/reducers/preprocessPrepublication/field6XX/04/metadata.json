@@ -1,0 +1,5 @@
+{
+  "description":"MET-34: Remove source's 653 fields",
+  "skip": false,
+  "comment": "Raison d'être: base LDR/17!=8 + base has proper subject term field"
+}

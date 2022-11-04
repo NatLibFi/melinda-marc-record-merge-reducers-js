@@ -1,0 +1,4 @@
+{
+  "description":"MET-34: Don't remove source's 653 fields as base LDR/17='8'",
+  "skip": false
+}
