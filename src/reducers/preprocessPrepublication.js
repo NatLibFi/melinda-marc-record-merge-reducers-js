@@ -164,6 +164,7 @@ function removeField263(record) {
   const deletableFields = record.get(/^263$/u);
   nvdebug(`removeField263() got ${deletableFields.length} deletable field(s)`);
   deletableFields.forEach(field => record.removeField(field));
+  removeEiVielaIlmestynyt500(record);
 }
 
 function removeEiVielaIlmestynyt500(record) {
@@ -185,7 +186,6 @@ function handleField263(base, source) {
   // If base record is good enough, remove 263 from source:
   if (encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
     removeField263(source);
-    removeEiVielaIlmestynyt500(source);
     return;
   }
   // NB! Here smaller is better. Skips only ENNAKKO_TIETO_OR_EOS.
