@@ -1,14 +1,18 @@
-import {getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from './prepublicationUtils';
+import {/*encodingLevelIsBetterThanPrepublication,*/ getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from './prepublicationUtils';
 import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
 
 /* // MET-33 (comments):
 ENNAKKOTIETOMERKINNÄLLISET ASIASANAT (600-655) $gENNAKOTIETO / $9 ENNAKKOTIETO
 
     If baseRecordLevel > prePub && baseRecord has some fields 600-655 -> drop NV: siis tiputetaan kaikki sourcen 6XX-kentät, joissa on $g ENNAKKOTIE tai $9 ENNAKKOTIETO?
+    OK
     If baseRecordLevel === prePub -> keepFromSource, merge with existing fields, drop prePubSubfield if existing doesn't have it, for merge search just based on term (sf $a), search in all subjectHeadings fields
-
-
+    OK
     If baseRecordLevel === prePub && baseRecord === databaseRecord && sourceRecord === incomingRecord && incomingCataloger === IMP_ENNAKK || IMP_VPKPK || ??? -> KEEP fromSource & DROP fromBase
+    NOT IMPLEMENTED
+
+    // MET-34 (SN Comment):
+    "Sanoisin, että jos tietueessa on jo sisällönkuvailu niin ei tuoda mitään kontrolloimattomia [653-kenttiä]."
 
 */
 
@@ -20,6 +24,7 @@ export function handleField6XX(base, source) {
     return;
   }
 
+  removeDoublish653FromSource(base, source);
   // Default_ remove stuff
   handleSource6XXWhenBaseIsNotPrepublication(base, source);
   return;
@@ -40,6 +45,25 @@ export function handleField6XX(base, source) {
     const baseFields6XX = getFields6XX(base).filter(field => !isEnnakkotietoField(field));
     const counterpartValues = baseFields6XX.map(field => extractComparabledata(field));
     sourceFields6XX.forEach(sourceField => removeEnnakkotietoFieldIfPossible(sourceField, counterpartValues));
+  }
+
+  function removeDoublish653FromSource(base, source) { // MET-34
+    const sourceEncodingLevel = getEncodingLevel(source);
+    if (!['2', '8'].includes(sourceEncodingLevel)) {
+      return;
+    }
+    const baseEncodingLevel = getEncodingLevel(base, source);
+    if (['2', '8'].includes(baseEncodingLevel)) {
+      return;
+    }
+
+    const baseFields6XX = getFields6XX(base).filter(field => !isEnnakkotietoField(field) && field.tag !== '653');
+    if (baseFields6XX.length === 0) {
+      return;
+    }
+    // <- base has proper subject fields, -> remove uncontrolled subject 653 fields:
+    const removableFields = source.get(/^653$/u);
+    removableFields.forEach(field => source.removeField(field));
   }
 
   function extractComparabledata(field) {
