@@ -1,0 +1,15 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "FIKKA" } ] },
+    { "tag": "001", "value": "000654321" },
+    { "tag": "042", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "finb" } ] },
+    { "tag": "245", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Title." } ] },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Incoming." } ] },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "EI VIELÄ ILMESTYNYT, arvioitu ilmestymisaika 01.08.2022." } ] },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "EI VIELÄ ILMESTYNYT, arvioitu ilmestymisaika 02.08.2022." },
+      { "code": "5", "value": "VAARA" }
+    ] }
+  ]
+}
