@@ -1,0 +1,17 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "042", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "finb" } ] },
+    { "tag": "245", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Title." } ] },
+    { "tag": "650", "ind1": " ", "ind2": "2", 
+      "subfields": [
+          { "code": "a", "value": "testi" },
+          { "code": "g", "value": "ENNAKKOTIETO" }
+      ] },
+    { "tag": "650", "ind1": " ", "ind2": "2", 
+      "subfields": [
+        { "code": "a", "value": "toinen" }
+    ] },
+    { "tag": "653", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "aihe." } ] } 
+  ]
+}

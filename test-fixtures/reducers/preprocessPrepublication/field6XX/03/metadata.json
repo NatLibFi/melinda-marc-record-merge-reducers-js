@@ -1,0 +1,4 @@
+{
+  "description":"MET-33 (part): Keep source's 653 fields and 6XX prepub subfields, since base has no proper subject fields + base is LDR/17='8'",
+  "skip": false
+}
