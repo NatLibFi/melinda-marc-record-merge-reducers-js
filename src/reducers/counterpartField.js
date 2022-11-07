@@ -27,6 +27,14 @@ function pairableValue(tag, subfieldCode, value1, value2) {
   return undefined;
 }
 
+function localNormalize(value) {
+  // Remove trailing punctuation:
+  const value2 = value.replace(/(\S)(?:,|\.|\?|!|\. -| *:| *;)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  // Remove brackets:
+  const value3 = value2.replace(/^\(([^()]+)\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  return value3;
+}
+
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
   // Here optional subfield means a subfield, that needs not to be present, but if present, it must be identical...
   // We use clones here, since these changes done below are not intented to appear on the actual records.
@@ -43,13 +51,13 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   const subfieldArray = keySubfieldsAsString.split('');
 
   return subfieldArray.every(subfieldCode => {
-    const subfieldValues1 = field1.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
-    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
+    const subfieldValues1 = field1.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => localNormalize(sf.value));
+    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => localNormalize(sf.value));
     // If one side is empty, all is good
     if (subfieldValues1.length === 0 || subfieldValues2.length === 0) {
       return true;
     }
-    // If one set is a subset of the other, all is good
+    // If one set is a subset of the other, all is probably good (how about 653$a, 505...)
     if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
       return true;
     }
@@ -215,7 +223,7 @@ function pairableName(baseField, sourceField) {
   }
 
 
-  // However, mismatch is not critical! If Asteri ID matches, it's still a match!
+  // However, name mismatch is not critical! If Asteri ID matches, it's still a match!
   // *NOT* sure whether this a good idea.
   if (pairableAsteriIDs(baseField, sourceField)) {
     //nvdebug(`    name match based on ASTERI $0'`);
