@@ -14,6 +14,7 @@ import prepublicationPreprocessor from './preprocessPrepublication';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
 import {default as postprocessSubfield6} from './postprocessSubfield6';
+import {default as metatietosanastoNormalizations} from './preprocessMetatietosanasto';
 import postprocessor from './postprocessor';
 //import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -69,7 +70,8 @@ export const localCopyReducerConfigs = [
 
 export const localReducers = [
   // UTF-8 normalization: if wanted, see mergeField.js for an example
-  genericPreprocessor(),
+  genericPreprocessor(), // Should this be moved downward?
+  metatietosanastoNormalizations(),
   prepublicationPreprocessor(),
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
