@@ -1,0 +1,24 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "700",
+      "ind1": "1",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Koski, Kari,"
+        },
+        {
+          "code": "e",
+          "value": "kääntäjä."
+        },
+        {
+          "code": "0",
+          "value": "https://isni.org/0000000479872492"
+        }
+      ]
+    }
+  ]
+}

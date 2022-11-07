@@ -1,0 +1,5 @@
+{
+  "description":"03: MET-38: field 700: $0 ASTERI-ID vs $0 isni should not prevent field merge",
+  "only": true
+
+}
