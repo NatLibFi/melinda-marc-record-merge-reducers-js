@@ -22,7 +22,7 @@ const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 // NB! 65X: Finnish terms don't use punctuation, but international ones do. Neither one is currently (2021-11-08) coded here.
 
 // Will unfortunately trigger "Sukunimi, Th." type:
-const removeX00Comma = {'code': 'abcqde', 'followedBy': '#01459', 'context': /(?:[a-z)]|ä|ä|ö),$/u, 'remove': /,$/u};
+const removeX00Comma = {'code': 'abcqde', 'followedBy': 'abcqde#01459', 'context': /.,$/u, 'remove': /,$/u};
 const cleanRHS = {'code': 'abcd', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
 const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#01459', 'context': /[0-9]-[,.]$/u, 'remove': /[,.]$/u};
 const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
@@ -32,7 +32,7 @@ const cleanX00eDot = {'code': 'e', 'followedBy': 'egj', 'context': /(?:aja|jä)\
 const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /\.$/u};
 
 
-const addX00aComma = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
+const addX00aComma = {'add': ',', 'code': 'abcqdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
 const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#tu01', 'context': defaultNeedsPuncAfter};
 
