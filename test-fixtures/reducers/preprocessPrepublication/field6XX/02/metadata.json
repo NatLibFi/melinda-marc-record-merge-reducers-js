@@ -1,4 +1,5 @@
 {
-  "description":"MET-33 (part): Remove source's 6XX prepub subfields, since base is a prepublication",
-  "skip": false
+  "description":"MET-33 (part): Remove source's 6XX matching $g/$9 prepub subfields, since base is has a matching proper subject field nad has LDR/17='8'",
+  "skip": false,
+  "comment": "NB! Term testi2 keeps it's prepub field as it has not pair in base"
 }

@@ -10,6 +10,11 @@
       ] },
     { "tag": "650", "ind1": " ", "ind2": "2", 
       "subfields": [
+          { "code": "a", "value": "testi2" },
+          { "code": "g", "value": "ENNAKKOTIETO" }
+      ] },
+    { "tag": "650", "ind1": " ", "ind2": "2", 
+      "subfields": [
         { "code": "a", "value": "toinen" }
     ] }  
   ]
