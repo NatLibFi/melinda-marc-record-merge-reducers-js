@@ -1,0 +1,5 @@
+{
+  "description":"Normalize 700$e relator abbreviations",
+  "comment": "note that $e subfiels are in suboptimal order.",
+  "only": false
+}
