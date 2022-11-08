@@ -19,7 +19,7 @@ const relatorTerms = [
   {'code': 'arr', 'eng': 'arranger', 'fin': 'sovittaja', 'swe': 'arrangör av musikalisk komposition'},
   {'code': 'aui', 'fin': 'esipuheen tekijä'},
   {'code': 'aut', 'fin': 'kirjoittaja', 'swe': 'författare'},
-  {'code': 'cmp', 'fin': 'sovittaja'},
+  {'code': 'cmp', 'eng': 'composer', 'fin': 'säveltäjä', 'swe': 'kompositör'},
   {'code': 'drt', 'fin': 'ohjaaja'},
   {'code': 'edt', 'fin': 'toimittaja'},
   {'code': 'ill', 'eng': 'illustrator', 'fin': 'kuvittaja', 'swe': 'illustratör'},
@@ -31,7 +31,7 @@ const relatorTerms = [
 ];
 
 
-function getCatalogingLanguage(record) {
+export function getCatalogingLanguage(record) {
   const [field040] = record.get(/^040$/u);
   if (!field040) {
     return null;
@@ -112,13 +112,13 @@ export function recordHandleRelatorTermAbbreviations(record, defaultCatLanguage 
   record.fields.forEach(field => fieldHandleRelatorTermAbbreviations(field, catalogingLanguage));
 }
 
-export function translateRelatorTerm(originalTerm, fromLanguage, toLanguage) {
+function translateRelatorTerm(originalTerm, fromLanguage, toLanguage) {
   if (fromLanguage === toLanguage) {
     return;
   }
   // originalTerm is supposed to be normal version (abbrs have been expanded), possibly with punctuation
   const term = originalTerm.replace(/[,.]$/u, '');
-  const [candRow] = relatorTerms.filter(row => fromLanguage in row && toLanguage in row[fromLanguage] === term);
+  const [candRow] = relatorTerms.filter(row => fromLanguage in row && toLanguage in row && row[fromLanguage] === term);
   if (candRow) {
     const punc = term === originalTerm ? '' : originalTerm.slice(-1);
     return `${candRow[toLanguage]}${punc}`;
@@ -126,4 +126,29 @@ export function translateRelatorTerm(originalTerm, fromLanguage, toLanguage) {
   return originalTerm;
 }
 
+function subfieldTranslateRelatorTerm(subfield, fromLanguage, toLanguage) {
+  if (subfield.code !== 'e') {
+    return;
+  }
+  subfield.value = translateRelatorTerm(subfield.value, fromLanguage, toLanguage); // eslint-disable-line functional/immutable-data
+}
 
+export function fieldTranslateRelatorTerm(field, fromLanguage, toLanguage) {
+  if (!isRelatorField(field) || fromLanguage === toLanguage) {
+    return;
+  }
+  field.subfields.forEach(sf => subfieldTranslateRelatorTerm(sf, fromLanguage, toLanguage));
+}
+
+
+export function translateRecord(record, toLanguage = null) {
+  const fromLanguage = getCatalogingLanguage(record);
+  if (toLanguage === null || fromLanguage === toLanguage) {
+    return;
+  }
+  record.fields.forEach(field => translateField(field, fromLanguage, toLanguage));
+
+  function translateField(field, from, to) {
+    fieldTranslateRelatorTerm(field, from, to);
+  }
+}
