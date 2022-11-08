@@ -71,27 +71,27 @@ function replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfi
 
 // use array.includes(value) for easy extendability (Swedish, other languages, abbrs, etc.()
 function isKierreselka(value) {
-  return ['kierreselkä'].includes(value);
+  return ['kierreselkä', 'spiral bound', 'spiral-bound', 'spiralrygg'].includes(value);
 }
 
 function isKovakantinen(value) {
-  return ['kovakantinen'].includes(value);
+  return ['hardback', 'hardcover', 'hårda pärmar', 'kovakantinen'].includes(value);
 }
 
 function isPehmeakantinen(value) {
-  return ['pehmeäkantinen'].includes(value);
+  return ['mjuka pärmar', 'paperback', 'pehmeäkantinen', 'softcover'].includes(value);
 }
 
 function isRengaskirja(value) {
-  return ['rengaskirja'].includes(value);
+  return ['rengaskirja', 'ringpärm'].includes(value);
 }
 
 function isSidottu(value) {
-  return ['sid.', 'sidottu'].includes(value);
+  return ['inb.', 'inbunden', 'sid.', 'sidottu'].includes(value);
 }
 
 function isNidottu(value) {
-  return ['nid.', 'nidottu'].includes(value);
+  return ['hfd.', 'häftad', 'nid.', 'nidottu'].includes(value);
 }
 
 
