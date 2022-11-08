@@ -6,7 +6,7 @@ import {mergeField} from './mergeField';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 
-import {postprocessRecords} from './mergePostprocess.js';
+import {postprocessRecords} from './mergeOrAddPostprocess.js';
 import {preprocessBeforeAdd} from './preprocessor.js';
 import {addField} from './addField';
 

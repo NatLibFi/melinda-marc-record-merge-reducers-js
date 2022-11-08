@@ -5,7 +5,7 @@ import createDebugLogger from 'debug';
 import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 
 import {MarcRecord} from '@natlibfi/marc-record';
-import {postprocessRecords} from './mergePostprocess.js';
+import {postprocessRecords} from './mergeOrAddPostprocess.js';
 import {preprocessBeforeAdd} from './preprocessor.js';
 import fs from 'fs';
 import path from 'path';
