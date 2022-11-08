@@ -2,10 +2,15 @@
 
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldFixPunctuation} from './punctuation.js';
+import {fieldTranslateRelatorTerm, getCatalogingLanguage} from './fixRelatorTerms.js';
 
-
-function postprocessBaseRecord(base) {
+function postprocessBaseRecord(base, source) {
+  const fromLanguage = getCatalogingLanguage(source);
+  const toLanguage = getCatalogingLanguage(base);
   base.fields.forEach(field => {
+    if (field.merged || field.addedd) { // eslint-disable-line functional/no-conditional-statement
+      fieldTranslateRelatorTerm(field, fromLanguage, toLanguage);
+    }
     // remove merge-specific information:
     if (field.merged) { // eslint-disable-line functional/no-conditional-statement
       // Field level ideas about things that could be done here:
@@ -41,6 +46,6 @@ function removeDeleteFields(record) {
 
 
 export function postprocessRecords(base, source) {
-  postprocessBaseRecord(base);
+  postprocessBaseRecord(base, source);
   removeDeleteFields(source);
 }
