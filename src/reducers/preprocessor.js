@@ -321,12 +321,27 @@ export function filterOperation(base, source, operation) {
 }
 
 
+export function filterOperations(base, source, config) {
+  config.forEach(operation => filterOperation(base, source, operation));
+}
+
+
+export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
+  // nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
+  if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
+    return;
+  }
+
+  filterOperations(base, source, preprocessorDirectives);
+}
+
 export default (config = defaultConfig) => (base, source) => {
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
 
   //const clonedSource = clone(source); // MRA-72
   const clonedSource = new MarcRecord(source, {subfieldValues: false});
 
+  // NB! Filter operations should be moved to their own file...
   filterOperations(base, clonedSource, config.preprocessorDirectives);
 
   const source2 = hyphenateISBN(clonedSource, config); // Should these be done to base as well?
@@ -344,17 +359,3 @@ export default (config = defaultConfig) => (base, source) => {
     return record;
   }
 };
-
-export function filterOperations(base, source, config) {
-  config.forEach(operation => filterOperation(base, source, operation));
-}
-
-
-export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
-  // nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
-  if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
-    return;
-  }
-
-  filterOperations(base, source, preprocessorDirectives);
-}
