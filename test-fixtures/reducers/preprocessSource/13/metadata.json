@@ -1,0 +1,6 @@
+{
+  "description":"13: Translate 700$e relator to base's 040$b language",
+  "comment": "note that $e subfields are in suboptimal order.",
+  "comment2": "should we change 040$b?",
+  "only": false
+}
