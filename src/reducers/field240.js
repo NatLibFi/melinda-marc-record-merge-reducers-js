@@ -6,7 +6,7 @@ import {mergeField} from './mergeField';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 
-import {postprocessRecord} from './mergePostprocess.js';
+import {postprocessRecords} from './mergePostprocess.js';
 import {preprocessBeforeAdd} from './preprocessor.js';
 import {addField} from './addField';
 
@@ -66,8 +66,7 @@ export default () => (base, source) => {
   });
 
   // Remove deleted fields and field.merged marks:
-  postprocessRecord(baseRecord);
-  postprocessRecord(sourceRecord);
+  postprocessRecords(baseRecord, sourceRecord);
 
   return {base: baseRecord, source: sourceRecord};
   //return {baseRecord2, sourceRecord2};

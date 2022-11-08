@@ -5,7 +5,7 @@ import createDebugLogger from 'debug';
 import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
 
 import {MarcRecord} from '@natlibfi/marc-record';
-import {postprocessRecord} from './mergePostprocess.js';
+import {postprocessRecords} from './mergePostprocess.js';
 import {preprocessBeforeAdd} from './preprocessor.js';
 import fs from 'fs';
 import path from 'path';
@@ -45,8 +45,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
     addField(baseRecord, candField, config);
   });
 
-  postprocessRecord(baseRecord);
-  postprocessRecord(sourceRecord);
+  postprocessRecords(baseRecord, sourceRecord);
 
   debugData(`Base after addField: ${JSON.stringify(baseRecord)}`);
   debugData(`Source after addField: ${JSON.stringify(sourceRecord)}`);

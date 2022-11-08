@@ -1,7 +1,15 @@
+// This field should be renamed, as it is called also from outside megre.
+
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldFixPunctuation} from './punctuation.js';
 
-export function postprocessRecord(record) {
+/*
+function postProcessBaseRecord(base) {
+
+}
+*/
+
+function postprocessRecord(record) {
   record.fields.forEach(field => {
     // remove merge-specific information:
     if (field.merged) { // eslint-disable-line functional/no-conditional-statement
@@ -33,4 +41,9 @@ export function postprocessRecord(record) {
   record.fields = record.fields.filter(f => !f.deleted); // eslint-disable-line functional/immutable-data
 
   return record;
+}
+
+export function postprocessRecords(base, source) {
+  postprocessRecord(base);
+  postprocessRecord(source);
 }

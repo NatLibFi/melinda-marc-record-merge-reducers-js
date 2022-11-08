@@ -7,7 +7,7 @@ import {mergeIndicators} from './mergeIndicator';
 import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
-import {postprocessRecord} from './mergePostprocess.js';
+import {postprocessRecords} from './mergePostprocess.js';
 import {preprocessBeforeAdd} from './preprocessor.js';
 
 import fs from 'fs';
@@ -54,8 +54,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   });
 
   // Remove deleted fields and field.merged marks:
-  postprocessRecord(baseRecord);
-  postprocessRecord(sourceRecord);
+  postprocessRecords(baseRecord, sourceRecord);
 
   return {base: baseRecord, source: sourceRecord};
   //return {baseRecord2, sourceRecord2};
