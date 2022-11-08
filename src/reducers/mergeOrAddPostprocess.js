@@ -3,14 +3,9 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldFixPunctuation} from './punctuation.js';
 
-/*
-function postProcessBaseRecord(base) {
 
-}
-*/
-
-function postprocessRecord(record) {
-  record.fields.forEach(field => {
+function postprocessBaseRecord(base) {
+  base.fields.forEach(field => {
     // remove merge-specific information:
     if (field.merged) { // eslint-disable-line functional/no-conditional-statement
       // Field level ideas about things that could be done here:
@@ -36,14 +31,16 @@ function postprocessRecord(record) {
 */
 
   });
-
-  // remove fields that are marked as deleted:
-  record.fields = record.fields.filter(f => !f.deleted); // eslint-disable-line functional/immutable-data
-
-  return record;
 }
 
+
+function removeDeleteFields(record) {
+  // remove fields that are marked as deleted:
+  record.fields = record.fields.filter(f => !f.deleted); // eslint-disable-line functional/immutable-data
+}
+
+
 export function postprocessRecords(base, source) {
-  postprocessRecord(base);
-  postprocessRecord(source);
+  postprocessBaseRecord(base);
+  removeDeleteFields(source);
 }
