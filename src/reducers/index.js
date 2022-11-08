@@ -11,6 +11,7 @@ import reindexSubfield8 from './reindexSubfield8';
 
 import genericPreprocessor from './preprocessor.js';
 import prepublicationPreprocessor from './preprocessPrepublication';
+import {default as fixRelatorTerms} from './fixRelatorTerms';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
 import {default as postprocessSubfield6} from './postprocessSubfield6';
@@ -73,6 +74,7 @@ export const localReducers = [
   genericPreprocessor(), // Should this be moved downward?
   metatietosanastoNormalizations(),
   prepublicationPreprocessor(),
+  fixRelatorTerms(),
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
   // We need a way to modify the source record's $6 and $8 and potential 1XX->7XX change.
