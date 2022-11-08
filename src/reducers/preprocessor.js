@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
+import {getCatalogingLanguage, translateRecord} from './fixRelatorTerms.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
 //import createDebugLogger from 'debug';
@@ -345,6 +346,8 @@ export default (config = defaultConfig) => (base, source) => {
   filterOperations(base, clonedSource, config.preprocessorDirectives);
 
   const source2 = hyphenateISBN(clonedSource, config); // Should these be done to base as well?
+
+  translateRecord(source2, getCatalogingLanguage(base)); // map stuff as per base's 040$b
 
   const result = {base, source: source2};
   //nvdebug(JSON.stringify(result));
