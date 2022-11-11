@@ -8,7 +8,7 @@ import {mergableTag} from './mergableTag';
 import {getCounterpart} from './counterpartField';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 import {postprocessRecords} from './mergeOrAddPostprocess.js';
-import {preprocessBeforeAdd} from './preprocessor.js';
+import {preprocessBeforeAdd} from './processFilter.js';
 
 import fs from 'fs';
 import path from 'path';
@@ -42,7 +42,6 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   normalizeEncoding().fix(sourceRecord);
 
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
-
 
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
