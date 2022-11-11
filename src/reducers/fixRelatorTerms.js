@@ -17,17 +17,19 @@ export default () => (base, source) => {
 
 const relatorTerms = [
   {'code': 'arr', 'eng': 'arranger', 'fin': 'sovittaja', 'swe': 'arrangör av musikalisk komposition'},
-  {'code': 'aui', 'fin': 'esipuheen tekijä'},
-  {'code': 'aut', 'fin': 'kirjoittaja', 'swe': 'författare'},
+  {'code': 'aui', 'eng': 'author of introduction', 'fin': 'esipuheen tekijä'},
+  {'code': 'aut', 'eng': 'author', 'fin': 'kirjoittaja', 'swe': 'författare'},
   {'code': 'cmp', 'eng': 'composer', 'fin': 'säveltäjä', 'swe': 'kompositör'},
-  {'code': 'drt', 'fin': 'ohjaaja'},
-  {'code': 'edt', 'fin': 'toimittaja'},
+  {'code': 'drt', 'eng': 'director', 'fin': 'ohjaaja', 'swe': 'regissör'},
+  {'code': 'edt', 'eng': 'editor', 'fin': 'toimittaja'},
   {'code': 'ill', 'eng': 'illustrator', 'fin': 'kuvittaja', 'swe': 'illustratör'},
-  {'code': 'lyr', 'fin': 'sanoittaja'},
+  {'code': 'lyr', 'eng': 'lyricist', 'fin': 'sanoittaja'},
+  {'code': 'nrt', 'eng': 'narrator', 'fin': 'kertoja'},
+  {'code': 'pbl', 'eng': 'publisher', 'fin': 'julkaisuja'},
   {'code': 'pht', 'eng': 'photographer', 'fin': 'valokuvaaja', 'swe': 'fotograf'},
-  {'code': 'prf', 'fin': 'esittäjä'},
-  {'code': 'pro', 'fin': 'tuottaja'},
-  {'code': 'trl', 'fin': 'kääntäjä'}
+  {'code': 'prf', 'eng': 'performer', 'fin': 'esittäjä'},
+  {'code': 'pro', 'eng': 'producer', 'fin': 'tuottaja'},
+  {'code': 'trl', 'eng': 'translator', 'fin': 'kääntäjä', 'swe': 'översättare'}
 ];
 
 
@@ -55,6 +57,8 @@ function recordNormalizeRelatorTerms(record, defaultLanguageCode = undef) {
 */
 const finnishAbbreviations = {
   'esitt.': 'esittäjä',
+  'käänt.': 'kääntäjä',
+  'näytt.': 'näyttelijä',
   'san.': 'sanoittaja',
   'sov.': 'sovittaja',
   'säv.': 'säveltäjä',
