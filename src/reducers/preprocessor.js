@@ -3,7 +3,8 @@ import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTran
 import fs from 'fs';
 import path from 'path';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug /*recordReplaceField, stringToRegex*/} from './utils.js';
+import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug, /*recordReplaceField, stringToRegex*/
+  subfieldToString} from './utils.js';
 import {getCatalogingLanguage, translateRecord} from './fixRelatorTerms.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
@@ -336,6 +337,33 @@ export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
   filterOperations(base, source, preprocessorDirectives);
 }
 
+
+function normalizeField505Separator(record) {
+  const fields = record.fields.filter(field => isRelevantField505(field));
+
+  fields.forEach(field => fixField505(field));
+
+  function fixField505(field) {
+    const subfields = field.subfields.filter(sf => sf.code === 'a');
+    subfields.forEach(sf => {
+      nvdebug(`Try to process ${subfieldToString(sf)}`);
+      sf.value = sf.value.replace(/ ; /gu, ' -- '); // eslint-disable-line functional/immutable-data
+      nvdebug(`Result ${subfieldToString(sf)}`);
+    });
+  }
+
+  function isRelevantField505(field) {
+    if (field.tag !== '505') {
+      return false;
+    }
+    if (field.subfields.some(sf => ['g', 'r', 't'].includes(sf.code))) {
+      return false;
+    }
+    return true;
+  }
+}
+
+
 export default (config = defaultConfig) => (base, source) => {
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
 
@@ -346,6 +374,9 @@ export default (config = defaultConfig) => (base, source) => {
   filterOperations(base, clonedSource, config.preprocessorDirectives);
 
   const source2 = hyphenateISBN(clonedSource, config); // Should these be done to base as well?
+
+  normalizeField505Separator(base);
+  normalizeField505Separator(source2);
 
   translateRecord(source2, getCatalogingLanguage(base)); // map stuff as per base's 040$b
 
