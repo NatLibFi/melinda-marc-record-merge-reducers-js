@@ -1,0 +1,42 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "505",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Foo -- Bar -- Whatever."
+        }
+      ]
+    },
+    {
+      "tag": "505",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "A -- B -- C -- D."
+        }
+      ]
+    },
+    {
+      "tag": "505",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Foo ; Bar -- Whatever2."
+        },
+        {
+          "code": "t",
+          "value": "Foo ; Bar -- Whatever33."
+        }
+      ]
+    }
+  ]
+}
