@@ -8,7 +8,7 @@ function postprocessBaseRecord(base, source) {
   const fromLanguage = getCatalogingLanguage(source);
   const toLanguage = getCatalogingLanguage(base);
   base.fields.forEach(field => {
-    if (field.merged || field.addedd) { // eslint-disable-line functional/no-conditional-statement
+    if (field.merged || field.added) { // eslint-disable-line functional/no-conditional-statement
       fieldTranslateRelatorTerm(field, fromLanguage, toLanguage);
     }
     // remove merge-specific information:
