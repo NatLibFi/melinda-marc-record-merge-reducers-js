@@ -1,3 +1,6 @@
+// NB! I have (apparently) downgraded this to an example file, since this can be handled by the generic code.
+// There relevant stuff has been copied to config.json, and everything works fine even without this.
+
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils';
