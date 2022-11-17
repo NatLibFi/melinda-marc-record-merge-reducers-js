@@ -126,7 +126,7 @@
     {   
         "comment #1" : "Meaningless indicators (=indicators having but one legal value) are derived from melindaCustomMergeFields.",
         "comment #2" : "Meaningless indicators and non-filing indicators never prevent merge. (Hard-coded in mergableIndicator.js)",
-        "comment #3" : "When merging, indicator preference has set defaults in mergeIndicator.js. However, these can be overridden here.",       
+        "comment #3" : "When merging, indicator preference has set defaults in mergeIndicators.js. However, these can be overridden here.",
         "indicator1PreferredValues": {
             "022" : {"0": 1, "1": 1, " ": 2},
             "041" : {"0": 1, "1": 1, " ": 2},
@@ -154,7 +154,10 @@
         },
         "comment #4" : "Non-filing indicators do not prevent field merge (their support is hard-coded). They are mainly listed here as an example.",
         "ignoreIndicator1" : ["130", "245", "490", "630", "650", "651", "655", "730", "740"],
-        "ignoreIndicator2" : ["017", "222", "240", "242", "243", "245", "830"]
+        "ignoreIndicator2" : ["017", "222", "240", "242", "243", "245", "830"],
+        "comment #5" : "If one indicator has value, and the other has not, it does not necessarily mean mismatch",
+        "tolerateBlankIndicator1": ["022", "037", "041", "046", "050", "055", "060", "070", "080", "260", "264"],
+        "tolerateBlankIndicator2": ["024", "033", "082"]
     },
 
     "addConfiguration" : {

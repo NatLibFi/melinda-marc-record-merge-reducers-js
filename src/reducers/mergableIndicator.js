@@ -31,19 +31,24 @@ function marc21NoNeedToCheckInd2(tag) {
   return false;
 }
 
+
 export function mergableIndicator1(field1, field2, config) {
   // Indicators are identical:
   if (field1.ind1 === field2.ind1) {
     return true;
   }
   const {tag} = field1; // means "tag = field1.tag"
-  // Indicator has but one legal value or is a non-fliing indicator (NB: can not be overridden via config...):
+  // Indicator has but one legal value or is a non-filing indicator (NB: can not be overridden via config...):
   if (marc21NoNeedToCheckInd1(tag) || ind1NonFilingChars.includes(tag)) {
     return true;
   }
   // Override via config:
   if (config.ignoreIndicator1 && config.ignoreIndicator1.includes(tag)) {
     return true;
+  }
+  // Tolerate value '#' (reason: not spefified etc, the other value is supposedly a good one)
+  if (field1.ind1 === ' ' || field2.ind1 === ' ') {
+    return config.tolerateBlankIndicator1 && config.tolerateBlankIndicator1.includes(tag);
   }
   // Fail:
   return false;
@@ -62,6 +67,10 @@ export function mergableIndicator2(field1, field2, config) {
   // Override via config:
   if (config.ignoreIndicator2 && config.ignoreIndicator2.includes(tag)) {
     return true;
+  }
+  // Tolerate value '#' (reason: not spefified etc, the other value is supposedly a good one)
+  if (field1.ind2 === ' ' || field2.ind2 === ' ') {
+    return config.tolerateBlankIndicator2 && config.tolerateBlankIndicator2.includes(tag);
   }
   // Fail:
   return false;
