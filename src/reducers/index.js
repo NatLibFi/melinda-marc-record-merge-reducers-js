@@ -9,6 +9,8 @@ import field008 from './field008';
 import reindexSubfield6 from './reindexSubfield6';
 import reindexSubfield8 from './reindexSubfield8';
 
+import publisherInformation from './field26X';
+
 import genericPreprocessor from './preprocessor.js';
 import prepublicationPreprocessor from './preprocessPrepublication';
 import {default as fixRelatorTerms} from './fixRelatorTerms';
@@ -70,6 +72,7 @@ export const localCopyReducerConfigs = [
 ];
 
 export const localReducers = [
+  //// PREPROCESSOR STUFF:
   // UTF-8 normalization: if wanted, see mergeField.js for an example
   genericPreprocessor(), // Should this be moved downward?
   metatietosanastoNormalizations(),
@@ -77,18 +80,14 @@ export const localReducers = [
   fixRelatorTerms(),
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
-  // We need a way to modify the source record's $6 and $8 and potential 1XX->7XX change.
-  // However, there's no way to do this currently.
-  // Now this is done in genericDataField() but they should be done in separate reducers,
-  // otherwise each local reducers would have to do the same $6/$8/1XX source record fixes...
 
+  //// ACTUAL MERGE/ADD STUFF:
   //internalFields(), // LOW, CAT, SID. Nowadays part of genericDatafield()
   leader(), // Test 01
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
-  //mainAndCorrespondingAddedEntry(),
-  //genericDatafield(),
+  publisherInformation(), // Handle fields 260 and 264. Their interaction is so complex it need to be done separely
   mergeDataFields(),
   addDataFields(),
   postprocessSubfield6(), // Should this be part of generic postprocessor? Probably...
