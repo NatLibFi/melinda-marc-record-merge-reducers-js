@@ -14,7 +14,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const stripCrap = / *[-;:,+]+$/u;
 const commaNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö|\))$/u;
 const defaultNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö)$/u;
-const field300NeedsPunc = /(?:[\]a-zA-Z0-9)]|ä)$/u;
+const defaultNeedsPuncAfter2 = /(?:[\]a-zA-Z0-9)]|ä|å|ö|Å|Ä|Ö)$/u;
 const field773NeedsPunc = /\. -$/u;
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
@@ -80,6 +80,16 @@ const cleanValidPunctuationRules = {
     {'name': 'ABN:N', 'code': 'abn', 'followedBy': 'n', 'remove': /\.$/u},
     {'name': 'N:P', 'code': 'n', 'followedBy': 'p', 'remove': /,$/u}
   ],
+  '260': [
+    {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
+    {'code': 'b', 'followedBy': 'c', 'remove': /,$/u},
+    {'code': 'c', 'followedBy': '#', 'remove': /\.$/u}
+  ],
+  '264': [
+    {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
+    {'code': 'b', 'followedBy': 'c', 'remove': /,$/u},
+    {'code': 'c', 'followedBy': '#', 'remove': /\.$/u}
+  ],
   '300': [
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
     {'code': 'ab', 'followedBy': 'c', 'remove': / ;$/u},
@@ -101,10 +111,21 @@ const addPairedPunctuationRules = {
     {'code': 'abk', 'followedBy': 'f', 'add': ',', 'context': defaultNeedsPuncAfter},
     {'code': 'abfnp', 'followedBy': 'c', 'add': ' /', 'context': defaultNeedsPuncAfter}
   ],
+  '260': [
+    {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
+    {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2}
+  ],
+  '264': [
+    {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
+    {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
+    // NB! The $c rule messes dotless exception "264 #4 $c p1983" up
+    // We'll need to add a hacky postprocessor for this?
+    {'code': 'c', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter2}
+  ],
   '300': [
-    {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': field300NeedsPunc},
-    {'code': 'ab', 'followedBy': 'c', 'add': ' ;', 'context': field300NeedsPunc},
-    {'code': 'abc', 'followedBy': 'e', 'add': ' +', 'context': field300NeedsPunc}
+    {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
+    {'code': 'ab', 'followedBy': 'c', 'add': ' ;', 'context': defaultNeedsPuncAfter2},
+    {'code': 'abc', 'followedBy': 'e', 'add': ' +', 'context': defaultNeedsPuncAfter2}
   ],
   '490': [
     {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'content': defaultNeedsPuncAfter},
