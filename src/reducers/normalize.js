@@ -11,18 +11,21 @@ import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import createDebugLogger from 'debug';
 import {normalizePartData, subfieldContainsPartData} from './normalizePart.js';
+import {valueCarriesMeaning} from './worldKnowledge.js';
+
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
-  //if (oldField.subfields.length === newField.subfields.length) {
-  oldField.subfields.forEach((subfield, index) => {
-    const newValue = newField.subfields[index].value;
-    if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(`NORMALIZE: '${subfield.value}' => '${newValue}'`);
-    }
-  });
-  //}
-  nvdebug(`NORMALIZE: '${fieldToString(oldField)}' => '${fieldToString(newField)}'`);
+  // We may drop certain subfields:
+  if (oldField.subfields.length === newField.subfields.length) { // eslint-disable-line functional/no-conditional-statement
+    oldField.subfields.forEach((subfield, index) => {
+      const newValue = newField.subfields[index].value;
+      if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statement
+        nvdebug(`NORMALIZE SUBFIELD: '${subfield.value}' => '${newValue}'`);
+      }
+    });
+  }
+  nvdebug(`NORMALIZE FIELD:\n '${fieldToString(oldField)}' =>\n '${fieldToString(newField)}'`);
 }
 
 function containsHumanName(tag = '???', subfieldCode = undefined) {
@@ -141,6 +144,11 @@ function normalizeField(field) {
   return field;
 }
 
+function dropIrrelevantSubfields(field) {
+  // Drop certain information free 260/264 $a and $b value
+  field.subfields = field.subfields.filter(subfield => valueCarriesMeaning(field.tag, subfield.code, subfield.value)); // eslint-disable-line functional/immutable-data
+}
+
 function hack490SubfieldA(field) {
   if (field.tag !== '490') {
     return;
@@ -222,6 +230,7 @@ export function cloneAndNormalizeField(field) {
   const clonedField = normalizeField(clone(field));
   fieldStripPunctuation(clonedField);
   fieldRemoveDecomposedDiacritics(clonedField);
+  dropIrrelevantSubfields(clonedField);
   fieldSpecificHacks(clonedField);
   fieldTrimSubfieldValues(clonedField);
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
