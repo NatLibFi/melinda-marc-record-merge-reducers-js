@@ -1,5 +1,7 @@
 import createDebugLogger from 'debug';
 import {partsAgree, subfieldContainsPartData} from './normalizePart';
+import {valueCarriesMeaning} from './worldKnowledge';
+import {nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 
@@ -160,16 +162,26 @@ export function mergeSubfield(targetField, candSubfield) {
   // Thus, typically this function fails...
 
   const relevantSubfields = targetField.subfields.filter(subfield => subfield.code === candSubfield.code);
-  if (relevantSubfields.length === 0) { // There must be something that gets replaced.
+
+  // There's nothing to replace the incoming subfield with. Thus abort:
+  if (relevantSubfields.length === 0) {
     return false;
   }
-  debug(`Got ${relevantSubfields.length} sf-cands for field ${targetField.tag}‡${candSubfield.code}`);
+
+  nvdebug(`Got ${relevantSubfields.length} sf-cand(s) for field ${targetField.tag}‡${candSubfield.code}`, debug);
 
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) ||
       mapBindingToCoverType(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
 
+  // We found a crappy empty subfield: replace that with a meaningful one.
+  // 260 $a value "[S.l]" is the main type for this.
+  const meaninglessSubfields = relevantSubfields.filter(sf => !valueCarriesMeaning(targetField.tag, sf.code, sf.value));
+  if (meaninglessSubfields.length > 0) {
+    meaninglessSubfields[0].value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    return true;
+  }
 
   // Mark 490$v "osa 1" vs "1" as merged (2nd part of MET-53).
   // NB! Keeps the original value and drops the incoming value. (Just preventing it from going to add-part...)
