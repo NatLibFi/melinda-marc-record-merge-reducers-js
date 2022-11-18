@@ -10,6 +10,7 @@ import {
 } from './utils.js';
 import {mergeSubfield} from './mergeSubfield.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
+import {valueCarriesMeaning} from './worldKnowledge.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeOrAddSubfield');
 
@@ -32,6 +33,12 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
     debug('040‡d matched 040‡a');
     return true;
   }
+
+  // Don't add 264$b 'Kustannuspaikka tuntematon' etc
+  if (!valueCarriesMeaning(targetField.tag, candSubfield.code, candSubfield.value)) {
+    return true;
+  }
+
   if (candSubfield.code === 'g' && candSubfield.value === 'ENNAKKOTIETO.') {
     // Skip just ‡g subfield or the whole field?
     // We decided to skip just this subfield. We want at least $0 and maybe even more from ennakkotieto.
