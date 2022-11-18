@@ -244,6 +244,11 @@ export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
   fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`), func);
 }
 
+export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
+  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`), func);
+}
+
+
 // base record level codes from highest (1) to lowest (10)
 const ldr17ToRanking = {' ': 1, '^': 1, '4': 2, '1': 3, '5': 4, '7': 5, '2': 6, '3': 7, '8': 8, 'u': 9, 'z': 10};
 
