@@ -1,7 +1,7 @@
 // For each incoming field that
 
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldToString, nvdebug} from './utils';
+import {fieldHasSubfield, fieldHasNSubfields, fieldToString, nvdebug, nvdebugSubfieldArray} from './utils';
 import {cloneAndNormalizeField} from './normalize';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
@@ -10,12 +10,16 @@ import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
 import {partsAgree} from './normalizePart';
+import {valueCarriesMeaning} from './worldKnowledge';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
 const counterpartRegexps = {
   '100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
-  '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u
+  '260': /^26[04]$/u, '264': /^26[04]$/u,
+  '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u,
+  // Hacks:
+  '940': /^[29]40$/u, '973': /^[79]73$/u
 };
 
 function pairableValue(tag, subfieldCode, value1, value2) {
@@ -37,6 +41,7 @@ function localNormalize(value) {
 
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
   // Here optional subfield means a subfield, that needs not to be present, but if present, it must be identical...
+  // (Think of a better name...)
   // We use clones here, since these changes done below are not intented to appear on the actual records.
   const field1 = cloneAndNormalizeField(originalBaseField);
   const field2 = cloneAndNormalizeField(originalSourceField);
@@ -51,12 +56,21 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   const subfieldArray = keySubfieldsAsString.split('');
 
   return subfieldArray.every(subfieldCode => {
-    const subfieldValues1 = field1.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => localNormalize(sf.value));
-    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => localNormalize(sf.value));
+    // NB! Don't compare non-meaningful subfields
+    const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
+    const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field2.tag, subfield.code, subfield.value));
+
     // If one side is empty, all is good
-    if (subfieldValues1.length === 0 || subfieldValues2.length === 0) {
+    if (subfields1.length === 0 || subfields2.length === 0) {
       return true;
     }
+
+    nvdebugSubfieldArray(subfields1, 'SF1', debug);
+    nvdebugSubfieldArray(subfields2, 'SF2', debug);
+
+    const subfieldValues1 = subfields1.map(sf => localNormalize(sf.value));
+    const subfieldValues2 = subfields2.map(sf => localNormalize(sf.value));
+
     // If one set is a subset of the other, all is probably good (how about 653$a, 505...)
     if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
       return true;
@@ -94,9 +108,42 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
   }
   const subfieldArray = keySubfieldsAsString.split('');
 
-  return subfieldArray.every(subfieldCode => {
+  const differentSubfieldCodes = differentPublisherSubfields(originalField1, originalField2);
+
+  return subfieldArray.every(subfieldCode => mandatorySingleSubfieldComparison(subfieldCode));
+
+  function getOtherSubfieldCode(subfieldCode) {
+    if (differentSubfieldCodes) {
+      if (originalField1.tag === '260') {
+        if (subfieldCode === 'e') {
+          return 'a';
+        }
+        if (subfieldCode === 'f') {
+          return 'b';
+        }
+        if (subfieldCode === 'g') {
+          return 'c';
+        }
+      }
+      if (originalField1.tag === '264') {
+        if (subfieldCode === 'a') {
+          return 'e';
+        }
+        if (subfieldCode === 'b') {
+          return 'f';
+        }
+        if (subfieldCode === 'c') {
+          return 'g';
+        }
+      }
+    }
+    return subfieldCode;
+  }
+
+  function mandatorySingleSubfieldComparison(subfieldCode) {
+    const otherSubfieldCode = getOtherSubfieldCode(subfieldCode);
     const subfieldValues1 = field1.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
-    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
+    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === otherSubfieldCode).map(sf => sf.value);
     // Assume that at least 1 instance must exist and that all instances must match
     if (subfieldValues1.length !== subfieldValues2.length) {
       debug(`mSC: Unique key: subfield ${subfieldCode} issues...`);
@@ -104,7 +151,7 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
     }
 
     return subfieldValues1.every(value => subfieldValues2.includes(value));
-  });
+  }
 
 }
 
@@ -136,7 +183,7 @@ function areRequiredSubfieldsPresent(field) {
   });
 }
 
-function arePairedSubfieldsInBalance(field1, field2) {
+function defaultArePairedSubfieldsInBalance(field1, field2) {
   const subfieldString = getMergeConstraintsForTag(field1.tag, 'paired');
   if (subfieldString === null) {
     return true;
@@ -144,6 +191,45 @@ function arePairedSubfieldsInBalance(field1, field2) {
   const subfieldArray = subfieldString.split('');
 
   return subfieldArray.every(sfcode => fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode));
+}
+
+function arePairedSubfieldsInBalanceFields260And264Ind1Is3(field1, field2) {
+  const [field260, field264] = mapFieldsTo260And264(field1, field2);
+  if (fieldHasNSubfields(field260, 'e') === fieldHasNSubfields(field264, 'a') &&
+      fieldHasNSubfields(field260, 'f') === fieldHasNSubfields(field264, 'b') &&
+      fieldHasNSubfields(field260, 'g') === fieldHasNSubfields(field264, 'c')) {
+    return true;
+  }
+  return false;
+}
+
+function mapFieldsTo260And264(field1, field2) {
+  if (field1.tag === '260' && field2.tag === '264' && field2.ind1 === '3') {
+    return [field1, field2];
+  }
+  if (field2.tag === '260' && field1.tag === '264' && field1.ind1 === '3') {
+    return [field2, field1];
+  }
+  return [null, null];
+}
+
+function differentPublisherSubfields(field1, field2) {
+  if (field1.tag === '260' && field2.tag === '264' && field2.ind1 === '3') {
+    return true;
+  }
+  if (field1.tag === '264' && field1.ind1 === '3' && field2.tag === '260') {
+    return true;
+  }
+  return false;
+}
+
+
+function arePairedSubfieldsInBalance(field1, field2) {
+  if (differentPublisherSubfields(field1, field2)) {
+    return arePairedSubfieldsInBalanceFields260And264Ind1Is3(field1, field2);
+  }
+
+  return defaultArePairedSubfieldsInBalance(field1, field2);
 }
 
 function mergablePair(baseField, sourceField, config) {
@@ -157,7 +243,9 @@ function mergablePair(baseField, sourceField, config) {
     return false;
   }
 
-  // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well. Thus check both:
+  // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well.
+  // Not even theoretically 260 $efg vs 264 with IND2=3 $abc
+  // Thus check both:
   if (!areRequiredSubfieldsPresent(baseField) || !areRequiredSubfieldsPresent(sourceField)) {
     nvdebug('non-mergable (reason: missing subfields)');
     return false;
@@ -321,7 +409,8 @@ function titlePartsMatch(field1, field2) {
 
 export function getCounterpart(record, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
-  // (240/940 and 773/940 might be interesting as well, but not supported.)
+  // Tags 260 and 264 are lumped together.
+  // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
   const counterpartCands = record.get(tagToRegexp(field.tag));
 
   if (!counterpartCands || counterpartCands.length === 0) {
