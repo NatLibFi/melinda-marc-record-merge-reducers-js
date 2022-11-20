@@ -113,7 +113,10 @@ const addPairedPunctuationRules = {
   ],
   '260': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
-    {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2}
+    {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
+    {'code': 'abc', 'followedBy': 'a', 'add': ' ;', 'context': defaultNeedsPuncAfter2},
+    {'code': 'e', 'followedBy': 'f', 'add': ' :', 'context': defaultNeedsPuncAfter2},
+    {'code': 'f', 'followedBy': 'g', 'add': ',', 'context': defaultNeedsPuncAfter2}
   ],
   '264': [
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
