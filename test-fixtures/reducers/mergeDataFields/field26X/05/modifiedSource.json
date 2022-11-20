@@ -1,0 +1,24 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "264",
+      "ind1": "3",
+      "ind2": "3",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Hevonkuusi :"
+        },
+        {
+          "code": "b",
+          "value": "Viisaan Hansin Kirjapaino,"
+        },
+        {
+          "code": "c",
+          "value": "2000."
+        }
+      ]
+    }
+  ]
+}

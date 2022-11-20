@@ -1,0 +1,5 @@
+{
+  "description":"merge base 260 and source 264",
+  "comment": "Note that source ind2 info is lost, since 260 ind2 is always '#' and we can not retag 260 as it contain $g",
+  "only": false
+}
