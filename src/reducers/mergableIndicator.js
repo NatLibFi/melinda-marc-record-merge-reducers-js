@@ -2,7 +2,7 @@
 //import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
-import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value} from './utils';
+import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -25,6 +25,7 @@ function marc21NoNeedToCheckInd1(tag) {
 
 function marc21NoNeedToCheckInd2(tag) {
   const cands = marc21GetTagsLegalInd2Value(tag);
+  nvdebug(`CHECK IND2 ${typeof cands} FOR ${tag}`);
   if (typeof cands === 'string') { // single cand
     return true;
   }
@@ -59,18 +60,29 @@ export function mergableIndicator2(field1, field2, config) {
   if (field1.ind2 === field2.ind2) {
     return true;
   }
-  const {tag} = field1;
-  // Indicator has but one legal value or is a non-fliing indicator (NB: can not be overridden via config...):
-  if (marc21NoNeedToCheckInd2(tag) || ind2NonFilingChars.includes(tag)) {
+  // NB! Our 260 vs 264 hacks...NB #2: We do this split check only for ind2, not for ind1.
+  // Maybe reasons to this for ind1 will rise later on. None known yetr though.
+  const tag1 = field1.tag;
+  const tag2 = field2.tag;
+  // Indicator has but one legal value or is a non-filing indicator (NB: can not be overridden via config...):
+  if (marc21NoNeedToCheckInd2(tag1) || marc21NoNeedToCheckInd2(tag2) || ind2NonFilingChars.includes(tag1)) {
     return true;
   }
   // Override via config:
-  if (config.ignoreIndicator2 && config.ignoreIndicator2.includes(tag)) {
-    return true;
+  if (config.ignoreIndicator2) {
+    if (config.ignoreIndicator2.includes(tag1) || config.ignoreIndicator2.includes(tag2)) {
+      return true;
+    }
   }
   // Tolerate value '#' (reason: not spefified etc, the other value is supposedly a good one)
-  if (field1.ind2 === ' ' || field2.ind2 === ' ') {
-    return config.tolerateBlankIndicator2 && config.tolerateBlankIndicator2.includes(tag);
+  if (config.tolerateBlankIndicator2) {
+    if (field1.ind2 === ' ' && config.tolerateBlankIndicator2.includes(tag1)) {
+      return true;
+    }
+    if (field2.ind2 === ' ' && config.tolerateBlankIndicator2.includes(tag2)) {
+      return true;
+    }
+
   }
   // Fail:
   return false;
