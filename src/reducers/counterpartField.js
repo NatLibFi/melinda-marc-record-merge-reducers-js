@@ -22,6 +22,16 @@ const counterpartRegexps = {
   '940': /^[29]40$/u, '973': /^[79]73$/u
 };
 
+function differentPublisherSubfields(field1, field2) {
+  if (field1.tag === '260' && field2.tag === '264' && field2.ind2 === '3') {
+    return true;
+  }
+  if (field1.tag === '264' && field1.ind2 === '3' && field2.tag === '260') {
+    return true;
+  }
+  return false;
+}
+
 function pairableValue(tag, subfieldCode, value1, value2) {
   if (partsAgree(value1, value2, tag, subfieldCode)) {
     // Pure baseness: here we assume that base's value1 is better than source's value2.
@@ -39,12 +49,57 @@ function localNormalize(value) {
   return value3;
 }
 
+function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
+  // NB! Assume that field1 and field2 have same relevant subfields.
+  // What to do if if base
+  // const keySubfieldsAsString = forcedKeyString || getUniqueKeyFields(field1);
+  const keySubfieldsAsString = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'key');
+  //return mandatorySubfieldComparison(baseField, sourceField, keySubfieldsAsString);
+  return optionalSubfieldComparison(baseField, sourceField, keySubfieldsAsString);
+}
+
+function publisherSubfieldSwapHack(field1, field2) {
+  // Use only for clones, please!
+  if (!differentPublisherSubfields(field1, field2)) {
+    return;
+  }
+
+  modify264(field1);
+  modify264(field2);
+
+  function modify264(field) {
+    if (field.tag !== '264' || field.ind2 !== '3') {
+      return;
+    }
+    field.subfields.forEach(sf => {
+      sf.code = corresponding260Code(sf.code); // eslint-disable-line functional/immutable-data
+    });
+  }
+
+  function corresponding260Code(code) {
+    if (code === 'a') {
+      return 'e';
+    }
+    if (code === 'b') {
+      return 'f';
+    }
+    if (code === 'c') {
+      return 'g';
+    }
+    return code;
+  }
+
+}
+
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
   // Here optional subfield means a subfield, that needs not to be present, but if present, it must be identical...
   // (Think of a better name...)
   // We use clones here, since these changes done below are not intented to appear on the actual records.
   const field1 = cloneAndNormalizeField(originalBaseField);
   const field2 = cloneAndNormalizeField(originalSourceField);
+
+  publisherSubfieldSwapHack(field1, field2); // 264ind2=3 $abc => $efg
+
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
@@ -55,7 +110,26 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   }
   const subfieldArray = keySubfieldsAsString.split('');
 
-  return subfieldArray.every(subfieldCode => {
+
+  if (subfieldArray.length > 0 && !subfieldArray.some(sfCode => hasCommonNominator(sfCode))) {
+    return false;
+  }
+
+
+  return subfieldArray.every(subfieldCode => testOptionalSubfield(subfieldCode));
+
+
+  function hasCommonNominator(subfieldCode) {
+    nvdebug(`common nominator for ${fieldToString(originalBaseField)}`);
+
+    // If base has $a and source has $b, there's no common nominator, thus fail...
+    const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
+    const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field2.tag, subfield.code, subfield.value));
+
+    return subfields1.length > 0 && subfields2.length > 0;
+  }
+
+  function testOptionalSubfield(subfieldCode) {
     // NB! Don't compare non-meaningful subfields
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field2.tag, subfield.code, subfield.value));
@@ -82,18 +156,9 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
 
     return false;
 
-  });
+  }
 }
 
-
-function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
-  // NB! Assume that field1 and field2 have same relevant subfields.
-  // What to do if if base
-  // const keySubfieldsAsString = forcedKeyString || getUniqueKeyFields(field1);
-  const keySubfieldsAsString = forcedKeyString || getMergeConstraintsForTag(baseField.tag, 'key');
-  //return mandatorySubfieldComparison(baseField, sourceField, keySubfieldsAsString);
-  return optionalSubfieldComparison(baseField, sourceField, keySubfieldsAsString);
-}
 
 function mandatorySubfieldComparison(originalField1, originalField2, keySubfieldsAsString) {
   // NB! We use clones here, since these changes done below are not intented to appear on the actual records.
@@ -108,10 +173,11 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
   }
   const subfieldArray = keySubfieldsAsString.split('');
 
-  const differentSubfieldCodes = differentPublisherSubfields(originalField1, originalField2);
+  //const differentSubfieldCodes = differentPublisherSubfields(originalField1, originalField2);
 
   return subfieldArray.every(subfieldCode => mandatorySingleSubfieldComparison(subfieldCode));
 
+  /*
   function getOtherSubfieldCode(subfieldCode) {
     if (differentSubfieldCodes) {
       if (originalField1.tag === '260') {
@@ -139,11 +205,12 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
     }
     return subfieldCode;
   }
+  */
 
   function mandatorySingleSubfieldComparison(subfieldCode) {
-    const otherSubfieldCode = getOtherSubfieldCode(subfieldCode);
+    //const otherSubfieldCode = getOtherSubfieldCode(subfieldCode);
     const subfieldValues1 = field1.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
-    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === otherSubfieldCode).map(sf => sf.value);
+    const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
     // Assume that at least 1 instance must exist and that all instances must match
     if (subfieldValues1.length !== subfieldValues2.length) {
       debug(`mSC: Unique key: subfield ${subfieldCode} issues...`);
@@ -183,7 +250,7 @@ function areRequiredSubfieldsPresent(field) {
   });
 }
 
-function defaultArePairedSubfieldsInBalance(field1, field2) {
+function arePairedSubfieldsInBalance(field1, field2) {
   const subfieldString = getMergeConstraintsForTag(field1.tag, 'paired');
   if (subfieldString === null) {
     return true;
@@ -193,8 +260,10 @@ function defaultArePairedSubfieldsInBalance(field1, field2) {
   return subfieldArray.every(sfcode => fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode));
 }
 
-function arePairedSubfieldsInBalanceFields260And264Ind1Is3(field1, field2) {
+/*
+function arePairedSubfieldsInBalanceFields260And264Ind2Is3(field1, field2) {
   const [field260, field264] = mapFieldsTo260And264(field1, field2);
+  // This will probably fail on some legal cases, but at least it won't let any crap through...
   if (fieldHasNSubfields(field260, 'e') === fieldHasNSubfields(field264, 'a') &&
       fieldHasNSubfields(field260, 'f') === fieldHasNSubfields(field264, 'b') &&
       fieldHasNSubfields(field260, 'g') === fieldHasNSubfields(field264, 'c')) {
@@ -202,7 +271,9 @@ function arePairedSubfieldsInBalanceFields260And264Ind1Is3(field1, field2) {
   }
   return false;
 }
+*/
 
+/*
 function mapFieldsTo260And264(field1, field2) {
   if (field1.tag === '260' && field2.tag === '264' && field2.ind1 === '3') {
     return [field1, field2];
@@ -212,30 +283,17 @@ function mapFieldsTo260And264(field1, field2) {
   }
   return [null, null];
 }
+*/
 
-function differentPublisherSubfields(field1, field2) {
-  if (field1.tag === '260' && field2.tag === '264' && field2.ind1 === '3') {
-    return true;
-  }
-  if (field1.tag === '264' && field1.ind1 === '3' && field2.tag === '260') {
-    return true;
-  }
-  return false;
-}
-
-
-function arePairedSubfieldsInBalance(field1, field2) {
-  if (differentPublisherSubfields(field1, field2)) {
-    return arePairedSubfieldsInBalanceFields260And264Ind1Is3(field1, field2);
-  }
-
-  return defaultArePairedSubfieldsInBalance(field1, field2);
-}
 
 function mergablePair(baseField, sourceField, config) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
-  if (!mergableIndicator1(baseField, sourceField, config) || !mergableIndicator2(baseField, sourceField, config)) {
-    nvdebug(`non-mergable (reason: indicator): ${JSON.stringify(config)}`);
+  if (!mergableIndicator1(baseField, sourceField, config)) {
+    nvdebug(`non-mergable (reason: indicator1): ${JSON.stringify(config)}`);
+    return false;
+  }
+  if (!mergableIndicator2(baseField, sourceField, config)) {
+    nvdebug(`non-mergable (reason: indicator2): ${JSON.stringify(config)}`);
     return false;
   }
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
