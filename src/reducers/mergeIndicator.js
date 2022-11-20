@@ -2,7 +2,7 @@
 //import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
-import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
+import {fieldToString, marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -125,10 +125,38 @@ export function mergeIndicators(toField, fromField, config) {
   }
 
 
+  function publisherTagSwapHack(toField, fromField) {
+    // NB! Note that field 264.ind2==3 maps to $efg in field 260, so it is not relevant *here*:
+    // (Not sure whether our ind2 sanity check list should contain '4' (copyright year) as well:)
+    if (toField.tag !== '260' || fromField.tag !== '264' || !['0', '1', '2'].includes(fromField.ind2)) {
+      return;
+    }
+    // Field 264 IND2 contains information that can not be coded into field 260.
+
+    // However, 260 contains data that cannot be converted to 264 as well
+    if (toField.subfields.some(sf => ['e', 'f', 'g'].includes(sf.code))) {
+      nvdebug(`WARNING: can not change base 260 to 264 as it contains $e, $f and/or $g. Source IND2 info lost.`);
+      nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`);
+      return;
+    }
+
+    // Convert 260 to 264 so that no information is lost:
+    nvdebug(`Apply base 260->264 tag swap hack`);
+    nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`);
+
+    toField.tag = '264'; // eslint-disable-line functional/immutable-data
+    toField.ind2 = fromField.ind2; // eslint-disable-line functional/immutable-data
+  }
+
   function mergeIndicator2(toField, fromField, config) {
+    nvdebug(`Merge IND2`);
+    nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`);
     if (toField.ind2 === fromField.ind2) {
       return; // Do nothing
     }
+
+    publisherTagSwapHack(toField, fromField); // Easter egg for base-260 vs source-264
+
     //nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`);
     const preferredValues = getIndicatorPreferredValues(toField.tag, 2, config);
 
