@@ -64,7 +64,7 @@ export function firstFieldHasBetterPrepubEncodingLevel(field1, field2) {
   return false;
 }
 
-
+/*
 export function firstFieldHasEqualOrBetterPrepubEncodingLevel(field1, field2) {
   // Could be optimized...
   if (fieldRefersToKoneellisestiTuotettuTietue(field1)) {
@@ -84,26 +84,29 @@ export function firstFieldHasEqualOrBetterPrepubEncodingLevel(field1, field2) {
   }
   return !fieldRefersToEnnakkotieto(field2);
 }
+*/
 
-
+/*
 function hasEnnakkotietoSubfield(field) {
   return field.subfields.some(sf => ['g', '9'].includes(sf.code) && sf.value.includes('ENNAKKOTIETO'));
 }
+*/
 
-
+/*
 export function isPrepublicationField6XX(field) {
   if (!field.tag.match(/^6(?:[0-4][0-9]|5[0-5])$/u)) { // Not within 600 ... 655 range
     return false;
   }
   return field.subfields.some(sf => hasEnnakkotietoSubfield(sf));
 }
+*/
 
 
 export function getRelevant5XXFields(record, f500 = false, f594 = false) {
   const cands = actualGetFields();
-  nvdebugFieldArray(cands, 'gR5XXa: ');
+  //nvdebugFieldArray(cands, 'gR5XXa: ');
   const filtered = cands.filter(field => hasRelevantPrepubData(field));
-  nvdebugFieldArray(filtered, 'gR5XXb: ');
+  //nvdebugFieldArray(filtered, 'gR5XXb: ');
   return filtered;
 
   //return actualGetFields().filter(field => hasRelevantPrepubData(field));
