@@ -253,6 +253,14 @@ export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined)
   subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`), func);
 }
 
+export function removeCopyright(value) {
+  return value.replace(/^(?:c|p|©|℗|Cop\. ?) ?((?:1[0-9][0-9][0-9]|20[012][0-9])\.?)$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
+}
+
+export function hasCopyright(value) {
+  const modValue = removeCopyright(value);
+  return value !== modValue;
+}
 
 // base record level codes from highest (1) to lowest (10)
 const ldr17ToRanking = {' ': 1, '^': 1, '4': 2, '1': 3, '5': 4, '7': 5, '2': 6, '3': 7, '8': 8, 'u': 9, 'z': 10};
