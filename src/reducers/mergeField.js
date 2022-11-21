@@ -1,6 +1,6 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
+import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright} from './utils';
 import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize';
 import {mergeOrAddSubfield} from './mergeOrAddSubfield';
 import {mergeIndicators} from './mergeIndicator';
@@ -79,6 +79,22 @@ function removeEnnakkotieto(field) {
   }
 }
 
+
+function copyrightYearHack(baseRecord, baseField, sourceField) {
+  if (baseField.tag !== '264' || sourceField.tag !== '260') {
+    return;
+  }
+  const relevantSubfields = sourceField.subfields.filter(sf => sf.code === 'c' && hasCopyright(sf.value));
+
+  relevantSubfields.forEach(sf => {
+    // Add new:
+    const value = sf.value.replace(/\.$/u, '');
+    baseRecord.insertField({'tag': '264', 'ind1': ' ', 'ind2': '4', 'subfields': [{'code': 'c', value}]});
+    // Modify original subfield:
+    sf.value = removeCopyright(sf.value); // eslint-disable-line functional/immutable-data
+  });
+}
+
 function mergeField2(baseRecord, baseField, sourceField, config) {
   //// Identical fields
   // No need to check every subfield separately.
@@ -95,7 +111,11 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
     baseField.merged = 1; // eslint-disable-line functional/immutable-data
   }
 
+  copyrightYearHack(baseRecord, baseField, sourceField);
+
   mergeIndicators(baseField, sourceField, config);
+
+
   // We want to add the incoming subfields without punctuation, and add puctuation later on.
   // (Cloning is harmless, but probably not needed.)
   // NEW: we also drag the normalized version along. It is needed for the merge-or-add decision
