@@ -22,6 +22,7 @@ const counterpartRegexps = {
   '940': /^[29]40$/u, '973': /^[79]73$/u
 };
 
+/*
 function differentPublisherSubfields(field1, field2) {
   if (field1.tag === '260' && field2.tag === '264' && field2.ind2 === '3') {
     return true;
@@ -31,6 +32,7 @@ function differentPublisherSubfields(field1, field2) {
   }
   return false;
 }
+*/
 
 function pairableValue(tag, subfieldCode, value1, value2) {
   if (partsAgree(value1, value2, tag, subfieldCode)) {
@@ -58,38 +60,6 @@ function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
   return optionalSubfieldComparison(baseField, sourceField, keySubfieldsAsString);
 }
 
-function publisherSubfieldSwapHack(field1, field2) {
-  // Use only for clones, please!
-  if (!differentPublisherSubfields(field1, field2)) {
-    return;
-  }
-
-  modify264(field1);
-  modify264(field2);
-
-  function modify264(field) {
-    if (field.tag !== '264' || field.ind2 !== '3') {
-      return;
-    }
-    field.subfields.forEach(sf => {
-      sf.code = corresponding260Code(sf.code); // eslint-disable-line functional/immutable-data
-    });
-  }
-
-  function corresponding260Code(code) {
-    if (code === 'a') {
-      return 'e';
-    }
-    if (code === 'b') {
-      return 'f';
-    }
-    if (code === 'c') {
-      return 'g';
-    }
-    return code;
-  }
-
-}
 
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
   // Here optional subfield means a subfield, that needs not to be present, but if present, it must be identical...
@@ -97,8 +67,6 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   // We use clones here, since these changes done below are not intented to appear on the actual records.
   const field1 = cloneAndNormalizeField(originalBaseField);
   const field2 = cloneAndNormalizeField(originalSourceField);
-
-  publisherSubfieldSwapHack(field1, field2); // 264ind2=3 $abc => $efg
 
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
@@ -177,36 +145,6 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
 
   return subfieldArray.every(subfieldCode => mandatorySingleSubfieldComparison(subfieldCode));
 
-  /*
-  function getOtherSubfieldCode(subfieldCode) {
-    if (differentSubfieldCodes) {
-      if (originalField1.tag === '260') {
-        if (subfieldCode === 'e') {
-          return 'a';
-        }
-        if (subfieldCode === 'f') {
-          return 'b';
-        }
-        if (subfieldCode === 'g') {
-          return 'c';
-        }
-      }
-      if (originalField1.tag === '264') {
-        if (subfieldCode === 'a') {
-          return 'e';
-        }
-        if (subfieldCode === 'b') {
-          return 'f';
-        }
-        if (subfieldCode === 'c') {
-          return 'g';
-        }
-      }
-    }
-    return subfieldCode;
-  }
-  */
-
   function mandatorySingleSubfieldComparison(subfieldCode) {
     //const otherSubfieldCode = getOtherSubfieldCode(subfieldCode);
     const subfieldValues1 = field1.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
@@ -259,31 +197,6 @@ function arePairedSubfieldsInBalance(field1, field2) {
 
   return subfieldArray.every(sfcode => fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode));
 }
-
-/*
-function arePairedSubfieldsInBalanceFields260And264Ind2Is3(field1, field2) {
-  const [field260, field264] = mapFieldsTo260And264(field1, field2);
-  // This will probably fail on some legal cases, but at least it won't let any crap through...
-  if (fieldHasNSubfields(field260, 'e') === fieldHasNSubfields(field264, 'a') &&
-      fieldHasNSubfields(field260, 'f') === fieldHasNSubfields(field264, 'b') &&
-      fieldHasNSubfields(field260, 'g') === fieldHasNSubfields(field264, 'c')) {
-    return true;
-  }
-  return false;
-}
-*/
-
-/*
-function mapFieldsTo260And264(field1, field2) {
-  if (field1.tag === '260' && field2.tag === '264' && field2.ind1 === '3') {
-    return [field1, field2];
-  }
-  if (field2.tag === '260' && field1.tag === '264' && field1.ind1 === '3') {
-    return [field2, field1];
-  }
-  return [null, null];
-}
-*/
 
 
 function mergablePair(baseField, sourceField, config) {
