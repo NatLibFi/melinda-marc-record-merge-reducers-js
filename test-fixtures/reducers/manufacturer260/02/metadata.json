@@ -1,5 +1,5 @@
 {
   "description":"Transfer 260$efg to 264$abc",
   "comment": "Same as test 01 but with parentheses",
-  "only": true
+  "only": false
 }
