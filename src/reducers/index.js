@@ -19,6 +19,8 @@ import {default as mergeDataFields} from './mergeField';
 import {default as postprocessSubfield6} from './postprocessSubfield6';
 import {default as metatietosanastoNormalizations} from './preprocessMetatietosanasto';
 import postprocessor from './postprocessor';
+import {default as manufacturer260To264} from './transferManufacturerDataFrom260To264';
+
 //import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -80,6 +82,7 @@ export const localReducers = [
   fixRelatorTerms(),
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
+  manufacturer260To264(),
 
   //// ACTUAL MERGE/ADD STUFF:
   //internalFields(), // LOW, CAT, SID. Nowadays part of genericDatafield()
