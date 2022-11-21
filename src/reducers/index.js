@@ -9,7 +9,6 @@ import field008 from './field008';
 import reindexSubfield6 from './reindexSubfield6';
 import reindexSubfield8 from './reindexSubfield8';
 
-import publisherInformation from './field26X';
 
 import genericPreprocessor from './preprocessor.js';
 import prepublicationPreprocessor from './preprocessPrepublication';
@@ -90,7 +89,6 @@ export const localReducers = [
   field006(), // Tests 02 and 03
   field007(), // Tests 04 and 05
   field008(), // Tests 06, 07, and 08
-  publisherInformation(), // Handle fields 260 and 264. Their interaction is so complex it need to be done separely
   mergeDataFields(),
   addDataFields(),
   postprocessSubfield6(), // Should this be part of generic postprocessor? Probably...
