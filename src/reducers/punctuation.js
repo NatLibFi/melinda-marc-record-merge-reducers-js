@@ -83,7 +83,10 @@ const cleanValidPunctuationRules = {
   '260': [
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
     {'code': 'b', 'followedBy': 'c', 'remove': /,$/u},
-    {'code': 'c', 'followedBy': '#', 'remove': /\.$/u}
+    {'code': 'c', 'followedBy': '#', 'remove': /\.$/u},
+    {'code': 'd', 'followedBy': 'e', 'remove': / :$/u},
+    {'code': 'e', 'followedBy': 'f', 'remove': /,$/u},
+    {'code': 'f', 'followedBy': '#', 'remove': /\.$/u} // Probably ')' but shouldit be removed?
   ],
   '264': [
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
@@ -122,7 +125,7 @@ const addPairedPunctuationRules = {
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter2},
     {'code': 'b', 'followedBy': 'c', 'add': ',', 'context': defaultNeedsPuncAfter2},
     // NB! The $c rule messes dotless exception "264 #4 $c p1983" up
-    // We'll need to add a hacky postprocessor for this?
+    // We'll need to add a hacky postprocessor for this? Add 'hasInd1': '0123' etc?
     {'code': 'c', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter2}
   ],
   '300': [
@@ -134,9 +137,12 @@ const addPairedPunctuationRules = {
     {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'content': defaultNeedsPuncAfter},
     {'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'content': defaultNeedsPuncAfter}
   ],
+  '600': [addX00aComma, addX00aDot],
   '700': [addX00aComma, addX00aDot],
-  '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'add': '. -', 'context': /[^-]$/u}]
-  // MISSING: 773 ". -" etc
+  // 773 rules will be discussed soon... Ape that discussion here...
+  '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'add': '. -', 'context': /[^-]$/u}],
+  '800': [addX00aComma, addX00aDot]
+
 };
 
 function ruleAppliesToSubfieldCode(targetSubfieldCodes, currSubfieldCode) {
