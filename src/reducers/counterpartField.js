@@ -1,7 +1,7 @@
 // For each incoming field that
 
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldToString, nvdebug, nvdebugSubfieldArray} from './utils';
+import {fieldHasSubfield, fieldHasNSubfields, fieldToString, nvdebug, nvdebugSubfieldArray, removeCopyright} from './utils';
 import {cloneAndNormalizeField} from './normalize';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
@@ -43,12 +43,17 @@ function pairableValue(tag, subfieldCode, value1, value2) {
   return undefined;
 }
 
-function localNormalize(value) {
+function counterpartExtraNormalize(value) {
+  /* eslint-disable prefer-named-capture-group, no-param-reassign */
   // Remove trailing punctuation:
-  const value2 = value.replace(/(\S)(?:,|\.|\?|!|\. -| *:| *;)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  value = value.replace(/(\S)(?:,|\.|\?|!|\. -| *:| *;)$/u, '$1');
   // Remove brackets:
-  const value3 = value2.replace(/^\(([^()]+)\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-  return value3;
+  value = value.replace(/^\(([^()]+)\)$/u, '$1');
+  value = value.replace(/^\[([^()]+)\]$/u, '$1');
+  // Mainly for field 260$c:
+  value = removeCopyright(value);
+  /* eslint-enable */
+  return value;
 }
 
 function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
@@ -110,8 +115,9 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     nvdebugSubfieldArray(subfields1, 'SF1', debug);
     nvdebugSubfieldArray(subfields2, 'SF2', debug);
 
-    const subfieldValues1 = subfields1.map(sf => localNormalize(sf.value));
-    const subfieldValues2 = subfields2.map(sf => localNormalize(sf.value));
+    // When pairing we can use stronger normalizations than the generic one:
+    const subfieldValues1 = subfields1.map(sf => counterpartExtraNormalize(sf.value));
+    const subfieldValues2 = subfields2.map(sf => counterpartExtraNormalize(sf.value));
 
     // If one set is a subset of the other, all is probably good (how about 653$a, 505...)
     if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
