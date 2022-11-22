@@ -184,6 +184,10 @@ export function fieldHasNSubfields(field, subfieldCode/*, subfieldValue = null*/
   //return subset.length;
 }
 
+export function fieldHasMultipleSubfields(field, subfieldCode/*, subfieldValue = null*/) {
+  return fieldHasNSubfields(field, subfieldCode) > 1;
+}
+
 /**
  * renameSubfieldCodes
  *
@@ -277,7 +281,8 @@ export function getEncodingLevelRanking(record) {
   //return levelCodes.filter(level => level.levelValue === record.leader[17])[0].levelCode;
 }
 
-
+/*
 export function stringToRegex(string) { // easier to remember
   return new RegExp(string, 'u');
 }
+*/
