@@ -139,11 +139,13 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
   });
 }
 
+
 function skipMergeField(baseRecord, sourceField, config) {
   if (!mergableTag(sourceField.tag, config)) {
     debug(`mergeField(): field '${fieldToString(sourceField)}' listed as skippable!`);
     return true;
   }
+
   // Skip duplicate field:
   if (baseRecord.fields.some(baseField => fieldsAreIdentical(sourceField, baseField))) {
     debug(`mergeField(): field '${fieldToString(sourceField)}' already exists! No action required!`);
