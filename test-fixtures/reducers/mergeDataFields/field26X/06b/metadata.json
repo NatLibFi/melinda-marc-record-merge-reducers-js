@@ -1,0 +1,4 @@
+{
+  "description":"Don't merge 260 fields despite overlapping $abc, since source has multiple $abc",
+  "only": false
+}
