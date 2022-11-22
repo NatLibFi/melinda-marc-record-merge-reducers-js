@@ -1,7 +1,7 @@
 // For each incoming field that
 
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldToString, nvdebug, nvdebugSubfieldArray, removeCopyright} from './utils';
+import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, nvdebugSubfieldArray, removeCopyright} from './utils';
 import {cloneAndNormalizeField} from './normalize';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
@@ -274,16 +274,42 @@ function pairableAsteriIDs(baseField, sourceField) {
   }
 }
 
+function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
+  if (field.tag === '260' || field.tag === '264') {
+    return ['a', 'b', 'c'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
+  }
+  if (field.tag === '382') {
+    return ['a', 'b', 'd', 'e', 'n', 'p'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
+  }
+  if (field.tag === '505') {
+    return ['t', 'r', 'g'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
+  }
+
+  return false;
+}
 
 function pairableName(baseField, sourceField) {
   // 100$a$t: remove $t and everything after that
   const reducedField1 = fieldToNamePart(baseField);
   const reducedField2 = fieldToNamePart(sourceField);
-  nvdebug(`IN: pairableName():\n '${fieldToString(reducedField1)}' vs\n '${fieldToString(reducedField2)}'`);
+
+  const string1 = fieldToString(reducedField1);
+  const string2 = fieldToString(reducedField2);
+
+  nvdebug(`IN: pairableName():\n '${string1}' vs\n '${string2}'`);
+  if (string1 === string2) {
+    return true;
+  }
+
+  if (hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(reducedField1) || hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(reducedField2)) {
+    return false;
+  }
+
   // Compare the remaining subsets...
   // First check that name matches...
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
     nvdebug(`    name match: '${fieldToString(reducedField1)}'`);
+
     return true;
   }
 
