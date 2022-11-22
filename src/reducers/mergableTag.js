@@ -83,11 +83,10 @@ const defaultNonMergableFields = [
   'SID'
 ];
 
+
 export function mergableTag(tag, config) {
-  if (config.skipMergeTags && Array.isArray(config.skipMergeTags)) {
+  // Use either configured non-mergable tags or default non-mergable tags
+  const nonMergableFields = config.skipMergeTags && Array.isArray(config.skipMergeTags) ? config.skipMergeTags : defaultNonMergableFields;
 
-    return !config.skipMergeTags.includes(tag);
-  }
-
-  return !defaultNonMergableFields.includes(tag);
+  return !nonMergableFields.includes(tag);
 }
