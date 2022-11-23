@@ -17,11 +17,11 @@ function validLisapainosField(field) {
   if (field.tag !== '500' || field.subfields.length !== 1 || field.subfields[0].code !== 'a') {
     return false;
   }
-  return field.subfields[0].value.match(/^Lisäpainokset: (?:[1-9][0-9]*\. p\. [0-9]+\.)(?: - [1-9][0-9]*\. p\. [0-9]+\.)*$/u);
+  return field.subfields[0].value.match(/^(?:Lisäpainokset|Lisäpainos): (?:[1-9][0-9]*\. p\. [0-9]+\.)(?: - [1-9][0-9]*\. p\. [0-9]+\.)*$/u);
 }
 
 function fieldToPrintsString(field) {
-  return field.subfields[0].value.replace(/^Lisäpainokset: /u, '').replace(/\.$/u, '');
+  return field.subfields[0].value.replace(/^(?:Lisäpainokset|Lisäpainos): /u, '').replace(/\.$/u, '');
 }
 
 export function mergeLisapainokset(record) {
