@@ -10,6 +10,9 @@ export default () => (base, source) => {
   return {base, source};
 };
 
+function getRelevantFields(record) {
+  return record.fields.filter(field => validLisapainosField(field));
+}
 
 function validLisapainosField(field) {
   // We are only interested in field 500 with a lone $a subfield.
@@ -77,12 +80,8 @@ function mergePrintData(value1, value2) {
 
 }
 
-export function mergeLisapainokset(record) {
-  const relevantFields = record.fields.filter(field => validLisapainosField(field));
-  if (relevantFields.length < 2) {
-    return;
-  }
 
+function extractAllPrintData(relevantFields) {
   /* eslint-disable */
   // Gather data about 500 $a Lisäpainokset.*
   let allPrintData = [];
@@ -100,7 +99,7 @@ export function mergeLisapainokset(record) {
           const mergedPrintData = mergePrintData(allPrintData[printIndex], currPrintData);
           if (!mergedPrintData) {
             nvdebug(`MISMATCH:\n '${currPrintData}'\n '${allPrintData[printIndex]}'`, debug);
-            return; // reason for for-loops: exit function from within nested loops
+            return []; // reason for for-loops: exit function from within nested loops
           }
           currPrintData = mergedPrintData;
         }
@@ -108,9 +107,21 @@ export function mergeLisapainokset(record) {
       allPrintData[printIndex] = currPrintData;
     }
   };
+  return allPrintData.filter(p => p !== undefined);
+}
 
-  
-  const collapsedArray = allPrintData.filter(p => p !== undefined);
+
+export function mergeLisapainokset(record) {
+  const relevantFields = getRelevantFields(record);
+  if (relevantFields.length < 2) {
+    return;
+  }
+
+  /* eslint-disable */
+  const collapsedArray = extractAllPrintData(relevantFields);
+  if (collapsedArray.length === 0) {
+    return;
+  }
 
   const content = "Lisäpainokset: " + collapsedArray.join('. - ') + ".";
 
