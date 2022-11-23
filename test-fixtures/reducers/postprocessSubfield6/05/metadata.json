@@ -1,0 +1,5 @@
+{
+  "description":"Remove duplicate XXX $6 880-YY and 880 $6 XXX-YY pairs",
+  "comment": "Note that subfield $6s is dropped from field comparison",
+  "only": false
+}

@@ -1,0 +1,75 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+
+    {
+      "tag": "520",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "880-01"
+        },
+        {
+          "code": "a",
+          "value": "lorum"
+        }
+      ]
+    },
+    {
+      "tag": "520",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "880-02"
+        },
+        {
+          "code": "a",
+          "value": "ipsum"
+        }
+      ]
+    },
+    {
+      "tag": "520",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "880-04"
+        },
+        {
+          "code": "a",
+          "value": "ipsum"
+        }
+      ]
+    },
+    
+
+    {
+      "tag": "880", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "6", "value": "520-01" },
+        { "code": "a", "value": "foo" }
+      ]
+    },
+    {
+      "tag": "880", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "6", "value": "520-02" },
+        { "code": "a", "value": "bar" }
+      ]
+    },
+    {
+      "tag": "880", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "6", "value": "520-04" },
+        { "code": "a", "value": "foo" }
+      ]
+    }
+
+  ]
+}
