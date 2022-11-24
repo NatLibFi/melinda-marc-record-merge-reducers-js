@@ -6,8 +6,8 @@ import {filterOperations} from './processFilter.js';
 
 import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melinda/dist/indicator-fixes';
 import {deleteAllPrepublicationNotesFromField500InNonPubRecord, removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
-import {mergeLisapainokset} from './mergeField500Lisapainokset.js';
-
+//import {mergeLisapainokset} from './mergeField500Lisapainokset.js';
+import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/mergeField500Lisapainokset';
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 export default (config = defaultConfig) => (base, source) => {
