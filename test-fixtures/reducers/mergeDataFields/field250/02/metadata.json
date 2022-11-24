@@ -1,0 +1,4 @@
+{
+  "description":"Merge. Incoming field (with only $a) is lost, as subfield $a is non-repeatable",
+  "only": false
+}
