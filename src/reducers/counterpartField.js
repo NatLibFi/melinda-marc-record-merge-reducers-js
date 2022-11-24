@@ -43,15 +43,30 @@ function pairableValue(tag, subfieldCode, value1, value2) {
   return undefined;
 }
 
-function counterpartExtraNormalize(value) {
+function normalizeEdition(tag, subfieldCode, value) {
+  if (tag === '250' && subfieldCode === 'a') {
+    if (value.match(/^[1-9][0-9]*(?:\.|:a|nd|rd|st|th) (?:ed\.|edition|p\.|painos|uppl\.|upplagan)/u)) {
+      const nth = value.replace(/[^0-9].*$/u, '');
+      return `<hack>${nth} painos</hack>`;
+    }
+  }
+  return value;
+}
+
+function counterpartExtraNormalize(tag, subfieldCode, value) {
   /* eslint-disable prefer-named-capture-group, no-param-reassign */
   // Remove trailing punctuation:
-  value = value.replace(/(\S)(?:,|\.|\?|!|\. -| *:| *;)$/u, '$1');
+  value = value.replace(/(\S)(?:,|\.|\?|!|\. -| *:| *;| =| \/)$/u, '$1');
   // Remove brackets:
-  value = value.replace(/^\(([^()]+)\)$/u, '$1');
-  value = value.replace(/^\[([^()]+)\]$/u, '$1');
+  value = value.replace(/^\(([^()]+)\)$/u, '$1'); // Remove starting-'(' and ending-')'
+  value = value.replace(/^\[([^[\]]+)\]$/u, '$1'); // Remove starting-'[' and ending-']'
   // Mainly for field 260$c:
   value = removeCopyright(value);
+
+
+  value = normalizeEdition(tag, subfieldCode, value);
+
+
   /* eslint-enable */
   return value;
 }
@@ -89,7 +104,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   }
 
 
-  return subfieldArray.every(subfieldCode => testOptionalSubfield(subfieldCode));
+  return subfieldArray.every(subfieldCode => testOptionalSubfield(originalBaseField.tag, subfieldCode));
 
 
   function hasCommonNominator(subfieldCode) {
@@ -102,7 +117,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     return subfields1.length > 0 && subfields2.length > 0;
   }
 
-  function testOptionalSubfield(subfieldCode) {
+  function testOptionalSubfield(tag, subfieldCode) {
     // NB! Don't compare non-meaningful subfields
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
     const subfields2 = field2.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field2.tag, subfield.code, subfield.value));
@@ -116,8 +131,8 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     nvdebugSubfieldArray(subfields2, 'SF2', debug);
 
     // When pairing we can use stronger normalizations than the generic one:
-    const subfieldValues1 = subfields1.map(sf => counterpartExtraNormalize(sf.value));
-    const subfieldValues2 = subfields2.map(sf => counterpartExtraNormalize(sf.value));
+    const subfieldValues1 = subfields1.map(sf => counterpartExtraNormalize(tag, subfieldCode, sf.value));
+    const subfieldValues2 = subfields2.map(sf => counterpartExtraNormalize(tag, subfieldCode, sf.value));
 
     // If one set is a subset of the other, all is probably good (how about 653$a, 505...)
     if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
@@ -221,7 +236,7 @@ function mergablePair(baseField, sourceField, config) {
   }
 
   // NB! field1.tag and field2.tag might differ (1XX vs 7XX). Therefore required subfields might theoretically differ as well.
-  // Not even theoretically 260 $efg vs 264 with IND2=3 $abc
+  // Note: Theoretically 260 $efg vs 264 with IND2=3 has already been handled by the preprocessor.
   // Thus check both:
   if (!areRequiredSubfieldsPresent(baseField) || !areRequiredSubfieldsPresent(sourceField)) {
     nvdebug('non-mergable (reason: missing subfields)');
