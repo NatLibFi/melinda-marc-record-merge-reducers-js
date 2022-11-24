@@ -56,7 +56,7 @@ export function mergableIndicator1(field1, field2, config) {
 }
 
 export function mergableIndicator2(field1, field2, config) {
-  nvdebug(`mergableIndicator2\n '${fieldToString(field1)}' vs\n '${fieldToString(field2)}')`);
+  nvdebug(`mergableIndicator2\n '${fieldToString(field1)}' vs\n '${fieldToString(field2)}'`);
   // Indicators are identical:
   if (field1.ind2 === field2.ind2) {
     return true;
