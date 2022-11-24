@@ -98,7 +98,7 @@ export function marc21GetTagsLegalInd2Value(tag) {
 export function subfieldIsRepeatable(tag, subfieldCode) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
-    debug(` WARNING! Getting field ${tag} data failed! Default value true is used for'${subfieldCode}' .`);
+    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debug);
     return true;
   }
 
