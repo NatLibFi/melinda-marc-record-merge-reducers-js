@@ -15,16 +15,6 @@ import {valueCarriesMeaning} from './worldKnowledge.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeOrAddSubfield');
 
 
-function insertSubfieldAllowed(targetField, candSubfield) {
-  // Subfield codes missing from the original record can be added by default:
-  if (!fieldHasSubfield(targetField, candSubfield.code)) {
-    return true;
-  }
-  // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
-  return subfieldIsRepeatable(targetField.tag, candSubfield.code);
-}
-
-
 function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   // Add hard-coded exceptions here
   nvdebug(`not required? '${subfieldToString(candSubfield)}' vs '${fieldToString(targetField)}'`);
@@ -87,6 +77,14 @@ function addSubfield(targetField, candSubfield) {
   sortAdjacentSubfields(targetField);
 }
 
+
+function setPunctuationFlag(field, addedSubfield) {
+  if (isControlSubfieldCode(addedSubfield.code)) { // These are never punctuation related
+    return;
+  }
+  field.punctuate = 1; // eslint-disable-line functional/immutable-data
+}
+
 export function mergeOrAddSubfield(record, targetField, normalizedCandSubfield, punctlessCandSubfield) {
   const normalizedTargetField = cloneAndNormalizeField(targetField);
 
@@ -104,21 +102,30 @@ export function mergeOrAddSubfield(record, targetField, normalizedCandSubfield, 
     if (original !== fieldToString(targetField)) {
       nvdebug(`    A: Merge. Subfield '${subfieldToString(punctlessCandSubfield)}' replaces the original subfield.`, debug);
       targetField.merged = 1; // eslint-disable-line functional/immutable-data
-      targetField.punctuate = 1; // eslint-disable-line functional/immutable-data
+      setPunctuationFlag(targetField, punctlessCandSubfield);
       return;
     }
     nvdebug(`      A: No. Field ${original} had a better merge candidate than our subfield '${subfieldToString(punctlessCandSubfield)}' replace.`, debug);
     return;
   }
 
-  if (insertSubfieldAllowed(targetField, normalizedCandSubfield)) {
-    nvdebug(`    A: Yes. Add subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
-
+  // Subfield codes missing from the original record can be added by default:
+  if (!fieldHasSubfield(targetField, punctlessCandSubfield.code)) {
+    nvdebug(`    A: Yes. Add previously unseen subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
+    targetField.merged = 1; // eslint-disable-line functional/immutable-data
+    setPunctuationFlag(targetField, punctlessCandSubfield);
     addSubfield(targetField, punctlessCandSubfield);
     return;
   }
 
+  // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
+  if (subfieldIsRepeatable(targetField.tag, punctlessCandSubfield.code)) {
+    nvdebug(`    A: Yes. Add repeatable subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
+    targetField.merged = 1; // eslint-disable-line functional/immutable-data
+    setPunctuationFlag(targetField, punctlessCandSubfield);
+    addSubfield(targetField, punctlessCandSubfield);
+    return;
+  }
 
-  // Didn't do anything, but thinks something should have been done:
-  nvdebug(`    A: Could not decide. Add decision rules. 'Til then, do nothing to '${subfieldToString(punctlessCandSubfield)}'`, debug);
+  nvdebug(`    A: No. Non-repeatable subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
 }
