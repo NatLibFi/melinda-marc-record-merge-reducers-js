@@ -134,7 +134,7 @@ function mapBindingToCoverType(field, candSubfield, relevantSubfields) {
     originalSubfieldQ.value = candSubfield.value; // eslint-disable-line functional/immutable-data
     return true;
   }
-  // Vice versa: if original value is cover type nad new value is ye olde binding, return true.
+  // Vice versa: if original value is cover type and new value is ye olde binding, return true.
   // Then change is considered to have happenened.
   if (isNidottu(candSubfield.value) && relevantSubfields.some(sf => isPehmeakantinen(sf.value))) {
     return true;
