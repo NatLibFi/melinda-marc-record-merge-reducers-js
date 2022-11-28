@@ -1388,6 +1388,22 @@
       ]
     },
     {
+      "tag": "334",
+      "repeatable": true,
+      "fieldType": "dataField",
+      "indicators": {"ind1": " ", "ind2": " "},
+      "subfields": [
+        {"code": "a", "repeatable": false},
+        {"code": "b", "repeatable": false},
+        {"code": "0", "repeatable": true},
+        {"code": "1", "repeatable": true},
+        {"code": "2", "repeatable": false},
+        {"code": "3", "repeatable": false},
+        {"code": "6", "repeatable": false},
+        {"code": "8", "repeatable": true}
+      ]
+    },
+    {
       "tag": "335",
       "repeatable": true,
       "fieldType": "dataField",
