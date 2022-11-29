@@ -1484,6 +1484,7 @@
         {"code": "i", "repeatable": true},
         {"code": "j", "repeatable": true},
         {"code": "k", "repeatable": true},
+        {"code": "l", "repeatable": true},
         {"code": "m", "repeatable": true},
         {"code": "n", "repeatable": true},
         {"code": "o", "repeatable": true},
