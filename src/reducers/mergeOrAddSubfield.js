@@ -70,19 +70,18 @@ function addSubfield(targetField, candSubfield) {
   nvdebug(` Added subfield ‡'${str}' to field`, debug);
   // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
   targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
-  if (!isControlSubfieldCode(candSubfield.code)) { // eslint-disable-line functional/no-conditional-statement
-    targetField.punctuate = 1; // eslint-disable-line functional/immutable-data
-  }
+
   targetField.merged = 1; // eslint-disable-line functional/immutable-data
+  setPunctuationFlag(targetField, candSubfield);
+
   sortAdjacentSubfields(targetField);
 }
-
 
 function setPunctuationFlag(field, addedSubfield) {
   if (isControlSubfieldCode(addedSubfield.code)) { // These are never punctuation related
     return;
   }
-  field.punctuate = 1; // eslint-disable-line functional/immutable-data
+  field.useExternalEndPunctuation = 1; // eslint-disable-line functional/immutable-data
 }
 
 export function mergeOrAddSubfield(record, targetField, normalizedCandSubfield, punctlessCandSubfield) {

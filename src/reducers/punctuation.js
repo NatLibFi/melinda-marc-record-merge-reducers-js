@@ -378,9 +378,9 @@ export function fieldFixPunctuation(field) {
     subfieldFixPunctuation(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null);
   });
 
-  // addFinalPunctuation(field); // local version. use shared code instead.
   // Use shared code for final punctuation (sadly this does not fix intermediate punc):
-  if (field.punctuate) { // eslint-disable-line functional/no-conditional-statement
+  if (field.useExternalEndPunctuation) { // eslint-disable-line functional/no-conditional-statement
+    // addFinalPunctuation(field); // local version. use shared code instead.
     validateSingleField(field, false, true); // NB! Don't use field.tag as second argument! It's a string, not an int. 3rd arg must be true (=fix)
   }
   return field;

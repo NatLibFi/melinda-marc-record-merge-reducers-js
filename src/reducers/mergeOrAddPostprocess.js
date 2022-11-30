@@ -21,8 +21,8 @@ function postprocessBaseRecord(base, source) {
       delete field.merged; // eslint-disable-line functional/immutable-data
     }
 
-    if (field.punctuate) { // eslint-disable-line functional/no-conditional-statement
-      delete field.punctuate; // eslint-disable-line functional/immutable-data
+    if (field.useExternalEndPunctuation) { // eslint-disable-line functional/no-conditional-statement
+      delete field.useExternalEndPunctuation; // eslint-disable-line functional/immutable-data
     }
 
     if (field.added) { // eslint-disable-line functional/no-conditional-statement
