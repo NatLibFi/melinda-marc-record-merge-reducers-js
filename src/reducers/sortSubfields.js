@@ -7,7 +7,11 @@ const defaultSortOrder = defaultSortOrderString.split('');
 
 // List *only* exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
+  {'tag': '017', 'sortOrder': ['i', 'a', 'b', 'd']},
+  {'tag': '028', 'sortOrder': ['b', 'a', 'q']}, // National convention
+  //{'tag': '031', 'sortOrder': ['a', 'b', 'c', 'm', 'e', 'd']}, // utter guesswork
   {'tag': '040', 'sortOrder': ['8', '6', 'a', 'b', 'e', 'c', 'd', 'x']},
+  {'tag': '041', 'sortOrder': ['8', '6', 'a', 'd', 'j', 'p', 'h', 'e', 'g', 'm']}, // guesswork
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
   {'tag': '110', 'sortOrder': ['a', 'b', 'n']},
@@ -28,13 +32,13 @@ const subfieldSortOrder = [
   {'tag': '700', 'sortOrder': ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
   {'tag': '710', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '773', 'sortOrder': ['7', 'w', 'a', 't', 'd', 'm', 'h', 'g', 'k', 'o', 'x', 'z', 'g', 'q']},
+  {'tag': '773', 'sortOrder': ['7', 'w', 'a', 's', 't', 'd', 'm', 'h', 'g', 'k', 'o', 'x', 'z', 'g', 'q']},
   {'tag': '776', 'sortOrder': ['i', 'a']},
   {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
   {'tag': '810', 'sortOrder': ['a', 'b', 'n']},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
-  {'tag': '880', 'sortOrder': ['a']},
+  {'tag': '880', 'sortOrder': ['6', 'a']},
   {'tag': 'LOW', 'sortOrder': ['a', 'b', 'c', 'l', 'h']},
   {'tag': 'SID', 'sortOrder': ['c', 'b']} // Hack, so that default order is not used
 ];
