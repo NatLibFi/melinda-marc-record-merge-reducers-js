@@ -127,7 +127,7 @@ function mergeField2(baseRecord, baseField, sourceField, config) {
   normalizedSourceField.subfields.forEach((candSubfield, index) => {
     //sourceField.subfields.forEach(candSubfield => {
     const originalValue = fieldToString(baseField);
-    mergeOrAddSubfield(baseRecord, baseField, candSubfield, strippedSourceField.subfields[index]); // candSubfield);
+    mergeOrAddSubfield(baseField, candSubfield, strippedSourceField.subfields[index]); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
       debug(`  MERGING SUBFIELD '‡${candSubfield.code} ${candSubfield.value}' TO '${originalValue}'`);

@@ -84,7 +84,7 @@ function setPunctuationFlag(field, addedSubfield) {
   field.useExternalEndPunctuation = 1; // eslint-disable-line functional/immutable-data
 }
 
-export function mergeOrAddSubfield(record, targetField, normalizedCandSubfield, punctlessCandSubfield) {
+export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctlessCandSubfield) {
   const normalizedTargetField = cloneAndNormalizeField(targetField);
 
   nvdebug(`   Q: mergeOrAddSubfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
