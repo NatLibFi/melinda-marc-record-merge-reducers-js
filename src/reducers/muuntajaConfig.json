@@ -1,0 +1,295 @@
+{
+    "preprocessorDirectives" :
+        [
+
+            {
+                "operation": "removeSubfield",
+                "comment": "Remove X00$d with old and deprecated (1) style value. (1) ... (99) are removed.",
+                "recordType": "both",
+                "fieldSpecification": {
+                    "tagPattern": "^[1678]00$",
+                    "subfieldFilters": [{"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$"}]
+                },
+                "deletableSubfieldFilter": {"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$" }
+            },        
+
+            {
+                "operation": "removeSubfield",
+                "comment": "remove price information",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^(?:020|024?)$",
+                    "subfieldFilters": [{"code": "c"}]
+                },
+                "deletableSubfieldFilter": {"code": "c"}
+            },
+
+            {
+                "operation": "renameSubfield",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "040",
+                    "subfieldFilters": [{"code": "a"}]
+                },
+                "renamableSubfieldFilter": {"code": "a", "newCode": "d"}
+            },
+
+            {
+                "operation": "removeSubfield",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "041",
+                    "subfieldFilters": [{
+                        "code": "a",
+                        "value": "zxx"
+                    }]
+                },
+                "deletableSubfieldFilter": {"code": "a", "value": "zxx"}
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "100"},
+                "comment": "NB! Retags should check corresponding 880 fields as well.",
+                "newTag": "700"
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "110"},
+                "newTag": "710"
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "111"},
+                "newTag": "711"
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "130"},
+                "newTag": "730"
+            },
+
+            {
+                "operation": "removeField",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^(?:648|650|651|655)$",
+                    "subfieldFilters": [{
+                        "code": "2",
+                        "valuePattern": "^(allars|cilla|musa|ysa)$"
+                    }]
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "830",
+                    "subfieldFilters": [{"missingCode": "x"}]
+                },
+                "comment": "NB! Domain-specific. As in specs."
+            }
+
+        ],
+    "mergeConfiguration" :
+    {   
+        "preprocessorDirectives" :
+        [
+            {
+                "operation": "removeField",
+                "comment": "Bunch of tags we always drop from the base (for Muuntaja)",
+                "recordType": "base",
+                "fieldSpecification": {
+                    "tagPattern": "^(336|337|338|HLI)$"
+                }
+            }
+        ],
+
+        "comment #1" : "Meaningless indicators (=indicators having but one legal value) are derived from melindaCustomMergeFields.",
+        "comment #2" : "Meaningless indicators and non-filing indicators never prevent merge. (Hard-coded in mergableIndicator.js)",
+        "comment #3" : "When merging, indicator preference has set defaults in mergeIndicators.js. However, these can be overridden here.",
+        "indicator1PreferredValues": {
+            "022" : {"0": 1, "1": 1, " ": 2},
+            "041" : {"0": 1, "1": 1, " ": 2},
+            "341" : {"0": 1, "1": 1, " ": 2},
+            "363" : {"0": 1, "1": 1, " ": 2},
+            "382" : {"0": 1, "1": 1, " ": 2},
+            "384" : {"0": 1, "1": 1, " ": 2},
+            "388" : {"0": 1, "1": 1, " ": 2},
+            "490" : [ "1", "0" ],
+            "541" : {"0": 1, "1": 1, " ": 2},
+            "542" : {"0": 1, "1": 1, " ": 2},
+            "544" : {"0": 1, "1": 1, " ": 2},
+            "545" : {"0": 1, "1": 1, " ": 2},
+            "561" : {"0": 1, "1": 1, " ": 2},
+            "583" : {"0": 1, "1": 1, " ": 2},
+            "588" : {"0": 1, "1": 1, " ": 2},
+            "650" : [ " ", "1", "2", "0" ]
+        },
+        "indicator2PreferredValues": {
+            "024" : {"0": 1, "1": 1, " ": 2},
+            "033" : {"0": 1, "1": 1, "2": 1, " ": 2},
+            "363" : {"0": 1, "1": 1, " ": 2},
+            "382" : {"0": 1, "1": 1, " ": 2},
+            "730" : [ "2", " " ]
+        },
+        "comment #4" : "Non-filing indicators do not prevent field merge (their support is hard-coded). They are mainly listed here as an example.",
+        "ignoreIndicator1" : ["130", "245", "490", "630", "650", "651", "655", "730", "740"],
+        "ignoreIndicator2" : ["017", "222", "240", "242", "243", "245", "830"],
+        "comment #5" : "If one indicator has value, and the other has not, it does not necessarily mean mismatch",
+        "tolerateBlankIndicator1": ["022", "037", "041", "046", "050", "055", "060", "070", "080", "260", "264"],
+        "tolerateBlankIndicator2": ["024", "033", "082"]
+    },
+
+    "addConfiguration" : {
+        "preprocessorDirectives" : [
+            {
+                "operation": "removeField",
+                "comment": "Bunch of tags we always drop from the base (for Muuntaja)",
+                "recordType": "base",
+                "fieldSpecification": {
+                    "tagPattern": "^(336|337|338|HLI)$"
+                }
+            },
+            {
+                "operation": "removeField",
+                "comment": "this should be done after field merge and before copy (could be merged, but not added)",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "240"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(130|240)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 041 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "041"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(041)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 260 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "260"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(260)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 264 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "264"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(264)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 300 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "300"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(300)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 310 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "310"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(310)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 321 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "321"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(321)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 335 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "335"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(335)$"
+                }
+            }
+
+        ]
+    },
+    "postprocessorDirectives" :
+        [
+            {
+                "operation": "removeField",
+                "skip": true,
+                "comment": "MET-113 (partial): delete 500 if better sister field exists",
+                "recordType": "base",
+                "fieldSpecification": {
+                    "tag": "500",
+                    "value": "500    ‡a ENNAKKOTIETO / KIRJAVÄLITYS.",
+                    "comment": "NB! value corresponds with fieldToString(field) output"
+                },
+                "requireField": {
+                    "tag": "500",
+                    "value": "500    ‡a TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS."
+                }
+            },
+            {
+                "operation": "removeField",
+                "skip": true,
+                "comment": "MET-113 (partial): delete 594 if better sister field exists",
+                "recordType": "base",
+                "fieldSpecification": {
+                    "tag": "594",
+                    "value": "594    ‡a ENNAKKOTIETO / KIRJAVÄLITYS ‡9 FENNI<KEEP>",
+                    "comment": "NB! value corresponds with fieldToString(field) output"
+                },
+                "requireField": {
+                    "tag": "594",
+                    "value": "594    ‡a TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS ‡9 FENNI<KEEP>"
+                }
+            }
+        ]
+    
+
+}
