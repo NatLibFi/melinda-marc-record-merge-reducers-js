@@ -1,6 +1,29 @@
 {
     "preprocessorDirectives" :
         [
+            {
+                "operation": "removeField",
+                "comment": "Bunch of tags we always drop from the source (semantic reason; holdings data etc)",
+                "comment2": "As per specs (except 852 was removed). Not sure whether this is a good idea.",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^(066|841|842|843|844|845|86[3-8]|876|877|878|HLI)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "recordType": "source",
+                "comment": "Remove 65X $g ENNAKKOTIETO fields from source if base has 65X without a $g ENNAKKOTIETO",
+                "fieldSpecification": {
+                    "tagPattern": "^(648|650|651|653|655)$",
+                    "subfieldFilters": [{"code": "g", "value": "ENNAKKOTIETO"}]
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(648|650|651|655)$",
+                    "subfieldFilters": [{"missingCode": "g"}]
+                }
+            },
 
             {
                 "operation": "removeSubfield",
@@ -101,18 +124,6 @@
         ],
     "mergeConfiguration" :
     {   
-        "preprocessorDirectives" :
-        [
-            {
-                "operation": "removeField",
-                "comment": "Bunch of tags we always drop from the base (for Muuntaja)",
-                "recordType": "base",
-                "fieldSpecification": {
-                    "tagPattern": "^(336|337|338|HLI)$"
-                }
-            }
-        ],
-
         "comment #1" : "Meaningless indicators (=indicators having but one legal value) are derived from melindaCustomMergeFields.",
         "comment #2" : "Meaningless indicators and non-filing indicators never prevent merge. (Hard-coded in mergableIndicator.js)",
         "comment #3" : "When merging, indicator preference has set defaults in mergeIndicators.js. However, these can be overridden here.",
@@ -153,14 +164,6 @@
         "preprocessorDirectives" : [
             {
                 "operation": "removeField",
-                "comment": "Bunch of tags we always drop from the base (for Muuntaja)",
-                "recordType": "base",
-                "fieldSpecification": {
-                    "tagPattern": "^(336|337|338|HLI)$"
-                }
-            },
-            {
-                "operation": "removeField",
                 "comment": "this should be done after field merge and before copy (could be merged, but not added)",
                 "recordType": "source",
                 "fieldSpecification": {
@@ -186,6 +189,7 @@
             {
                 "operation": "removeField",
                 "comment": "Remove 260 so that a repeatable field won't be copied from source if base already has one",
+                "comment2": "Handling of 26X fields has changed after this rule was added. Can we remove this? Maybe not, even though all tests pass...",
                 "recordType": "source",
                 "fieldSpecification": {
                     "tag": "260"
@@ -252,6 +256,44 @@
                 },
                 "requireBaseField": {
                     "tagPattern": "^(335)$"
+                }
+            },
+
+
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 336 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "336"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(336)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 337 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "337"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(337)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 338 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "338"
+                },
+                "requireBaseField": {
+                    "tagPattern": "^(338)$"
                 }
             }
 
