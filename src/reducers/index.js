@@ -15,6 +15,7 @@ import prepublicationPreprocessor from './preprocessPrepublication';
 import {default as fixRelatorTerms} from './fixRelatorTerms';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
+import {default as muuntajaMergeDataFields} from './muuntaja';
 import {default as postprocessSubfield6} from './postprocessSubfield6';
 import {default as metatietosanastoNormalizations} from './preprocessMetatietosanasto';
 import postprocessor from './postprocessor';
@@ -93,4 +94,12 @@ export const localReducers = [
   addDataFields(),
   postprocessSubfield6(), // Should this be part of generic postprocessor? Probably...
   postprocessor()
+];
+
+export const muuntajaReducers = [
+  genericPreprocessor(),
+  metatietosanastoNormalizations(),
+  muuntajaMergeDataFields(),
+  addDataFields(),
+  postprocessSubfield6()
 ];
