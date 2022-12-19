@@ -21,22 +21,23 @@ const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..'
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
-const debugData = debug.extend('data');
+//const debugData = debug.extend('data');
 
 const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
 
 // Should this load default configuration?
+//export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
 export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
-  debug(`ENTERING mergeField.js`);
+  nvdebug(`ENTERING mergeField.js`, debug);
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
   const activeTagPattern = getTagPattern(tagPattern, config);
 
-  debugData(JSON.stringify(baseRecord));
-  debugData(JSON.stringify(sourceRecord));
-  debug(`MERGE CONFIG: ${JSON.stringify(config)}`);
+  //debugData(JSON.stringify(baseRecord));
+  //debugData(JSON.stringify(sourceRecord));
+  nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debug);
 
   normalizeEncoding().fix(baseRecord);
   normalizeEncoding().fix(sourceRecord);
