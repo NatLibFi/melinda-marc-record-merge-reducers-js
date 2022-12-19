@@ -244,7 +244,7 @@ function operationRetag(record, fieldSpecification, newTag) {
   relevantFields.forEach(field => {
     resetCorrespondingField880(field, record, field.tag, newTag);
     field.tag = newTag; // eslint-disable-line functional/immutable-data
-
+    nvdebug(`Retagged field ${fieldToString(field)}`); //, debug);
   });
 }
 
@@ -276,6 +276,7 @@ export function filterOperation(base, source, operation) {
         nvdebug(' Required base field not found!');
         return;
       }
+      nvdebug(` Base field ${fieldToString(baseFields[0])}`);
     }
 
     /*
