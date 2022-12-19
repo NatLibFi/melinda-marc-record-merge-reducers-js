@@ -3,41 +3,19 @@
   "fields": [
     { "tag": "001", "value": "123456" },
     {
-      "tag": "336",
-      "ind1": " ",
-      "ind2": " ",
+      "tag": "336", "ind1": " ", "ind2": " ",
       "subfields": [
-        {
-          "code": "a",
-          "value": "teksti"
-        },
-        {
-          "code": "b",
-          "value": "txt"
-        },
-        {
-          "code": "2",
-          "value": "rdacontent"
-        }
+        { "code": "a", "value": "teksti" },
+        { "code": "b", "value": "txt" },
+        { "code": "2", "value": "rdacontent" }
       ]
     },
     {
-      "tag": "337",
-      "ind1": " ",
-      "ind2": " ",
+      "tag": "337", "ind1": " ", "ind2": " ",
       "subfields": [
-        {
-          "code": "a",
-          "value": "tietokonekäyttöinen"
-        },
-        {
-          "code": "b",
-          "value": "c"
-        },
-        {
-          "code": "2",
-          "value": "rdamedia"
-        }
+        { "code": "a", "value": "tietokonekäyttöinen" },
+        { "code": "b", "value": "c" },
+        { "code": "2", "value": "rdamedia" }
       ]
     },
     {
