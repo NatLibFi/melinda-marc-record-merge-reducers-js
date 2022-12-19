@@ -1,0 +1,4 @@
+{
+  "description":"Muuntaja: prefer source 1XX/7XX fields (but there are not so keep base's fields as is)",
+  "only": true
+}

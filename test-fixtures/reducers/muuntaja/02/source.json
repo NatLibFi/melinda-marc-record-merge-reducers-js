@@ -1,0 +1,19 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "666" },
+    {
+      "tag": "100", "ind1": "2", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Robo 100." }
+      ]
+    },
+    {
+      "tag": "700", "ind1": "2", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Bobo 700," },
+        { "code": "e", "value": "esittäjä." }
+      ]
+    }
+  ]
+}

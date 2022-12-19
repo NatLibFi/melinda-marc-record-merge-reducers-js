@@ -1,0 +1,33 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456" },
+    {
+      "tag": "100", "ind1": "2", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Robo 100," },
+        { "code": "e", "value": "säveltäjä." }
+      ]
+    },
+    {
+      "tag": "700", "ind1": "2", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Bobo 700," },
+        { "code": "e", "value": "esittäjä." }
+      ]
+    },
+    {
+      "tag": "700", "ind1": "2", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Robo 700." }
+      ]
+    },
+    {
+      "tag": "700", "ind1": "2", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Lobo 700," },
+        { "code": "e", "value": "esittäjä." }
+      ]
+    }
+  ]
+}
