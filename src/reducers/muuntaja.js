@@ -4,7 +4,7 @@ import {default as addDataFieldsProto} from './addField';
 import {nvdebug} from './utils';
 import fs from 'fs';
 import path from 'path';
-
+import {default as swapFieldsProto} from './swapAuthorFields';
 const muuntajaConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'muuntajaConfig.json'), 'utf8'));
 
 //import {sortAdjacentSubfields} from './sortSubfields';
@@ -21,8 +21,12 @@ export default (tagPattern = false, config = muuntajaConfig) => (base, source) =
   // Wrapper for mergeDatafields that uses muuntaja's config
   nvdebug(`ENTERING muuntajaMergeField.js using fake ${tagPattern}`, debug);
   nvdebug(`MUUNTAJA CONFIG: ${JSON.stringify(config)}`);
+
+  const swapAuthorFields = swapFieldsProto(false);
+  const val3 = swapAuthorFields(base, source);
+
   const mergeDataFields = mergeDataFieldsProto(tagPattern, config.mergeConfiguration); // base, source);
-  const val = mergeDataFields(base, source); // eslint-disable-line functional/immutable-data
+  const val = mergeDataFields(val3.base, val3.source); // eslint-disable-line functional/immutable-data
   const addDataFields = addDataFieldsProto(config.addConfiguration); // base, source);
   const val2 = addDataFields(val.base, val.source); // eslint-disable-line functional/immutable-data
   nvdebug(`PAST MERGE'N'ADD`);
