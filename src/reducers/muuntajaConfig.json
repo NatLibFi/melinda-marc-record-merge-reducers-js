@@ -71,35 +71,6 @@
             },
 
             {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "100"},
-                "comment": "NB! Retags should check corresponding 880 fields as well.",
-                "newTag": "700"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "110"},
-                "newTag": "710"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "111"},
-                "newTag": "711"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "130"},
-                "newTag": "730"
-            },
-
-            {
                 "operation": "removeField",
                 "recordType": "source",
                 "fieldSpecification": {
@@ -162,6 +133,47 @@
 
     "addConfiguration" : {
         "preprocessorDirectives" : [
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "100"},
+                "newTag": "700",
+                "requireBaseField": {
+                    "tagPattern": "^1..$"
+                }
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "110"},
+                "newTag": "710",
+                "requireBaseField": {
+                    "tagPattern": "^1..$"
+                }
+
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "111"},
+                "newTag": "711",
+                "requireBaseField": {
+                    "tagPattern": "^1..$"
+                }
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "130"},
+                "newTag": "730",
+                "requireBaseField": {
+                    "tagPattern": "^1..$"
+                }
+            },
+            
             {
                 "operation": "removeField",
                 "comment": "this should be done after field merge and before copy (could be merged, but not added)",
