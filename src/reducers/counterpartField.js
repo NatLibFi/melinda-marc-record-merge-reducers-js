@@ -14,7 +14,8 @@ import {valueCarriesMeaning} from './worldKnowledge';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
-const counterpartRegexps = {
+const counterpartRegexps = { // NB! tag is from source!
+  // Note that in the normal case, all source 1XX fields have been converted to 7XX fields.
   '100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
   '260': /^26[04]$/u, '264': /^26[04]$/u,
   '700': /^[17]00$/u, '710': /^[17]10$/u, '711': /^[17]11$/u, '730': /^[17]30$/u,
