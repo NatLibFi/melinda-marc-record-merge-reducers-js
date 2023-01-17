@@ -20,7 +20,7 @@ import {default as postprocessSubfield6} from './postprocessSubfield6';
 import {default as metatietosanastoNormalizations} from './preprocessMetatietosanasto';
 import postprocessor from './postprocessor';
 import {default as manufacturer260To264} from './transferManufacturerDataFrom260To264';
-
+import {default as removeDuplicatesFromSource} from './removeIdenticalDataFields';
 //import mainAndCorrespondingAddedEntry from './mainAndCorrespondingAddedEntry';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
@@ -80,6 +80,7 @@ export const localReducers = [
   metatietosanastoNormalizations(),
   prepublicationPreprocessor(),
   fixRelatorTerms(),
+  removeDuplicatesFromSource(), // handles $6 chains as well. Working on $8 chains
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
   manufacturer260To264(),
