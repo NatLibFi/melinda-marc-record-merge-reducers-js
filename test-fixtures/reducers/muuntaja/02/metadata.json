@@ -1,4 +1,3 @@
 {
-  "description":"Muuntaja: Prefer source 1XX/7XX fields over bases",
-  "only": true
+  "description":"Muuntaja: Prefer source 1XX/7XX fields over bases"
 }
