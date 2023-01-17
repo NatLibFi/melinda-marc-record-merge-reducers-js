@@ -1,12 +1,13 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldToString,*/ nvdebug} from './utils';
+import {subfieldGetIndex6} from './subfield6Utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
 
 
-const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
+//const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
 
 export default () => (base, source) => {
   // NV: Not actually sure why this is done...
@@ -22,12 +23,19 @@ export default () => (base, source) => {
 };
 
 function subfield6Index(subfield) {
+  const indexPart = subfieldGetIndex6(subfield);
+  if (indexPart === undefined) {
+    return 0;
+  }
+
+  /* // old version
   if (!subfield.value.match(sf6Regexp)) {
     return 0;
   }
-  const tailPart = subfield.value.substring(4, 6); // 4 is for "TAG-"
-  const result = parseInt(tailPart, 10);
-  debug(`SF6: ${subfield.value} => ${tailPart} => ${result}`);
+  const indexPart = subfield.value.substring(4, 6); //  4 is for "TAG-"
+  */
+  const result = parseInt(indexPart, 10);
+  debug(`SF6: ${subfield.value} => ${indexPart} => ${result}`);
   return result;
 }
 
