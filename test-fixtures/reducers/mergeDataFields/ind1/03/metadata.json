@@ -1,5 +1,5 @@
 {
-  "description":"Field 506 ind1 differs (nine permutations), values '0' and '1' are eqyually good, and '#' is worse.",
+  "description":"Field 506 ind1 differs (nine permutations), values '0' and '1' are equally good, and '#' is worse.",
   "config": {
     "ignoreIndicator1": [ "506" ],
     "indicator1PreferredValues": { "506" : {"0": 1, "1": 1, " ": 2} }
