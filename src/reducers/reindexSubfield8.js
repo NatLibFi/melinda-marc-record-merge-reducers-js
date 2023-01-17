@@ -14,12 +14,30 @@ export default () => (base, source) => {
   return {base, source: sourceRecord};
 };
 
+export function getSubfield8IndexAsString(subfield) {
+  if (subfield.code !== '8') {
+    return undefined;
+  }
+  const match = subfield.value.match(sf8Regexp);
+  if (!match || match.length === 0) {
+    return undefined;
+  }
+  return match[0];
+}
+
 function getSubfield8Index(subfield) {
+
+  /*
   const match = subfield.value.match(sf8Regexp);
   if (!match || match.length === 0) {
     return 0;
   }
-  return parseInt(match[0], 10);
+  */
+  const match = getSubfield8IndexAsString(subfield);
+  if (match === undefined) {
+    return 0;
+  }
+  return parseInt(match, 10);
 }
 
 function getMaxSubfield8(record) {
