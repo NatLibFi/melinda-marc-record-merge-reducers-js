@@ -1,13 +1,10 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldToString,*/ nvdebug} from './utils';
-import {subfieldGetIndex6} from './subfield6Utils';
+import {isValidSubfield6, subfieldGetIndex6} from './subfield6Utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
-
-
-//const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
 
 export default () => (base, source) => {
   // NV: Not actually sure why this is done...
@@ -28,14 +25,8 @@ function subfield6Index(subfield) {
     return 0;
   }
 
-  /* // old version
-  if (!subfield.value.match(sf6Regexp)) {
-    return 0;
-  }
-  const indexPart = subfield.value.substring(4, 6); //  4 is for "TAG-"
-  */
   const result = parseInt(indexPart, 10);
-  debug(`SF6: ${subfield.value} => ${indexPart} => ${result}`);
+  //nvdebug(`SF6: ${subfield.value} => ${indexPart} => ${result}`, debug);
   return result;
 }
 
@@ -46,11 +37,12 @@ function getMaxSubfield6(record) {
 
   function fieldSubfield6Index(field) {
     //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
-    const sf6s = field.subfields ? field.subfields.filter(subfield => subfield.code === '6') : [];
+    const sf6s = field.subfields ? field.subfields.filter(subfield => isValidSubfield6(subfield)) : [];
     if (sf6s.length === 0) {
       return 0;
     }
-    nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`);
+    // There should always be one, but here we check every subfield.
+    nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`, debug);
     const vals = sf6s.map(sf => subfield6Index(sf));
     return Math.max(...vals);
   }
@@ -62,7 +54,7 @@ export function reindexSubfield6s(record, baseMax = 0) {
     return record;
   }
 
-  nvdebug(`Maximun subfield $6 index is ${baseMax}`);
+  nvdebug(`Maximum subfield $6 index is ${baseMax}`, debug);
 
   record.fields.forEach(field => fieldUpdateSubfield6s(field, baseMax));
 
@@ -79,7 +71,7 @@ export function reindexSubfield6s(record, baseMax = 0) {
       const index = origIndex + max;
       const strindex = index < 10 ? `0${index}` : `${index}`;
       sf.value = sf.value.substring(0, 4) + strindex + sf.value.substring(6); // eslint-disable-line functional/immutable-data
-      nvdebug(`SF6 is now ${origIndex} + ${max} = ${index}`);
+      nvdebug(`SF6 is now ${origIndex} + ${max} = ${index}`, debug);
     }
   }
 }
