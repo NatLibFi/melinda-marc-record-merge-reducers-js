@@ -1,4 +1,5 @@
 import createDebugLogger from 'debug';
+import {getSubfield8IndexAsString} from './reindexSubfield8';
 import {fieldGetSubfield6Pair, isValidSubfield6} from './subfield6Utils';
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldToString,*/ fieldToString, nvdebug} from './utils';
@@ -7,6 +8,9 @@ import {/*fieldToString,*/ fieldToString, nvdebug} from './utils';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
 const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
+
+// const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
+
 
 export default () => (base, source) => {
   // NV: Not actually sure why this is done...
@@ -22,7 +26,7 @@ export default () => (base, source) => {
 
 function removeSharedDataFieldsFromSource(base, source) {
   removeSharedDatafieldsWithSubfield6FromSource(base, source);
-  //removeSharedDatafieldsWithSubfield8FromSource(base, source);
+  removeSharedDatafieldsWithSubfield8FromSource(base, source);
   removeCommonSharedDataFieldsFromSource(base, source);
 }
 
@@ -38,8 +42,7 @@ function isRelevantField8(field) {
   if (!field.subfields) {
     return false;
   }
-  const sf8s = field.subfields.filter(sf => sf.code === '8');
-  return sf8s.length === 1;
+  return field.subfields.some(sf => getSubfield8IndexAsString(sf) !== undefined);
 }
 
 function isRelevantCommonDataField(field) {
@@ -71,11 +74,44 @@ function fieldsToNormalizedString(fields) {
   return strings.join('\t__SEPARATOR__\t');
 }
 
-/*
+function recordGetAllSubfield8Indexes(record) {
+  /* eslint-disable */
+  let subfield8Values = [];
+  record.fields.forEach(field => {
+    if (!field.subfields) {
+      return;
+    }
+    field.subfields.forEach(sf => {
+      const index = getSubfield8IndexAsString(sf);
+      if (index !== undefined && !subfield8Values.includes(index)) {
+        nvdebug(`Add subfield \$8 ${index} to seen values list`);
+        subfield8Values.push(index);
+      }
+    });
+  });
+
+  return subfield8Values;
+  /* eslint-enable */
+}
+
 function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
+  const baseIndexesToInspect = recordGetAllSubfield8Indexes(base);
+  if (baseIndexesToInspect.length === 0) {
+    return;
+  }
+  const sourceIndexesToInspect = recordGetAllSubfield8Indexes(source);
+  if (sourceIndexesToInspect.length === 0) {
+    return;
+  }
+
+  // Steps:
+  // 1. for each baseIndex, gather fields + sort fields + convert to string (with anonymisation)
+  // 2. for each sourceIndex, gather fields + sort fields + convert to string (with anonymisation)
+  //    + match with base + remove if needed
+
+  //const baseFields8 = base.fields.filter(field => isRelevantField8(field)); // Does not get 880 fields
 
 }
-*/
 
 function removeSharedDatafieldsWithSubfield6FromSource(base, source) {
   const baseFields6 = base.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
