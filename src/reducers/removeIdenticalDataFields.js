@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {getSubfield8IndexAsString} from './reindexSubfield8';
+import {getSubfield8Index, getSubfield8Value, isValidSubfield8} from './reindexSubfield8';
 import {fieldGetSubfield6Pair, isValidSubfield6} from './subfield6Utils';
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldToString,*/ fieldToString, nvdebug} from './utils';
@@ -42,7 +42,7 @@ function isRelevantField8(field) {
   if (!field.subfields) {
     return false;
   }
-  return field.subfields.some(sf => getSubfield8IndexAsString(sf) !== undefined);
+  return field.subfields.some(sf => getSubfield8Value(sf) !== undefined);
 }
 
 function isRelevantCommonDataField(field) {
@@ -55,6 +55,10 @@ function fieldToNormalizedString(field) {
     if (isValidSubfield6(sf)) {
       // Replace index with XX:
       return `‡${sf.code} ${sf.value.substring(0, 3)}-XX`;
+    }
+    if (isValidSubfield8(sf)) {
+      const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
+      return `‡${sf.code} ${normVal}`;
     }
     return `‡${sf.code} ${sf.value}`;
   }
@@ -71,6 +75,7 @@ function fieldToNormalizedString(field) {
 
 function fieldsToNormalizedString(fields) {
   const strings = fields.map(field => fieldToNormalizedString(field));
+  strings.sort(); // eslint-disable-line functional/immutable-data
   return strings.join('\t__SEPARATOR__\t');
 }
 
@@ -82,9 +87,9 @@ function recordGetAllSubfield8Indexes(record) {
       return;
     }
     field.subfields.forEach(sf => {
-      const index = getSubfield8IndexAsString(sf);
-      if (index !== undefined && !subfield8Values.includes(index)) {
-        nvdebug(`Add subfield \$8 ${index} to seen values list`);
+      const index = getSubfield8Index(sf);
+      if (index > 0 && !subfield8Values.includes(index)) {
+        //nvdebug(`Add subfield \$8 ${index} to seen values list`, debug);
         subfield8Values.push(index);
       }
     });
@@ -94,23 +99,51 @@ function recordGetAllSubfield8Indexes(record) {
   /* eslint-enable */
 }
 
+function getFieldsWithSubfield8Index(record, index) {
+  return record.fields.filter(field => relevant4GFWS8I(field, index));
+
+  function relevant4GFWS8I(field, index) {
+    if (!field.subfields) {
+      return false;
+    }
+    return field.subfields.some(sf => index > 0 && getSubfield8Index(sf) === index);
+  }
+}
+
+
 function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
   const baseIndexesToInspect = recordGetAllSubfield8Indexes(base);
   if (baseIndexesToInspect.length === 0) {
     return;
   }
+
+  nvdebug(`base elements: ${baseIndexesToInspect.join(' -- ')}`, debug);
+
   const sourceIndexesToInspect = recordGetAllSubfield8Indexes(source);
   if (sourceIndexesToInspect.length === 0) {
     return;
   }
 
-  // Steps:
-  // 1. for each baseIndex, gather fields + sort fields + convert to string (with anonymisation)
-  // 2. for each sourceIndex, gather fields + sort fields + convert to string (with anonymisation)
-  //    + match with base + remove if needed
+  nvdebug(`source elements: ${sourceIndexesToInspect.join(' -- ')}`, debug);
 
-  //const baseFields8 = base.fields.filter(field => isRelevantField8(field)); // Does not get 880 fields
-
+  baseIndexesToInspect.forEach(baseIndex => {
+    const baseFields = getFieldsWithSubfield8Index(base, baseIndex);
+    const baseFieldsAsString = fieldsToNormalizedString(baseFields);
+    //nvdebug(`Results for BASE ${baseIndex}:`, debug);
+    //nvdebug(`${baseFieldsAsString}`, debug);
+    sourceIndexesToInspect.forEach(sourceIndex => {
+      const sourceFields = getFieldsWithSubfield8Index(source, sourceIndex);
+      const sourceFieldsAsString = fieldsToNormalizedString(sourceFields);
+      // If $8 source fields match with base fields, then remove them from source:
+      //nvdebug(`Compare BASE and SOURCE:`, debug);
+      //nvdebug(`${baseFieldsAsString} vs\n${sourceFieldsAsString}`, debug);
+      if (sourceFieldsAsString === baseFieldsAsString) {
+        //nvdebug(`Deletable subfield $8 group found: ${sourceFieldsAsString}`);
+        sourceFields.forEach(field => source.removeField(field));
+        return;
+      }
+    });
+  });
 }
 
 function removeSharedDatafieldsWithSubfield6FromSource(base, source) {
