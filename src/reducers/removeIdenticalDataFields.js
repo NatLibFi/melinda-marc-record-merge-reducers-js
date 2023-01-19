@@ -135,10 +135,10 @@ function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
       const sourceFields = getFieldsWithSubfield8Index(source, sourceIndex);
       const sourceFieldsAsString = fieldsToNormalizedString(sourceFields);
       // If $8 source fields match with base fields, then remove them from source:
-      //nvdebug(`Compare BASE and SOURCE:`, debug);
-      //nvdebug(`${baseFieldsAsString} vs\n${sourceFieldsAsString}`, debug);
+      nvdebug(`Compare BASE and SOURCE:`, debug);
+      nvdebug(`${baseFieldsAsString} vs\n${sourceFieldsAsString}`, debug);
       if (sourceFieldsAsString === baseFieldsAsString) {
-        //nvdebug(`Deletable subfield $8 group found: ${sourceFieldsAsString}`);
+        nvdebug(`Deletable subfield $8 group found: ${sourceFieldsAsString}`);
         sourceFields.forEach(field => source.removeField(field));
         return;
       }
