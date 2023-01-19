@@ -60,7 +60,10 @@ function getIsbn(record) {
   const subfields = fields.map(field => field.subfields.filter(sf => getIsbnRelevantSubfield(sf))).flat();
 
   if (subfields.length) {
-    return subfields[0].value;
+    // NB! The "recommendation" is that ISBN is returned without '-' hyphens.
+    // (I think removing them is a bir stupid, but let's go with the flow):
+    const isbnString = subfields[0].value.replace(/-/gu, '');
+    return isbnString;
   }
   return undefined;
 
