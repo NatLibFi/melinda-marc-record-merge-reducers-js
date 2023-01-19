@@ -39,7 +39,7 @@ function postprocessBaseRecord(base, source) {
 }
 
 
-function removeDeleteFields(record) {
+function removeDeletedFields(record) {
   // remove fields that are marked as deleted:
   record.fields = record.fields.filter(f => !f.deleted); // eslint-disable-line functional/immutable-data
 }
@@ -47,5 +47,5 @@ function removeDeleteFields(record) {
 
 export function postprocessRecords(base, source) {
   postprocessBaseRecord(base, source);
-  removeDeleteFields(source);
+  removeDeletedFields(source);
 }
