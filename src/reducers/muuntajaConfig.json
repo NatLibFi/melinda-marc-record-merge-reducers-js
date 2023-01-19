@@ -1,6 +1,5 @@
 {
-    "preprocessorDirectives" :
-        [
+    "preprocessorDirectives" : [
             {
                 "operation": "removeSubfield",
                 "comment": "remove 24X subfield $h as it may contain data about the manisfestation (that changes in Muuntaja)",
@@ -22,15 +21,16 @@
 
             {
                 "operation": "removeField",
-                "comment": "Bunch of tags we always drop from the Muuntaja source",
+                "comment": "Bunch of tags never copy to base, and which don't contain information we might need later on",
                 "comment2": "NB! Don't remove identifiers (020, 035...) yet, as they can be used to create field 776",
                 "comment3": "Some 7[678]X field",
                 "comment4": "field 960 might be good to keep sometimes, but this is semantics",
                 "comment5": "field 974 with $a KV should be kept as well. Requires a separate rule...",
                 "comment6": "regexp is still incomplete!",
+                "comment7": "Too early to remove 338 as it serves a the source of 776$i. Keeping 338...",
                 "recordType": "source",
                 "fieldSpecification": {
-                    "tagPattern": "^(2[5-9].|3[0123][0-9]|4..|53.|8[0-7]|9[04][1-9]|91[^01]|9[235689][0-9]|97[0-35-9]|CAT|LOW|RES|SID)$"
+                    "tagPattern": "^(2[5-9].|3[012][0-9]|33[0-79]|4..|53.|8[0-7]|9[04][1-9]|91[^01]|9[235689][0-9]|97[0-35-9]|CAT|LOW|RES|SID)$"
                 }
             },
 
@@ -119,6 +119,16 @@
         ],
     "mergeConfiguration" :
     {   
+        "preprocessorDirectives": [
+            {
+                "operation": "removeField",
+                "comment": "Muuntaja specific: bunch of tags never merge nor copy to base, but which were needed in the 776 creation",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^(015|020|022|338)$"
+                }
+            }
+        ],
         "comment #1" : "Meaningless indicators (=indicators having but one legal value) are derived from melindaCustomMergeFields.",
         "comment #2" : "Meaningless indicators and non-filing indicators never prevent merge. (Hard-coded in mergableIndicator.js)",
         "comment #3" : "When merging, indicator preference has set defaults in mergeIndicators.js. However, these can be overridden here.",
