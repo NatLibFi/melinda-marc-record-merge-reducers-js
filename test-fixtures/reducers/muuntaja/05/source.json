@@ -9,11 +9,11 @@
       "subfields": [
         {
           "code": "a",
-          "value": "978-952-7157-54-1"
+          "value": "1111111"
         },
         {
           "code": "q",
-          "value": "validi"
+          "value": "laiton"
         }
       ]
     },
@@ -24,11 +24,11 @@
       "subfields": [
         {
           "code": "a",
-          "value": "1111111"
+          "value": "978-952-7157-54-1"
         },
         {
           "code": "q",
-          "value": "laiton"
+          "value": "validi"
         }
       ]
     }
