@@ -5,6 +5,7 @@ import {nvdebug} from './utils';
 import fs from 'fs';
 import path from 'path';
 import {default as swapFieldsProto} from './swapAuthorFields';
+import {default as createField776Proto} from './muuntaja776';
 import {filterOperations} from './processFilter';
 const muuntajaConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'muuntajaConfig.json'), 'utf8'));
 
@@ -25,8 +26,11 @@ export default (tagPattern = false, config = muuntajaConfig) => (base, source) =
 
   filterOperations(base, source, config.preprocessorDirectives);
 
+  const createField776 = createField776Proto();
+  const val4 = createField776(base, source);
+
   const swapAuthorFields = swapFieldsProto(false); // Create a reducer
-  const val3 = swapAuthorFields(base, source);
+  const val3 = swapAuthorFields(val4.base, val4.source);
 
 
   const mergeDataFields = mergeDataFieldsProto(tagPattern, config.mergeConfiguration);
