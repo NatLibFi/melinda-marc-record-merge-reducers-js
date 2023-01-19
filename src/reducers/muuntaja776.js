@@ -1,3 +1,7 @@
+// NB! The logic of this reducer is different from others. It derives a field 776, it does not merge it.
+// NB #2! This will delete fields 015, 020, 022 and 338 from source
+// NB #2.1! We could (should?) do this in muuntajaConfig.json when preprocessing merge...
+
 //import createDebugLogger from 'debug';
 import ISBN from 'isbn3';
 
@@ -21,7 +25,7 @@ export default () => (base, source) => {
 };
 
 function removeIdentifierFields(record) {
-  record.fields = record.fields.filter(f => !['015', '020', '022'].includes(f.tag)); // eslint-disable-line functional/immutable-data
+  record.fields = record.fields.filter(f => !['015', '020', '022', '338'].includes(f.tag)); // eslint-disable-line functional/immutable-data
 }
 
 function createIdentiferSubfield(x, z, o) {
@@ -50,8 +54,28 @@ function createSubfieldForField776(record) {
 
 
   // Add $i creation!
+  const i = getRelationshipInformation(record);
+  if (i === undefined) {
+    return [idenfifierSubfield];
+  }
+  return [{'code': 'i', 'value': i}, idenfifierSubfield];
+}
 
-  return [idenfifierSubfield];
+function getRelationshipInformation(record) {
+  const field338 = record.get(/^338$/u);
+  if (field338.length === 1) {
+    // There should be only one $b...
+    const b = field338[0].subfields.find(sf => sf.code === 'b');
+    if (b) {
+      if (b.value === 'cr') {
+        return 'Verkkoaineisto:';
+      }
+      if (b.value === 'nc') {
+        return 'Painettu:';
+      }
+    }
+  }
+  return undefined;
 }
 
 function getIsbn(record) {
@@ -78,18 +102,34 @@ function getIsbn(record) {
 
 function getIssn(record) {
   const fields = record.get(/^022$/u);
-  if (fields.length > 0) {
-    return undefined;
+  const subfields = fields.map(field => field.subfields.filter(sf => getIssnRelevantSubfield(sf))).flat();
+
+  if (subfields.length) {
+    return subfields[0].value;
   }
   return undefined;
+
+  function getIssnRelevantSubfield(subfield) {
+    if (subfield.code !== 'a') {
+      return false;
+    }
+    // I think there's a proper ISSN validator by P.T. under @natlibfi, but I'm too lazy to learn it now
+    return subfield.value.match(/^[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9Xx]$/u);
+  }
 }
 
 function getOtherIdentifier(record) {
   const fields = record.get(/^015$/u);
-  if (fields.length > 0) {
-    return undefined;
+  const subfields = fields.map(field => field.subfields.filter(sf => isRelevantOtherIdentifier(field.tag, sf))).flat();
+  if (subfields.length > 0) {
+    return subfields[0].value; // might need some processing...
   }
   return undefined;
+
+  function isRelevantOtherIdentifier(tag, sf) {
+    // Currently this is pretty stupid...
+    return tag && sf.code === 'a';
+  }
 }
 
 
