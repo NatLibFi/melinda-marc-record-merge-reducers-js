@@ -2,12 +2,35 @@
     "preprocessorDirectives" :
         [
             {
-                "operation": "removeField",
-                "comment": "Bunch of tags we always drop from the source (semantic reason; holdings data etc)",
-                "comment2": "As per specs (except 852 was removed). Not sure whether this is a good idea.",
+                "operation": "removeSubfield",
+                "comment": "remove 24X subfield $h as it may contain data about the manisfestation (that changes in Muuntaja)",
                 "recordType": "source",
                 "fieldSpecification": {
-                    "tagPattern": "^(066|841|842|843|844|845|86[3-8]|876|877|878|HLI)$"
+                    "tagPattern": "^(?:24[0-9])$"
+                },
+                "deletableSubfieldFilter": {"code": "h"}
+            },
+            {
+                "operation": "removeSubfield",
+                "comment": "remove 24X $k subfields as they may contain data about the manisfestation (that changes in Muuntaja)",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^(?:24[0-9])$"
+                },
+                "deletableSubfieldFilter": {"code": "k"}
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Bunch of tags we always drop from the Muuntaja source",
+                "comment2": "NB! Don't remove identifiers (020, 035...) yet, as they can be used to create field 776",
+                "comment3": "Some 7[678]X field",
+                "comment4": "field 960 might be good to keep sometimes, but this is semantics",
+                "comment5": "field 974 with $a KV should be kept as well. Requires a separate rule...",
+                "comment6": "regexp is still incomplete!",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^(2[5-9].|3[0123][0-9]|8[0-7]|9[04][1-9]|91[^01]|9[235689][0-9]|97[0-35-9]|CAT|LOW|SID)$"
                 }
             },
 
@@ -41,11 +64,12 @@
                 "comment": "remove price information",
                 "recordType": "source",
                 "fieldSpecification": {
-                    "tagPattern": "^(?:020|024?)$",
+                    "tagPattern": "^(?:020|024)$",
                     "subfieldFilters": [{"code": "c"}]
                 },
                 "deletableSubfieldFilter": {"code": "c"}
             },
+
 
             {
                 "operation": "renameSubfield",
@@ -225,13 +249,10 @@
 
             {
                 "operation": "removeField",
-                "comment": "Remove 300 so that a repeatable field won't be copied from source if base already has one",
+                "comment": "Remove fields 300-339 from source",
                 "recordType": "source",
                 "fieldSpecification": {
-                    "tag": "300"
-                },
-                "requireBaseField": {
-                    "tagPattern": "^(300)$"
+                    "tag": "(3[0123][0-9])"
                 }
             },
 
@@ -269,46 +290,7 @@
                 "requireBaseField": {
                     "tagPattern": "^(335)$"
                 }
-            },
-
-
-
-            {
-                "operation": "removeField",
-                "comment": "Remove 336 so that a repeatable field won't be copied from source if base already has one",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tag": "336"
-                },
-                "requireBaseField": {
-                    "tagPattern": "^(336)$"
-                }
-            },
-
-            {
-                "operation": "removeField",
-                "comment": "Remove 337 so that a repeatable field won't be copied from source if base already has one",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tag": "337"
-                },
-                "requireBaseField": {
-                    "tagPattern": "^(337)$"
-                }
-            },
-
-            {
-                "operation": "removeField",
-                "comment": "Remove 338 so that a repeatable field won't be copied from source if base already has one",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tag": "338"
-                },
-                "requireBaseField": {
-                    "tagPattern": "^(338)$"
-                }
             }
-
         ]
     },
     "postprocessorDirectives" :
