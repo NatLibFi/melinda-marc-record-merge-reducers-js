@@ -1,4 +1,3 @@
 {
-  "description":"Strip $h and $k from 24X. (Contains other fields as well)",
-  "only": true
+  "description":"Strip $h and $k from 24X. (Contains other fields as well)"
 }
