@@ -1,0 +1,38 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456"},
+    {
+      "tag": "245", "ind1": " ", "ind2": " ", "subfields": [
+        {"code": "a", "value": "Otsikko /"},
+        {"code": "c", "value": "Tekijä."}
+    ]},
+    {
+      "tag": "336", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "teksti" },
+        { "code": "b", "value": "txt" },
+        { "code": "2", "value": "rdacontent" }
+      ]
+    },
+    {
+      "tag": "337", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "tietokonekäyttöinen" },
+        { "code": "b", "value": "c" },
+        { "code": "2", "value": "rdamedia" }
+      ]
+    },
+    {
+      "tag": "338", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "verkkoaineisto" },
+        { "code": "b", "value": "cr" },
+        { "code": "2", "value": "rdacarrier" }
+      ]
+    },
+    {
+      "tag": "500", "ind1": " ", "ind2": " ", "subfields": [{"code": "a", "value": "testi"}]
+    }
+  ]
+}
