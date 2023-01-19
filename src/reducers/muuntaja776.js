@@ -25,11 +25,11 @@ function removeIdentifierFields(record) {
 }
 
 function createIdentiferSubfield(x, z, o) {
-  if (x) {
-    return {'code': 'x', 'value': x};
-  }
   if (z) {
     return {'code': 'z', 'value': z};
+  }
+  if (x) {
+    return {'code': 'x', 'value': x};
   }
   if (o) {
     return {'code': 'o', 'value': o};
@@ -39,8 +39,8 @@ function createIdentiferSubfield(x, z, o) {
 
 function createSubfieldForField776(record) {
   // The variable names below are based on field 776 subfield codes
-  const x = getIsbn(record);
-  const z = x ? undefined : getIssn(record);
+  const z = getIsbn(record);
+  const x = z ? undefined : getIssn(record);
   const o = x || z ? undefined : getOtherIdentifier(record);
 
   const idenfifierSubfield = createIdentiferSubfield(x, z, o);
