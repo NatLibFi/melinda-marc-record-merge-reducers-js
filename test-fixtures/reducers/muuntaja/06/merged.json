@@ -1,0 +1,18 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "022", "ind1": " ", "ind2": " ",
+      "subfields": [
+        {"code": "a", "value": "1234-5678"},
+        {"code": "q", "value": "basen oma"}
+      ]
+    },
+    {
+      "tag": "776", "ind1": "0", "ind2": "8",
+      "subfields": [
+        { "code": "i", "value": "Painettu:"},
+        { "code": "x", "value": "0783-3660" }
+      ]
+    }
+  ]
+}
