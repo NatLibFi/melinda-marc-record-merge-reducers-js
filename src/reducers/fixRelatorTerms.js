@@ -90,7 +90,7 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
 
 
 export function isRelatorField(field) {
-  // List might be incomplete!
+  // Tag list might be incomplete!
   return field.tag.match(/^(?:100|110|600|610|700|710|720|800|810)$/u);
 }
 
