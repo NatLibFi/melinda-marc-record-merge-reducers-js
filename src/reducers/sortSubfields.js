@@ -21,7 +21,7 @@ const subfieldSortOrder = [
   {'tag': '245', 'sortOrder': ['6', 'a', 'b', 'n', 'p', 'k', 'f', 'c']},
   {'tag': '246', 'sortOrder': ['i', 'a', 'n', 'p']},
   {'tag': '382', 'sortOrder': ['a']},
-  {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a']},
+  {'tag': '385', 'sortOrder': ['8', 'm', 'n', 'a', '2', '0']},
   {'tag': '386', 'sortOrder': ['8', 'm', 'n', 'a']},
   {'tag': '490', 'sortOrder': ['a', 'x', 'y', 'v', 'l']},
   {'tag': '505', 'sortOrder': ['a']},
