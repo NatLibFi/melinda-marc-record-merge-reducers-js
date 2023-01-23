@@ -1,5 +1,5 @@
 {
   "description":"MET-183: Normalize 700$e relator abbreviations",
   "comment": "note that $e subfiel order might be suboptimal.",
-  "only": true
+  "only": false
 }
