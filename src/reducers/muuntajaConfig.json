@@ -1,5 +1,16 @@
 {
     "preprocessorDirectives" : [
+        {
+            "operation": "swapFields",
+            "comment": "Experimental. If source has 1XX or corresponding 7XX fields swap 'em fields from base and source",
+            "comment2": "NB! recordType is meaningless for swapFields!",
+            "recordType": "base",
+            "fieldSpecification": {"tagPattern": "^(?:100|110|111|130|700|710|711|730)$"},
+            "requireSourceField": {
+                "tagPattern": "^(?:100|110|111|130|700|710|711|730)$"
+            }
+        },
+
             {
                 "operation": "removeSubfield",
                 "comment": "remove 24X subfield $h as it may contain data about the manisfestation (that changes in Muuntaja)",
