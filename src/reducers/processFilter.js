@@ -1,13 +1,14 @@
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
+
 import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug} from './utils.js';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
 
 // fieldSpecs
@@ -177,8 +178,15 @@ function logRecordType(recordType) {
   nvdebug(`ERROR: record type ${recordType} is not defined!`);
 }
 
-function getTargetRecordsForOperation(base, source, recordType) {
+function getTargetRecordsForOperation(base, source, operation) {
+  const {recordType} = operation;
   logRecordType(recordType);
+
+  // This is hard-coded exception/hack.
+  // Can't use 'both' as swap rules might feed each other.
+  if (operation.operation === 'swapFields') {
+    return [base];
+  }
 
   if (recordType === 'base') {
     return [base];
@@ -248,12 +256,26 @@ function operationRetag(record, fieldSpecification, newTag) {
   });
 }
 
+function operationSwapFields(record, otherRecord, fieldSpecification) {
+  const relevantFields1 = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
+  const relevantFields2 = getSpecifiedFieldsAndFilterThem(otherRecord, fieldSpecification);
+
+  relevantFields1.forEach(field => record.removeField(field));
+  relevantFields2.forEach(field => otherRecord.removeField(field));
+
+  relevantFields1.forEach(field => otherRecord.insertField(field));
+  relevantFields2.forEach(field => record.insertField(field));
+
+  nvdebug(`Moved ${relevantFields1.length} field(s) from base to source`, debug);
+  nvdebug(`Moved ${relevantFields2.length} field(s) from source to base`, debug);
+}
+
 export function filterOperation(base, source, operation) {
   if (operation.skip) {
     // Log?
     return;
   }
-  const targetRecords = getTargetRecordsForOperation(base, source, operation.recordType);
+  const targetRecords = getTargetRecordsForOperation(base, source, operation);
 
   if (targetRecords.length === 0) {
     nvdebug('Failed to get the target record');
@@ -286,10 +308,11 @@ export function filterOperation(base, source, operation) {
     }
     */
 
-    performActualOperation(targetRecord, operation);
+    const otherRecord = operation.operation === 'swapFields' ? source : undefined;
+    performActualOperation(targetRecord, operation, otherRecord);
   }
 
-  function performActualOperation(targetRecord, operation) {
+  function performActualOperation(targetRecord, operation, otherRecord) {
     if (!operation.operation) {
       nvdebug('No operation defined');
       return;
@@ -312,7 +335,11 @@ export function filterOperation(base, source, operation) {
       operationRetag(targetRecord, operation.fieldSpecification, operation.newTag);
       return;
     }
-    nvdebug(`Illegal operation: '${operation}.operation`);
+    if (operation.operation === 'swapFields') {
+      operationSwapFields(targetRecord, otherRecord, operation.fieldSpecification);
+      return;
+    }
+    nvdebug(`Illegal/unknown operation: '${operation.operation}' skipped`);
   }
 }
 
