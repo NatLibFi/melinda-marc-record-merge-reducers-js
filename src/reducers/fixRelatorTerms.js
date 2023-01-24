@@ -13,22 +13,23 @@ export default () => (base, source) => {
 
 // Partial source: https://marc21.kansalliskirjasto.fi/funktiot_koodit.htm
 // https://wiki.helsinki.fi/display/MARC21svenska/Funktions-+och+relationskoder+-+alfabetiskt+efter+funktion
-
+// New, better source: https://id.kb.se/find?q=relator&_sort=_sortKeyByLang.en
 
 const relatorTerms = [
   {'code': 'arr', 'eng': 'arranger', 'fin': 'sovittaja', 'swe': 'arrangör av musikalisk komposition'},
+  {'code': 'art', 'eng': 'artist', 'fin': 'taiteilija', 'swe': 'konstnär'},
   {'code': 'aui', 'eng': 'author of introduction', 'fin': 'esipuheen tekijä'},
   {'code': 'aut', 'eng': 'author', 'fin': 'kirjoittaja', 'swe': 'författare'},
   {'code': 'cmp', 'eng': 'composer', 'fin': 'säveltäjä', 'swe': 'kompositör'},
   {'code': 'drt', 'eng': 'director', 'fin': 'ohjaaja', 'swe': 'regissör'},
-  {'code': 'edt', 'eng': 'editor', 'fin': 'toimittaja'},
+  {'code': 'edt', 'eng': 'editor', 'fin': 'toimittaja', 'swe': 'redaktör'},
   {'code': 'ill', 'eng': 'illustrator', 'fin': 'kuvittaja', 'swe': 'illustratör'},
-  {'code': 'lyr', 'eng': 'lyricist', 'fin': 'sanoittaja'},
-  {'code': 'nrt', 'eng': 'narrator', 'fin': 'kertoja'},
-  {'code': 'pbl', 'eng': 'publisher', 'fin': 'julkaisuja'},
+  {'code': 'lyr', 'eng': 'lyricist', 'fin': 'sanoittaja', 'swe': 'sångtext'},
+  {'code': 'nrt', 'eng': 'narrator', 'fin': 'kertoja', 'swe': 'berättare'}, // berättare/inläsare
+  {'code': 'pbl', 'eng': 'publisher', 'fin': 'julkaisija', 'swe': 'utgivare'},
   {'code': 'pht', 'eng': 'photographer', 'fin': 'valokuvaaja', 'swe': 'fotograf'},
-  {'code': 'prf', 'eng': 'performer', 'fin': 'esittäjä'},
-  {'code': 'pro', 'eng': 'producer', 'fin': 'tuottaja'},
+  {'code': 'prf', 'eng': 'performer', 'fin': 'esittäjä', 'swe': 'framförande'},
+  {'code': 'pro', 'eng': 'producer', 'fin': 'tuottaja', 'swe': 'producent'},
   {'code': 'trl', 'eng': 'translator', 'fin': 'kääntäjä', 'swe': 'översättare'}
 ];
 
@@ -122,10 +123,13 @@ function translateRelatorTerm(originalTerm, fromLanguage, toLanguage) {
   }
   // originalTerm is supposed to be normal version (abbrs have been expanded), possibly with punctuation
   const term = originalTerm.replace(/[,.]$/u, '');
+  nvdebug(`Try to translate '${term}'`);
   const [candRow] = relatorTerms.filter(row => fromLanguage in row && toLanguage in row && row[fromLanguage] === term);
   if (candRow) {
     const punc = term === originalTerm ? '' : originalTerm.slice(-1);
-    return `${candRow[toLanguage]}${punc}`;
+    const translation = `${candRow[toLanguage]}${punc}`;
+    nvdebug(`Translate relator term: ${originalTerm} => ${translation}`);
+    return translation;
   }
   return originalTerm;
 }
