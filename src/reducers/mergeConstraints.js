@@ -3,7 +3,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
-// "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined. ()
+// "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined.
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 const mergeConstraints = [
@@ -232,6 +232,7 @@ const mergeConstraints = [
   {'tag': '800', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'},
   {'tag': '810', 'required': 'a', 'paired': 'bt', 'key': 'abcdfhlnoprstux'},
   {'tag': '811', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'},
+  {'tag': '830', 'required': 'a', 'key': 'adfloprtvwxx'},
   {'tag': '840', 'required': 'a'},
   {'tag': '841', 'required': 'a'},
   {'tag': '842', 'required': 'a'},
