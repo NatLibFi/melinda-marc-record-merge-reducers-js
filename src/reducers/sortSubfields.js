@@ -14,7 +14,7 @@ const subfieldSortOrder = [
   {'tag': '041', 'sortOrder': ['8', '6', 'a', 'd', 'j', 'p', 'h', 'e', 'g', 'm']}, // guesswork
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
-  {'tag': '110', 'sortOrder': ['a', 'b', 'n', 'e']},
+  {'tag': '110', 'sortOrder': ['6', 'a', 'b', 'n', 'e', '0', '5', '9']},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
