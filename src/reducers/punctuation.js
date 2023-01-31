@@ -67,11 +67,21 @@ const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#01459', context: /^[IVX
 const cleanLegalX00Dot = {'code': 'abcde', 'followedBy': 'tu#01459', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 
 const legalX00punc = [cleanLegalX00Comma, cleanLegalX00bDot, cleanLegalX00Dot];
+
+const cleanLegalX10Comma = {'name': 'X10comma', 'code': 'abe', 'followedBy': 'e', 'content': /.,$/u, 'remove': /,$/u};
+const cleanLegalX10Dot = {'name': 'X10dot', 'code': 'ab', 'followedBy': 'b#', 'context': /.\.$/u, 'remove': /\.$/u};
+
+const legalX10punc = [cleanLegalX10Comma, cleanLegalX10Dot];
+
 const cleanValidPunctuationRules = {
   '100': legalX00punc,
+  '110': legalX10punc,
   '600': legalX00punc,
+  '610': legalX10punc,
   '700': legalX00punc,
+  '710': legalX10punc,
   '800': legalX00punc,
+  '810': legalX10punc,
   '245': [
     {'name': 'A:B', 'code': 'a', 'followedBy': 'b', 'remove': / [:;=]$/u},
     {'name': 'AB:K', 'code': 'ab', 'followedBy': 'k', 'remove': / :$/u},
@@ -102,7 +112,6 @@ const cleanValidPunctuationRules = {
     {'code': 'axy', 'followedBy': 'xy', 'remove': /,$/u},
     {'code': 'axy', 'followedBy': 'v', 'remove': / ;$/u}
   ],
-  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'remove': field773NeedsPunc}]
 };
 
@@ -199,7 +208,7 @@ function checkRule(rule, subfield1, subfield2) {
     return false;
   }
 
-  nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`, debug);
+  nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : '#'}`, debug);
   return true;
 }
 
