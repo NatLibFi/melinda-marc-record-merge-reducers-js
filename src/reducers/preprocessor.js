@@ -3,8 +3,11 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import {nvdebug, subfieldToString} from './utils.js';
 import {getCatalogingLanguage, translateRecord} from './fixRelatorTerms.js';
 import {filterOperations} from './processFilter.js';
+import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 import fs from 'fs';
 import path from 'path';
+import {fieldTrimSubfieldValues} from './normalize.js';
+import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
@@ -33,8 +36,19 @@ function normalizeField505Separator(record) {
   }
 }
 
+function trimRecord(record) {
+  record.fields?.forEach(f => fieldTrimSubfieldValues(f));
+}
 
 export default (config = defaultConfig) => (base, source) => {
+
+  normalizeEncoding().fix(base);
+  normalizeEncoding().fix(source);
+
+  trimRecord(base);
+  trimRecord(source);
+
+
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
 
   //const clonedSource = clone(source); // MRA-72
@@ -49,6 +63,9 @@ export default (config = defaultConfig) => (base, source) => {
   normalizeField505Separator(source2);
 
   translateRecord(source2, getCatalogingLanguage(base)); // map stuff as per base's 040$b
+
+  recordRemoveDuplicateSubfieldsFromFields(source2);
+  recordRemoveDuplicateSubfieldsFromFields(base);
 
   const result = {base, source: source2};
   //nvdebug(JSON.stringify(result));
