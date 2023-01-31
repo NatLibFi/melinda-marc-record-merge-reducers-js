@@ -1,4 +1,5 @@
 {
-  "description":"Keep duplicate 856 from base, but don't add to it",
-  "comment": "from JO via Slack 24.1.2023"
+  "description":"Keep duplicate field 856 from base, but don't add to it. Merge subfields.",
+  "comment": "from JO via Slack 24.1.2023",
+  "only": false
 }
