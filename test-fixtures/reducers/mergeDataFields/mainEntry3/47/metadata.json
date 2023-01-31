@@ -1,3 +1,6 @@
 {
-  "description":"47: merge fields despite of name mismatch, $0 will do"
+  "description":"47: don't merge fields ($0 match, but name differs)",
+  "comment": "$0 is no longer enough for acceptance.",
+  "skip": false,
+  "only": false
 }
