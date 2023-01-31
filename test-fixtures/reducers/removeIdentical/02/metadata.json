@@ -1,3 +1,3 @@
 {
-  "description":"Remove normal ($6-less and $8-less) shared fields from source"
+  "description":"Remove $6-linked duplicate fields from source"
 }
