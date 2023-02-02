@@ -1,3 +1,5 @@
 {
-  "description":"25: Name mismatch. However, merge 100 fields based on base $0 (FIN11)ID and source $0 (FI-ASTERI-N)ID"
+  "description":"25: Name mismatch. However, merge 100 fields based on base $0 (FIN11)ID and source $0 (FI-ASTERI-N)ID",
+  "skip": true,
+  "comment": "We don't dare to trust $0 alone. Caretaker will/should handle these!"
 }

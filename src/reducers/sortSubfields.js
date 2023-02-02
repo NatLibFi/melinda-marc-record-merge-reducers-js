@@ -14,7 +14,7 @@ const subfieldSortOrder = [
   {'tag': '041', 'sortOrder': ['8', '6', 'a', 'd', 'j', 'p', 'h', 'e', 'g', 'm']}, // guesswork
   {'tag': '048', 'sortOrder': ['8', '6', 'b', 'a']},
   {'tag': '100', 'sortOrder': ['6', 'a', 'b', 'c', 'q', 'd', 'e', 'j', 't', 'u', 'l', 'f', '0', '5', '9']}, // don't do $g
-  {'tag': '110', 'sortOrder': ['a', 'b', 'n']},
+  {'tag': '110', 'sortOrder': ['6', 'a', 'b', 'n', 'e', '0', '5', '9']},
   {'tag': '111', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '130', 'sortOrder': ['a', 'n', 'p', 'k', 'l']},
   {'tag': '240', 'sortOrder': ['a', 'm', 'n', 'p', 's', 'l', '2', '0', '1', '5', '9']},
@@ -30,7 +30,7 @@ const subfieldSortOrder = [
   {'tag': '610', 'sortOrder': ['6', 'a', 'b', 'n']},
   {'tag': '611', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '700', 'sortOrder': ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
-  {'tag': '710', 'sortOrder': ['a', 'b', 'n']},
+  {'tag': '710', 'sortOrder': ['a', 'b', 'n', 'e']},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '773', 'sortOrder': ['7', 'w', 'a', 's', 't', 'd', 'm', 'h', 'g', 'k', 'o', 'x', 'z', 'g', 'q']},
   {'tag': '776', 'sortOrder': ['i', 'a']},
