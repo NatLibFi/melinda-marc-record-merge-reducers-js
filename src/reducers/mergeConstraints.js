@@ -183,10 +183,10 @@ const mergeConstraints = [
   {'tag': '597', 'required': ''},
   {'tag': '598', 'required': ''},
   {'tag': '599', 'required': ''},
-  {'tag': '600', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'}, // aped from 700
-  {'tag': '610', 'required': 'a', 'paired': 'bt', 'key': 'abcdgntu'}, // aped from 710
-  {'tag': '611', 'required': 'a', 'paired': 't', 'key': 'acdgntu'}, // aped from 711
-  {'tag': '630', 'required': 'a', 'key': 'adfhklmnoprsxvg'}, // aped from 730
+  {'tag': '600', 'required': 'a', 'paired': 'txyz', 'key': 'abcjqtu'}, // aped from 700
+  {'tag': '610', 'required': 'a', 'paired': 'btxyz', 'key': 'abcdgntu'}, // aped from 710
+  {'tag': '611', 'required': 'a', 'paired': 'txyz', 'key': 'acdgntu'}, // aped from 711
+  {'tag': '630', 'required': 'a', 'key': 'adfhklmnoprsvgxyz'}, // aped from 730
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '647', 'required': 'a', 'key': 'acdgvxyz02'},
   {'tag': '648', 'required': 'a', 'key': 'avxyz02'},
