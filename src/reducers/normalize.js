@@ -172,8 +172,8 @@ function fieldSpecificHacks(field) {
   hack490SubfieldA(field);
 }
 
-function fieldTrimSubfieldValues(field) {
-  field.subfields.forEach((sf) => {
+export function fieldTrimSubfieldValues(field) {
+  field.subfields?.forEach((sf) => {
     sf.value = sf.value.replace(/^[ \t\n]+/u, ''); // eslint-disable-line functional/immutable-data
     sf.value = sf.value.replace(/[ \t\n]+$/u, ''); // eslint-disable-line functional/immutable-data
     sf.value = sf.value.replace(/[ \t\n]+/gu, ' '); // eslint-disable-line functional/immutable-data

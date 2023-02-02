@@ -27,14 +27,18 @@ const cleanRHS = {'code': 'abcd', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-
 const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#01459', 'context': /[0-9]-[,.]$/u, 'remove': /[,.]$/u};
 const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 // These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation such as "esitt."...
-const cleanX00eDot = {'code': 'e', 'followedBy': 'egj', 'context': /(?:aja|jä)\.$/u, 'remove': /\.$/u};
+const cleanX00eDot = {'code': 'e', 'followedBy': 'egj#059', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
 
 const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /\.$/u};
 
 
 const addX00aComma = {'add': ',', 'code': 'abcqdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
 const addX00aComma2 = {'add': ',', 'code': 'abcdej', 'followedBy': 'cdeg', 'context': /(?:[A-Z]|Å|Ä|Ö)\.$/u, 'contextRHS': allowsPuncRHS};
-const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#tu01', 'context': defaultNeedsPuncAfter};
+const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#tu0159', 'context': defaultNeedsPuncAfter};
+
+const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': defaultNeedsPuncAfter};
+const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter};
+const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abe', 'followedBy': '#0159', 'context': defaultNeedsPuncAfter};
 
 const dotSpaceMinus773 = 'dghkoqtxyz';
 
@@ -67,11 +71,21 @@ const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#01459', context: /^[IVX
 const cleanLegalX00Dot = {'code': 'abcde', 'followedBy': 'tu#01459', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
 
 const legalX00punc = [cleanLegalX00Comma, cleanLegalX00bDot, cleanLegalX00Dot];
+
+const cleanLegalX10Comma = {'name': 'X10comma', 'code': 'abe', 'followedBy': 'e', 'context': /.,$/u, 'remove': /,$/u};
+const cleanLegalX10Dot = {'name': 'X10dot', 'code': 'ab', 'followedBy': 'b#059', 'context': /.\.$/u, 'remove': /\.$/u};
+
+const legalX10punc = [cleanLegalX10Comma, cleanLegalX10Dot, cleanX00eDot];
+
 const cleanValidPunctuationRules = {
   '100': legalX00punc,
+  '110': legalX10punc,
   '600': legalX00punc,
+  '610': legalX10punc,
   '700': legalX00punc,
+  '710': legalX10punc,
   '800': legalX00punc,
+  '810': legalX10punc,
   '245': [
     {'name': 'A:B', 'code': 'a', 'followedBy': 'b', 'remove': / [:;=]$/u},
     {'name': 'AB:K', 'code': 'ab', 'followedBy': 'k', 'remove': / :$/u},
@@ -102,12 +116,13 @@ const cleanValidPunctuationRules = {
     {'code': 'axy', 'followedBy': 'xy', 'remove': /,$/u},
     {'code': 'axy', 'followedBy': 'v', 'remove': / ;$/u}
   ],
-  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'remove': field773NeedsPunc}]
 };
 
+const addX10 = [addX10bDot, addX10eComma, addX10Dot];
 const addPairedPunctuationRules = {
   '100': [addX00aComma, addX00aComma2, addX00aDot],
+  '110': addX10,
   '245': [
     // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
     {'code': 'a', 'followedBy': 'b', 'add': ' :', 'context': defaultNeedsPuncAfter},
@@ -134,14 +149,17 @@ const addPairedPunctuationRules = {
     {'code': 'abc', 'followedBy': 'e', 'add': ' +', 'context': defaultNeedsPuncAfter2}
   ],
   '490': [
-    {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'content': defaultNeedsPuncAfter},
-    {'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'content': defaultNeedsPuncAfter}
+    {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter},
+    {'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'context': defaultNeedsPuncAfter}
   ],
   '600': [addX00aComma, addX00aDot],
+  '610': addX10,
   '700': [addX00aComma, addX00aDot],
+  '710': addX10,
   // 773 rules will be discussed soon... Ape that discussion here...
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'add': '. -', 'context': /[^-]$/u}],
-  '800': [addX00aComma, addX00aDot]
+  '800': [addX00aComma, addX00aDot],
+  '810': addX10
 
 };
 
@@ -193,13 +211,14 @@ function checkRule(rule, subfield1, subfield2) {
     return false;
   }
 
+  // NB! This is not a perfect solution. We might have $e$0$e where $e$0 punctuation should actually be based on $e$e rules
   if (!ruleAppliesToNextSubfield(rule, subfield2)) {
     //const msg = subfield2 ? `${name}: FAIL ON RHS FIELD '${subfield2.code}' not in [${rule.followedBy}]` : `${name}: FAIL ON RHS FIELD`;
     //nvdebug(msg, debug);
     return false;
   }
 
-  nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : 'N/A'}`, debug);
+  nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : '#'}`, debug);
   return true;
 }
 
@@ -375,6 +394,8 @@ export function fieldFixPunctuation(field) {
   nvdebug(`################### fieldFixPunctuation() TEST ${fieldToString(field)}`);
 
   field.subfields.forEach((sf, i) => {
+    // NB! instead of next subfield, we should actually get next *non-control-subfield*!!!
+    // (In plain English: We should skip $0 - $9 at least, maybe $w as well...)
     subfieldFixPunctuation(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null);
   });
 

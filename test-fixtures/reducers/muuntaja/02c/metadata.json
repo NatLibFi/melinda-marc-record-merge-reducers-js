@@ -1,0 +1,4 @@
+{
+  "description":"Muuntaja 02C: Copy [17]XX fields from source to base as such (base has none)",
+  "comment": "Keeps tags as they are"
+}

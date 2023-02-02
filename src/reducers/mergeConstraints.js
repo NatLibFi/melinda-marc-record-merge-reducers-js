@@ -3,7 +3,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
-// "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined. ()
+// "paired" refers to a field that must either exist in both or be absent in both (negative XOR). Typically it's not defined.
 // NB: key+paired with identical values is an attempt to prevent copy for (ET) fields, and to force separate fields on (T) fields.
 // NB! If base has eg. no 264, two+ 264 fields can be copied from the source.
 const mergeConstraints = [
@@ -59,7 +59,7 @@ const mergeConstraints = [
   {'tag': '088', 'required': '', 'paired': 'a', 'key': 'a'},
   // NB! 100, 110 and 111 may have title parts that are handled elsewhere
   {'tag': '100', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'},
-  {'tag': '110', 'required': 'a', 'paired': 't', 'key': 'abcdgntu'},
+  {'tag': '110', 'required': 'a', 'paired': 'bt', 'key': 'abcdgntu'},
   {'tag': '111', 'required': 'a', 'paired': 't', 'key': 'acdgntu'},
   // NB! 130 has no name part, key is used for title part
   {'tag': '130', 'required': 'a', 'key': 'adfhklmnoprsxvg'},
@@ -94,7 +94,7 @@ const mergeConstraints = [
   {'tag': '337', 'required': 'b2', 'key': 'ab2'}, // MET-88: don't merge different $a subfields
   {'tag': '338', 'required': 'b2', 'key': 'ab2'}, // / MET-88: don't merge different $a subfields
   {'tag': '340', 'required': '', 'paired': 'abcdefghijkmnop', 'key': 'abcdefghijkmnop'},
-  {'tag': '341', 'required': '', 'paired': 'abcde', 'key': 'abcde'}, // SKIP 341. NOT SEEN!
+  {'tag': '341', 'required': '', 'paired': 'abcde', 'key': 'abcde'}, // NEW! Starting to appear!
   {'tag': '342', 'required': '', 'paired': 'abcdefghijklmnopqrstuvw', 'key': 'abcdefghijklmnopqrstuvw'}, // SKIP 342. NOT SEEN!
   {'tag': '343', 'required': '', 'paired': 'abcdefghi', 'key': 'abcdefghi'}, // SKIP 343.
   {'tag': '344', 'required': '', 'paired': 'abcdefgh', 'key': 'abcdefgh'},
@@ -183,10 +183,10 @@ const mergeConstraints = [
   {'tag': '597', 'required': ''},
   {'tag': '598', 'required': ''},
   {'tag': '599', 'required': ''},
-  {'tag': '600', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'}, // aped from 700
-  {'tag': '610', 'required': 'a', 'paired': 't', 'key': 'abcdgntu'}, // aped from 710
-  {'tag': '611', 'required': 'a', 'paired': 't', 'key': 'acdgntu'}, // aped from 711
-  {'tag': '630', 'required': 'a', 'key': 'adfhklmnoprsxvg'}, // aped from 730
+  {'tag': '600', 'required': 'a', 'paired': 'txyz', 'key': 'abcjqtu'}, // aped from 700
+  {'tag': '610', 'required': 'a', 'paired': 'btxyz', 'key': 'abcdgntu'}, // aped from 710
+  {'tag': '611', 'required': 'a', 'paired': 'txyz', 'key': 'acdgntu'}, // aped from 711
+  {'tag': '630', 'required': 'a', 'key': 'adfhklmnoprsvgxyz'}, // aped from 730
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
   {'tag': '647', 'required': 'a', 'key': 'acdgvxyz02'},
   {'tag': '648', 'required': 'a', 'key': 'avxyz02'},
@@ -201,7 +201,7 @@ const mergeConstraints = [
   {'tag': '662', 'required': ''}, // N=0
   {'tag': '668', 'required': 'a'}, // N=0
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcjqtux'}, // h/i/m/o/r/s/x are missing from 100
-  {'tag': '710', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
+  {'tag': '710', 'required': 'a', 'paired': 'bt', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
   {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
@@ -230,9 +230,9 @@ const mergeConstraints = [
   {'tag': '786', 'required': ''},
   {'tag': '787', 'required': ''},
   {'tag': '800', 'required': 'a', 'paired': 't', 'key': 'abcjqtu'},
-  {'tag': '810', 'required': 'a', 'paired': 't', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
-  {'tag': '811', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
-  {'tag': '830', 'required': 'ax', 'key': 'adfloprtvwxx'},
+  {'tag': '810', 'required': 'a', 'paired': 'bt', 'key': 'abcdfhlnoprstux'},
+  {'tag': '811', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'},
+  {'tag': '830', 'required': 'a', 'key': 'adfloprtvwxx'},
   {'tag': '840', 'required': 'a'},
   {'tag': '841', 'required': 'a'},
   {'tag': '842', 'required': 'a'},
