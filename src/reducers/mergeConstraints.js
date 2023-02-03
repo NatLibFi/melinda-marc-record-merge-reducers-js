@@ -183,26 +183,26 @@ const mergeConstraints = [
   {'tag': '597', 'required': ''},
   {'tag': '598', 'required': ''},
   {'tag': '599', 'required': ''},
-  {'tag': '600', 'required': 'a', 'paired': 'txyz', 'key': 'abcjqtu'}, // aped from 700
-  {'tag': '610', 'required': 'a', 'paired': 'btxyz', 'key': 'abcdgntu'}, // aped from 710
-  {'tag': '611', 'required': 'a', 'paired': 'txyz', 'key': 'acdgntu'}, // aped from 711
-  {'tag': '630', 'required': 'a', 'key': 'adfhklmnoprsvgxyz'}, // aped from 730
+  {'tag': '600', 'required': 'a', 'paired': 'tvxyz', 'key': 'abcjqtu'}, // aped from 700
+  {'tag': '610', 'required': 'a', 'paired': 'btvxyz', 'key': 'abcdgntu'}, // aped from 710
+  {'tag': '611', 'required': 'a', 'paired': 'tvxyz', 'key': 'acdgntu'}, // aped from 711
+  {'tag': '630', 'required': 'a', 'paired': 'atvxyz', 'key': 'adfhklmnoprsvgxyz'}, // aped from 730
   // NB! 700, 710 and 711 may have title parts that are handled elsewhere
-  {'tag': '647', 'required': 'a', 'key': 'acdgvxyz02'},
-  {'tag': '648', 'required': 'a', 'key': 'avxyz02'},
+  {'tag': '647', 'required': 'a', 'paired': 'avxyz', 'key': 'acdgvxyz02'},
+  {'tag': '648', 'required': 'a', 'paired': 'avxyz', 'key': 'avxyz02'},
   {'tag': '650', 'required': 'a', 'paired': 'abcdegvxyz', 'key': 'abcdegvxyz20'},
   {'tag': '651', 'required': 'a', 'paired': 'aegvxyz', 'key': 'aegvxyz20'},
-  {'tag': '653', 'required': 'a', 'key': 'a'}, // this is interesting as a can be repeated
-  {'tag': '654', 'required': ''},
-  {'tag': '655', 'required': 'a', 'paired': 'axyz', 'key': 'axyz20'},
-  {'tag': '656', 'required': 'a'}, // N=0
-  {'tag': '657', 'required': 'a'}, // N=0
-  {'tag': '658', 'required': 'a'}, // N=0
-  {'tag': '662', 'required': ''}, // N=0
-  {'tag': '668', 'required': 'a'}, // N=0
+  {'tag': '653', 'required': 'a', 'paired': 'a', 'key': 'a'}, // this is interesting as a can be repeated
+  {'tag': '654', 'required': '', 'paired': 'abcevxyz'},
+  {'tag': '655', 'required': 'a', 'paired': 'abcvxyz', 'key': 'avxyz20'},
+  {'tag': '656', 'required': 'a', 'paired': 'akvxyz'}, // N=0
+  {'tag': '657', 'required': 'a', 'paired': 'avxyz'}, // N=0
+  {'tag': '658', 'required': 'a', 'paired': 'abcd'}, // N=0
+  {'tag': '662', 'required': '', 'paired': 'abcdefgh'}, // N=0
+  {'tag': '688', 'required': 'a'}, // N=0
   {'tag': '700', 'required': 'a', 'paired': 't', 'key': 'abcjqtux'}, // h/i/m/o/r/s/x are missing from 100
   {'tag': '710', 'required': 'a', 'paired': 'bt', 'key': 'abcdfhlnoprstux'}, // h/j/m/o/r/s/x are missing from 110
-  {'tag': '711', 'required': 'a', 'paired': 't', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
+  {'tag': '711', 'required': 'a', 'paired': 'cdeflns', 'key': 'acdefhlnpqstux'}, // h/i/s/x are missing from 711
   {'tag': '720', 'required': 'a', 'key': 'a'},
   // NB! 730 has no name part, key is used for title part
   {'tag': '730', 'required': 'a', 'key': 'adfhlnoprstx'}, // NB: 130->730 magic subfields might not agree...
