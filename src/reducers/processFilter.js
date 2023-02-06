@@ -250,9 +250,11 @@ function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFi
 function operationRetag(record, fieldSpecification, newTag) {
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
   relevantFields.forEach(field => {
+    const oldTag = field.tag;
     resetCorrespondingField880(field, record, field.tag, newTag);
     field.tag = newTag; // eslint-disable-line functional/immutable-data
-    nvdebug(`Retagged field ${fieldToString(field)}`); //, debug);
+    nvdebug(`Retagged field ${oldTag} => ${fieldToString(field)}`); //, debug);
+
   });
 }
 
