@@ -1,0 +1,4 @@
+{
+  "description":"Merge 264 fields, treat subfields as non-repeatable",
+  "only": true
+}
