@@ -1,0 +1,80 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "100",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Multiple"
+        }
+      ]
+    },
+    {
+      "tag": "110",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "880-01"
+        },
+        {
+          "code": "a",
+          "value": "1XX fields"
+        }
+      ]
+    },
+    {
+      "tag": "111",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "is illegal"
+        }
+      ]
+    },
+    {
+      "tag": "130",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "but who cares"
+        }
+      ]
+    },
+    {
+      "tag": "150",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "not handled"
+        }
+      ]
+    },
+    {
+      "tag": "880",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "110-01"
+        },
+        {
+          "code": "a",
+          "value": "lagelli si"
+        }
+      ]
+    }
+
+  ]
+}

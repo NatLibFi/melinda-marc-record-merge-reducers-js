@@ -1,0 +1,5 @@
+{
+  "description":"X00/01: Retag 1XX fields using config, now with a field 880 twist",
+  "comment": "Note the educated guess with 730 IND1 (non-filing character)",
+  "only": false
+}
