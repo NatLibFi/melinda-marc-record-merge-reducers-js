@@ -95,12 +95,32 @@ export function marc21GetTagsLegalInd2Value(tag) {
 }
 
 
+function isNonStandardNonrepeatableSubfield(tag, subfieldCode) {
+  // Put these into config or so...
+  if (tag === '264') {
+    return ['a', 'b', 'c'].includes(subfieldCode);
+  }
+
+  if (['336', '337', '338'].includes(tag)) {
+    return ['a', 'b', '2'].includes(subfieldCode);
+  }
+
+  return false;
+}
+
+
 export function subfieldIsRepeatable(tag, subfieldCode) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
     nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debug);
     return true;
   }
+
+
+  if (isNonStandardNonrepeatableSubfield(tag, subfieldCode)) {
+    return false;
+  }
+
 
   // These we know or "know":
   if ('0159'.indexOf(subfieldCode) > -1) {
@@ -110,6 +130,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
 
   const subfieldSpecs = fieldSpecs[0].subfields.filter(subfield => subfield.code === subfieldCode);
   // Currently we don't support multiple $6 fields due to re-indexing limitations...
+  // Well, $6 is non-repeatable, isn't it?!?
   // (This might actually already be fixed... Marginal issue, but check eventually.)
   if (subfieldSpecs.length !== 1 || subfieldCode === '6') {
     return false; // repeatable if not specified, I guess. Maybe add log or warn?
