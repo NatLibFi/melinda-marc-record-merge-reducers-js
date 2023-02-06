@@ -68,6 +68,10 @@ export function reindexSubfield6s(record, baseMax = 0) {
   function updateSubfield6(sf, max) {
     if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statement
       const origIndex = subfield6Index(sf);
+      if (origIndex === 0) {
+        // "00" is valid exception value. It is not reindexed!
+        return;
+      }
       const index = origIndex + max;
       const strindex = index < 10 ? `0${index}` : `${index}`;
       sf.value = sf.value.substring(0, 4) + strindex + sf.value.substring(6); // eslint-disable-line functional/immutable-data
