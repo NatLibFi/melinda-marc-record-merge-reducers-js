@@ -1,4 +1,0 @@
-{
-  "description":"merge subfield $8 from source field, if base is a proper subset of source",
-  "comment":"Note that copying of field 880 is not covered by this merge test"
-}

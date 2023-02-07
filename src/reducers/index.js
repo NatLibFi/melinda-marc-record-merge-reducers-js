@@ -80,7 +80,7 @@ export const localReducers = [
   metatietosanastoNormalizations(),
   prepublicationPreprocessor(),
   fixRelatorTerms(),
-  removeDuplicatesFromSource(), // handles $6 chains as well. Working on $8 chains
+  removeDuplicatesFromSource(), // handles $6 and $8 chains as well
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
   manufacturer260To264(),

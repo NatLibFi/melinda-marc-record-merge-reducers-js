@@ -2,6 +2,32 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "9518613869"
+        },
+        {
+          "code": "q",
+          "value": "020_q_base1"
+        }
+      ]
+    },
+    {
+      "tag": "150",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "not handled"
+        }
+      ]
+    },
+    {
       "tag": "700",
       "ind1": " ",
       "ind2": " ",
@@ -40,7 +66,7 @@
     },
     {
       "tag": "730",
-      "ind1": " ",
+      "ind1": "0",
       "ind2": " ",
       "subfields": [
         {
@@ -49,17 +75,7 @@
         }
       ]
     },
-    {
-      "tag": "150",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "not handled"
-        }
-      ]
-    },
+
     {
       "tag": "880",
       "ind1": " ",

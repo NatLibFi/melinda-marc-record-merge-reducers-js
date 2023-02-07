@@ -71,35 +71,6 @@
             },
 
             {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "100"},
-                "comment": "NB! Retags should check corresponding 880 fields as well.",
-                "newTag": "700"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "110"},
-                "newTag": "710"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "111"},
-                "newTag": "711"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "130"},
-                "newTag": "730"
-            },
-
-            {
                 "operation": "removeField",
                 "recordType": "source",
                 "fieldSpecification": {
@@ -157,7 +128,37 @@
         "ignoreIndicator2" : ["017", "222", "240", "242", "243", "245", "830"],
         "comment #5" : "If one indicator has value, and the other has not, it does not necessarily mean mismatch",
         "tolerateBlankIndicator1": ["022", "037", "041", "046", "050", "055", "060", "070", "080", "260", "264"],
-        "tolerateBlankIndicator2": ["024", "033", "082"]
+        "tolerateBlankIndicator2": ["024", "033", "082"],
+        "preprocessorDirectives" : [
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "100"},
+                "comment": "NB! Retags should check corresponding 880 fields as well.",
+                "newTag": "700"
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "110"},
+                "newTag": "710"
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "111"},
+                "newTag": "711"
+            },
+
+            {
+                "operation": "retag",
+                "recordType": "source",
+                "fieldSpecification": {"tag": "130"},
+                "newTag": "730"
+            }
+        ]
     },
 
     "addConfiguration" : {
