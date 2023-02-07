@@ -1,4 +1,4 @@
 {
-  "description":"Test MRA-222",
+  "description":"Do not duplicate $6-linked f100 as f700 (Test MRA-222)",
   "only": false
 }
