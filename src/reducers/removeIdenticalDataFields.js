@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import {getSubfield8Index, getSubfield8Value, isValidSubfield8} from './reindexSubfield8';
 import {fieldGetSubfield6Pair, isValidSubfield6} from './subfield6Utils';
 //import {MarcRecord} from '@natlibfi/marc-record';
-import {/*fieldToString,*/ fieldToString, nvdebug} from './utils';
+import {fieldHasNSubfields, fieldToString, nvdebug} from './utils';
 
 // NB! It this file 'common' means 'normal' not 'identical'
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -13,12 +13,6 @@ const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
 
 
 export default () => (base, source) => {
-  // NV: Not actually sure why this is done...
-  //const baseRecord = new MarcRecord(base, {subfieldValues: false});
-  //const sourceRecord = new MarcRecord(source, {subfieldValues: false});
-
-  //const baseMax = getMaxSubfield6(baseRecord);
-
   removeSharedDataFieldsFromSource(base, source);
 
   return {base, source};
@@ -50,15 +44,20 @@ function isRelevantCommonDataField(field) {
 }
 
 
-function fieldToNormalizedString(field) {
+function fieldToNormalizedString(field, currIndex = 0) {
   function subfieldToNormalizedString(sf) {
     if (isValidSubfield6(sf)) {
       // Replace index with XX:
       return `‡${sf.code} ${sf.value.substring(0, 3)}-XX`;
     }
     if (isValidSubfield8(sf)) {
-      const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
-      return `‡${sf.code} ${normVal}`;
+      const index8 = getSubfield8Index(sf);
+      if (currIndex === 0 || currIndex === index8) {
+        // For $8 we should only XX the index we are looking at...
+        const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
+        return `‡${sf.code} ${normVal}`;
+      }
+      return ''; // Other $8 subfields are meaningless in this context
     }
     return `‡${sf.code} ${sf.value}`;
   }
@@ -69,7 +68,7 @@ function fieldToNormalizedString(field) {
   return `${field.tag}    ${field.value}`;
 
   function formatAndNormalizeSubfields(field) {
-    return field.subfields.map(sf => ` ${subfieldToNormalizedString(sf)}`).join('');
+    return field.subfields.map(sf => `${subfieldToNormalizedString(sf)}`).join('');
   }
 }
 
@@ -110,6 +109,18 @@ function getFieldsWithSubfield8Index(record, index) {
   }
 }
 
+function removeFieldOrSubfield8(record, field, index = 0) {
+  const n8 = fieldHasNSubfields(field, '8');
+  if (n8 === 1) {
+    record.removeField(field);
+    return;
+  }
+  if (index === 0) {
+    return;
+  }
+  field.subfields = field.subfields.filter(sf => sf.code !== '8' || getSubfield8Index(sf) !== index); // eslint-disable-line functional/immutable-data
+
+}
 
 function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
   const baseIndexesToInspect = recordGetAllSubfield8Indexes(base);
@@ -128,18 +139,21 @@ function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
 
   baseIndexesToInspect.forEach(baseIndex => {
     const baseFields = getFieldsWithSubfield8Index(base, baseIndex);
-    const baseFieldsAsString = fieldsToNormalizedString(baseFields);
+    const baseFieldsAsString = fieldsToNormalizedString(baseFields, baseIndex);
     //nvdebug(`Results for BASE ${baseIndex}:`, debug);
     //nvdebug(`${baseFieldsAsString}`, debug);
     sourceIndexesToInspect.forEach(sourceIndex => {
       const sourceFields = getFieldsWithSubfield8Index(source, sourceIndex);
-      const sourceFieldsAsString = fieldsToNormalizedString(sourceFields);
+      const sourceFieldsAsString = fieldsToNormalizedString(sourceFields, sourceIndex);
       // If $8 source fields match with base fields, then remove them from source:
       nvdebug(`Compare BASE and SOURCE:`, debug);
       nvdebug(`${baseFieldsAsString} vs\n${sourceFieldsAsString}`, debug);
       if (sourceFieldsAsString === baseFieldsAsString) {
         nvdebug(`Deletable subfield $8 group found: ${sourceFieldsAsString}`);
-        sourceFields.forEach(field => source.removeField(field));
+        // FFS! Mainly theoretical, but what if record has multiple $8 indexes!?!
+        // The other 8s might be different. If field has multiple $8s, only relevant $8 subfield
+        // should be removed.
+        sourceFields.forEach(field => removeFieldOrSubfield8(source, field, sourceIndex));
         return;
       }
     });
@@ -185,12 +199,13 @@ function removeSharedDatafieldsWithSubfield6FromSource(base, source) {
 function removeCommonSharedDataFieldsFromSource(base, source) {
   const baseFields = base.fields.filter(field => isRelevantCommonDataField(field));
   const sourceFields = source.fields.filter(field => isRelevantCommonDataField(field));
-  const baseFieldsAsString = baseFields.map(field => fieldToString(field));
+  const baseFieldsAsString = baseFields.map(field => fieldToNormalizedString(field));
 
   sourceFields.forEach(field => removeCommonDataFieldIfNeeded(field));
 
   function removeCommonDataFieldIfNeeded(field) {
     const fieldAsString = fieldToNormalizedString(field);
+    nvdebug(`Looking for '${fieldAsString}' in '${baseFieldsAsString.join('\', \'')}'`, debug);
     if (!baseFieldsAsString.includes(fieldAsString)) {
       return;
     }
