@@ -72,8 +72,8 @@ function fieldToNormalizedString(field, currIndex = 0) {
   }
 }
 
-function fieldsToNormalizedString(fields) {
-  const strings = fields.map(field => fieldToNormalizedString(field));
+function fieldsToNormalizedString(fields, index = 0) {
+  const strings = fields.map(field => fieldToNormalizedString(field, index));
   strings.sort(); // eslint-disable-line functional/immutable-data
   return strings.join('\t__SEPARATOR__\t');
 }
@@ -140,8 +140,8 @@ function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
   baseIndexesToInspect.forEach(baseIndex => {
     const baseFields = getFieldsWithSubfield8Index(base, baseIndex);
     const baseFieldsAsString = fieldsToNormalizedString(baseFields, baseIndex);
-    //nvdebug(`Results for BASE ${baseIndex}:`, debug);
-    //nvdebug(`${baseFieldsAsString}`, debug);
+    nvdebug(`Results for BASE ${baseIndex}:`, debug);
+    nvdebug(`${baseFieldsAsString}`, debug);
     sourceIndexesToInspect.forEach(sourceIndex => {
       const sourceFields = getFieldsWithSubfield8Index(source, sourceIndex);
       const sourceFieldsAsString = fieldsToNormalizedString(sourceFields, sourceIndex);
