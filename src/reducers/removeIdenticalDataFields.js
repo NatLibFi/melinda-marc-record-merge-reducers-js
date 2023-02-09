@@ -1,13 +1,13 @@
 import createDebugLogger from 'debug';
-import {getSubfield8Index, getSubfield8Value, isValidSubfield8} from './reindexSubfield8';
-import {fieldGetSubfield6Pair, isValidSubfield6} from './subfield6Utils';
+import {getSubfield8Index, getSubfield8Value} from './reindexSubfield8';
+import {fieldsToNormalizedString, fieldToNormalizedString, isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
 //import {MarcRecord} from '@natlibfi/marc-record';
-import {fieldHasNSubfields, fieldToString, nvdebug} from './utils';
+import {fieldHasNSubfields, nvdebug} from './utils';
 
 // NB! It this file 'common' means 'normal' not 'identical'
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
-const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
+//const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
 
 // const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
 
@@ -24,14 +24,6 @@ function removeSharedDataFieldsFromSource(base, source) {
   removeCommonSharedDataFieldsFromSource(base, source);
 }
 
-function isRelevantField6(field) {
-  if (!field.subfields || field.tag === '880') {
-    return false;
-  }
-  const sf6s = field.subfields.filter(sf => sf.code === '6' && sf.value.match(sf6Regexp));
-  return sf6s.length === 1;
-}
-
 function isRelevantField8(field) {
   if (!field.subfields) {
     return false;
@@ -43,40 +35,6 @@ function isRelevantCommonDataField(field) {
   return field.tag !== '880' && field.subfields && !isRelevantField6(field) && !isRelevantField8(field);
 }
 
-
-function fieldToNormalizedString(field, currIndex = 0) {
-  function subfieldToNormalizedString(sf) {
-    if (isValidSubfield6(sf)) {
-      // Replace index with XX:
-      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX`;
-    }
-    if (isValidSubfield8(sf)) {
-      const index8 = getSubfield8Index(sf);
-      if (currIndex === 0 || currIndex === index8) {
-        // For $8 we should only XX the index we are looking at...
-        const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
-        return `‡${sf.code} ${normVal}`;
-      }
-      return ''; // Other $8 subfields are meaningless in this context
-    }
-    return `‡${sf.code} ${sf.value}`;
-  }
-
-  if ('subfields' in field) {
-    return `${field.tag} ${field.ind1}${field.ind2}${formatAndNormalizeSubfields(field)}`;
-  }
-  return `${field.tag}    ${field.value}`;
-
-  function formatAndNormalizeSubfields(field) {
-    return field.subfields.map(sf => `${subfieldToNormalizedString(sf)}`).join('');
-  }
-}
-
-function fieldsToNormalizedString(fields, index = 0) {
-  const strings = fields.map(field => fieldToNormalizedString(field, index));
-  strings.sort(); // eslint-disable-line functional/immutable-data
-  return strings.join('\t__SEPARATOR__\t');
-}
 
 function recordGetAllSubfield8Indexes(record) {
   /* eslint-disable */
@@ -160,40 +118,14 @@ function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
   });
 }
 
+
 function removeSharedDatafieldsWithSubfield6FromSource(base, source) {
   const baseFields6 = base.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
   const baseFieldsAsString = baseFields6.map(field => pairAndStringify6(field, base));
 
   const sourceFields6 = source.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
 
-  sourceFields6.forEach(field => removeSourceField6IfNeeded(field, source, baseFieldsAsString));
-
-  function removeSourceField6IfNeeded(sourceField, sourceRecord, baseFieldsAsString) {
-    const sourcePairField = fieldGetSubfield6Pair(sourceField, sourceRecord);
-    const sourceString = sourcePairField ? fieldsToNormalizedString([sourceField, sourcePairField]) : fieldToNormalizedString(sourceField);
-    nvdebug(`SOURCE: ${sourceString} -- REALITY: ${fieldToString(sourceField)}`);
-    const tmp = sourcePairField ? fieldToString(sourcePairField) : 'HUTI';
-    nvdebug(`PAIR: ${tmp}`);
-    nvdebug(`BASE:   ${baseFieldsAsString.join(' -- ')}`);
-    if (!baseFieldsAsString.includes(sourceString)) {
-      return;
-    }
-    sourceRecord.removeField(sourceField);
-    if (sourcePairField === undefined) {
-      return;
-    }
-    sourceRecord.removeField(sourcePairField);
-  }
-
-  function pairAndStringify6(field, record) {
-    const pair6 = fieldGetSubfield6Pair(field, record);
-    if (!pair6) {
-      return fieldToNormalizedString(field);
-    }
-    return fieldsToNormalizedString([field, pair6]);
-  }
-
-
+  sourceFields6.forEach(field => removeField6IfNeeded(field, source, baseFieldsAsString));
 }
 
 function removeCommonSharedDataFieldsFromSource(base, source) {
@@ -209,7 +141,7 @@ function removeCommonSharedDataFieldsFromSource(base, source) {
     if (!baseFieldsAsString.includes(fieldAsString)) {
       return;
     }
-    nvdebug(`Remove ${fieldAsString}`, debug);
+    nvdebug(`rCSDFFS(): Remove ${fieldAsString}`, debug);
     source.removeField(field);
   }
 }
