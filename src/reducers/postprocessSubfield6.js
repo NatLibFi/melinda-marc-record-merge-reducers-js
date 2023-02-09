@@ -1,11 +1,10 @@
 import createDebugLogger from 'debug';
+import {isRelevantField6, isValidSubfield6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
 import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
 
-// CHECK: what if index is greater than 99?
-const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]+/u;
 
 // Remove unpaired
 export default () => (base, source) => {
@@ -13,10 +12,13 @@ export default () => (base, source) => {
   //nvdebug(JSON.stringify(base));
   //nvdebug(JSON.stringify(source));
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
+
   recordRemovePairlessFields(base, false); // Or should pairless 880 $6 520-05 become $6 520-00 etc?
-  removeDuplicateFieldPairs(base);
+  removeDuplicatedDatafieldsWithSubfield6(base);
+  //removeDuplicateFieldPairs(base);
   return {base, source};
 };
+
 
 function get6s(field) {
   if (!field.subfields) {
@@ -32,6 +34,7 @@ function numberOf6s(field) {
 }
 */
 
+
 function subfieldApplies(subfield, lookFor) {
   if (subfield.code !== '6') {
     return false;
@@ -41,6 +44,7 @@ function subfieldApplies(subfield, lookFor) {
   return key === lookFor;
 }
 
+
 function getPairValue(subfield6, myTag) {
   const index = subfield6.value.replace(/^[0-9][0-9][0-9]-([0-9][0-9]+).*$/u, '$1'); // eslint-disable-line prefer-named-capture-group
 
@@ -48,9 +52,10 @@ function getPairValue(subfield6, myTag) {
   return lookFor;
 }
 
+
 function findPairForSubfield6(subfield6, myTag, fields) {
   // We keep the crap!
-  if (!subfield6.value.match(sf6Regexp)) {
+  if (!isValidSubfield6(subfield6)) {
     return undefined;
   }
 
@@ -88,55 +93,7 @@ function cleanAndReturnTrueIfDeletable(field, fields) {
 }
 
 
-function get6lessClone(field) {
-  return {
-    'tag': field.tag,
-    'ind1': field.ind1,
-    'ind2': field.ind2,
-    'subfields': field.subfields.filter(sf => sf.code !== '6')
-  };
-}
-
-
-export function removeDuplicateFieldPairs(record) { // Try to fix MRA-156
-  /* eslint-disable */
-  let seen = {};
-
-  record.fields.forEach(field => processField(field));
-
-  function processField(field) {
-    if (field.tag === '880') {
-      return;
-    }
-
-    const sixes = get6s(field);
-    if ( sixes.length !== 1) {
-      return;
-    }
-
-    nvdebug(`Try to pair ${fieldToString(field)}`, debug);
-    const pairField = findPairForSubfield6(sixes[0], field.tag, record.fields);
-    if (!pairField) {
-      nvdebug(` No pair for ${fieldToString(field)}`, debug);
-      return;
-    }
-    const fieldString = fieldToString(get6lessClone(field));
-    const pairFieldString = fieldToString(get6lessClone(pairField));
-    if (seen[fieldString]) {
-      if (seen[fieldString] === pairFieldString) {
-        nvdebug(`Remove '${fieldString}' and '${pairFieldString}`, debug);
-        record.removeField(field);
-        record.removeField(pairField);
-        return;
-      }
-      return;
-    }
-    seen[fieldString] = pairFieldString;
-  }
-  /* eslint-enable */
-}
-
-export function recordRemovePairlessFields(record) {
+function recordRemovePairlessFields(record) {
   const relevantFields = record.fields.filter(field => fieldHasSubfield(field, '6'));
   const deletableFields = relevantFields.filter(field => cleanAndReturnTrueIfDeletable(field, relevantFields));
 
@@ -144,4 +101,29 @@ export function recordRemovePairlessFields(record) {
 
   //const deletableFields = getDeletableFieldsAndRemoveUnneeded6s(recordRemovePairlessFields);
 
+}
+
+
+export function removeDuplicatedDatafieldsWithSubfield6(record) {
+  /* eslint-disable */
+  let seen = {};
+
+  record.fields.forEach(field => nvdebug(`CHECK ${fieldToString(field)}`));
+  
+  const fields6 = record.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
+  
+  fields6.forEach(field => removeDuplicatedDatafieldWithSubfield6(field));
+
+  function removeDuplicatedDatafieldWithSubfield6(field) {
+    const fieldAsString = pairAndStringify6(field, record);
+    if ( fieldAsString in seen ) {
+      nvdebug(`REMOVE? ${fieldAsString}`, debug);
+      removeField6IfNeeded(field, record, [fieldAsString]);
+      return;
+    }
+    nvdebug(`ADD2SEEN ${fieldAsString}`, debug);
+    seen[fieldAsString] = 1;
+  }
+
+  /* eslint-enable */
 }
