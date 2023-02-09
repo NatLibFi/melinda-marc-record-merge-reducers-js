@@ -1,0 +1,21 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {"tag":"001", "value": "952715754"},
+    { "tag": "974", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "KV" },
+      { "code": "b", "value": "TT0047375 keep me" },
+      { "code": "5", "value": "FENNI" }
+    ]},
+    { "tag": "974", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "VK" },
+      { "code": "b", "value": "TT0047375 drop me" },
+      { "code": "5", "value": "FENNI" }
+    ]},
+    { "tag": "974", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "KV with tail" },
+      { "code": "b", "value": "TT0047375 drop me" },
+      { "code": "5", "value": "FENNI" }
+    ]}
+  ]
+}
