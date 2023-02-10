@@ -22,7 +22,10 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mu
 export default (tagPattern = false, config = muuntajaConfig) => (base, source) => {
   // Wrapper for mergeDatafields that uses muuntaja's config
   nvdebug(`ENTERING muuntajaMergeField.js using fake ${tagPattern}`, debug);
-  nvdebug(`MUUNTAJA CONFIG: ${JSON.stringify(config)}`);
+  //nvdebug(`MUUNTAJA CONFIG: ${JSON.stringify(config)}`);
+
+
+  copyLanguage(base, source); // Copy 008/35-37
 
   const createField776 = createField776Proto();
   const val4 = createField776(base, source);
@@ -43,3 +46,21 @@ export default (tagPattern = false, config = muuntajaConfig) => (base, source) =
   return {base: val2.base, source: val2.source};
 };
 
+function copyLanguage(base, source) {
+  // Copy 008/35-37 from source to base record
+  const [source008] = source.get('008');
+  if (!source008 || source008.value.length !== 40) {
+    return;
+  }
+  const sourceLang = source008.value.substring(35, 38);
+  if (['   '].includes(sourceLang)) { // Don't add language information
+    return;
+  }
+
+  const [base008] = base.get('008');
+  if (!base008 || base008.value.length !== 40) {
+    return;
+  }
+
+  base008.value = base008.value.substring(0, 35) + sourceLang + base008.value.substring(38); // eslint-disable-line functional/immutable-data
+}
