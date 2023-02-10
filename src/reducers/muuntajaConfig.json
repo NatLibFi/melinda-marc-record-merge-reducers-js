@@ -114,6 +114,7 @@
         ],
     "mergeConfiguration" :
     {   
+        "comment": "note that mergeConfiguration refer to field-level merge of subfields",
         "preprocessorDirectives": [
             {
                 "operation": "removeField",
