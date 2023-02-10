@@ -3,7 +3,7 @@
         {
             "operation": "swapFields",
             "comment": "Experimental. If source has 1XX or corresponding 7XX fields swap 'em fields from base and source",
-            "comment2": "NB! recordType is meaningless for swapFields!",
+            "comment2": "NB! recordType value is meaningless for swapFields!",
             "recordType": "base",
             "fieldSpecification": {"tagPattern": "^(?:100|110|111|130|700|710|711|730)$"},
             "requireSourceField": {
@@ -53,18 +53,6 @@
                 },
                 "deletableSubfieldFilter": {"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$" }
             },        
-
-            {
-                "operation": "removeSubfield",
-                "comment": "remove price information",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tagPattern": "^(?:020|024)$",
-                    "subfieldFilters": [{"code": "c"}]
-                },
-                "deletableSubfieldFilter": {"code": "c"}
-            },
-
 
             {
                 "operation": "renameSubfield",
@@ -124,9 +112,28 @@
                 "comment 3.1": "NB! MH wants to keep auth ref fields 900/910/911/940. NB! is used for multi-240 as well",
                 "comment 3.2": "Field 960: we might want to keep eg. Saamelaisbibligrafia or Arto info",
                 "comment 3.3": "MH also suggested that 974 $a KV stuff is kept",
+                "comment 4": "Field 046 probably needs an indicator-related rule",
+                "comment 5": "Field 242 is iffy as cataloging org changes",
+                "comment 6": "Fields 210 and 222 are iffy as they refer to ISSN, and ISSN is dropped/goes to 776",
+                "comment 7": "Field 385 will be handled by a separate rule, and it should not be removed here",
+                "comment 8": "Fields 54X need to be discussed with an expert",
+                "comment 9": "Field 588 is removed. However, we might create a new one?!?",
+                "comment 10": "Field 776 is removed. Theoretically it might contain an identifier that goes to 020 or 022...",
                 "recordType": "source",
                 "fieldSpecification": {
-                    "tagPattern": "^(?:015|020|022|2[5-9].|3[0-4][0-9]|4..|8[0-7]..|9[04][1-9]|91[2-9]9|9[35689][0-9]|97[0-35-9]|CAT|LOW|RES|SID)$"
+                    "tagPattern": "^(?:01[^3]|02[^7]|03[^13]|04[249]|05[^25]|06[^0]|07[^2]|08[^0234]|2[5-9].|3[0-46][0-9]|35[^5]|38[678]|4..|504|51[456]|53.|541|546|55.|56[0-4]|58[^16]|773|776|8[0-7]..|9[04][1-9]|91[2-9]9|9[35689][0-9]|97[0-35-9]|CAT|LOW|RES|SID)$"
+                }
+            },
+            {
+                "operation": "removeField",
+                "comment": "Remove source field 385 (audience characteristics) with restrictions",
+                "comment 2": "Untested yet",
+                "comment 3": "Different format might be aimed at different age or heath groups (eg. blind)",
+                "comment 4": "Wouldn't bee too bad if they'd come, anyway.",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^385$",
+                    "subfieldFilters": [{"code": "n", "valuePattern": "^(age|mpd)$"}]
                 }
             },
 
