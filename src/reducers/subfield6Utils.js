@@ -1,13 +1,16 @@
-// import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
+import {getSubfield8Index, isValidSubfield8} from './reindexSubfield8';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
 
 // import {fieldToString, nvdebug} from './utils';
 
-// const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // NB! Subfield 6 is non-repeatable and always comes first!
 
+
+// How to handle non-linking value '00'?
 const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9](?:\/.+)?$/u;
 
 
@@ -52,18 +55,20 @@ export function fieldGetIndex6(field) {
 
 
 export function isSubfield6Pair(field, otherField) {
-  // nvdebug(`Look for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
+  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
   if (!tagsArePairable6(field.tag, otherField.tag)) {
+    nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
     return false;
   }
 
   const fieldIndex = fieldGetIndex6(field);
   if (fieldIndex === undefined) {
+    nvdebug(` FAILED. REASON: NO INDEX FOUND`);
     return false;
   }
 
   const otherFieldIndex = fieldGetIndex6(otherField);
-
+  nvdebug(` INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
   return fieldIndex === otherFieldIndex;
 
   function tagsArePairable6(tag1, tag2) {
@@ -84,4 +89,75 @@ export function fieldGetSubfield6Pair(field, record) {
   }
   nvdebug(`fieldGetSubfield6Pair(): ${fieldToString(field)} => ${fieldToString(pairedField)}`);
   return pairedField;
+}
+
+export function isRelevantField6(field) {
+  if (!field.subfields || field.tag === '880') {
+    return false;
+  }
+  const sf6s = field.subfields.filter(sf => sf.code === '6' && sf.value.match(sf6Regexp));
+  return sf6s.length === 1;
+}
+
+export function pairAndStringify6(field, record) {
+  const pair6 = fieldGetSubfield6Pair(field, record);
+  if (!pair6) {
+    return fieldToNormalizedString(field);
+  }
+  return fieldsToNormalizedString([field, pair6]);
+}
+
+
+export function fieldToNormalizedString(field, currIndex = 0) {
+  function subfieldToNormalizedString(sf) {
+    if (isValidSubfield6(sf)) {
+      // Replace index with XX:
+      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX`;
+    }
+    if (isValidSubfield8(sf)) {
+      const index8 = getSubfield8Index(sf);
+      if (currIndex === 0 || currIndex === index8) {
+        // For $8 we should only XX the index we are looking at...
+        const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
+        return `‡${sf.code} ${normVal}`;
+      }
+      return ''; // Other $8 subfields are meaningless in this context
+    }
+    return `‡${sf.code} ${sf.value}`;
+  }
+
+  if ('subfields' in field) {
+    return `${field.tag} ${field.ind1}${field.ind2}${formatAndNormalizeSubfields(field)}`;
+  }
+  return `${field.tag}    ${field.value}`;
+
+  function formatAndNormalizeSubfields(field) {
+    return field.subfields.map(sf => `${subfieldToNormalizedString(sf)}`).join('');
+  }
+}
+
+export function fieldsToNormalizedString(fields, index = 0) {
+  const strings = fields.map(field => fieldToNormalizedString(field, index));
+  strings.sort(); // eslint-disable-line functional/immutable-data
+  return strings.join('\t__SEPARATOR__\t');
+}
+
+export function removeField6IfNeeded(field, record, fieldsAsString) {
+  const pairField = fieldGetSubfield6Pair(field, record);
+  const asString = pairField ? fieldsToNormalizedString([field, pairField]) : fieldToNormalizedString(field);
+  nvdebug(`SOURCE: ${asString} -- REALITY: ${fieldToString(field)}`);
+  const tmp = pairField ? fieldToString(pairField) : 'HUTI';
+  nvdebug(`PAIR: ${tmp}`);
+  nvdebug(`BASE:   ${fieldsAsString.join(' -- ')}`);
+  if (!fieldsAsString.includes(asString)) {
+    return;
+  }
+  nvdebug(`Duplicate $6 removal: ${fieldToString(field)}`);
+  record.removeField(field);
+
+  if (pairField === undefined) {
+    return;
+  }
+  nvdebug(`Duplicate $6 removal (pair): ${fieldToString(pairField)}`);
+  record.removeField(pairField);
 }

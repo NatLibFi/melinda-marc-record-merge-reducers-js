@@ -11,40 +11,24 @@
             }
         },
 
-            {
-                "operation": "removeSubfield",
-                "comment": "remove 24X subfield $h as it may contain data about the manisfestation (that changes in Muuntaja)",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tagPattern": "^(?:24[0-9])$"
-                },
-                "deletableSubfieldFilter": {"code": "h"}
+        {
+            "operation": "removeSubfield",
+            "comment": "remove 24X subfield $h as it may contain data about the manisfestation (that changes in Muuntaja)",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tagPattern": "^(?:24[0-9])$"
             },
-            {
-                "operation": "removeSubfield",
-                "comment": "remove 24X $k subfields as they may contain data about the manisfestation (that changes in Muuntaja)",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tagPattern": "^(?:24[0-9])$"
-                },
+            "deletableSubfieldFilter": {"code": "h"}
+        },
+        {
+            "operation": "removeSubfield",
+            "comment": "remove 24X $k subfields as they may contain data about the manisfestation (that changes in Muuntaja)",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tagPattern": "^(?:24[0-9])$"
+            },
                 "deletableSubfieldFilter": {"code": "k"}
             },
-
-            {
-                "operation": "removeField",
-                "comment": "Bunch of tags never copy to base, and which don't contain information we might need later on",
-                "comment2": "NB! Don't remove identifiers (020, 035...) yet, as they can be used to create field 776",
-                "comment3": "Some 7[678]X field",
-                "comment4": "field 960 might be good to keep sometimes, but this is semantics",
-                "comment5": "field 974 with $a KV should be kept as well. Requires a separate rule...",
-                "comment6": "regexp is still incomplete!",
-                "comment7": "Too early to remove 338 as it serves a the source of 776$i. Keeping 338...",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tagPattern": "^(2[5-9].|3[012][0-9]|33[0-79]|4..|53.|8[0-7]|9[04][1-9]|91[^01]|9[235689][0-9]|97[0-35-9]|CAT|LOW|RES|SID)$"
-                }
-            },
-
             {
                 "operation": "removeField",
                 "recordType": "source",
@@ -133,10 +117,27 @@
         "preprocessorDirectives": [
             {
                 "operation": "removeField",
-                "comment": "Muuntaja specific: bunch of tags never merge nor copy to base, but which were needed in the 776 creation",
+                "comment": "Muuntaja specific: bunch of tags never merge nor copy to base",
+                "comment 2": "NB! Identifier fields 020, 022 and 015 and field 338 are used for bases 776 creation. Remove them only after that has been done (pre-merge).",
+                "comment 3": "9XX: fields: keep 900, 910, 911, 940. Think about 960",
+                "comment 3.1": "NB! MH wants to keep auth ref fields 900/910/911/940. NB! is used for multi-240 as well",
+                "comment 3.2": "Field 960: we might want to keep eg. Saamelaisbibligrafia or Arto info",
+                "comment 3.3": "MH also suggested that 974 $a KV stuff is kept",
                 "recordType": "source",
                 "fieldSpecification": {
-                    "tagPattern": "^(015|020|022|338)$"
+                    "tagPattern": "^(?:015|020|022|2[5-9].|3[0-4][0-9]|4..|8[0-7]..|9[04][1-9]|91[2-9]9|9[35689][0-9]|97[0-35-9]|CAT|LOW|RES|SID)$"
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove source field 974 with restrictions",
+                "comment 2": "Untested yet",
+                "comment 3": "Current reality: we have ~30K 974 fields, and all of them have $a KV.",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^974$",
+                    "subfieldFilters": [{"code": "a", "valuePattern": "^(?!KV$)"}]
                 }
             }
         ],

@@ -1,4 +1,4 @@
 {
-  "description":"Normalize 520-880 chain",
+  "description":"Deduplicate 520-880 chains",
   "only": false
 }
