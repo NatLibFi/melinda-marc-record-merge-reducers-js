@@ -1,7 +1,7 @@
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {nvdebug, subfieldToString} from './utils.js';
-import {getCatalogingLanguage, translateRecord} from './fixRelatorTerms.js';
+import {getCatalogingLanguage, nvdebug, subfieldToString} from './utils.js';
+import {translateRecord} from './fixRelatorTerms.js';
 import {filterOperations} from './processFilter.js';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 import fs from 'fs';
