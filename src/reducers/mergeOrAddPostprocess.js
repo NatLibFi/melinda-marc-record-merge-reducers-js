@@ -2,7 +2,8 @@
 
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldFixPunctuation} from './punctuation.js';
-import {fieldTranslateRelatorTerm, getCatalogingLanguage} from './fixRelatorTerms.js';
+import {fieldTranslateRelatorTerm} from './fixRelatorTerms.js';
+import {getCatalogingLanguage} from './utils.js';
 
 function postprocessBaseRecord(base, source) {
   const fromLanguage = getCatalogingLanguage(source);
