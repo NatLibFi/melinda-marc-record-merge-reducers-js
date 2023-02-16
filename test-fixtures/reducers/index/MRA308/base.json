@@ -1,6 +1,15 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-05" },
+      { "code": "a", "value": "Jarkije stranitsy" }
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-90" },
+      { "code": "a", "value": "Jarkije stranitsy" }
+    ]},
+
     { "tag": "700", "ind1": "1", "ind2": " ",
       "subfields": [
         { "code": "6", "value": "880-06" },
@@ -30,6 +39,14 @@
       { "code": "6", "value": "880-20" },
       { "code": "a", "value": "Sedakova, O.," },
       { "code": "e", "value": "kääntäjä." }
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-05/(N" },
+      { "code": "a", "value": "Яркие страницы" }
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-90/(N" },
+      { "code": "a", "value": "Яркие страницы" }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "700-06/(N" },
