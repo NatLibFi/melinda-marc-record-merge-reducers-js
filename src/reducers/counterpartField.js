@@ -10,7 +10,7 @@ import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
 import {partsAgree} from './normalizePart';
-import {valueCarriesMeaning} from './worldKnowledge';
+import {normalizeEditionStatement, valueCarriesMeaning} from './worldKnowledge';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
@@ -44,15 +44,6 @@ function pairableValue(tag, subfieldCode, value1, value2) {
   return undefined;
 }
 
-function normalizeEdition(tag, subfieldCode, value) {
-  if (tag === '250' && subfieldCode === 'a') {
-    if (value.match(/^[1-9][0-9]*(?:\.|:a|nd|rd|st|th) (?:ed\.|edition|p\.|painos|uppl\.|upplagan)/u)) {
-      const nth = value.replace(/[^0-9].*$/u, '');
-      return `<hack>${nth} painos</hack>`;
-    }
-  }
-  return value;
-}
 
 function counterpartExtraNormalize(tag, subfieldCode, value) {
   /* eslint-disable prefer-named-capture-group, no-param-reassign */
@@ -65,7 +56,7 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
   value = removeCopyright(value);
 
 
-  value = normalizeEdition(tag, subfieldCode, value);
+  value = normalizeEditionStatement(tag, subfieldCode, value); // Applies only to 250$a
 
 
   /* eslint-enable */
@@ -134,6 +125,9 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     // When pairing we can use stronger normalizations than the generic one:
     const subfieldValues1 = subfields1.map(sf => counterpartExtraNormalize(tag, subfieldCode, sf.value));
     const subfieldValues2 = subfields2.map(sf => counterpartExtraNormalize(tag, subfieldCode, sf.value));
+
+    nvdebug(`SF1 NORM: ${subfieldValues1.join(' --')}`, debug);
+    nvdebug(`SF2 NORM: ${subfieldValues2.join(' --')}`, debug);
 
     // If one set is a subset of the other, all is probably good (how about 653$a, 505...)
     if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
