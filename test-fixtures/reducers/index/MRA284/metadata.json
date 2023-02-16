@@ -1,0 +1,5 @@
+{
+  "description":"Test MRA-282",
+  "comment": "But what is the right answer? Currently we only remove the duplicate 020 field (Appel Förlag) from the merged record",
+  "only": false
+}
