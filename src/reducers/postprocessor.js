@@ -9,6 +9,7 @@ import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melind
 import {deleteAllPrepublicationNotesFromField500InNonPubRecord, removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
 //import {mergeLisapainokset} from './mergeField500Lisapainokset.js';
 import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/mergeField500Lisapainokset';
+import {recordResetSubfield6Indexes} from './reindexSubfield6.js';
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 export default (config = defaultConfig) => (base, source) => {
@@ -28,6 +29,7 @@ export default (config = defaultConfig) => (base, source) => {
   recordNormalizeIndicators(base); // Fix 245 and non-filing indicators
   mergeLisapainokset(base);
   removeDuplicateDatafields(base);
+  recordResetSubfield6Indexes(base);
   return {base, source};
 };
 
