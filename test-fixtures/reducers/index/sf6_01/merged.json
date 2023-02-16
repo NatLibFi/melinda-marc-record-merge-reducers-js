@@ -8,7 +8,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "880-06"
+          "value": "880-01"
         },
         {
           "code": "a",
@@ -35,7 +35,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "880-09"
+          "value": "880-02"
         },
         {
           "code": "a",
@@ -58,7 +58,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "880-11"
+          "value": "880-03"
         },
         {
           "code": "a",
@@ -81,7 +81,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "100-06/$1"
+          "value": "100-01/$1"
         },
         {
           "code": "a",
@@ -109,7 +109,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "700-09/$1"
+          "value": "700-02/$1"
         },
         {
           "code": "a",
@@ -132,7 +132,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "700-11/$1"
+          "value": "700-03/$1"
         },
         {
           "code": "a",

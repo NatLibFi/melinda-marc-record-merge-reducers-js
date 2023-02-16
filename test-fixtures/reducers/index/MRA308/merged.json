@@ -3,45 +3,45 @@
   "fields": [
     { "tag": "700", "ind1": "1", "ind2": " ",
       "subfields": [
-        { "code": "6", "value": "880-06" },
+        { "code": "6", "value": "880-01" },
         { "code": "a", "value": "Demurova, Nina," },
         { "code": "e", "value": "kääntäjä." }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ",
     "subfields": [
-      { "code": "6", "value": "880-07" },
+      { "code": "6", "value": "880-02" },
       { "code": "a", "value": "Jakimova, I.," },
       { "code": "e", "value": "kuvittaja." }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ",
     "subfields": [
-      { "code": "6", "value": "880-08" },
+      { "code": "6", "value": "880-03" },
       { "code": "a", "value": "Zujev, I.," },
       { "code": "e", "value": "kuvittaja." }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ",
     "subfields": [
-      { "code": "6", "value": "880-10" },
+      { "code": "6", "value": "880-04" },
       { "code": "a", "value": "Sedakova, O.," },
       { "code": "e", "value": "kääntäjä." }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-06/(N" },
+      { "code": "6", "value": "700-01/(N" },
       { "code": "a", "value": "Демурова, Нина," },
       { "code": "e", "value": "kääntäjä." }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-07/(N" },
+      { "code": "6", "value": "700-02/(N" },
       { "code": "a", "value": "Якимова,И.," },
       { "code": "e", "value": "kuvittaja." }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-08/(N" },
+      { "code": "6", "value": "700-03/(N" },
       { "code": "a", "value": "Зуев, И.," },
       { "code": "e", "value": "kuvittaja." }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-10/(N" },
+      { "code": "6", "value": "700-04/(N" },
       { "code": "a", "value": "Седаковa, O.," },
       { "code": "e", "value": "kääntäjä." }
     ]}   
