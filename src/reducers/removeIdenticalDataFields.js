@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import {getSubfield8Index, getSubfield8Value} from './reindexSubfield8';
 import {fieldsToNormalizedString, fieldToNormalizedString, isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
 //import {MarcRecord} from '@natlibfi/marc-record';
-import {fieldHasNSubfields, nvdebug} from './utils';
+import {fieldHasNSubfields, fieldToString, nvdebug} from './utils';
 
 // NB! It this file 'common' means 'normal' not 'identical'
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -145,4 +145,77 @@ function removeCommonSharedDataFieldsFromSource(base, source) {
     source.removeField(field);
   }
 }
+
+
+function numberOfLinkageSubfields(field) {
+  const subfields = field.subfields.filter(sf => sf.code === '6' || sf.code === '8');
+  return subfields.length;
+}
+
+function isComplexChain(fields) {
+  return fields.some(field => numberOfLinkageSubfields(field) > 1);
+}
+
+function getAllLinkedfields(field) {
+  // We need to implement getting $6- and $8-related fields here. Currently we just ignore them,
+  // and handle only normal fields
+  if (numberOfLinkageSubfields(field) > 0) {
+    return [];
+  }
+
+  const fields = [field]; // Uh, quick'n'dirty
+
+  // Press panic button if multiple linkahe subfields are found
+  if (isComplexChain(fields)) {
+    return [];
+  }
+
+  return fields;
+}
+
+function isLoneOrFirstLinkedField(field) {
+  if (!field.subfields) { // Is not a datafield
+    return false;
+  }
+  const chain = getAllLinkedfields(field);
+  if (chain.length === 0) {
+    return false;
+  }
+  return fieldToString(field) === fieldToString(chain[0]);
+}
+
+
+export function removeDuplicateDatafields(record) {
+  /* eslint-disable */
+  let seen = {};
+
+  record.fields.forEach(field => nvdebug(`CHECK ${fieldToString(field)}`));
+  
+  const fields = record.fields.filter(field => isLoneOrFirstLinkedField(field));
+  
+  fields.forEach(field => removeDuplicateDatafield(field));
+
+  function removeDuplicateDatafield(field) {
+    const fields = getAllLinkedfields(field);
+    if(fields.length === 0) {
+      return;
+    }
+    const fieldsAsString = fieldsToNormalizedString(fields);
+    if (fieldsAsString in seen)  {
+      if (fields.some(currField => numberOfLinkageSubfields(currField) > 0) ) {
+        // Fields with multi-$6 should only get the relevant $6 removed.
+        // (And then removal will break the cache hit logic)
+        return;
+      }
+      nvdebug(`REMOVE? ${fieldsAsString}`, debug);
+      fields.forEach(currField => record.removeField(currField));
+      return;
+    }
+    nvdebug(`ADD2SEEN ${fieldsAsString}`, debug);
+    seen[fieldsAsString] = 1;
+  }
+
+  /* eslint-enable */
+}
+
 
