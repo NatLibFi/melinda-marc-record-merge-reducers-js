@@ -1,47 +1,55 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-01" },
+      { "code": "a", "value": "Jarkije stranitsy" }
+    ]},
     { "tag": "700", "ind1": "1", "ind2": " ",
       "subfields": [
-        { "code": "6", "value": "880-01" },
+        { "code": "6", "value": "880-02" },
         { "code": "a", "value": "Demurova, Nina," },
         { "code": "e", "value": "kääntäjä." }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ",
     "subfields": [
-      { "code": "6", "value": "880-02" },
+      { "code": "6", "value": "880-03" },
       { "code": "a", "value": "Jakimova, I.," },
       { "code": "e", "value": "kuvittaja." }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ",
     "subfields": [
-      { "code": "6", "value": "880-03" },
+      { "code": "6", "value": "880-04" },
       { "code": "a", "value": "Zujev, I.," },
       { "code": "e", "value": "kuvittaja." }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ",
     "subfields": [
-      { "code": "6", "value": "880-04" },
+      { "code": "6", "value": "880-05" },
       { "code": "a", "value": "Sedakova, O.," },
       { "code": "e", "value": "kääntäjä." }
     ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-01/(N" },
+      { "code": "a", "value": "Яркие страницы" }
+    ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-01/(N" },
+      { "code": "6", "value": "700-02/(N" },
       { "code": "a", "value": "Демурова, Нина," },
       { "code": "e", "value": "kääntäjä." }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-02/(N" },
+      { "code": "6", "value": "700-03/(N" },
       { "code": "a", "value": "Якимова,И.," },
       { "code": "e", "value": "kuvittaja." }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-03/(N" },
+      { "code": "6", "value": "700-04/(N" },
       { "code": "a", "value": "Зуев, И.," },
       { "code": "e", "value": "kuvittaja." }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-04/(N" },
+      { "code": "6", "value": "700-05/(N" },
       { "code": "a", "value": "Седаковa, O.," },
       { "code": "e", "value": "kääntäjä." }
     ]}   
