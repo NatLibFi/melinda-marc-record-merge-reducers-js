@@ -8,7 +8,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "880-06"
+          "value": "880-01"
         },
         {
           "code": "a",
@@ -35,7 +35,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "700-06/$1"
+          "value": "700-01/$1"
         },
         {
           "code": "a",
