@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
 import {getSubfield8Index, getSubfield8Value} from './reindexSubfield8';
-import {fieldsToNormalizedString, fieldToNormalizedString, isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
+import {fieldGetSubfield6Pair, fieldsToNormalizedString, fieldToNormalizedString, isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
 //import {MarcRecord} from '@natlibfi/marc-record';
-import {fieldHasNSubfields, fieldToString, nvdebug} from './utils';
+import {fieldHasNSubfields, fieldHasSubfield, fieldToString, nvdebug} from './utils';
 
 // NB! It this file 'common' means 'normal' not 'identical'
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -156,12 +156,21 @@ function isComplexChain(fields) {
   return fields.some(field => numberOfLinkageSubfields(field) > 1);
 }
 
-function getAllLinkedfields(field) {
+function getAllLinkedfields(field, record) {
+  const n = numberOfLinkageSubfields(field);
   // We need to implement getting $6- and $8-related fields here. Currently we just ignore them,
   // and handle only normal fields
-  if (numberOfLinkageSubfields(field) > 0) {
+  if (n > 1) {
     return [];
   }
+
+  if (n === 1 && fieldHasSubfield(field, '6')) {
+    const pair = fieldGetSubfield6Pair(field, record);
+    if (pair) {
+      return [field, pair];
+    }
+  }
+
 
   const fields = [field]; // Uh, quick'n'dirty
 
@@ -173,15 +182,40 @@ function getAllLinkedfields(field) {
   return fields;
 }
 
-function isLoneOrFirstLinkedField(field) {
+
+function getFirstField(record, fields) {
+  const fieldsAsStrings = fields.map(field => fieldToString(field));
+  record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`));
+  nvdebug(`INCOMING: ${fieldsAsStrings.join('\t')}`);
+  const i = record.fields.findIndex(field => fieldsAsStrings.includes(fieldToString(field)));
+  if (i > -1) {
+    const field = record.fields[i];
+    nvdebug(`1st F: ${i + 1}/${record.fields.length} ${fieldToString(field)}`);
+    return field;
+  }
+  return undefined;
+}
+
+function isLoneOrFirstLinkedField(field, record) {
   if (!field.subfields) { // Is not a datafield
     return false;
   }
-  const chain = getAllLinkedfields(field);
+  const chain = getAllLinkedfields(field, record);
   if (chain.length === 0) {
     return false;
   }
-  return fieldToString(field) === fieldToString(chain[0]);
+  if (chain.length === 1) {
+    return true;
+  }
+  // Interpretation of first: position of field in
+  const firstField = getFirstField(record, chain);
+  if (firstField) {
+    return fieldToString(field) === fieldToString(firstField);
+  }
+  return false;
+
+  // Fallback:
+  //return fieldToString(field) === fieldToString(chain[0]);
 }
 
 
@@ -189,24 +223,30 @@ export function removeDuplicateDatafields(record) {
   /* eslint-disable */
   let seen = {};
 
-  record.fields.forEach(field => nvdebug(`CHECK ${fieldToString(field)}`));
+  record.fields.forEach(field => nvdebug(`DUPL-CHECK ${fieldToString(field)}`));
   
-  const fields = record.fields.filter(field => isLoneOrFirstLinkedField(field));
+  const fields = record.fields.filter(field => isLoneOrFirstLinkedField(field, record));
   
   fields.forEach(field => removeDuplicateDatafield(field));
 
   function removeDuplicateDatafield(field) {
-    const fields = getAllLinkedfields(field);
+    nvdebug(`removeDuplicateDatafield? ${fieldToString(field)} (and friends)`);
+    const fields = getAllLinkedfields(field, record);
     if(fields.length === 0) {
       return;
     }
+
     const fieldsAsString = fieldsToNormalizedString(fields);
+    nvdebug(` step 2 ${fieldsAsString}`);
     if (fieldsAsString in seen)  {
+      nvdebug(` step 3 ${fieldsAsString}`);
+      /*
       if (fields.some(currField => numberOfLinkageSubfields(currField) > 0) ) {
         // Fields with multi-$6 should only get the relevant $6 removed.
         // (And then removal will break the cache hit logic)
         return;
       }
+      */
       nvdebug(`REMOVE? ${fieldsAsString}`, debug);
       fields.forEach(currField => record.removeField(currField));
       return;
