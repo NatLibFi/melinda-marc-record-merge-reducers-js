@@ -21,6 +21,9 @@ export function isValidSubfield6(subfield) {
   return subfield.value.match(sf6Regexp);
 }
 
+function fieldHasValidSubfield6(field) {
+  return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
+}
 
 export function subfieldGetIndex6(subfield) {
   if (isValidSubfield6(subfield)) {
@@ -76,14 +79,20 @@ export function fieldGetIndex6(field) {
 
 
 export function isSubfield6Pair(field, otherField) {
+  // No need to log this:
+  if (!fieldHasValidSubfield6(field) || !fieldHasValidSubfield6(otherField)) {
+    return false;
+  }
+
   nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
+
   if (!tagsArePairable6(field.tag, otherField.tag)) {
     nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
     return false;
   }
 
   const fieldIndex = fieldGetIndex6(field);
-  if (fieldIndex === undefined) {
+  if (fieldIndex === undefined || fieldIndex === '00') {
     nvdebug(` FAILED. REASON: NO INDEX FOUND`);
     return false;
   }
@@ -93,6 +102,7 @@ export function isSubfield6Pair(field, otherField) {
   return fieldIndex === otherFieldIndex;
 
   function tagsArePairable6(tag1, tag2) {
+    // How to do XOR operation in one line? Well, this is probably more readable...
     if (tag1 === '880' && tag2 === '880') {
       return false;
     }
