@@ -30,14 +30,35 @@ export function subfieldGetIndex6(subfield) {
   return undefined;
 }
 
+
+export function intToTwoDigitString(i) {
+  return i < 10 ? `0${i}` : `${i}`;
+}
+
 export function resetSubfield6Tag(subfield, tag) {
   if (!isValidSubfield6(subfield)) {
     return;
   }
-  // NB! This
+  // NB! mainly for 1XX<->7XX transfers
   const newValue = `${tag}-${subfield.value.substring(4)}`;
   nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
+}
+
+export function resetSubfield6Index(subfield, strindex) {
+  if (!isValidSubfield6(subfield)) {
+    return;
+  }
+  const newValue = subfield.value.substring(0, 4) + strindex + subfield.value.substring(6); // eslint-disable-line functional/immutable-data
+  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
+  subfield.value = newValue; // eslint-disable-line functional/immutable-data
+}
+
+export function subfieldGetIndex(subfield) {
+  if (!isValidSubfield6(subfield)) {
+    return undefined;
+  }
+  return subfield.value.substring(4, 6);
 }
 
 export function fieldGetIndex6(field) {
@@ -48,9 +69,9 @@ export function fieldGetIndex6(field) {
   // There should be only one $6, so find is ok.
   const sf6 = field.subfields.find(subfield => isValidSubfield6(subfield));
   if (sf6 === undefined) {
-    return sf6;
+    return undefined;
   }
-  return sf6.value.substring(4, 6);
+  return subfieldGetIndex(sf6);
 }
 
 
@@ -91,7 +112,7 @@ export function fieldGetSubfield6Pair(field, record) {
   return pairedField;
 }
 
-export function isRelevantField6(field) {
+export function isRelevantField6(field) { // ...
   if (!field.subfields || field.tag === '880') {
     return false;
   }
