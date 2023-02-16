@@ -1,0 +1,5 @@
+{
+  "description":"Test MRA-308",
+  "comment": "Duplicate removal from base. No new entries from source.",
+  "only": false
+}
