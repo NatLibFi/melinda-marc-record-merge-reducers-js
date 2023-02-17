@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {/*fieldToString,*/ nvdebug} from './utils';
-import {isValidSubfield6, subfieldGetIndex6} from './subfield6Utils';
+import {intToTwoDigitString, isValidSubfield6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
@@ -49,7 +49,7 @@ function getMaxSubfield6(record) {
 }
 
 
-export function reindexSubfield6s(record, baseMax = 0) {
+function reindexSubfield6s(record, baseMax = 0) {
   if (baseMax === 0 || !record.fields) { // No action required
     return record;
   }
@@ -73,10 +73,50 @@ export function reindexSubfield6s(record, baseMax = 0) {
         return;
       }
       const index = origIndex + max;
-      const strindex = index < 10 ? `0${index}` : `${index}`;
-      sf.value = sf.value.substring(0, 4) + strindex + sf.value.substring(6); // eslint-disable-line functional/immutable-data
-      nvdebug(`SF6 is now ${origIndex} + ${max} = ${index}`, debug);
+      const strindex = intToTwoDigitString(index);
+      resetSubfield6Index(sf, strindex);
     }
   }
 }
 
+
+export function recordResetSubfield6Indexes(record) { // Remove gaps
+  /* eslint-disable */
+    let currentInt = 1;
+    let oldtoNewCache = {};
+
+    record.fields.forEach(field => fieldResetSubfield6(field));
+
+    function fieldResetSubfield6(field) {
+      if (!field.subfields) {
+        return;
+      }
+      field.subfields.forEach(subfield => subfieldReset6(subfield));
+    }
+
+    function subfieldReset6(subfield) {
+      if (!isValidSubfield6(subfield)) {
+        return;
+      }
+      const currIndex = subfield6Index(subfield);
+      if (currIndex === '00') {
+        return;
+      }
+      const newIndex = mapCurrIndexToNewIndex(currIndex);
+      resetSubfield6Index(subfield, newIndex);
+      
+    }
+
+    function mapCurrIndexToNewIndex(currIndex) {
+      if(currIndex in oldtoNewCache) {
+        return oldtoNewCache[currIndex];
+      }
+      const newIndex = intToTwoDigitString(currentInt);
+      oldtoNewCache[currIndex] = newIndex;
+      currentInt++;
+      return newIndex;
+    }
+
+    /* eslint-enable */
+
+}

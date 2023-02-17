@@ -1,0 +1,14 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "source-ID"},
+    { "tag": "490", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-04" },
+      { "code": "a", "value": "Jarkije stranitsy" }
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-04/(N" },
+      { "code": "a", "value": "Яркие страницы" }
+    ]}
+  ]
+}

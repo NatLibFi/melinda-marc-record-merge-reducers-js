@@ -21,6 +21,9 @@ export function isValidSubfield6(subfield) {
   return subfield.value.match(sf6Regexp);
 }
 
+function fieldHasValidSubfield6(field) {
+  return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
+}
 
 export function subfieldGetIndex6(subfield) {
   if (isValidSubfield6(subfield)) {
@@ -30,14 +33,35 @@ export function subfieldGetIndex6(subfield) {
   return undefined;
 }
 
+
+export function intToTwoDigitString(i) {
+  return i < 10 ? `0${i}` : `${i}`;
+}
+
 export function resetSubfield6Tag(subfield, tag) {
   if (!isValidSubfield6(subfield)) {
     return;
   }
-  // NB! This
+  // NB! mainly for 1XX<->7XX transfers
   const newValue = `${tag}-${subfield.value.substring(4)}`;
   nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
+}
+
+export function resetSubfield6Index(subfield, strindex) {
+  if (!isValidSubfield6(subfield)) {
+    return;
+  }
+  const newValue = subfield.value.substring(0, 4) + strindex + subfield.value.substring(6); // eslint-disable-line functional/immutable-data
+  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
+  subfield.value = newValue; // eslint-disable-line functional/immutable-data
+}
+
+export function subfieldGetIndex(subfield) {
+  if (!isValidSubfield6(subfield)) {
+    return undefined;
+  }
+  return subfield.value.substring(4, 6);
 }
 
 export function fieldGetIndex6(field) {
@@ -48,21 +72,27 @@ export function fieldGetIndex6(field) {
   // There should be only one $6, so find is ok.
   const sf6 = field.subfields.find(subfield => isValidSubfield6(subfield));
   if (sf6 === undefined) {
-    return sf6;
+    return undefined;
   }
-  return sf6.value.substring(4, 6);
+  return subfieldGetIndex(sf6);
 }
 
 
 export function isSubfield6Pair(field, otherField) {
+  // No need to log this:
+  if (!fieldHasValidSubfield6(field) || !fieldHasValidSubfield6(otherField)) {
+    return false;
+  }
+
   nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
+
   if (!tagsArePairable6(field.tag, otherField.tag)) {
     nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
     return false;
   }
 
   const fieldIndex = fieldGetIndex6(field);
-  if (fieldIndex === undefined) {
+  if (fieldIndex === undefined || fieldIndex === '00') {
     nvdebug(` FAILED. REASON: NO INDEX FOUND`);
     return false;
   }
@@ -72,6 +102,7 @@ export function isSubfield6Pair(field, otherField) {
   return fieldIndex === otherFieldIndex;
 
   function tagsArePairable6(tag1, tag2) {
+    // How to do XOR operation in one line? Well, this is probably more readable...
     if (tag1 === '880' && tag2 === '880') {
       return false;
     }
@@ -91,7 +122,7 @@ export function fieldGetSubfield6Pair(field, record) {
   return pairedField;
 }
 
-export function isRelevantField6(field) {
+export function isRelevantField6(field) { // ...
   if (!field.subfields || field.tag === '880') {
     return false;
   }

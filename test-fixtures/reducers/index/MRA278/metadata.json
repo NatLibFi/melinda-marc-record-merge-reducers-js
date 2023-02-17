@@ -1,0 +1,4 @@
+{
+  "description":"Test MRA-278: two 264 merges (+ yet another MRA-294 variant in field 250)",
+  "only": false
+}
