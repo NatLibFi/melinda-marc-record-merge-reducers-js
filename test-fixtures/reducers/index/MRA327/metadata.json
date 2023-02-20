@@ -1,0 +1,4 @@
+{
+  "description":"MRA-327: $6 regexp was set too tight",
+  "only": false
+}
