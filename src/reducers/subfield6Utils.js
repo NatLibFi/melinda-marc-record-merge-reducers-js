@@ -8,10 +8,9 @@ import {fieldToString, nvdebug, subfieldToString} from './utils';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // NB! Subfield 6 is non-repeatable and always comes first!
-
-
-// How to handle non-linking value '00'?
-const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9](?:\/.+)?$/u;
+// NB! Index size is always 2 (preceding 0 required for 01..09)
+// How to handle non-linking value '00'? How to handle 100+ indexes?
+const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9](?:[^0-9].*)?$/u;
 
 
 export function isValidSubfield6(subfield) {
@@ -27,8 +26,8 @@ function fieldHasValidSubfield6(field) {
 
 export function subfieldGetIndex6(subfield) {
   if (isValidSubfield6(subfield)) {
-    // Skip "TAG-" prefix
-    return subfield.value.substring(4, 6);
+    // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
+    return subfield.value.substring(4).replace(/\D.*$/u, '');
   }
   return undefined;
 }
@@ -84,12 +83,12 @@ export function isSubfield6Pair(field, otherField) {
     return false;
   }
 
-  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
-
   if (!tagsArePairable6(field.tag, otherField.tag)) {
-    nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
+    //nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
     return false;
   }
+
+  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
 
   const fieldIndex = fieldGetIndex6(field);
   if (fieldIndex === undefined || fieldIndex === '00') {
