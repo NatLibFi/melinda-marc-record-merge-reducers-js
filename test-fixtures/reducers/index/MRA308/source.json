@@ -6,6 +6,10 @@
       { "code": "6", "value": "880-05" },
       { "code": "a", "value": "Jarkije stranitsy" }
     ]},
+    { "tag": "647", "ind1": " ", "ind2": "4", "subfields": [
+      { "code": "6", "value": "880-04" },
+      { "code": "a", "value": "Oolannin sota" }
+    ]},
     { "tag": "700", "ind1": "1", "ind2": " ",
       "subfields": [
         { "code": "6", "value": "880-06" },
@@ -56,6 +60,10 @@
     { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
       { "code": "6", "value": "490-05/(N" },
       { "code": "a", "value": "Яркие страницы" }
+    ]},
+    { "tag": "880", "ind1": " ", "ind2": "4", "subfields": [
+      { "code": "6", "value": "647-04" },
+      { "code": "a", "value": "Крымская война" }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "6", "value": "700-06/(N" },
