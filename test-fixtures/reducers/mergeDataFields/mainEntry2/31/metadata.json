@@ -1,3 +1,5 @@
 {
-  "description":"31: indicator mismatch (error) prevents field merge"
+  "description":"31: indicator mismatch (error) prevents field merge",
+  "comment": "Test disabled, as I no longer want this behaviour for X00 fields",
+  "skip": true
 }
