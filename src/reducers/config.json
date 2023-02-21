@@ -124,7 +124,7 @@
             "730" : [ "2", " " ]
         },
         "comment #4" : "Non-filing indicators do not prevent field merge (their support is hard-coded). They are mainly listed here as an example.",
-        "ignoreIndicator1" : ["130", "245", "490", "630", "650", "651", "655", "730", "740"],
+        "ignoreIndicator1" : ["100", "130", "245", "490", "600", "630", "650", "651", "655", "700", "730", "740", "800"],
         "ignoreIndicator2" : ["017", "222", "240", "242", "243", "245", "830"],
         "comment #5" : "If one indicator has value, and the other has not, it does not necessarily mean mismatch",
         "tolerateBlankIndicator1": ["022", "037", "041", "046", "050", "055", "060", "070", "080",
