@@ -10,7 +10,7 @@ import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
 import {partsAgree} from './normalizePart';
-import {normalizeEditionStatement, valueCarriesMeaning} from './worldKnowledge';
+import {normalizeEditionStatement, normalizePersonalName, valueCarriesMeaning} from './worldKnowledge';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
@@ -57,6 +57,7 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
 
 
   value = normalizeEditionStatement(tag, subfieldCode, value); // Applies only to 250$a
+  value = normalizePersonalName(tag, subfieldCode, value); // Applies to 100/600/700/800$a "Surname, Forename" => "F N"
 
 
   /* eslint-enable */
