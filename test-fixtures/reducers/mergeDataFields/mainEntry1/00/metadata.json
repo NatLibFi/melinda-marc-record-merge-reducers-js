@@ -1,3 +1,4 @@
 {
-  "description":"00 merge X00, keep 710"
+  "description":"00 merge X00, keep 710",
+  "only": false
 }
