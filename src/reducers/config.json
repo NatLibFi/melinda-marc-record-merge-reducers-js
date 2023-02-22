@@ -192,6 +192,15 @@
 
             {
                 "operation": "removeField",
+                "comment": "Never add 250 (as per MET-193 and MET-194 related discussion with MH",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "250"
+                }
+            },
+
+            {
+                "operation": "removeField",
                 "comment": "Remove 260 so that a repeatable field won't be copied from source if base already has one",
                 "comment2": "Handling of 26X fields has changed after this rule was added. Can we remove this? Maybe not, even though all tests pass...",
                 "recordType": "source",
