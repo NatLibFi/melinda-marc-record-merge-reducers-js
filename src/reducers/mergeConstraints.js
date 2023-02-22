@@ -68,7 +68,7 @@ const mergeConstraints = [
   {'tag': '240', 'required': 'a', 'key': 'adfghklmnoprs'},
   {'tag': '242', 'required': 'a', 'key': 'abchnpy'},
   {'tag': '243', 'required': 'a', 'key': 'adfghklmnoprs'},
-  {'tag': '245', 'required': 'a', 'key': 'abcghnps', 'paired': 'a'}, // 'paired': 'abnp' },
+  {'tag': '245', 'required': 'a', 'key': 'abcghnps', 'paired': 'abnps'},
   {'tag': '246', 'required': 'a', 'key': 'abfnp'},
   {'tag': '247', 'required': 'a', 'key': 'abfnpx'},
   {'tag': '250', 'required': 'a', 'key': 'ab'},
