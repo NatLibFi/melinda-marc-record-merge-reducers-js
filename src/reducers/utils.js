@@ -95,12 +95,32 @@ export function marc21GetTagsLegalInd2Value(tag) {
 }
 
 
+function isNonStandardNonrepeatableSubfield(tag, subfieldCode) {
+  // Put these into config or so...
+  if (tag === '264') {
+    return ['a', 'b', 'c'].includes(subfieldCode);
+  }
+
+  if (['336', '337', '338'].includes(tag)) {
+    return ['a', 'b', '2'].includes(subfieldCode);
+  }
+
+  return false;
+}
+
+
 export function subfieldIsRepeatable(tag, subfieldCode) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
     nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debug);
     return true;
   }
+
+
+  if (isNonStandardNonrepeatableSubfield(tag, subfieldCode)) {
+    return false;
+  }
+
 
   // These we know or "know":
   if ('0159'.indexOf(subfieldCode) > -1) {
@@ -110,6 +130,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
 
   const subfieldSpecs = fieldSpecs[0].subfields.filter(subfield => subfield.code === subfieldCode);
   // Currently we don't support multiple $6 fields due to re-indexing limitations...
+  // Well, $6 is non-repeatable, isn't it?!?
   // (This might actually already be fixed... Marginal issue, but check eventually.)
   if (subfieldSpecs.length !== 1 || subfieldCode === '6') {
     return false; // repeatable if not specified, I guess. Maybe add log or warn?
@@ -131,38 +152,6 @@ export function subfieldsAreIdentical(subfieldA, subfieldB) {
   return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
 }
 
-/* // subfield sorting is done in/after mergeOrAddSubfield.js
-// Default subfield sort order if no custom order is given (use string first to improve readablility and compactness)
-const sortDefaultString = '8673abcdefghijklmnopqrstuvwxyz420159';
-const sortDefault = sortDefaultString.split('');
-
-function sortSubfields(subfields, order = sortDefault, orderedSubfields = []) {
-  const [filter, ...rest] = order;
-  if (filter === undefined) {
-    return [...orderedSubfields, ...subfields];
-  }
-  //debug(`### Subfield sort filter: ${JSON.stringify(filter)}`);
-  //debug(`### Subfields: ${JSON.stringify(subfields)}`);
-  //debug(`### Ordered subfields: ${JSON.stringify(orderedSubfields)}`);
-  // eslint-disable
-  const filtered = subfields.filter(sub => {
-    if (typeof filter === 'string') {
-      return sub.code === filter;
-    }
-
-  });
-  const restSubfields = subfields.filter(sub => {
-    if (typeof filter === 'string') {
-      return sub.code !== filter;
-    }
-    // eslint-enable
-  });
-  if (filtered.length > 0) {
-    return sortSubfields(restSubfields, rest, [...orderedSubfields, ...filtered]);
-  }
-  return sortSubfields(restSubfields, rest, orderedSubfields);
-}
-*/
 
 // NVOLK's marc record modifications
 export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
@@ -286,3 +275,15 @@ export function stringToRegex(string) { // easier to remember
   return new RegExp(string, 'u');
 }
 */
+
+export function getCatalogingLanguage(record) {
+  const [field040] = record.get(/^040$/u);
+  if (!field040) {
+    return null;
+  }
+  const [b] = field040.subfields.filter(sf => sf.code === 'b');
+  if (!b) {
+    return null;
+  }
+  return b.value;
+}

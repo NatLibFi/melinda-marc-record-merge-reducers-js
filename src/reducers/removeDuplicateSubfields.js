@@ -38,7 +38,7 @@ export function fieldRemoveDuplicatesubfields(field) {
       field.collapsed = 1; // trigger punctuation reset
       return false;
     }
-    nvdebug(`Add ${subfieldAsString} to seen[]`, debug);
+    nvdebug(`identical subfield removal: Add ${subfieldAsString} to seen[]`, debug);
     seen[subfieldAsString] = subfieldAsString;
     return true;
   }

@@ -1,0 +1,69 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456" },
+{ "tag" : "700", "ind1": "1", "ind2": " ", "subfields": [
+    { "code": "6", "value": "880-07" },
+    { "code": "a", "value": "Mock, Rebecca," },
+    { "code": "e", "value": "sarjakuvantekijä." }
+]},
+{ "tag" : "700", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "880-12" },
+  { "code": "a", "value": "Skaf, Marija," },
+  { "code": "e", "value": "kääntäjä." }
+]},
+{ "tag" : "700", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "880-19" },
+  { "code": "a", "value": "Mock, Rebecca," },
+  { "code": "e", "value": "sarjakuvantekijä." }
+]},
+{ "tag" : "700", "ind1": "1", "ind2": " ", "subfields": [
+{ "code": "6", "value": "880-24" },
+{ "code": "a", "value": "Skaf, Marija," },
+{ "code": "e", "value": "kääntäjä." }
+]},
+{ "tag" : "700", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "880-31" },
+  { "code": "a", "value": "Mock, Rebecca," },
+  { "code": "e", "value": "sarjakuvantekijä." }
+]},
+{ "tag" : "700", "ind1": "1", "ind2": " ", "subfields": [
+{ "code": "6", "value": "880-36" },
+{ "code": "a", "value": "Skaf, Marija," },
+{ "code": "e", "value": "kääntäjä." }
+]},
+{ "tag" : "880", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "700-07/(N" },
+  { "code": "a", "value": "Мок, Ребекка," },
+  { "code": "e", "value": "sarjakuvantekijä." }
+]},
+{ "tag" : "880", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "700-12/(N" },
+  { "code": "a", "value": "Скаф, Мария," },
+  { "code": "e", "value": "kääntäjä." }
+]},
+{ "tag" : "880", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "700-19/(N" },
+  { "code": "a", "value": "Мок, Ребекка," },
+  { "code": "e", "value": "sarjakuvantekijä." }
+]},
+{ "tag" : "880", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "700-24/(N" },
+  { "code": "a", "value": "Скаф, Мария," },
+  { "code": "e", "value": "kääntäjä." }
+]},
+{ "tag" : "880", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "700-31/(N" },
+  { "code": "a", "value": "Мок, Ребекка," },
+  { "code": "e", "value": "sarjakuvantekijä." }
+]},
+{ "tag" : "880", "ind1": "1", "ind2": " ", "subfields": [
+  { "code": "6", "value": "700-36/(N" },
+  { "code": "a", "value": "Скаф, Мария," },
+  { "code": "e", "value": "kääntäjä." }
+]}
+
+
+
+  ]
+}

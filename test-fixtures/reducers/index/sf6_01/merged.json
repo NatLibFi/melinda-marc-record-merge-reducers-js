@@ -1,0 +1,152 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "100",
+      "ind1": "1",
+      "ind2": "2",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "880-01"
+        },
+        {
+          "code": "a",
+          "value": "Jang, Gangmyeong,"
+        },
+        {
+          "code": "d",
+          "value": "1975-"
+        },
+        {
+          "code": "t",
+          "value": "Albasaeng jareugi,"
+        },
+        {
+          "code": "l",
+          "value": "englanti."
+        }
+      ]
+    },
+    {
+      "tag": "700",
+      "ind1": "1",
+      "ind2": "2",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "880-02"
+        },
+        {
+          "code": "a",
+          "value": "Jang, Gangmyeong,"
+        },
+        {
+          "code": "d",
+          "value": "1975-"
+        },
+        {
+          "code": "t",
+          "value": "Albasaeng jareugi."
+        }
+      ]
+    },
+    {
+      "tag": "700",
+      "ind1": "1",
+      "ind2": "2",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "880-03"
+        },
+        {
+          "code": "a",
+          "value": "FOOJang, Gangmyeong,"
+        },
+        {
+          "code": "d",
+          "value": "1975-"
+        },
+        {
+          "code": "t",
+          "value": "Albasaeng jareugi."
+        }
+      ]
+    },
+    {
+      "tag": "880",
+      "ind1": "1",
+      "ind2": "2",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "100-01/$1"
+        },
+        {
+          "code": "a",
+          "value": "장강명,"
+        },
+        {
+          "code": "d",
+          "value": "1975-"
+        },
+        {
+          "code": "t",
+          "value": "알바생 자르기,"
+        },
+        {
+          "code": "l",
+          "value": "englanti."
+        }
+      ]
+    },
+
+    {
+      "tag": "880",
+      "ind1": "1",
+      "ind2": "2",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "700-02/$1"
+        },
+        {
+          "code": "a",
+          "value": "장강명,"
+        },
+        {
+          "code": "d",
+          "value": "1975-"
+        },
+        {
+          "code": "t",
+          "value": "알바생 자르기."
+        }
+      ]
+    },
+    {
+      "tag": "880",
+      "ind1": "1",
+      "ind2": "2",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "700-03/$1"
+        },
+        {
+          "code": "a",
+          "value": "FOO장강명,"
+        },
+        {
+          "code": "d",
+          "value": "1975-"
+        },
+        {
+          "code": "t",
+          "value": "알바생 자르기."
+        }
+      ]
+    }
+  ]
+}

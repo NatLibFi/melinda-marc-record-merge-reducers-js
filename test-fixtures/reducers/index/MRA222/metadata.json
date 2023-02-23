@@ -1,0 +1,4 @@
+{
+  "description":"MRA-222: Do not duplicate $6-linked f100 as f700",
+  "only": false
+}

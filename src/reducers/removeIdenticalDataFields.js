@@ -1,24 +1,18 @@
 import createDebugLogger from 'debug';
-import {getSubfield8Index, getSubfield8Value, isValidSubfield8} from './reindexSubfield8';
-import {fieldGetSubfield6Pair, isValidSubfield6} from './subfield6Utils';
+import {getSubfield8Index, getSubfield8Value} from './reindexSubfield8';
+import {fieldGetSubfield6Pair, fieldsToNormalizedString, fieldToNormalizedString, isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
 //import {MarcRecord} from '@natlibfi/marc-record';
-import {/*fieldToString,*/ fieldToString, nvdebug} from './utils';
+import {fieldHasNSubfields, fieldHasSubfield, fieldToString, nvdebug} from './utils';
 
 // NB! It this file 'common' means 'normal' not 'identical'
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
-const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
+//const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
 
 // const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
 
 
 export default () => (base, source) => {
-  // NV: Not actually sure why this is done...
-  //const baseRecord = new MarcRecord(base, {subfieldValues: false});
-  //const sourceRecord = new MarcRecord(source, {subfieldValues: false});
-
-  //const baseMax = getMaxSubfield6(baseRecord);
-
   removeSharedDataFieldsFromSource(base, source);
 
   return {base, source};
@@ -28,14 +22,6 @@ function removeSharedDataFieldsFromSource(base, source) {
   removeSharedDatafieldsWithSubfield6FromSource(base, source);
   removeSharedDatafieldsWithSubfield8FromSource(base, source);
   removeCommonSharedDataFieldsFromSource(base, source);
-}
-
-function isRelevantField6(field) {
-  if (!field.subfields || field.tag === '880') {
-    return false;
-  }
-  const sf6s = field.subfields.filter(sf => sf.code === '6' && sf.value.match(sf6Regexp));
-  return sf6s.length === 1;
 }
 
 function isRelevantField8(field) {
@@ -49,35 +35,6 @@ function isRelevantCommonDataField(field) {
   return field.tag !== '880' && field.subfields && !isRelevantField6(field) && !isRelevantField8(field);
 }
 
-
-function fieldToNormalizedString(field) {
-  function subfieldToNormalizedString(sf) {
-    if (isValidSubfield6(sf)) {
-      // Replace index with XX:
-      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX`;
-    }
-    if (isValidSubfield8(sf)) {
-      const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
-      return `‡${sf.code} ${normVal}`;
-    }
-    return `‡${sf.code} ${sf.value}`;
-  }
-
-  if ('subfields' in field) {
-    return `${field.tag} ${field.ind1}${field.ind2}${formatAndNormalizeSubfields(field)}`;
-  }
-  return `${field.tag}    ${field.value}`;
-
-  function formatAndNormalizeSubfields(field) {
-    return field.subfields.map(sf => ` ${subfieldToNormalizedString(sf)}`).join('');
-  }
-}
-
-function fieldsToNormalizedString(fields) {
-  const strings = fields.map(field => fieldToNormalizedString(field));
-  strings.sort(); // eslint-disable-line functional/immutable-data
-  return strings.join('\t__SEPARATOR__\t');
-}
 
 function recordGetAllSubfield8Indexes(record) {
   /* eslint-disable */
@@ -110,6 +67,18 @@ function getFieldsWithSubfield8Index(record, index) {
   }
 }
 
+function removeFieldOrSubfield8(record, field, index = 0) {
+  const n8 = fieldHasNSubfields(field, '8');
+  if (n8 === 1) {
+    record.removeField(field);
+    return;
+  }
+  if (index === 0) {
+    return;
+  }
+  field.subfields = field.subfields.filter(sf => sf.code !== '8' || getSubfield8Index(sf) !== index); // eslint-disable-line functional/immutable-data
+
+}
 
 function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
   const baseIndexesToInspect = recordGetAllSubfield8Indexes(base);
@@ -128,23 +97,27 @@ function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
 
   baseIndexesToInspect.forEach(baseIndex => {
     const baseFields = getFieldsWithSubfield8Index(base, baseIndex);
-    const baseFieldsAsString = fieldsToNormalizedString(baseFields);
-    //nvdebug(`Results for BASE ${baseIndex}:`, debug);
-    //nvdebug(`${baseFieldsAsString}`, debug);
+    const baseFieldsAsString = fieldsToNormalizedString(baseFields, baseIndex);
+    nvdebug(`Results for BASE ${baseIndex}:`, debug);
+    nvdebug(`${baseFieldsAsString}`, debug);
     sourceIndexesToInspect.forEach(sourceIndex => {
       const sourceFields = getFieldsWithSubfield8Index(source, sourceIndex);
-      const sourceFieldsAsString = fieldsToNormalizedString(sourceFields);
+      const sourceFieldsAsString = fieldsToNormalizedString(sourceFields, sourceIndex);
       // If $8 source fields match with base fields, then remove them from source:
       nvdebug(`Compare BASE and SOURCE:`, debug);
       nvdebug(`${baseFieldsAsString} vs\n${sourceFieldsAsString}`, debug);
       if (sourceFieldsAsString === baseFieldsAsString) {
         nvdebug(`Deletable subfield $8 group found: ${sourceFieldsAsString}`);
-        sourceFields.forEach(field => source.removeField(field));
+        // FFS! Mainly theoretical, but what if record has multiple $8 indexes!?!
+        // The other 8s might be different. If field has multiple $8s, only relevant $8 subfield
+        // should be removed.
+        sourceFields.forEach(field => removeFieldOrSubfield8(source, field, sourceIndex));
         return;
       }
     });
   });
 }
+
 
 function removeSharedDatafieldsWithSubfield6FromSource(base, source) {
   const baseFields6 = base.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
@@ -152,50 +125,137 @@ function removeSharedDatafieldsWithSubfield6FromSource(base, source) {
 
   const sourceFields6 = source.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
 
-  sourceFields6.forEach(field => removeSourceField6IfNeeded(field, source, baseFieldsAsString));
-
-  function removeSourceField6IfNeeded(sourceField, sourceRecord, baseFieldsAsString) {
-    const sourcePairField = fieldGetSubfield6Pair(sourceField, sourceRecord);
-    const sourceString = sourcePairField ? fieldsToNormalizedString([sourceField, sourcePairField]) : fieldToNormalizedString(sourceField);
-    nvdebug(`SOURCE: ${sourceString} -- REALITY: ${fieldToString(sourceField)}`);
-    const tmp = sourcePairField ? fieldToString(sourcePairField) : 'HUTI';
-    nvdebug(`PAIR: ${tmp}`);
-    nvdebug(`BASE:   ${baseFieldsAsString.join(' -- ')}`);
-    if (!baseFieldsAsString.includes(sourceString)) {
-      return;
-    }
-    sourceRecord.removeField(sourceField);
-    if (sourcePairField === undefined) {
-      return;
-    }
-    sourceRecord.removeField(sourcePairField);
-  }
-
-  function pairAndStringify6(field, record) {
-    const pair6 = fieldGetSubfield6Pair(field, record);
-    if (!pair6) {
-      return fieldToNormalizedString(field);
-    }
-    return fieldsToNormalizedString([field, pair6]);
-  }
-
-
+  sourceFields6.forEach(field => removeField6IfNeeded(field, source, baseFieldsAsString));
 }
 
 function removeCommonSharedDataFieldsFromSource(base, source) {
   const baseFields = base.fields.filter(field => isRelevantCommonDataField(field));
   const sourceFields = source.fields.filter(field => isRelevantCommonDataField(field));
-  const baseFieldsAsString = baseFields.map(field => fieldToString(field));
+  const baseFieldsAsString = baseFields.map(field => fieldToNormalizedString(field));
 
   sourceFields.forEach(field => removeCommonDataFieldIfNeeded(field));
 
   function removeCommonDataFieldIfNeeded(field) {
     const fieldAsString = fieldToNormalizedString(field);
+    nvdebug(`Looking for '${fieldAsString}' in '${baseFieldsAsString.join('\', \'')}'`, debug);
     if (!baseFieldsAsString.includes(fieldAsString)) {
       return;
     }
-    nvdebug(`Remove ${fieldAsString}`, debug);
+    nvdebug(`rCSDFFS(): Remove ${fieldAsString}`, debug);
     source.removeField(field);
   }
 }
+
+
+function numberOfLinkageSubfields(field) {
+  const subfields = field.subfields.filter(sf => sf.code === '6' || sf.code === '8');
+  return subfields.length;
+}
+
+function isComplexChain(fields) {
+  return fields.some(field => numberOfLinkageSubfields(field) > 1);
+}
+
+function getAllLinkedfields(field, record) {
+  const n = numberOfLinkageSubfields(field);
+  // We need to implement getting $6- and $8-related fields here. Currently we just ignore them,
+  // and handle only normal fields
+  if (n > 1) {
+    return [];
+  }
+
+  if (n === 1 && fieldHasSubfield(field, '6')) {
+    const pair = fieldGetSubfield6Pair(field, record);
+    if (pair) {
+      return [field, pair];
+    }
+  }
+
+
+  const fields = [field]; // Uh, quick'n'dirty
+
+  // Press panic button if multiple linkahe subfields are found
+  if (isComplexChain(fields)) {
+    return [];
+  }
+
+  return fields;
+}
+
+
+function getFirstField(record, fields) {
+  const fieldsAsStrings = fields.map(field => fieldToString(field));
+  record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`));
+  nvdebug(`INCOMING: ${fieldsAsStrings.join('\t')}`);
+  const i = record.fields.findIndex(field => fieldsAsStrings.includes(fieldToString(field)));
+  if (i > -1) {
+    const field = record.fields[i];
+    nvdebug(`1st F: ${i + 1}/${record.fields.length} ${fieldToString(field)}`);
+    return field;
+  }
+  return undefined;
+}
+
+function isLoneOrFirstLinkedField(field, record) {
+  if (!field.subfields) { // Is not a datafield
+    return false;
+  }
+  const chain = getAllLinkedfields(field, record);
+  if (chain.length === 0) {
+    return false;
+  }
+  if (chain.length === 1) {
+    return true;
+  }
+  // Interpretation of first: position of field in
+  const firstField = getFirstField(record, chain);
+  if (firstField) {
+    return fieldToString(field) === fieldToString(firstField);
+  }
+  return false;
+
+  // Fallback:
+  //return fieldToString(field) === fieldToString(chain[0]);
+}
+
+
+export function removeDuplicateDatafields(record) {
+  /* eslint-disable */
+  let seen = {};
+
+  record.fields.forEach(field => nvdebug(`DUPL-CHECK ${fieldToString(field)}`));
+  
+  const fields = record.fields.filter(field => isLoneOrFirstLinkedField(field, record));
+  
+  fields.forEach(field => removeDuplicateDatafield(field));
+
+  function removeDuplicateDatafield(field) {
+    nvdebug(`removeDuplicateDatafield? ${fieldToString(field)} (and friends)`);
+    const fields = getAllLinkedfields(field, record);
+    if(fields.length === 0) {
+      return;
+    }
+
+    const fieldsAsString = fieldsToNormalizedString(fields);
+    nvdebug(` step 2 ${fieldsAsString}`);
+    if (fieldsAsString in seen)  {
+      nvdebug(` step 3 ${fieldsAsString}`);
+      /*
+      if (fields.some(currField => numberOfLinkageSubfields(currField) > 0) ) {
+        // Fields with multi-$6 should only get the relevant $6 removed.
+        // (And then removal will break the cache hit logic)
+        return;
+      }
+      */
+      nvdebug(`REMOVE? ${fieldsAsString}`, debug);
+      fields.forEach(currField => record.removeField(currField));
+      return;
+    }
+    nvdebug(`ADD2SEEN ${fieldsAsString}`, debug);
+    seen[fieldsAsString] = 1;
+  }
+
+  /* eslint-enable */
+}
+
 
