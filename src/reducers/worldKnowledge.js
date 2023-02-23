@@ -16,6 +16,14 @@ export function valueCarriesMeaning(tag, subfieldCode, value) {
   return true;
 }
 
+export function normalizePersonalName(tag, subfieldCode, originalValue) {
+  if (!['100', '600', '700', '800'].includes(tag) || subfieldCode !== 'a') {
+    return originalValue;
+  }
+  // Use "Forename Surname" format:
+  return originalValue.replace(/^([^,]+), ([^,]+)$/u, '$2 $1'); // eslint-disable-line prefer-named-capture-group
+}
+
 export function normalizeEditionStatement(tag, subfieldCode, originalValue) {
   if (tag !== '250' && subfieldCode !== 'a') {
     return originalValue;

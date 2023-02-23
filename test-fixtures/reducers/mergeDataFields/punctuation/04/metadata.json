@@ -1,3 +1,5 @@
 {
-  "description":"04 - merge 245 (add $b) and fix punctuation"
+  "description":"04 - don't merge 245 (= add $b) as per MET-197",
+  "comment": "Was: 04 - merge 245 (add $b) and fix punctuation",
+  "comment 2": "As not merge happens, field 245 ending punctuation is not fixed!"
 }

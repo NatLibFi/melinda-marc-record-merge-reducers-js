@@ -8,15 +8,11 @@
       "subfields": [
         {
           "code": "a",
-          "value": "Manun illallinen :"
-        },
-        {
-          "code": "b",
-          "value": "lentopallosta hiustöyhtöön /"
+          "value": "Manun illallinen /"
         },
         {
           "code": "c",
-          "value": "Tellervo Koivisto."
+          "value": "Tellervo Koivisto"
         }
       ]
     }
