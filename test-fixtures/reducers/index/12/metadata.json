@@ -1,5 +1,5 @@
 {
-  "description":"Keep duplicate field 856 from base, but don't add to it. Merge subfields.",
+  "description":"12: Duplicate subfield removal. After that merge subfields. Postprocess: remove base's duplicate field 856.",
   "comment": "from JO via Slack 24.1.2023",
   "only": false
 }

@@ -11,6 +11,7 @@ import {
 import {mergeSubfield} from './mergeSubfield.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
 import {valueCarriesMeaning} from './worldKnowledge.js';
+import {resetSubfield6Tag} from './subfield6Utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeOrAddSubfield');
 
@@ -72,9 +73,10 @@ function addSubfield(targetField, candSubfield) {
   targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
 
   targetField.merged = 1; // eslint-disable-line functional/immutable-data
-  setPunctuationFlag(targetField, candSubfield);
 
+  setPunctuationFlag(targetField, candSubfield);
   sortAdjacentSubfields(targetField);
+
 }
 
 function setPunctuationFlag(field, addedSubfield) {
@@ -84,7 +86,25 @@ function setPunctuationFlag(field, addedSubfield) {
   field.useExternalEndPunctuation = 1; // eslint-disable-line functional/immutable-data
 }
 
-export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctlessCandSubfield) {
+
+function resetPaired880(candFieldPair880, targetField, punctlessCandSubfield) {
+  // No relevant:
+  if (punctlessCandSubfield.code !== '6') {
+    return;
+  }
+  if (targetField.tag === '880') {
+    return;
+  }
+  // NB! $6 comes first:
+  if (candFieldPair880 === undefined || !candFieldPair880.subfields || candFieldPair880.subfields[0].code !== '6') {
+    return;
+
+  }
+  nvdebug(`880 contents: ${fieldToString(candFieldPair880)}`);
+  resetSubfield6Tag(candFieldPair880.subfields[0], targetField.tag);
+}
+
+export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctlessCandSubfield, candFieldPair880 = undefined) {
   const normalizedTargetField = cloneAndNormalizeField(targetField);
 
   nvdebug(`   Q: mergeOrAddSubfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
@@ -113,6 +133,7 @@ export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctles
     nvdebug(`    A: Yes. Add previously unseen subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
     setPunctuationFlag(targetField, punctlessCandSubfield);
+    resetPaired880(candFieldPair880, targetField, punctlessCandSubfield);
     addSubfield(targetField, punctlessCandSubfield);
     return;
   }

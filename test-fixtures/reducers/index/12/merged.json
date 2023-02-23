@@ -21,21 +21,6 @@
           "value": "Linkki julkaisun verkkosivuille"
         }
       ]
-    },
-    {
-      "tag": "856",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "u",
-          "value": "https://www.novitaknits.com/fi/fazer-x-novita/"
-        },
-        {
-          "code": "y",
-          "value": "Linkki julkaisun verkkosivuille"
-        }
-      ]
     }
   ]
 }

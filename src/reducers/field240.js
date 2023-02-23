@@ -62,7 +62,7 @@ export default () => (base, source) => {
 
   candidateFields.forEach(candField => {
     nvdebug(`Now merging (or trying to) field ${fieldToString(candField)}`, debug);
-    if (!mergeField(baseRecord, candField, config)) {
+    if (!mergeField(baseRecord, candField, config)) { // NB! Does not handle $6 linking. See generic code...
       addField(baseRecord, candField, config);
       return;
     }

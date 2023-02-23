@@ -1,5 +1,5 @@
 import {fieldFixPunctuation} from './punctuation';
-import {fieldToString, nvdebug, subfieldToString} from './utils';
+import {fieldToString, getCatalogingLanguage, nvdebug, subfieldToString} from './utils';
 
 // NB! Make this a marc-record-validators-melinda validator/fixer eventually!
 
@@ -32,20 +32,6 @@ const relatorTerms = [
   {'code': 'pro', 'eng': 'producer', 'fin': 'tuottaja', 'swe': 'producent'},
   {'code': 'trl', 'eng': 'translator', 'fin': 'kääntäjä', 'swe': 'översättare'}
 ];
-
-
-export function getCatalogingLanguage(record) {
-  const [field040] = record.get(/^040$/u);
-  if (!field040) {
-    return null;
-  }
-  const [b] = field040.subfields.filter(sf => sf.code === 'b');
-  if (!b) {
-    return null;
-  }
-  return b.value;
-}
-
 
 /*
 function recordNormalizeRelatorTerms(record, defaultLanguageCode = undef) {

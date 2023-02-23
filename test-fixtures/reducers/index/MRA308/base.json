@@ -1,0 +1,120 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-05" },
+      { "code": "a", "value": "Jarkije stranitsy" }
+    ]},
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-90" },
+      { "code": "a", "value": "Jarkije stranitsy" }
+    ]},
+
+    { "tag": "700", "ind1": "1", "ind2": " ",
+      "subfields": [
+        { "code": "6", "value": "880-06" },
+        { "code": "a", "value": "Demurova, Nina," },
+        { "code": "e", "value": "kääntäjä." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "880-07" },
+      { "code": "a", "value": "Jakimova, I.," },
+      { "code": "e", "value": "kuvittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "880-08" },
+      { "code": "a", "value": "Zujev, I.," },
+      { "code": "e", "value": "kuvittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "880-10" },
+      { "code": "a", "value": "Sedakova, O.," },
+      { "code": "e", "value": "kääntäjä." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "880-20" },
+      { "code": "a", "value": "Sedakova, O.," },
+      { "code": "e", "value": "kääntäjä." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "880-33" },
+      { "code": "a", "value": "Safronov, Juri," },
+      { "code": "e", "value": "kokoaja," },
+      { "code": "e", "value": "toimittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ",
+      "subfields": [
+        { "code": "6", "value": "880-34" },
+        { "code": "a", "value": "Politkovski, Ilja," },
+        { "code": "e", "value": "esipuheen kirjoittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-35" },
+      { "code": "a", "value": "Politkovskaja, Vera," },
+      { "code": "e", "value": "esipuheen kirjoittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-36" },
+      { "code": "a", "value": "Muratov, Dmitri," },
+      { "code": "e", "value": "alkuperäisidean luoja."}
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-05/(N" },
+      { "code": "a", "value": "Яркие страницы" }
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-90/(N" },
+      { "code": "a", "value": "Яркие страницы" }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-06/(N" },
+      { "code": "a", "value": "Демурова, Нина," },
+      { "code": "e", "value": "kääntäjä." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-07/(N" },
+      { "code": "a", "value": "Якимова,И.," },
+      { "code": "e", "value": "kuvittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-08/(N" },
+      { "code": "a", "value": "Зуев, И.," },
+      { "code": "e", "value": "kuvittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-10/(N" },
+      { "code": "a", "value": "Седаковa, O.," },
+      { "code": "e", "value": "kääntäjä." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-20/(N" },
+      { "code": "a", "value": "Седаковa, O.," },
+      { "code": "e", "value": "kääntäjä." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-33/(N" },
+      { "code": "a", "value": "Сафронов, Юрий," },
+      { "code": "e", "value": "kokoaja," },
+      { "code": "e", "value": "toimittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-34/(N" },
+      { "code": "a", "value": "Политковский, Илья," },
+      { "code": "e", "value": "esipuheen kirjoittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-35/(N‡aПолитковская, Bера," },
+      { "code": "e", "value": "esipuheen kirjoittaja." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "700-36/(N" },
+      { "code": "a", "value": "Муратов, Дмитрий," },
+      { "code": "e", "value": "alkuperäisidean luoja." }
+    ]}   
+  ]
+}

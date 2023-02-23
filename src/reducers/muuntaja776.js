@@ -1,6 +1,5 @@
-// NB! The logic of this reducer is different from others. It derives a field 776, it does not merge it.
-// NB #2! This will delete fields 015, 020, 022 and 338 from source
-// NB #2.1! We could (should?) do this in muuntajaConfig.json when preprocessing merge...
+// NB! The logic of this reducer is different from others. It derives a field 776 from certains source fields,
+// it does not merge them.
 
 //import createDebugLogger from 'debug';
 import ISBN from 'isbn3';
@@ -11,9 +10,9 @@ import ISBN from 'isbn3';
 //const debugData = debug.extend('data');
 
 export default () => (base, source) => {
-  const subfieldsForField776 = createSubfieldForField776(source);
+  const subfieldsForField776 = createIdentifierSubfieldForField776(source);
 
-  removeIdentifierFields(source);
+  //removeIdentifierFields(source);
 
   if (subfieldsForField776 !== undefined) {
     const field = {'tag': '776', 'ind1': '0', 'ind2': '8', 'subfields': subfieldsForField776};
@@ -24,9 +23,11 @@ export default () => (base, source) => {
   return {base, source};
 };
 
+/*
 function removeIdentifierFields(record) {
   record.fields = record.fields.filter(f => !['015', '020', '022', '338'].includes(f.tag)); // eslint-disable-line functional/immutable-data
 }
+*/
 
 function createIdentiferSubfield(x, z, o) {
   if (z) {
@@ -41,7 +42,7 @@ function createIdentiferSubfield(x, z, o) {
   return undefined;
 }
 
-function createSubfieldForField776(record) {
+function createIdentifierSubfieldForField776(record) {
   // The variable names below are based on field 776 subfield codes
   const z = getIsbn(record);
   const x = z ? undefined : getIssn(record);

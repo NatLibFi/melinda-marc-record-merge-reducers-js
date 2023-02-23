@@ -1,3 +1,4 @@
 {
-  "description":"Remove $6-linked duplicate fields from source"
+  "description":"Remove $6-linked duplicate fields from source",
+  "only": false
 }

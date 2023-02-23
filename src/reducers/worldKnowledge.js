@@ -15,3 +15,44 @@ export function valueCarriesMeaning(tag, subfieldCode, value) {
   }
   return true;
 }
+
+export function normalizePersonalName(tag, subfieldCode, originalValue) {
+  if (!['100', '600', '700', '800'].includes(tag) || subfieldCode !== 'a') {
+    return originalValue;
+  }
+  // Use "Forename Surname" format:
+  return originalValue.replace(/^([^,]+), ([^,]+)$/u, '$2 $1'); // eslint-disable-line prefer-named-capture-group
+}
+
+export function normalizeEditionStatement(tag, subfieldCode, originalValue) {
+  if (tag !== '250' && subfieldCode !== 'a') {
+    return originalValue;
+  }
+
+  const value = originalValue;
+  // NB! originalValue should already be lowercased, stripped on initial '[' chars and postpunctuation.
+
+  // As normalization tries to translate things info Finnish, use this for similarity check only!
+  if (value.match(/^[1-9][0-9]*(?:\.|:a|nd|rd|st|th) (?:ed\.?|edition|p\.?|painos|uppl\.?|upplagan)[.\]]*$/ui)) {
+    const nth = value.replace(/[^0-9].*$/u, '');
+    return `${nth}. painos`;
+  }
+
+  if (value.match(/^(?:First|Första|Ensimmäinen) (?:ed\.?|edition|p\.?|painos|uppl\.?|upplagan)[.\]]*$/ui)) {
+    return `1. painos`;
+  }
+
+  if (value.match(/^(?:Andra|Second|Toinen) (?:ed\.?|edition|p\.?|painos|uppl\.?|upplagan)[.\]]*$/ui)) {
+    return `2. painos`;
+  }
+
+  if (value.match(/^(?:Kolmas|Third|Tredje) (?:ed\.?|edition|p\.?|painos|uppl\.?|upplagan)[.\]]*$/ui)) {
+    return `3. painos`;
+  }
+
+  if (value.match(/^(?:Fourth|Fjärde|Neljäs) (?:ed\.?|edition|p\.?|painos|uppl\.?|upplagan)[.\]]*$/ui)) {
+    return `4. painos`;
+  }
+
+  return originalValue;
+}

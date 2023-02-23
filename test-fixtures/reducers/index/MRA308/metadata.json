@@ -1,0 +1,6 @@
+{
+  "description":"Test MRA-308, MRA-287, and MELINDA-8212",
+  "comment": "Duplicate removal from base. No new entries from source.",
+  "comment #2": "Multiple tickets, so that we get 10+ $6 links here, which allows us to check $6 reindexing properly",
+  "only": false
+}

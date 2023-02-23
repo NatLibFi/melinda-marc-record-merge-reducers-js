@@ -1,0 +1,4 @@
+{
+  "description":"Remove $8-linked duplicate fields or (if multi-$8) or $8 subfields from source",
+  "only": false
+}
