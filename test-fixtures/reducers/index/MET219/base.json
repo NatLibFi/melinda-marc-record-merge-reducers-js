@@ -41,6 +41,12 @@
       { "code": "a", "value": "BAR" },
       { "code": "v", "value": "1" }
     ]},
+    { "tag": "610", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-31" },
+      { "code": "a", "value": "LORUM IPSUM" },
+      { "code": "v", "value": "1" }
+    ]},
+
 
     { "tag": "880", "ind1": " ", "ind2": "1", "subfields": [
       { "code": "6", "value": "264-05/(N" },
@@ -78,6 +84,11 @@
     { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
       { "code": "6", "value": "600-31" },
       { "code": "a", "value": "BAR" },
+      { "code": "v", "value": "1" }
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "610-31" },
+      { "code": "a", "value": "LORUM IPSUM" },
       { "code": "v", "value": "1" }
     ]}
   ]
