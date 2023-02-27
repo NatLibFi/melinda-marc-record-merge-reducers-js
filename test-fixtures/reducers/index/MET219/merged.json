@@ -1,0 +1,46 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "BASE-12345"},
+
+    { "tag": "264", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "6", "value": "880-01" },
+      { "code": "a", "value": "Kyjiv" },
+      { "code": "b", "value": "А-BА-БА-HА-LА-МА-HА"},
+      { "code": "c", "value": "2021." }
+    ]}, 
+    { "tag": "490", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-02" },
+      { "code": "a", "value": "Šerlok Holms ;" },
+      { "code": "v", "value": "1" }
+    ]},
+    { "tag": "505", "ind1": "0", "ind2": "0", "subfields": [
+      { "code": "6", "value": "880-03" },
+      { "code": "t", "value": "Etjud u bagrjanyh' tonah' --" },
+      { "code": "t", "value": "Znak tšotyroh' --" },
+      { "code": "t", "value": "Prigody Šerloka Holmsa --" },
+      { "code": "t", "value": "Spogady pro Šerloka Holmsa --" },
+      { "code": "t", "value": "Sobaka Baskerviliv ." }
+    ]},
+
+    { "tag": "880", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "6", "value": "264-01/(N" },
+      { "code": "a", "value": "Київ :" },
+      { "code": "b", "value": "А-БА-БА-ГА-ЛА-МА-ГА," },
+      { "code": "c", "value": "2021." }
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": " ", "subfields": [
+      { "code": "6", "value": "490-02/(N" },
+      { "code": "a", "value": "Шерлок Голмс ;" },
+      { "code": "v", "value": "1" }
+    ]},
+    { "tag": "880", "ind1": "0", "ind2": "0", "subfields": [
+      { "code": "6", "value": "505-03/(N" },
+      { "code": "t", "value": "Етюд у багряних тонах --" },
+      { "code": "t", "value": "Знак чотирйох --" },
+      { "code": "t", "value": "Пригоди Шерлока Голмса --" },
+      { "code": "t", "value": "Спогади про Шерлока Голмса --" },
+      { "code": "t", "value": "Собака Баскервiлiв ." }
+    ]}
+  ]
+}
