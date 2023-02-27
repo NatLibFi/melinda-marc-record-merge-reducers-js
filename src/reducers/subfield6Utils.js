@@ -32,6 +32,13 @@ export function subfieldGetIndex6(subfield) {
   return undefined;
 }
 
+function subfieldGetTag6(subfield) {
+  if (isValidSubfield6(subfield)) {
+    return subfield.value.substring(0, 3);
+  }
+  return undefined;
+}
+
 
 export function intToTwoDigitString(i) {
   return i < 10 ? `0${i}` : `${i}`;
@@ -86,6 +93,18 @@ export function fieldGetIndex6(field) {
   return subfieldGetIndex6(sf6);
 }
 
+function fieldGetTag6(field) {
+  if (!field.subfields) {
+    return undefined;
+  }
+  // Subfield $6 should always be the 1st subfield... (not implemented)
+  // There should be only one $6, so find is ok.
+  const sf6 = field.subfields.find(subfield => isValidSubfield6(subfield));
+  if (sf6 === undefined) {
+    return undefined;
+  }
+  return subfieldGetTag6(sf6);
+}
 
 export function isSubfield6Pair(field, otherField) {
   // No need to log this:
@@ -107,8 +126,17 @@ export function isSubfield6Pair(field, otherField) {
   }
 
   const otherFieldIndex = fieldGetIndex6(otherField);
-  nvdebug(` INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
-  return fieldIndex === otherFieldIndex;
+
+  if (fieldIndex !== otherFieldIndex) {
+    nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
+    return false;
+  }
+
+  if (fieldGetTag6(field) !== otherField.tag || field.tag !== fieldGetTag6(otherField)) {
+    nvdebug(` FAILURE: TAG vs $6 TAG`);
+    return false;
+  }
+  return true;
 
   function tagsArePairable6(tag1, tag2) {
     // How to do XOR operation in one line? Well, this is probably more readable...
@@ -123,12 +151,12 @@ export function isSubfield6Pair(field, otherField) {
 }
 
 export function fieldGetSubfield6Pair(field, record) {
-  const pairedField = record.fields.find(otherField => isSubfield6Pair(field, otherField));
-  if (!pairedField) {
-    return pairedField;
+  const pairedFields = record.fields.filter(otherField => isSubfield6Pair(field, otherField));
+  if (pairedFields.length !== 1) {
+    return undefined;
   }
-  nvdebug(`fieldGetSubfield6Pair(): ${fieldToString(field)} => ${fieldToString(pairedField)}`);
-  return pairedField;
+  nvdebug(`fieldGetSubfield6Pair(): ${fieldToString(field)} => ${fieldToString(pairedFields[0])}`);
+  return pairedFields[0];
 }
 
 export function isRelevantField6(field) { // ...
