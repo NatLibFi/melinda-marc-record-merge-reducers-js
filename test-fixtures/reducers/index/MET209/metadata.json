@@ -1,0 +1,5 @@
+{
+  "description":"MET-209",
+  "only": false,
+  "comment": "Note that kirjoittaja does not get translated if both base and source contains it, as no merge nor add happens."
+}
