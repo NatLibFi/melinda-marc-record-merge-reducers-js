@@ -9,7 +9,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 // NB! Subfield 6 is non-repeatable and always comes first!
 // NB! Index size is always 2 (preceding 0 required for 01..09)
-// How to handle non-linking value '00'? How to handle 100+ indexes?
+// How to handle non-linking value '00'? (Now accepted.) Support for 100+ was added on 2023-02-27.
 const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
 
 
@@ -200,4 +200,16 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
   }
   nvdebug(`Duplicate $6 removal (pair): ${fieldToString(pairField)}`);
   record.removeField(pairField);
+}
+
+
+export function getFieldsWithSubfield6Index(record, index) {
+  return record.fields.filter(field => fieldHasIndex(field, index));
+
+  function fieldHasIndex(field, index) {
+    if (!field.subfields) {
+      return false;
+    }
+    return field.subfields.find(sf => isValidSubfield6(sf) && subfieldGetIndex6(sf) === index);
+  }
 }
