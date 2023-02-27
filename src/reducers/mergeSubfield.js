@@ -96,56 +96,70 @@ function isNidottu(value) {
   return ['hfd.', 'häftad', 'nid.', 'nidottu'].includes(value);
 }
 
-
-function pairKovakantinen(candidateSubfields) {
+function findReplaceableSidottu(candidateSubfields) {
   return candidateSubfields.find(sf => sf.code === 'q' && isSidottu(sf.value));
 }
 
-function pairPehmeakantinen(candidateSubfields) {
+function findReplaceableNidottu(candidateSubfields) {
   return candidateSubfields.find(sf => sf.code === 'q' && isNidottu(sf.value));
 }
 
-function pairKierreselka(candidateSubfields) {
+function findReplaceableRengaskirja(candidateSubfields) {
   return candidateSubfields.find(sf => sf.code === 'q' && isRengaskirja(sf.value));
 }
 
 
-function findCounterpartForCoverType(coverType, candidateSubfields) {
+function overrideBingingWithCoverType(coverType, candidateSubfields) {
   if (isKovakantinen(coverType)) {
-    return pairKovakantinen(candidateSubfields);
+    return findReplaceableSidottu(candidateSubfields);
   }
   if (isPehmeakantinen(coverType)) {
-    return pairPehmeakantinen(candidateSubfields);
+    return findReplaceableNidottu(candidateSubfields);
   }
   if (isKierreselka(coverType)) {
-    return pairKierreselka(candidateSubfields);
+    return findReplaceableRengaskirja(candidateSubfields);
   }
   return null;
 }
 
+function candTypeIsSameOrWorse(candSubfield, relevantSubfields) {
+  if (isNidottu(candSubfield.value) && relevantSubfields.some(sf => isNidottu(sf.value) || isPehmeakantinen(sf.value))) {
+    return true;
+  }
+  if (isSidottu(candSubfield.value) && relevantSubfields.some(sf => isSidottu(sf.value) || isKovakantinen(sf.value))) {
+    return true;
+  }
+  if (isRengaskirja(candSubfield.value) && relevantSubfields.some(sf => isRengaskirja(sf.value) || isKierreselka(sf.value))) {
+    return true;
+  }
+
+  if (isPehmeakantinen(candSubfield.value) && relevantSubfields.some(sf => isPehmeakantinen(sf.value))) {
+    return true;
+  }
+  if (isKovakantinen(candSubfield.value) && relevantSubfields.some(sf => isKovakantinen(sf.value))) {
+    return true;
+  }
+  if (isRengaskirja(candSubfield.value) && relevantSubfields.some(sf => isRengaskirja(sf.value))) {
+    return true;
+  }
+  return false;
+}
 
 function mapBindingToCoverType(field, candSubfield, relevantSubfields) {
   if (candSubfield.code !== 'q' || !['015', '020', '024', '028'].includes(field.tag)) {
     return false;
   }
   // See if base's field has a binding and source subfield has a cover. If so, replace subfield value:
-  const originalSubfieldQ = findCounterpartForCoverType(candSubfield.value, relevantSubfields);
+  const originalSubfieldQ = overrideBingingWithCoverType(candSubfield.value, relevantSubfields);
   if (originalSubfieldQ) {
     originalSubfieldQ.value = candSubfield.value; // eslint-disable-line functional/immutable-data
     return true;
   }
-  // Vice versa: if original value is cover type and new value is ye olde binding, return true.
+  // Vice versa (and equality): if original value is cover type and new value is ye olde binding, return true.
   // Then change is considered to have happenened.
-  if (isNidottu(candSubfield.value) && relevantSubfields.some(sf => isPehmeakantinen(sf.value))) {
+  if (candTypeIsSameOrWorse(candSubfield, relevantSubfields)) {
     return true;
   }
-  if (isSidottu(candSubfield.value) && relevantSubfields.some(sf => isKovakantinen(sf.value))) {
-    return true;
-  }
-  if (isRengaskirja(candSubfield.value) && relevantSubfields.some(sf => isKierreselka(sf.value))) {
-    return true;
-  }
-
 
   return false;
 }
