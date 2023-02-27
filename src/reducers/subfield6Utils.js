@@ -10,7 +10,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 // NB! Subfield 6 is non-repeatable and always comes first!
 // NB! Index size is always 2 (preceding 0 required for 01..09)
 // How to handle non-linking value '00'? How to handle 100+ indexes?
-const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9](?:[^0-9].*)?$/u;
+const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
 
 
 export function isValidSubfield6(subfield) {
@@ -47,21 +47,31 @@ export function resetSubfield6Tag(subfield, tag) {
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
+function getSubfield6Tail(subfield) {
+  if (isValidSubfield6(subfield)) {
+    // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
+    return subfield.value.replace(/^\d+-\d+/u, '');
+  }
+  return '';
+}
+
 export function resetSubfield6Index(subfield, strindex) {
   if (!isValidSubfield6(subfield)) {
     return;
   }
-  const newValue = subfield.value.substring(0, 4) + strindex + subfield.value.substring(6); // eslint-disable-line functional/immutable-data
+  const newValue = subfield.value.substring(0, 4) + strindex + getSubfield6Tail(subfield); // eslint-disable-line functional/immutable-data
   nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
+/*
 export function subfieldGetIndex(subfield) {
   if (!isValidSubfield6(subfield)) {
     return undefined;
   }
   return subfield.value.substring(4, 6);
 }
+*/
 
 export function fieldGetIndex6(field) {
   if (!field.subfields) {
@@ -73,7 +83,7 @@ export function fieldGetIndex6(field) {
   if (sf6 === undefined) {
     return undefined;
   }
-  return subfieldGetIndex(sf6);
+  return subfieldGetIndex6(sf6);
 }
 
 
@@ -142,7 +152,7 @@ export function fieldToNormalizedString(field, currIndex = 0) {
   function subfieldToNormalizedString(sf) {
     if (isValidSubfield6(sf)) {
       // Replace index with XX:
-      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX`;
+      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX${getSubfield6Tail(sf)}`;
     }
     if (isValidSubfield8(sf)) {
       const index8 = getSubfield8Index(sf);
@@ -178,7 +188,7 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
   nvdebug(`SOURCE: ${asString} -- REALITY: ${fieldToString(field)}`);
   const tmp = pairField ? fieldToString(pairField) : 'HUTI';
   nvdebug(`PAIR: ${tmp}`);
-  nvdebug(`BASE:   ${fieldsAsString.join(' -- ')}`);
+  nvdebug(`BASE:\n ${fieldsAsString.join('\n ')}`);
   if (!fieldsAsString.includes(asString)) {
     return;
   }
