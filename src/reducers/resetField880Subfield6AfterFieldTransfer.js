@@ -1,3 +1,4 @@
+import {subfieldGetIndex6} from './subfield6Utils';
 import {nvdebug, subfieldToString} from './utils';
 
 export function resetCorrespondingField880(field, record, oldTag, newTag) {
@@ -8,9 +9,11 @@ export function resetCorrespondingField880(field, record, oldTag, newTag) {
   const cand880Fields = record.fields.filter(field => field.tag === '880');
   sixes.forEach(sf6 => fix880(sf6));
 
-  function fix880(sf6) {
+  function fix880(sf6) { // sf6 tag is not 880!
     const pairValue = getPairValue(sf6, oldTag);
     const newPairValue = `${newTag}-${pairValue.substring(4)}`;
+    // CHECK: does this lose the post-index encoding information!?!
+
     // Change forEach to some? Also $6 should always be the first subfield...
     cand880Fields.forEach(f => f.subfields.forEach(sf => fix880Subfield6(sf, pairValue, newPairValue)));
   }
@@ -30,7 +33,7 @@ export function resetCorrespondingField880(field, record, oldTag, newTag) {
 
 
   function getPairValue(subfield6, myTag) {
-    const index = subfield6.value.substring(4, 6);
+    const index = subfieldGetIndex6(subfield6);
     const lookFor = `${myTag}-${index}`;
     return lookFor;
   }
