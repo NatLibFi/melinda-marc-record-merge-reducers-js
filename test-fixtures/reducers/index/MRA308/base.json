@@ -59,7 +59,7 @@
       { "code": "e", "value": "esipuheen kirjoittaja." }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "880-36" },
+      { "code": "6", "value": "880-136" },
       { "code": "a", "value": "Muratov, Dmitri," },
       { "code": "e", "value": "alkuperäisidean luoja."}
     ]},
@@ -112,7 +112,7 @@
       { "code": "e", "value": "esipuheen kirjoittaja." }
     ]},
     { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "6", "value": "700-36/(N" },
+      { "code": "6", "value": "700-136/(N" },
       { "code": "a", "value": "Муратов, Дмитрий," },
       { "code": "e", "value": "alkuperäisidean luoja." }
     ]}   
