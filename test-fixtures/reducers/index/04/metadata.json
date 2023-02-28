@@ -1,5 +1,6 @@
 {
   "description":"MET-33: merged gets LDR/17=4 from source, and deletes 500 prepub notes because of that. Best 594 Fennica prepub note is retained",
   "comment": "Note that 594 field drops affect only $5 FENNI/FIKKA/VIOLA and thus the field with $5 WHATEVER is retained",
+  "comment #2": "2023-02-28: Add MET-198-ish field-merge for field 245. NB! punc is added to 245$c!",
   "only": false
 }
