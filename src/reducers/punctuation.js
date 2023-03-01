@@ -362,7 +362,7 @@ function getFinalPunctuationSubfield(field) {
 
 /*
 function addFinalPunctuation(field) {
-  // Add punctuation as per https://www.kiwi.fi/display/kumea/Loppupisteohje:
+  // Add punctuation as per https://wiki.helsinki.fi/display/rdasovellusohje/Loppupisteohje:
   const subfield = getFinalPunctuationSubfield(field);
   if (subfield && subfield.value.slice(-1) !== '.') {
     debug(`  Adding final punctuation '.' to '${field.tag} $${subfield.code} ${subfield.value}'.`);

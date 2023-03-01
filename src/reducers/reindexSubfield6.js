@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {/*fieldToString,*/ nvdebug} from './utils';
-import {intToTwoDigitString, isValidSubfield6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
+import {fieldToString, nvdebug, subfieldToString} from './utils';
+import {fieldGetIndex6, fieldGetSubfield6Pair, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6, isValidSubfield6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
@@ -57,13 +57,13 @@ function reindexSubfield6s(record, baseMax = 0) {
   nvdebug(`Maximum subfield $6 index is ${baseMax}`, debug);
 
   record.fields.forEach(field => fieldUpdateSubfield6s(field, baseMax));
+}
 
-  function fieldUpdateSubfield6s(field, max) {
-    if (!field.subfields) {
-      return;
-    }
-    field.subfields.forEach(sf => updateSubfield6(sf, max));
+function fieldUpdateSubfield6s(field, max) {
+  if (!field.subfields) {
+    return;
   }
+  field.subfields.forEach(sf => updateSubfield6(sf, max));
 
   function updateSubfield6(sf, max) {
     if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statement
@@ -80,7 +80,52 @@ function reindexSubfield6s(record, baseMax = 0) {
 }
 
 
+export function reindexDuplicateSubfield6Indexes(record) {
+  // MET-219: same index is used twice.
+  // This should be converted into a validator/fixer and moved to marc-record-validate.
+  /* eslint-disable */
+  let cache = {};
+
+  // 1. Get all non-880 fields.
+  const fields6 = record.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
+
+  fields6.forEach(field => reindexIfNeeded(field));
+
+  function reindexIfNeeded(currField) {
+    if (currField.tag === '880') {
+      return;
+    }
+
+    const index = fieldGetIndex6(currField);
+    if (index === undefined || index === '00') {
+      return;
+    }
+
+    const relevantFields = getFieldsWithSubfield6Index(record, index);
+    if (relevantFields.length < 3) { // Default 2: XXX $6 880-NN and 880 $6 XXX-NN
+      return;
+    }
+    
+    const currTagFields = relevantFields.filter(f => f.tag === currField.tag);
+    if ( currTagFields.length === 1) {
+      nvdebug(`NEED TO REINDEX ${fieldToString(currField)}`);
+      const max = getMaxSubfield6(record);
+      if (max) {
+        const pairField = fieldGetSubfield6Pair(currField, record);
+        if (pairField) {
+          nvdebug(` PAIR ${fieldToString(pairField)}`);
+          fieldUpdateSubfield6s(currField, max);
+          fieldUpdateSubfield6s(pairField, max);
+        }
+      }
+    }
+  }
+  /* eslint-enable */
+
+}
+
 export function recordResetSubfield6Indexes(record) { // Remove gaps
+  // This should be converted into a validator/fixer and moved to marc-record-validate.
   /* eslint-disable */
     let currentInt = 1;
     let oldtoNewCache = {};
@@ -88,6 +133,7 @@ export function recordResetSubfield6Indexes(record) { // Remove gaps
     record.fields.forEach(field => fieldResetSubfield6(field));
 
     function fieldResetSubfield6(field) {
+      nvdebug(`fieldResetSubfield6(${fieldToString(field)})`);
       if (!field.subfields) {
         return;
       }
@@ -102,7 +148,9 @@ export function recordResetSubfield6Indexes(record) { // Remove gaps
       if (currIndex === '00') {
         return;
       }
+
       const newIndex = mapCurrIndexToNewIndex(currIndex);
+      nvdebug(`subfieldReset6(${subfieldToString(subfield)}): ${newIndex}`);
       resetSubfield6Index(subfield, newIndex);
       
     }

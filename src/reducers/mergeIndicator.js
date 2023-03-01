@@ -102,10 +102,22 @@ export function mergeIndicators(toField, fromField, config) {
     }
   }
 
+
+  function fieldIsFenniKept(field) {
+    return field.subfields && field.subfields.some(sf => sf.code === '9' && sf.value === 'FENNI<KEEP>');
+  }
+
   function mergeIndicator1(toField, fromField, config) {
     if (toField.ind1 === fromField.ind1) {
       return; // Do nothing
     }
+
+    // MRA-300: If source contains the (un)holy $9 FENNI<KEEP>, we prefer that value regardless of whatever...
+    if (!fieldIsFenniKept(toField) && fieldIsFenniKept(fromField)) {
+      toField.ind1 = fromField.ind1; // eslint-disable-line functional/immutable-data
+      return;
+    }
+
 
     const preferredValues = getIndicatorPreferredValues(toField.tag, 1, config);
 
@@ -155,7 +167,9 @@ export function mergeIndicators(toField, fromField, config) {
       return; // Do nothing
     }
 
-    publisherTagSwapHack(toField, fromField); // Easter egg for base-260 vs source-264
+    publisherTagSwapHack(toField, fromField); // Easter egg/hack for base-260 vs source-264
+
+    // If source contains $9 FENNI<KEEP>, we might prefer it?
 
     //nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`);
     const preferredValues = getIndicatorPreferredValues(toField.tag, 2, config);
