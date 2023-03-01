@@ -4,6 +4,7 @@
 import {fieldFixPunctuation} from './punctuation.js';
 import {fieldTranslateRelatorTerm} from './fixRelatorTerms.js';
 import {getCatalogingLanguage} from './utils.js';
+import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields.js';
 
 function postprocessBaseRecord(base, source) {
   const fromLanguage = getCatalogingLanguage(source);
@@ -18,6 +19,7 @@ function postprocessBaseRecord(base, source) {
       // - Fix indicators?
       // Record level fixes should be implemented as validators/fixers
       // in marc-record-validators-melinda and ust called from here.
+      fieldRemoveDuplicateSubfields(field);
       fieldFixPunctuation(field); // NB! This will fix only fields with merged content
       delete field.merged; // eslint-disable-line functional/immutable-data
     }

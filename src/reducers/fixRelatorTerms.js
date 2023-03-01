@@ -103,13 +103,38 @@ export function recordHandleRelatorTermAbbreviations(record, defaultCatLanguage 
   record.fields.forEach(field => fieldHandleRelatorTermAbbreviations(field, catalogingLanguage));
 }
 
-function translateRelatorTerm(originalTerm, fromLanguage, toLanguage) {
-  if (fromLanguage === toLanguage) {
-    return;
+
+function termIsInGivenLanguage(term, language) {
+  return relatorTerms.some(row => language in row && row[language] === term);
+}
+
+function anyToLanguage(originalTerm) {
+  // Sometimes there's no 040$b or 040$b and, say, 700$e don't correlate
+  if (termIsInGivenLanguage(originalTerm, 'fin')) {
+    return 'fin';
   }
+  if (termIsInGivenLanguage(originalTerm, 'swe')) {
+    return 'swe';
+  }
+  if (termIsInGivenLanguage(originalTerm, 'eng')) {
+    return 'eng';
+  }
+  return null;
+}
+
+function translateRelatorTerm(originalTerm, fromLanguage2, toLanguage) {
+
   // originalTerm is supposed to be normal version (abbrs have been expanded), possibly with punctuation
   const term = originalTerm.replace(/[,.]$/u, '');
-  nvdebug(`Try to translate '${term}'`);
+  nvdebug(`Try to translate '${term}' from ${fromLanguage2} to ${toLanguage}`);
+
+  // Kind of hacky... If term is in toLanguage, do nothing. 040$b isn't that reliable.
+  if (termIsInGivenLanguage(term, toLanguage)) {
+    return originalTerm;
+  }
+  // Guess fromLanguage as 040$b isn't that reliable:
+  const fromLanguage = fromLanguage2 === null || !termIsInGivenLanguage(term, fromLanguage2) ? anyToLanguage(term) : fromLanguage2;
+
   const [candRow] = relatorTerms.filter(row => fromLanguage in row && toLanguage in row && row[fromLanguage] === term);
   if (candRow) {
     const punc = term === originalTerm ? '' : originalTerm.slice(-1);

@@ -9,10 +9,10 @@ import {fieldFixPunctuation} from './punctuation.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:removeDuplicateSubfields');
 
 export function recordRemoveDuplicateSubfieldsFromFields(record) {
-  record.fields.forEach(field => fieldRemoveDuplicatesubfields(field));
+  record.fields.forEach(field => fieldRemoveDuplicateSubfields(field));
 }
 
-export function fieldRemoveDuplicatesubfields(field) {
+export function fieldRemoveDuplicateSubfields(field) {
   // Skip bad (382, 505) and risky (264 ...) stuff: 382$n, 505$r, others...
   if (!field.subfields || ['264', '300', '382', '505'].includes(field.tag)) {
     return;

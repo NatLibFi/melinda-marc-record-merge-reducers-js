@@ -7,7 +7,6 @@ import {fieldHasNSubfields, fieldHasSubfield, fieldToString, nvdebug} from './ut
 // NB! It this file 'common' means 'normal' not 'identical'
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
-//const sf6Regexp = /^[0-9][0-9][0-9]-[0-9][0-9]/u;
 
 // const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
 
@@ -247,11 +246,11 @@ export function removeDuplicateDatafields(record) {
         return;
       }
       */
-      nvdebug(`REMOVE? ${fieldsAsString}`, debug);
+      nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldsAsString}`, debug);
       fields.forEach(currField => record.removeField(currField));
       return;
     }
-    nvdebug(`ADD2SEEN ${fieldsAsString}`, debug);
+    nvdebug(`DOUBLE REMOVAL: ADD2SEEN ${fieldsAsString}`, debug);
     seen[fieldsAsString] = 1;
   }
 

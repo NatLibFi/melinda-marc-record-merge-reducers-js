@@ -8,6 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import {fieldTrimSubfieldValues} from './normalize.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
+import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
@@ -48,6 +49,10 @@ export default (config = defaultConfig) => (base, source) => {
   trimRecord(base);
   trimRecord(source);
 
+  nvdebug(`BASE: Reindex $6 duplicates`);
+  reindexDuplicateSubfield6Indexes(base);
+  nvdebug(`SOURCE: Reindex $6 duplicates`);
+  reindexDuplicateSubfield6Indexes(source);
 
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
 
@@ -67,6 +72,7 @@ export default (config = defaultConfig) => (base, source) => {
   recordRemoveDuplicateSubfieldsFromFields(source2);
   recordRemoveDuplicateSubfieldsFromFields(base);
 
+
   const result = {base, source: source2};
   //nvdebug(JSON.stringify(result));
   return result;
@@ -80,3 +86,4 @@ export default (config = defaultConfig) => (base, source) => {
     return record;
   }
 };
+
