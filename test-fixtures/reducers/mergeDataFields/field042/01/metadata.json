@@ -1,3 +1,4 @@
 {
-  "description":"Do nothing, as there's nothing to merge"
+  "description":"Do nothing, as there's nothing to merge",
+  "comment": "Added 045 fields here, to check that 045$a and 045$b won't merge"
 }
