@@ -2,7 +2,7 @@
 //import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
-import {fieldToString, marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
+import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
@@ -56,11 +56,12 @@ export function mergableIndicator1(field1, field2, config) {
 }
 
 export function mergableIndicator2(field1, field2, config) {
-  nvdebug(`mergableIndicator2\n '${fieldToString(field1)}' vs\n '${fieldToString(field2)}'`);
   // Indicators are identical:
   if (field1.ind2 === field2.ind2) {
     return true;
   }
+
+  // nvdebug(`mergableIndicator2\n '${fieldToString(field1)}' vs\n '${fieldToString(field2)}'`);
 
   // NB! Our 260 vs 264 hacks...NB #2: We do this split check only for ind2, not for ind1.
   // Maybe reasons to this for ind1 will rise later on. None known yetr though.
