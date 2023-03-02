@@ -1,21 +1,11 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
-    {
-      "tag": "506",
-      "ind1": " ",
-      "ind2": "1",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test1"
-        }
-      ]
+    { "tag": "506", "ind1": " ", "ind2": "1", "subfields": [ { "code": "a", "value": "test1" } ]
     },
     {
       "tag": "506",
-      "ind1": "0",
-      "ind2": "2",
+      "ind1": "0", "ind2": "2",
       "subfields": [
         {
           "code": "a",
@@ -25,8 +15,7 @@
     },
     {
       "tag": "506",
-      "ind1": "1",
-      "ind2": "3",
+      "ind1": "1", "ind2": "3",
       "subfields": [
         {
           "code": "a",
@@ -36,8 +25,7 @@
     },
     {
       "tag": "506",
-      "ind1": " ",
-      "ind2": "4",
+      "ind1": " ", "ind2": "4",
       "subfields": [
         {
           "code": "a",
@@ -47,8 +35,7 @@
     },
     {
       "tag": "506",
-      "ind1": "0",
-      "ind2": "5",
+      "ind1": "0", "ind2": "5",
       "subfields": [
         {
           "code": "a",
