@@ -11,6 +11,8 @@
           "value": "testing"
         }
       ]
-    }
+    },
+    { "tag": "045", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "a-c-" } ] },
+    { "tag": "045", "ind1": "0", "ind2": " ", "subfields": [ { "code": "b", "value": "d1975" } ] }
   ]
 }
