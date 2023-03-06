@@ -10,7 +10,7 @@ import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
 import {partsAgree} from './normalizePart';
-import {normalizeEditionStatement, normalizePersonalName, valueCarriesMeaning} from './worldKnowledge';
+import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
 
@@ -56,9 +56,7 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
   value = removeCopyright(value);
 
 
-  value = normalizeEditionStatement(tag, subfieldCode, value); // Applies only to 250$a
-  value = normalizePersonalName(tag, subfieldCode, value); // Applies to 100/600/700/800$a "Surname, Forename" => "F N"
-
+  value = normalizeForSamenessCheck(tag, subfieldCode, value);
 
   /* eslint-enable */
   return value;
@@ -75,7 +73,7 @@ function uniqueKeyMatches(baseField, sourceField, forcedKeyString = null) {
 
 
 function optionalSubfieldComparison(originalBaseField, originalSourceField, keySubfieldsAsString) {
-  // Here optional subfield means a subfield, that needs not to be present, but if present, it must be identical...
+  // Here "optional subfield" means a subfield, that needs not to be present, but if present, it must be identical...
   // (Think of a better name...)
   // We use clones here, since these changes done below are not intented to appear on the actual records.
   const field1 = cloneAndNormalizeField(originalBaseField);
@@ -91,7 +89,9 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   }
   const subfieldArray = keySubfieldsAsString.split('');
 
-
+  // Long forgotten, but my educated guess about this: if 'key' is defined in merge constraints
+  // for this field, then at least one of the subfield codes in 'key' must be present in both fields.
+  // However, this is not necessarily right.
   if (subfieldArray.length > 0 && !subfieldArray.some(sfCode => hasCommonNominator(sfCode))) {
     return false;
   }
@@ -101,7 +101,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
 
 
   function hasCommonNominator(subfieldCode) {
-    nvdebug(`common nominator for ${fieldToString(originalBaseField)}`);
+    nvdebug(`hasCommonNominator(${subfieldCode}): '${fieldToString(originalBaseField)}' vs '${fieldToString(originalSourceField)}'`);
 
     // If base has $a and source has $b, there's no common nominator, thus fail...
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
@@ -249,6 +249,7 @@ function mergablePair(baseField, sourceField, config) {
     nvdebug('non-mergable (reason: semantics)');
     return false;
   }
+  nvdebug(`MERGABLE PAIR:\n  B: ${fieldToString(baseField)}\n  S: ${fieldToString(sourceField)}`);
   return true;
 }
 
@@ -313,6 +314,7 @@ function pairableName(baseField, sourceField) {
     return true;
   }
 
+  // Essentially these are too hard to handle with field-merge (eg. multi-505$g)
   if (hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(reducedField1) || hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(reducedField2)) {
     return false;
   }
@@ -446,7 +448,7 @@ export function getCounterpart(record, field, config) {
     const normalizedCurrCand = cloneAndNormalizeField(currCand);
     nvdebug(` B: ${fieldToString(normalizedCurrCand)}`);
     if (mergablePair(normalizedCurrCand, normalizedField, config)) {
-      nvdebug(`  OK pair found: '${fieldToString(currCand)}'. Returning it!`);
+      nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`);
       return true;
     }
     nvdebug(`  FAILED TO PAIR: '${fieldToString(currCand)}'. Skipping it!`);

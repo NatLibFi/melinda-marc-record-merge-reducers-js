@@ -54,6 +54,30 @@
         }
       ]
     },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-08" },
+      { "code": "a", "value": "Hindley, Kate," },
+      { "code": "e", "value": "taiteilija." }
+    ] },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Andrejev, A." },
+      { "code": "e", "value": "kääntäjä." }
+    ] },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Andrejev, A.," },
+      { "code": "e", "value": "kääntäjä." }
+    ] },
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "700-08/(N" },
+      {"code": "a", "value": "Хиндли, Кейт," },
+      {"code": "e", "value": "taiteilija." }
+    ] },
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "700-08/(N" },
+      {"code": "a", "value": "Андреев, А.," },
+      {"code": "e", "value": "kääntäjä." }
+    ] },
+
     { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "FIKKA" } ] }
   ]
 }

@@ -1,104 +1,14 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
-    {
-      "tag": "506",
-      "ind1": " ",
-      "ind2": "1",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test1"
-        }
-      ]
-    },
-    {
-      "tag": "506",
-      "ind1": " ",
-      "ind2": "2",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test2"
-        }
-      ]
-    },
-    {
-      "tag": "506",
-      "ind1": " ",
-      "ind2": "3",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test3"
-        }
-      ]
-    },
-    {
-      "tag": "506",
-      "ind1": "0",
-      "ind2": "4",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test4"
-        }
-      ]
-    },
-    {
-      "tag": "506",
-      "ind1": "0",
-      "ind2": "5",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test5"
-        }
-      ]
-    },
-    {
-      "tag": "506",
-      "ind1": "0",
-      "ind2": "6",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test6"
-        }
-      ]
-    },
-    {
-      "tag": "506",
-      "ind1": "1",
-      "ind2": "7",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test7"
-        }
-      ]
-    },
-    {
-      "tag": "506",
-      "ind1": "1",
-      "ind2": "8",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test8"
-        }
-      ]
-    },
-    {
-      "tag": "506",
-      "ind1": "1",
-      "ind2": "9",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "test9"
-        }
-      ]
-    }
+    { "tag": "506", "ind1": " ", "ind2": "1", "subfields": [ { "code": "a", "value": "test1" } ] },
+    { "tag": "506", "ind1": " ", "ind2": "2", "subfields": [ { "code": "a", "value": "test2" } ] },
+    { "tag": "506", "ind1": " ", "ind2": "3", "subfields": [ { "code": "a", "value": "test3" } ] },
+    { "tag": "506", "ind1": "0", "ind2": "4", "subfields": [ { "code": "a", "value": "test4" } ] },
+    { "tag": "506", "ind1": "0", "ind2": "5", "subfields": [ { "code": "a", "value": "test5" } ] },
+    { "tag": "506", "ind1": "0", "ind2": "6", "subfields": [ { "code": "a", "value": "test6" } ] },
+    { "tag": "506", "ind1": "1", "ind2": "7", "subfields": [ { "code": "a", "value": "test7" } ] },
+    { "tag": "506", "ind1": "1", "ind2": "8", "subfields": [ { "code": "a", "value": "test8" } ] },
+    { "tag": "506", "ind1": "1", "ind2": "9", "subfields": [ { "code": "a", "value": "test9" } ] }
   ]
 }

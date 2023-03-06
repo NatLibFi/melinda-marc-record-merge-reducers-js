@@ -116,6 +116,7 @@ const cleanValidPunctuationRules = {
     {'code': 'axy', 'followedBy': 'xy', 'remove': /,$/u},
     {'code': 'axy', 'followedBy': 'v', 'remove': / ;$/u}
   ],
+  '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}],
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'remove': field773NeedsPunc}]
 };
 
@@ -152,6 +153,8 @@ const addPairedPunctuationRules = {
     {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter},
     {'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'context': defaultNeedsPuncAfter}
   ],
+  '506': [{'code': 'a', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter2}],
+  '534': [{'code': 'p', 'followedBy': 'c', 'add': ':', 'context': defaultNeedsPuncAfter2}],
   '600': [addX00aComma, addX00aDot],
   '610': addX10,
   '700': [addX00aComma, addX00aDot],

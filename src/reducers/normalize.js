@@ -25,6 +25,7 @@ function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
       }
     });
   }
+
   nvdebug(`NORMALIZE FIELD:\n '${fieldToString(oldField)}' =>\n '${fieldToString(newField)}'`);
 }
 
@@ -93,8 +94,8 @@ function subfieldValueLowercase(value, subfieldCode, tag) {
   //return value.toLowerCase();
   const newValue = value.toLowerCase();
   if (newValue !== value) {
-    nvdebug(`SVL ${tag} $${subfieldCode} '${value}' =>`);
-    nvdebug(`SVL ${tag} $${subfieldCode} '${newValue}'`);
+    //nvdebug(`SVL ${tag} $${subfieldCode} '${value}' =>`);
+    //nvdebug(`SVL ${tag} $${subfieldCode} '${newValue}'`);
     return newValue;
   }
   return value;
