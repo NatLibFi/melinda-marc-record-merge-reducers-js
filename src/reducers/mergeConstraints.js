@@ -30,7 +30,7 @@ const mergeConstraints = [
   {'tag': '037', 'required': 'b', 'key': 'ab'},
   {'tag': '039', 'required': 'a'},
   {'tag': '040', 'required': '', 'key': ''},
-  {'tag': '041', 'required': '', 'key': ''},
+  {'tag': '041', 'required': '', 'paired': '2', 'key': ''}, // Don't put $2 in 'key'! hasCommonNominator() would get into trouble with it...
   {'tag': '042', 'required': 'a', 'key': ''}, // NB: preprocessor hacks applied
   {'tag': '043', 'required': 'a', 'key': 'abc'},
   {'tag': '044', 'required': '', 'key': 'abc', 'paired': 'abc'},
@@ -53,7 +53,7 @@ const mergeConstraints = [
   {'tag': '080', 'required': 'a', 'paired': 'bx', 'key': 'abx'},
   {'tag': '082', 'required': 'a', 'paired': 'b', 'key': 'abmq2'},
   {'tag': '083', 'required': 'a', 'paired': 'b', 'key': 'abmqy'},
-  {'tag': '084', 'required': 'a', 'paired': 'b', 'key': 'abq'},
+  {'tag': '084', 'required': 'a', 'paired': 'b2', 'key': 'abq2'},
   {'tag': '085', 'required': '', 'paired': 'abcfrstuvwyz', 'key': 'abcfrstuvwxyz'},
   {'tag': '086', 'required': '', 'paired': 'a', 'key': 'a'},
   {'tag': '088', 'required': '', 'paired': 'a', 'key': 'a'},
@@ -146,7 +146,7 @@ const mergeConstraints = [
   {'tag': '530', 'required': 'a', 'paired': 'abcd', 'key': 'abcd'},
   {'tag': '532', 'required': 'a', 'key': 'a'},
   {'tag': '533', 'required': 'a', 'paired': 'abcdefmn7', 'key': 'abcdefmn7'},
-  {'tag': '534', 'required': 'a', 'paired': 'abcempt', 'key': 'abcempt'},
+  {'tag': '534', 'required': '', 'paired': 'abcempt', 'key': 'abcempt'},
   {'tag': '535', 'required': '', 'paired': 'abcdg', 'key': 'abcdg'},
   {'tag': '536', 'required': '', 'paired': 'abcdefgh', 'key': 'abcdefgh'},
   {'tag': '538', 'required': 'a', 'paired': 'aiu', 'key': 'aiu'},

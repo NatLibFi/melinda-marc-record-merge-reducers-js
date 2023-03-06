@@ -161,11 +161,13 @@ export function mergeIndicators(toField, fromField, config) {
   }
 
   function mergeIndicator2(toField, fromField, config) {
-    nvdebug(`Merge IND2`);
-    nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`);
     if (toField.ind2 === fromField.ind2) {
       return; // Do nothing
     }
+
+    //nvdebug(`Merge IND2`);
+    //nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`);
+
 
     publisherTagSwapHack(toField, fromField); // Easter egg/hack for base-260 vs source-264
 

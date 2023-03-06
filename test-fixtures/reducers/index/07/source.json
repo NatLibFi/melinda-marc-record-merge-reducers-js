@@ -28,6 +28,12 @@
           "value": "(pdf)"
         }
       ]
-    }
+    },
+    { "tag": "506", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Sallittu." } ]},
+    { "tag": "506", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "S" } ]},
+    { "tag": "534", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "p", "value": "Alunperin julkaistu:" },
+      { "code": "c", "value": "2018." }
+    ]}
   ]
 }

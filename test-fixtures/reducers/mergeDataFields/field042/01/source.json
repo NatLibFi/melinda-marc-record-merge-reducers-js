@@ -11,6 +11,8 @@
           "value": "lc"
         }
       ]
-    }
+    },
+    { "tag": "045", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "d7n6" } ] },
+    { "tag": "045", "ind1": "0", "ind2": " ", "subfields": [ { "code": "b", "value": "d1984" } ] }
   ]
 }

@@ -27,6 +27,11 @@
           "value": "PDF"
         }
       ]
-    }
+    },
+    { "tag": "506", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Sallittu kaikenikäisille" } ]},
+    { "tag": "534", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "p", "value": "Alun perin julkaistu:" },
+      { "code": "c", "value": "2018." }
+    ]}
   ]
 }

@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
-import {isRelevantField6, isValidSubfield6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
-import {fieldHasSubfield, fieldToString, nvdebug} from './utils';
+import {isRelevantField6, isValidSubfield6, pairAndStringify6, removeField6IfNeeded, subfieldGetIndex6} from './subfield6Utils';
+import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
@@ -46,8 +46,8 @@ function subfieldApplies(subfield, lookFor) {
 
 
 function getPairValue(subfield6, myTag) {
-  const index = subfield6.value.replace(/^[0-9][0-9][0-9]-([0-9][0-9]+).*$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-
+  //const index = subfield6.value.replace(/^[0-9][0-9][0-9]-([0-9][0-9]+).*$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  const index = subfieldGetIndex6(subfield6);
   const lookFor = `${myTag}-${index}`;
   return lookFor;
 }
@@ -82,6 +82,9 @@ function cleanAndReturnTrueIfDeletable(field, fields) {
     if (field.tag !== '880' || pairlessSixes.length < sixes.length) {
       const remainingSubfields = field.subfields.filter(sf => pairlessSixes.every(sf2 => sf2.code !== sf.code || sf2.value !== sf.value));
       if (remainingSubfields.length) { // Just clean up the crappy $6s as decent $6 remains
+        const removables = field.subfields.filter(sf => pairlessSixes.every(sf2 => sf2.code === sf.code && sf2.value === sf.value));
+        removables.forEach(sf => nvdebug(`Remove pairless $6 subfield: ${subfieldToString(sf)}`));
+
         field.subfields = remainingSubfields; // eslint-disable-line functional/immutable-data
         return false;
       }
