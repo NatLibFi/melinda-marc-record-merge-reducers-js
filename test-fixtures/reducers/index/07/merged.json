@@ -1,33 +1,14 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
-    {
-      "tag": "024",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "FILNM9500119"
-        },
-        {
-          "code": "q",
-          "value": "häftad"
-        },
-        {
-          "code": "q",
-          "value": "sidottu"
-        },
-        {
-          "code": "q",
-          "value": "MP3"
-        },
-        {
-          "code": "q",
-          "value": "PDF"
-        }
-      ]
-    },
+    { "tag": "024", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "FILNM9500119" },
+        { "code": "q", "value": "häftad" },
+        { "code": "q", "value": "inbunden" },
+        { "code": "q", "value": "MP3" },
+        { "code": "q", "value": "PDF" }
+    ]},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [ {"code": "b", "value": "swe"}]},
     { "tag": "506", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Sallittu kaikenikäisille" } ]},
     { "tag": "534", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "p", "value": "Alun perin julkaistu:" },
