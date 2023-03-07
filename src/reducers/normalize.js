@@ -198,9 +198,15 @@ function removeDecomposedDiacritics(value = '') {
 
 
 function normalizeSubfieldValue(value, subfieldCode, tag) {
-  const intermediateValue1 = subfieldValueLowercase(value, subfieldCode, tag);
-  // Normalize: s. = sivut = pp.:
-  const intermediateValue2 = normalizePartData(intermediateValue1, subfieldCode, tag);
+  // For compasison values only
+  /* eslint-disable */
+  value = subfieldValueLowercase(value, subfieldCode, tag);
+
+  // Normalize: s. = sivut = pp.
+  value = normalizePartData(value, subfieldCode, tag);
+  value = value.replace(/^\[([^[\]]+)\]/gu, '$1'); // eslint-disable-line functional/immutable-data, prefer-named-capture-group
+  /* eslint-enable */
+
   // Not going to do these in the foreseeable future, but keeping them here for discussion:
   // Possible normalizations include but are not limited to:
   // ø => ö? Might be language dependent: 041 $a fin => ö, 041 $a eng => o?
@@ -212,7 +218,7 @@ function normalizeSubfieldValue(value, subfieldCode, tag) {
   // ü => y (probably not, though this correlates with Finnish letter-to-sound rules)
   // w => v (OK for Finnish sorting in certain cases, but we are not here, are we?)
   // I guess we should use decomposed values in code here. (Not sure what composition my examples above use.)
-  return intermediateValue2;
+  return value;
 }
 
 export function cloneAndRemovePunctuation(field) {
