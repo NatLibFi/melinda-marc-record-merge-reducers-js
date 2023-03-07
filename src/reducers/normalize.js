@@ -197,7 +197,7 @@ function removeDecomposedDiacritics(value = '') {
 }
 
 
-function normalizeSubfieldValue(value, subfieldCode, tag) {
+export function normalizeSubfieldValue(value, subfieldCode, tag) {
   // For compasison values only
   /* eslint-disable */
   value = subfieldValueLowercase(value, subfieldCode, tag);
