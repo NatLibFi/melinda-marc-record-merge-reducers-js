@@ -4,7 +4,7 @@ import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, nvdebugSubfieldArray, removeCopyright} from './utils';
 import {cloneAndNormalizeField} from './normalize';
 // This should be done via our own normalizer:
-// import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
+import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
@@ -253,7 +253,7 @@ function mergablePair(baseField, sourceField, config) {
   return true;
 }
 
-/*
+
 function pairableAsteriIDs(baseField, sourceField) {
   //nvdebug(`ASTERI1 ${fieldToString(baseField)}`); // eslint-disable-line
   //nvdebug(`ASTERI2 ${fieldToString(sourceField)}`); // eslint-disable-line
@@ -285,7 +285,7 @@ function pairableAsteriIDs(baseField, sourceField) {
       .filter(val => val.substring(0, 7) === '(FIN11)');
   }
 }
-*/
+
 
 function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
   if (field.tag === '260' || field.tag === '264') {
@@ -332,13 +332,11 @@ function pairableName(baseField, sourceField) {
   // *NOT* sure whether this a good idea.
   // 2023-01-24 Disable this. Caretaker can fix these later on. Not a job for merge.
   // We can't be sure that $0 pair is corrent, nor which version (base or source) to use.
-  /*
+  // 2023-03-07: Enable this again!
   if (pairableAsteriIDs(baseField, sourceField)) {
     //nvdebug(`    name match based on ASTERI $0'`);
     return true;
   }
-  */
-
 
   nvdebug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
   return false;
