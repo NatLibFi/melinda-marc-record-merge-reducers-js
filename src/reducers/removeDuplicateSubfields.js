@@ -34,11 +34,11 @@ export function fieldRemoveDuplicateSubfields(field) {
   function notSeenBefore(sf, index) {
     const subfieldAsString = subfieldToString(strippedField.subfields[index]); // use normalized form
     if (seen[subfieldAsString]) {
-      nvdebug(`Remove subfield ${subfieldToString(sf)}`, debug);
+      nvdebug(`Remove field-internal duplicate subfield ${subfieldToString(sf)}`, debug);
       field.collapsed = 1; // trigger punctuation reset
       return false;
     }
-    nvdebug(`identical subfield removal: Add ${subfieldAsString} to seen[]`, debug);
+    //nvdebug(`identical subfield removal: Add ${subfieldAsString} to seen[]`, debug);
     seen[subfieldAsString] = subfieldAsString;
     return true;
   }

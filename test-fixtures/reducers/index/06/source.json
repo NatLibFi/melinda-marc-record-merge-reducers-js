@@ -7,6 +7,7 @@
       { "code": "g", "value": "ENNAKKOTIETO."}
       ]
     },
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "MET-271 ;"}, { "code": "v", "value": "3"}]},
     { "tag": "511", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Alpha." } ] },
     { "tag": "511", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Beta." }, {"code": "9", "value": "FENNI<KEEP>"}  ] },
     { "tag": "511", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Gamma." } ] },

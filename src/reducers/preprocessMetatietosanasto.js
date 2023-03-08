@@ -1,6 +1,11 @@
 //import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
+import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields';
+import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
+
+// Handle various MTS terms: open abbreviations, normalize to MTS format, translate
+
 
 // Do later: 300/773$h, X00$e Relator term...
 
@@ -13,7 +18,7 @@ export default () => (base, source) => {
   return {base, source};
 };
 
-function mtsQualifyingInformation(value) {
+function fixMtsQualifyingInformationAbbreviations(value) {
   if (value.match(/^hft[.,]?$/iu)) { // nidottu
     return 'häftad';
   }
@@ -36,21 +41,69 @@ function mtsQualifyingInformation(value) {
   return value;
 }
 
-function mtsCaseSubfield(tag, subfield) {
+const translationTable = [
+  {'eng': 'hardback', 'fin': 'sidottu', 'swe': 'inbunden'},
+  {'eng': 'paperback', 'fin': 'nidottu', 'swe': 'häftad'}
+];
+
+// const supportedLanguages = ['eng', 'fin', 'swe'];
+
+function translateMtsTerm(term, to, from = 'all') {
+  if (translationTable.some(entry => entry[to] === term)) {
+    return term;
+  }
+
+  // A bit of copypaste coding below. Not sure how to loop it properly and functionally.
+  if (to !== 'eng' && ['all', 'eng'].includes(from)) {
+    const row = translationTable.find(currRow => currRow.eng && currRow.eng === term);
+    if (row && row[to]) {
+      return row[to];
+    }
+  }
+
+  if (to !== 'fin' && ['all', 'fin'].includes(from)) {
+    const row = translationTable.find(currRow => currRow.fin && currRow.fin === term);
+    if (row && row[to]) {
+      return row[to];
+    }
+  }
+
+  if (to !== 'swe' && ['all', 'swe'].includes(from)) {
+    const row = translationTable.find(currRow => currRow.swe && currRow.swe === term);
+    if (row && row[to]) {
+      return row[to];
+    }
+  }
+
+  return term;
+}
+
+
+function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
   if (['015', '020', '024', '028'].includes(tag) && subfield.code === 'q') {
-    subfield.value = mtsQualifyingInformation(subfield.value); // eslint-disable-line functional/immutable-data
+    const tmpValue = fixMtsQualifyingInformationAbbreviations(subfield.value);
+    nvdebug(`Translate $q term '${tmpValue}' to ${catalogingLanguage}`);
+    subfield.value = translateMtsTerm(tmpValue, catalogingLanguage, 'all'); // eslint-disable-line functional/immutable-data
     return;
   }
 }
 
-function mtsCaseField(field) {
-  if (field.subfields) {
-    field.subfields.forEach(sf => mtsCaseSubfield(field.tag, sf));
+function mtsCaseField(field, catalogingLanguage) {
+  if (!field.subfields) {
     return;
   }
+  const originalValue = fieldToString(field);
+  field.subfields.forEach(sf => mtsCaseSubfield(field.tag, sf, catalogingLanguage));
+  if (originalValue === fieldToString(field)) {
+    return;
+  }
+  fieldRemoveDuplicateSubfields(field);
+  const modifiedValue = fieldToString(field);
+  nvdebug(`MODIFY FIELD:\n  ${originalValue} =>\n  ${modifiedValue}`);
 }
 
 
 function mtsCaseRecord(record) {
-  record.fields.forEach(field => mtsCaseField(field));
+  const catalogingLanguage = getCatalogingLanguage(record) || 'fin';
+  record.fields.forEach(field => mtsCaseField(field, catalogingLanguage));
 }

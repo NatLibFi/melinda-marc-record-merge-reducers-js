@@ -1,0 +1,11 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "245", "ind1": "1", "ind2": "0", "subfields": [
+        { "code": "a", "value": "Muumi." },
+        { "code": "p", "value": "Syntymäpäivät /" },
+        { "code": "c", "value": "Tove Janssonin Muumitarinoiden pohjalta ideointi Lars Jansson, Dennis Livson ; käsikirjoitus Akira Miyazaki, Shozo Matsuda ; ohjaus Hiroshi Saito ; tuottaja Dennis Livson." }
+      ]
+    }
+  ]
+}
