@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {fieldToString, nvdebug, subfieldToString} from './utils';
+import {fieldToString, nvdebug} from './utils';
 import {fieldGetIndex6, fieldGetSubfield6Pair, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6, isValidSubfield6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -121,50 +121,5 @@ export function reindexDuplicateSubfield6Indexes(record) {
     }
   }
   /* eslint-enable */
-
-}
-
-export function recordResetSubfield6Indexes(record) { // Remove gaps
-  // This should be converted into a validator/fixer and moved to marc-record-validate.
-  /* eslint-disable */
-    let currentInt = 1;
-    let oldtoNewCache = {};
-
-    record.fields.forEach(field => fieldResetSubfield6(field));
-
-    function fieldResetSubfield6(field) {
-      nvdebug(`fieldResetSubfield6(${fieldToString(field)})`);
-      if (!field.subfields) {
-        return;
-      }
-      field.subfields.forEach(subfield => subfieldReset6(subfield));
-    }
-
-    function subfieldReset6(subfield) {
-      if (!isValidSubfield6(subfield)) {
-        return;
-      }
-      const currIndex = subfield6Index(subfield);
-      if (currIndex === '00') {
-        return;
-      }
-
-      const newIndex = mapCurrIndexToNewIndex(currIndex);
-      nvdebug(`subfieldReset6(${subfieldToString(subfield)}): ${newIndex}`);
-      resetSubfield6Index(subfield, newIndex);
-      
-    }
-
-    function mapCurrIndexToNewIndex(currIndex) {
-      if(currIndex in oldtoNewCache) {
-        return oldtoNewCache[currIndex];
-      }
-      const newIndex = intToTwoDigitString(currentInt);
-      oldtoNewCache[currIndex] = newIndex;
-      currentInt++;
-      return newIndex;
-    }
-
-    /* eslint-enable */
 
 }
