@@ -8,7 +8,8 @@ import {removeDuplicateDatafields} from './removeIdenticalDataFields';
 import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melinda/dist/indicator-fixes';
 import {deleteAllPrepublicationNotesFromField500InNonPubRecord, removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
 import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/mergeField500Lisapainokset';
-import {recordResetSubfield6Indexes} from './reindexSubfield6.js';
+import {recordResetSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/reindexSubfield6OccurenceNumbers';
+
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 export default (config = defaultConfig) => (base, source) => {
@@ -35,7 +36,7 @@ export default (config = defaultConfig) => (base, source) => {
 
 
   removeDuplicateDatafields(base);
-  recordResetSubfield6Indexes(base);
+  recordResetSubfield6OccurrenceNumbers(base);
   return {base, source};
 };
 
