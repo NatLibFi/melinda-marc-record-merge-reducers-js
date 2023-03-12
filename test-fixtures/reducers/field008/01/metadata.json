@@ -1,3 +1,4 @@
 {
-  "description":"If the level code of the source record is better (smaller number), replace base field 008 with field 008 from source"
+  "description":"Keep base's older 008/00-05. However, take source's better 008/06-14, 008/035-37 and 008/39",
+  "only": false
 }
