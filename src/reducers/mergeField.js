@@ -155,13 +155,13 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPair88
 
 function skipMergeField(baseRecord, sourceField, config) {
   if (!mergableTag(sourceField.tag, config)) {
-    debug(`skipMergeField(): field '${fieldToString(sourceField)}' listed as skippable!`);
+    nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' listed as skippable!`);
     return true;
   }
 
   // Skip duplicate field:
   if (baseRecord.fields.some(baseField => fieldsAreIdentical(sourceField, baseField))) {
-    debug(`skipMergeField(): field '${fieldToString(sourceField)}' already exists! No merge required!`);
+    nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' already exists! No merge required!`);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
@@ -170,10 +170,10 @@ function skipMergeField(baseRecord, sourceField, config) {
 }
 
 export function mergeField(baseRecord, sourceField, config, candFieldPair880 = undefined) {
-  //nvdebug(`mergeField config: ${JSON.stringify(config)}`);
+  nvdebug(`MERGE SOURCE FIELD '${fieldToString(sourceField)}'`); //  mergeField config: ${JSON.stringify(config)}`);
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
-    debug(`mergeField(): don't merge '${fieldToString(sourceField)}'`);
+    nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`);
     return false;
   }
 
@@ -181,7 +181,7 @@ export function mergeField(baseRecord, sourceField, config, candFieldPair880 = u
   const counterpartField = getCounterpart(baseRecord, sourceField, config);
 
   if (counterpartField) {
-    debug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
+    nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
     mergeField2(baseRecord, counterpartField, sourceField, config, candFieldPair880);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
