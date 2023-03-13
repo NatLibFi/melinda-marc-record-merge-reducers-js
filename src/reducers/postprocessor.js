@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import {nvdebug} from './utils.js';
+import {fieldToString, nvdebug} from './utils.js';
 import {filterOperations} from './processFilter.js';
 //import {removeDuplicateDatafields as removeDuplicateDatafieldsOld} from './removeIdenticalDataFields';
 
@@ -11,12 +11,13 @@ import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/
 import {recordResetSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/reindexSubfield6OccurenceNumbers';
 import {mtsProcessRecord} from './preprocessMetatietosanasto';
 import {removeDuplicateDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeDuplicateDataFields';
-
+import {recordFixSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/resolveOrphanedSubfield6s.js';
 import factoryForThereCanBeOnlyOneSubfield0 from '@natlibfi/marc-record-validators-melinda/dist/multiple-subfield-0';
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 export default (config = defaultConfig) => (base, source) => {
   nvdebug('ENTERING postprocessor.js');
+  base.fields.forEach(field => nvdebug(`WP0: ${fieldToString(field)}`));
 
   //nvdebug(JSON.stringify(base));
   //nvdebug(JSON.stringify(source));
@@ -38,6 +39,9 @@ export default (config = defaultConfig) => (base, source) => {
   //base.fields.forEach(field => nvdebug(`WP7: ${fieldToString(field)}`));
   mtsProcessRecord(base);
 
+  //base.fields.forEach(field => nvdebug(`WP50: ${fieldToString(field)}`));
+  recordFixSubfield6OccurrenceNumbers(base); // remove orphaned $6 fields or set them to 880 $6 700-00...
+  //base.fields.forEach(field => nvdebug(`WP51: ${fieldToString(field)}`));
   const thereCanBeOnlyOneSubfield0 = factoryForThereCanBeOnlyOneSubfield0({}); // MRA-392
   thereCanBeOnlyOneSubfield0.fix(base);
 
@@ -50,6 +54,7 @@ export default (config = defaultConfig) => (base, source) => {
   //removeDuplicateDatafieldsOld(base);
 
   recordResetSubfield6OccurrenceNumbers(base);
+  //base.fields.forEach(field => nvdebug(`WP99: ${fieldToString(field)}`));
   return {base, source};
 };
 
