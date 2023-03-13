@@ -9,7 +9,7 @@ import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melind
 import {deleteAllPrepublicationNotesFromField500InNonPubRecord, removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
 import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/mergeField500Lisapainokset';
 import {recordResetSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/reindexSubfield6OccurenceNumbers';
-
+import {mtsProcessRecord} from './preprocessMetatietosanasto';
 //import {removeDuplicateDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeDuplicateDataFields';
 
 import factoryForThereCanBeOnlyOneSubfield0 from '@natlibfi/marc-record-validators-melinda/dist/multiple-subfield-0';
@@ -36,8 +36,9 @@ export default (config = defaultConfig) => (base, source) => {
 
   mergeLisapainokset(base);
   //base.fields.forEach(field => nvdebug(`WP7: ${fieldToString(field)}`));
+  mtsProcessRecord(base);
 
-  const thereCanBeOnlyOneSubfield0 = factoryForThereCanBeOnlyOneSubfield0({});
+  const thereCanBeOnlyOneSubfield0 = factoryForThereCanBeOnlyOneSubfield0({}); // MRA-392
   thereCanBeOnlyOneSubfield0.fix(base);
 
   //const res = removeDuplicateDatafields(base, true); // NB! 10.2 is buggy!
