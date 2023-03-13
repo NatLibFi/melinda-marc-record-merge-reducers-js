@@ -13,8 +13,8 @@ import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
 //const debugData = debug.extend('data');
 
 export default () => (base, source) => {
-  mtsCaseRecord(base);
-  mtsCaseRecord(source);
+  mtsProcessRecord(base);
+  mtsProcessRecord(source);
   return {base, source};
 };
 
@@ -43,7 +43,8 @@ function fixMtsQualifyingInformationAbbreviations(value) {
 
 const translationTable = [
   {'eng': 'hardback', 'fin': 'sidottu', 'swe': 'inbunden'},
-  {'eng': 'paperback', 'fin': 'nidottu', 'swe': 'häftad'}
+  {'eng': 'paperback', 'fin': 'nidottu', 'swe': 'häftad'},
+  {'fin': '(fiktiivinen hahmo)', 'swe': '(fiktiv gestalt)'}
 ];
 
 // const supportedLanguages = ['eng', 'fin', 'swe'];
@@ -86,6 +87,14 @@ function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
     subfield.value = translateMtsTerm(tmpValue, catalogingLanguage, 'all'); // eslint-disable-line functional/immutable-data
     return;
   }
+
+  if (tag === '600' && subfield.code === 'c') { // (fiktiivinen hahmo) vs (fiktiv gestalt)
+    const modValue = translateMtsTerm(subfield.value, catalogingLanguage, 'all');
+    nvdebug(`MTS: ${subfield.value} => ${modValue}`);
+
+    subfield.value = modValue; // eslint-disable-line functional/immutable-data
+    return;
+  }
 }
 
 function mtsCaseField(field, catalogingLanguage) {
@@ -103,7 +112,7 @@ function mtsCaseField(field, catalogingLanguage) {
 }
 
 
-function mtsCaseRecord(record) {
+export function mtsProcessRecord(record) {
   const catalogingLanguage = getCatalogingLanguage(record) || 'fin';
   record.fields.forEach(field => mtsCaseField(field, catalogingLanguage));
 }
