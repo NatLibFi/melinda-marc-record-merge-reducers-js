@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import createDebugLogger from 'debug';
-import {baseHasEqualOrHigherEncodingLevel, getEncodingLevel} from './prepublicationUtils';
+import {baseHasEqualOrHigherEncodingLevel, deleteAllPrepublicationNotesFromField500InNonPubRecord, getEncodingLevel} from './prepublicationUtils';
 
 export default () => (base, source) => {
   //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
@@ -38,4 +38,5 @@ function setBaseEncodingLevel(base, source) { // See MET-33
   }
   // Source's LDR/17 is copied to base's LDR/17:
   base.leader = base.leader.substring(0, 17) + sourceEncodingLevel + base.leader.substring(18); // eslint-disable-line functional/immutable-data
+  deleteAllPrepublicationNotesFromField500InNonPubRecord(base);
 }
