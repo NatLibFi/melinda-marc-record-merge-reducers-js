@@ -6,7 +6,7 @@ import {filterOperations} from './processFilter.js';
 //import {removeDuplicateDatafields as removeDuplicateDatafieldsOld} from './removeIdenticalDataFields';
 
 import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melinda/dist/indicator-fixes';
-import {deleteAllPrepublicationNotesFromField500InNonPubRecord, removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
+import {removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
 import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/mergeField500Lisapainokset';
 import {recordResetSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/reindexSubfield6OccurenceNumbers';
 import {mtsProcessRecord} from './preprocessMetatietosanasto';
@@ -26,7 +26,7 @@ export default (config = defaultConfig) => (base, source) => {
   //nvdebug(`HSP CONF ${config}`);
   filterOperations(base, source, config.postprocessorDirectives); // declared in preprocessor
 
-  deleteAllPrepublicationNotesFromField500InNonPubRecord(base);
+  //deleteAllPrepublicationNotesFromField500InNonPubRecord(base); // Already done when LDR/17 was copied from source
   removeWorsePrepubField500s(base);
   removeWorsePrepubField594s(base);
   //base.fields.forEach(field => nvdebug(`WP5: ${fieldToString(field)}`));
