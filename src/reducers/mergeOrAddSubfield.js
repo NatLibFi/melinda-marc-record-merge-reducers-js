@@ -104,7 +104,7 @@ function resetPaired880(candFieldPair880, targetField, punctlessCandSubfield) {
   resetSubfield6Tag(candFieldPair880.subfields[0], targetField.tag);
 }
 
-export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctlessCandSubfield, candFieldPair880 = undefined) {
+export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctlessCandSubfield, candFieldPairs880 = []) {
   const normalizedTargetField = cloneAndNormalizeField(targetField);
 
   nvdebug(`   Q: mergeOrAddSubfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
@@ -133,7 +133,7 @@ export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctles
     nvdebug(`    A: Yes. Add previously unseen subfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
     setPunctuationFlag(targetField, punctlessCandSubfield);
-    resetPaired880(candFieldPair880, targetField, punctlessCandSubfield);
+    candFieldPairs880.forEach(pair => resetPaired880(pair, targetField, punctlessCandSubfield));
     addSubfield(targetField, punctlessCandSubfield);
     return;
   }
