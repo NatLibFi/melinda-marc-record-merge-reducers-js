@@ -1,4 +1,4 @@
 {
-  "description":"Deduplicate 520-880 chains",
+  "description":"Deduplicate 520-880 chains. MET-295: Keep 500 'Koneellisesti tuotettu tietue'",
   "only": false
 }
