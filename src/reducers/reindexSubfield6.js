@@ -1,7 +1,9 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldToString, nvdebug} from './utils';
-import {fieldGetIndex6, fieldGetSubfield6Pair, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6, isValidSubfield6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
+import {fieldGetIndex6, fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6, isValidSubfield6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
+import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
+
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 //const debugData = debug.extend('data');
@@ -42,7 +44,7 @@ function getMaxSubfield6(record) {
       return 0;
     }
     // There should always be one, but here we check every subfield.
-    nvdebug(`Got ${field.subfields} $6-subfield(s) from ${JSON.stringify(field)}`, debug);
+    //nvdebug(`Got ${field.subfields.length} $6-subfield(s) from ${fieldToString(field)}`, debug);
     const vals = sf6s.map(sf => subfield6Index(sf));
     return Math.max(...vals);
   }
@@ -111,11 +113,11 @@ export function reindexDuplicateSubfield6Indexes(record) {
       nvdebug(`NEED TO REINDEX ${fieldToString(currField)}`);
       const max = getMaxSubfield6(record);
       if (max) {
-        const pairField = fieldGetSubfield6Pair(currField, record);
-        if (pairField) {
-          nvdebug(` PAIR ${fieldToString(pairField)}`);
+        const pairFields = fieldGetSubfield6Pairs(currField, record);
+        if (pairFields.length) {
+          nvdebug(` PAIR ${fieldsToString(pairFields)}`);
           fieldUpdateSubfield6s(currField, max);
-          fieldUpdateSubfield6s(pairField, max);
+          pairFields.forEach(pairField => fieldUpdateSubfield6s(pairField, max));;
         }
       }
     }
