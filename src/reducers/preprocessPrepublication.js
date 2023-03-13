@@ -31,7 +31,7 @@ import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
 import {handleField6XX} from './preprocessPrepublicationField6XX';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
-  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
+  prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
   removeWorsePrepubField594s} from './prepublicationUtils';
 import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries';
 
@@ -109,6 +109,7 @@ function removeUnwantedSourceField594s(base, source) {
 
 function removeUninterestingSourceField594s(base, source) {
   // Remove them source 594 fields that already have same or better base 594 source field
+  // Koneellisesti tuotettu tietue > Tarkistettu ennakkotieto > Ennakkotieto.
   const baseFields594 = getRelevant5XXFields(base, false, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
   if (baseFields594.length === 0) {
     return;
@@ -192,7 +193,7 @@ function handleField263(base, source) {
   if (baseEncodingLevel === '8') { // LDR/17='8'
     const prepublicationLevel = getPrepublicationLevel(base, true, true); // NB! Any prepub info is used here!
     nvdebug(`handleField263: Prepublication level is ${prepublicationLevel}`);
-    if (isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublicationLevel)) {
+    if (prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublicationLevel)) {
       removeField263(source);
       return;
     }
