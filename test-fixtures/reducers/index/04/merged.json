@@ -54,6 +54,9 @@
         }
       ]
     },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Some, Name." } ] },
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [ { "code": "6", "value" : "700-00" }, { "code": "a", "value": "Other, Name." } ] },
+
     { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "FIKKA" } ] }
   ]
 }
