@@ -54,7 +54,7 @@ const defaultNonMergableFields = [
   '853',
   '854',
   '855',
-  '856', // This is mergable but so risky, that let's just ignore these
+  // '856', // This is mergable but so risky, that let's just ignore these
   '863',
   '864',
   '865',

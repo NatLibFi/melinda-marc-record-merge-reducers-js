@@ -1,10 +1,7 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
-    {
-      "tag": "001",
-      "value": "000123456"
-    },
+    { "tag": "001", "value": "000123456" },
     {
       "tag": "336",
       "ind1": " ",
@@ -48,20 +45,23 @@
       "ind1": " ",
       "ind2": " ",
       "subfields": [
-        {
-          "code": "a",
-          "value": "nide"
-        },
-        {
-          "code": "b",
-          "value": "nc"
-        },
-        {
-          "code": "2",
-          "value": "rdacarrier"
+        { "code": "a", "value": "nide" },
+        { "code": "b", "value": "nc" },
+        { "code": "2", "value": "rdacarrier"
         }
       ]
-    }
+    },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "A. A." },
+      { "code": "0", "value": "(FI-ASTERI-N)000000001" },
+      { "code": "0", "value": "(isni)0000000000000001" }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "B. B." },
+      { "code": "0", "value": "(FI-ASTERI-N)000000002" },
+      { "code": "t", "value": "Block removals!" },
+      { "code": "0", "value": "(isni)0000000000000002" }
+    ]}
 
   ]
 }

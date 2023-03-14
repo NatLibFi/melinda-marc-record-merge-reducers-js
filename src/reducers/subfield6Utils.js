@@ -1,5 +1,6 @@
 import createDebugLogger from 'debug';
 import {getSubfield8Index, isValidSubfield8} from './reindexSubfield8';
+import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
 
@@ -150,13 +151,8 @@ export function isSubfield6Pair(field, otherField) {
   }
 }
 
-export function fieldGetSubfield6Pair(field, record) {
-  const pairedFields = record.fields.filter(otherField => isSubfield6Pair(field, otherField));
-  if (pairedFields.length !== 1) {
-    return undefined;
-  }
-  nvdebug(`fieldGetSubfield6Pair(): ${fieldToString(field)} => ${fieldToString(pairedFields[0])}`);
-  return pairedFields[0];
+export function fieldGetSubfield6Pairs(field, record) {
+  return record.fields.filter(otherField => isSubfield6Pair(field, otherField));
 }
 
 export function isRelevantField6(field) { // ...
@@ -168,11 +164,11 @@ export function isRelevantField6(field) { // ...
 }
 
 export function pairAndStringify6(field, record) {
-  const pair6 = fieldGetSubfield6Pair(field, record);
-  if (!pair6) {
+  const pairs6 = fieldGetSubfield6Pairs(field, record);
+  if (!pairs6.length) {
     return fieldToNormalizedString(field);
   }
-  return fieldsToNormalizedString([field, pair6]);
+  return fieldsToNormalizedString([field].concat(pairs6));
 }
 
 
@@ -211,10 +207,10 @@ export function fieldsToNormalizedString(fields, index = 0) {
 }
 
 export function removeField6IfNeeded(field, record, fieldsAsString) {
-  const pairField = fieldGetSubfield6Pair(field, record);
-  const asString = pairField ? fieldsToNormalizedString([field, pairField]) : fieldToNormalizedString(field);
+  const pairFields = fieldGetSubfield6Pairs(field, record);
+  const asString = pairFields ? fieldsToNormalizedString([field].concat(pairFields)) : fieldToNormalizedString(field);
   nvdebug(`SOURCE: ${asString} -- REALITY: ${fieldToString(field)}`);
-  const tmp = pairField ? fieldToString(pairField) : 'HUTI';
+  const tmp = pairFields.length ? fieldsToString(pairFields) : 'HUTI';
   nvdebug(`PAIR: ${tmp}`);
   nvdebug(`BASE:\n ${fieldsAsString.join('\n ')}`);
   if (!fieldsAsString.includes(asString)) {
@@ -223,11 +219,11 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
   nvdebug(`Duplicate $6 removal: ${fieldToString(field)}`);
   record.removeField(field);
 
-  if (pairField === undefined) {
+  if (pairFields.length === 0) {
     return;
   }
-  nvdebug(`Duplicate $6 removal (pair): ${fieldToString(pairField)}`);
-  record.removeField(pairField);
+  nvdebug(`Duplicate $6 removal (pair): ${fieldsToString(pairFields)}`);
+  pairFields.forEach(pairField => record.removeField(pairField));
 }
 
 

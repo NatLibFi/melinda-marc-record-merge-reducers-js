@@ -1,7 +1,7 @@
 {
-  "description":"MET-33: Best 500 prepub and 594 Fennica prepub note are retained. MET-197 title: don't merge",
+  "description":"MET-33 et al: Best 500 prepub and 594 Fennica prepub note are retained. MET-197 title: don't merge",
   "comment": "Note that 594 field drops affect only $5 FENNI/FIKKA/VIOLA and thus the field with $5 WHATEVER is retained",
-  "comment 2": "Same as test 04 except LDR/17=8 for both records, thus best 500 prepub field is kept.",
+  "comment 2": "Was once same as test 04 except LDR/17=8 for both records, thus best 500 prepub field is kept.",
   "comment 3": "Added MRA-245-ish tests. Added MRA-223 fields...",
   "only": false
 

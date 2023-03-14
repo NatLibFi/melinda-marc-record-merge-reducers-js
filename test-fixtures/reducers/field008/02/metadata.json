@@ -1,3 +1,4 @@
 {
-  "description":"If the level code of the base record is better or the same, keep existing 008"
+  "description":"Take source's older (20th century) value",
+  "only": false
 }

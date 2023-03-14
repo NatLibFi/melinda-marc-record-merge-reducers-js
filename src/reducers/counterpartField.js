@@ -382,7 +382,8 @@ function namePartThreshold(field) {
 
 function fieldToNamePart(field) {
   const index = namePartThreshold(field);
-  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i < index || index === -1)};
+  const relevantSubfields = field.subfields.filter((sf, i) => i < index || index === -1);
+  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
 
   /*
   if (index > -1) { // eslint-disable-line functional/no-conditional-statement
@@ -430,6 +431,7 @@ export function getCounterpart(record, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
   // Tags 260 and 264 are lumped together.
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
+  nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`);
   const counterpartCands = record.get(tagToRegexp(field.tag));
 
   if (!counterpartCands || counterpartCands.length === 0) {
