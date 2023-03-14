@@ -33,7 +33,7 @@ export function subfieldGetIndex6(subfield) {
   return undefined;
 }
 
-function subfieldGetTag6(subfield) {
+export function subfieldGetTag6(subfield) {
   if (isValidSubfield6(subfield)) {
     return subfield.value.substring(0, 3);
   }
