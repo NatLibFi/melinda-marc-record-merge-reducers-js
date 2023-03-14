@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 //import clone from 'clone';
-import {cloneAndNormalizeField} from './normalize.js';
+import {cloneAndNormalizeFieldForComparison} from './normalize.js';
 //import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeAs, normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import {
@@ -49,7 +49,7 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
 
 function mergeOrAddSubfieldNotRequired(targetField, candSubfield) {
   // candSubfield has been stripped of punctuation.
-  const normalizedTargetField = cloneAndNormalizeField(targetField);
+  const normalizedTargetField = cloneAndNormalizeFieldForComparison(targetField);
 
   nvdebug(`     Look for identical subfields in '${fieldToString(normalizedTargetField)}'`);
 
@@ -105,7 +105,7 @@ function resetPaired880(candFieldPair880, targetField, punctlessCandSubfield) {
 }
 
 export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctlessCandSubfield, candFieldPairs880 = []) {
-  const normalizedTargetField = cloneAndNormalizeField(targetField);
+  const normalizedTargetField = cloneAndNormalizeFieldForComparison(targetField);
 
   nvdebug(`   Q: mergeOrAddSubfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
   nvdebug(`      with field '${fieldToString(targetField)}'?`, debug);

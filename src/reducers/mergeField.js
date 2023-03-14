@@ -1,7 +1,7 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright} from './utils';
-import {cloneAndNormalizeField, cloneAndRemovePunctuation} from './normalize';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from './normalize';
 import {mergeOrAddSubfield} from './mergeOrAddSubfield';
 import {mergeIndicators} from './mergeIndicator';
 import {mergableTag} from './mergableTag';
@@ -132,7 +132,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
   // We want to add the incoming subfields without punctuation, and add puctuation later on.
   // (Cloning is harmless, but probably not needed.)
   // NEW: we also drag the normalized version along. It is needed for the merge-or-add decision
-  const normalizedSourceField = cloneAndNormalizeField(sourceField); //cloneAndRemovePunctuation(sourceField);
+  const normalizedSourceField = cloneAndNormalizeFieldForComparison(sourceField); //cloneAndRemovePunctuation(sourceField);
   const strippedSourceField = cloneAndRemovePunctuation(sourceField);
 
   nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}'`);

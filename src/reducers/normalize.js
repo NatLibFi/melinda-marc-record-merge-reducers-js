@@ -231,7 +231,7 @@ export function cloneAndRemovePunctuation(field) {
   return clonedField;
 }
 
-export function cloneAndNormalizeField(field) {
+export function cloneAndNormalizeFieldForComparison(field) {
   // NB! This new field is for comparison purposes only.
   // Some of the normalizations might be considered a bit overkill for other purposes.
   const clonedField = normalizeField(clone(field));
