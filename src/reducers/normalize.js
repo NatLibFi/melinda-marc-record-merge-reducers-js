@@ -11,7 +11,6 @@ import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import createDebugLogger from 'debug';
 import {normalizePartData, subfieldContainsPartData} from './normalizePart.js';
-import {valueCarriesMeaning} from './worldKnowledge.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
@@ -145,10 +144,6 @@ function normalizeField(field) {
   return field;
 }
 
-function dropIrrelevantSubfields(field) {
-  // Drop certain information free 260/264 $a and $b value
-  field.subfields = field.subfields.filter(subfield => valueCarriesMeaning(field.tag, subfield.code, subfield.value)); // eslint-disable-line functional/immutable-data
-}
 
 function hack490SubfieldA(field) {
   if (field.tag !== '490') {
@@ -237,7 +232,6 @@ export function cloneAndNormalizeFieldForComparison(field) {
   const clonedField = normalizeField(clone(field));
   fieldStripPunctuation(clonedField);
   fieldRemoveDecomposedDiacritics(clonedField);
-  dropIrrelevantSubfields(clonedField);
   fieldSpecificHacks(clonedField);
   fieldTrimSubfieldValues(clonedField);
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
