@@ -88,6 +88,7 @@ function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
     return;
   }
 
+  /* // Commented this after discussion with MH. We can have both Finnish and Swedish versio in same record.
   if (tag === '600' && subfield.code === 'c') { // (fiktiivinen hahmo) vs (fiktiv gestalt)
     const modValue = translateMtsTerm(subfield.value, catalogingLanguage, 'all');
     nvdebug(`MTS: ${subfield.value} => ${modValue}`);
@@ -95,6 +96,7 @@ function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
     subfield.value = modValue; // eslint-disable-line functional/immutable-data
     return;
   }
+  */
 }
 
 function mtsCaseField(field, catalogingLanguage) {
