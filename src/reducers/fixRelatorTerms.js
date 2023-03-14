@@ -153,7 +153,8 @@ function subfieldTranslateRelatorTerm(subfield, fromLanguage, toLanguage) {
 }
 
 export function fieldTranslateRelatorTerm(field, fromLanguage, toLanguage) {
-  if (!isRelatorField(field) || fromLanguage === toLanguage) {
+  // fromLanguage can not be relied upon.
+  if (!isRelatorField(field)/* || fromLanguage === toLanguage*/) {
     return;
   }
   field.subfields.forEach(sf => subfieldTranslateRelatorTerm(sf, fromLanguage, toLanguage));
