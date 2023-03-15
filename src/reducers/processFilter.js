@@ -206,6 +206,9 @@ function getTargetRecordsForOperation(base, source, operation) {
 
 function operationRemoveField(record, fieldSpecification) {
   const deletableFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
+  if (deletableFields.length === 0) {
+    return;
+  }
   nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`);
   deletableFields.forEach(field => record.removeField(field));
 }
@@ -229,6 +232,9 @@ function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFi
 
 function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFilter) {
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
+  if (relevantFields.length === 0) {
+    return;
+  }
   nvdebug(`operationRemoveSubfield() got ${relevantFields.length} field(s)`);
   relevantFields.forEach(field => {
     nvdebug(`Try to remove subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`);
