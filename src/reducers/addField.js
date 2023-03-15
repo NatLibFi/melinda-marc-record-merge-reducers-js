@@ -163,7 +163,7 @@ export function addField(record, field, config = {}) {
   const newField = cloneAddableField(field, config); // clone for base + set field.added = 1
   field.deleted = 1; // eslint-disable-line functional/immutable-data
 
-  nvdebug(`Add as '${fieldToString(field)}'`, debug);
+  nvdebug(`ADD NEW FIELD: '${fieldToString(field)}'`, debug);
   // NB! We don't we sort subfields in added fields.
   return record.insertField(newField);
 }
