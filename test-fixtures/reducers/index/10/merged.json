@@ -3,6 +3,8 @@
   "fields": [
     { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "fin" } ] },
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Koneellisesti tuotettu tietue." } ] },
+    { "tag": "520", "ind1": "8", "ind2": " ", "subfields": [ {"code": "a", "value": "'Lorum ipsum...' MRA-395"} ]},
+  
     { "tag": "520", "ind1": "8", "ind2": " ", "subfields": [
       {"code": "6", "value": "880-01" },
       {"code": "a", "value": "Tiivistelmä venäjäksi."}
