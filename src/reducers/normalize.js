@@ -24,7 +24,11 @@ function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
       }
     });
   }
-
+  const oldString = fieldToString(oldField);
+  const newString = fieldToString(newField);
+  if (oldString === newString) {
+    return;
+  }
   nvdebug(`NORMALIZE FIELD:\n '${fieldToString(oldField)}' =>\n '${fieldToString(newField)}'`);
 }
 
