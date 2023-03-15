@@ -1,41 +1,25 @@
-import {subfieldGetIndex6} from './subfield6Utils';
-import {nvdebug, subfieldToString} from './utils';
+import {fieldGetSubfield6Pairs, resetSubfield6Tag, subfieldGetTag6} from './subfield6Utils';
+import {fieldToString, nvdebug} from './utils';
 
-export function resetCorrespondingField880(field, record, oldTag, newTag) {
-  const sixes = get6s(field);
-  if (sixes.length === 0) { // speed things up
-    return;
-  }
-  const cand880Fields = record.fields.filter(field => field.tag === '880');
-  sixes.forEach(sf6 => fix880(sf6));
+export function resetCorrespondingField880(field, record, newTag) {
+  const pairedFields = fieldGetSubfield6Pairs(field, record);
 
-  function fix880(sf6) { // sf6 tag is not 880!
-    const pairValue = getPairValue(sf6, oldTag);
-    const newPairValue = `${newTag}-${pairValue.substring(4)}`;
-    // CHECK: does this lose the post-index encoding information!?!
+  nvdebug(`RESET6: ${fieldToString(field)} got ${pairedFields.length} pair(s)`);
+  pairedFields.forEach(pairedField => fixPaired880(pairedField));
 
-    // Change forEach to some? Also $6 should always be the first subfield...
-    cand880Fields.forEach(f => f.subfields.forEach(sf => fix880Subfield6(sf, pairValue, newPairValue)));
+  function fixPaired880(pairedField) {
+    nvdebug(` PAIR-6 (before) '${fieldToString(pairedField)}'`);
+    pairedField.subfields.forEach(sf => fixPaired880Subfield6(sf));
+    nvdebug(` PAIR-6 (after)  '${fieldToString(pairedField)}'`);
   }
 
-  function fix880Subfield6(sf, oldValue, newValue) {
-    if (sf.code === '6' && sf.value === oldValue) {
-
-      sf.value = newValue; // eslint-disable-line functional/immutable-data
-      nvdebug(`fix880Subfield6: reset subfield: ${oldValue} => ${subfieldToString(sf)}`);
+  function fixPaired880Subfield6(sf) {
+    const tag = subfieldGetTag6(sf);
+    if (tag !== field.tag) {
       return;
     }
+    resetSubfield6Tag(sf, newTag);
   }
 
-  function get6s(field) {
-    return field.subfields.filter(sf => sf.code === '6');
-  }
-
-
-  function getPairValue(subfield6, myTag) {
-    const index = subfieldGetIndex6(subfield6);
-    const lookFor = `${myTag}-${index}`;
-    return lookFor;
-  }
 }
 

@@ -11,7 +11,6 @@ import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import createDebugLogger from 'debug';
 import {normalizePartData, subfieldContainsPartData} from './normalizePart.js';
-import {valueCarriesMeaning} from './worldKnowledge.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
@@ -25,7 +24,11 @@ function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
       }
     });
   }
-
+  const oldString = fieldToString(oldField);
+  const newString = fieldToString(newField);
+  if (oldString === newString) {
+    return;
+  }
   nvdebug(`NORMALIZE FIELD:\n '${fieldToString(oldField)}' =>\n '${fieldToString(newField)}'`);
 }
 
@@ -145,10 +148,6 @@ function normalizeField(field) {
   return field;
 }
 
-function dropIrrelevantSubfields(field) {
-  // Drop certain information free 260/264 $a and $b value
-  field.subfields = field.subfields.filter(subfield => valueCarriesMeaning(field.tag, subfield.code, subfield.value)); // eslint-disable-line functional/immutable-data
-}
 
 function hack490SubfieldA(field) {
   if (field.tag !== '490') {
@@ -198,7 +197,7 @@ function removeDecomposedDiacritics(value = '') {
 
 
 export function normalizeSubfieldValue(value, subfieldCode, tag) {
-  // For compasison values only
+  // NB! For comparison of values only
   /* eslint-disable */
   value = subfieldValueLowercase(value, subfieldCode, tag);
 
@@ -231,17 +230,28 @@ export function cloneAndRemovePunctuation(field) {
   return clonedField;
 }
 
-export function cloneAndNormalizeField(field) {
+function removeCharsThatDontCarryMeaning(value, tag) {
+  if (tag === '080') {
+    return value;
+  }
+  /* eslint-disable */
+  // 3" refers to inches, but as this is for comparison only we don't mind...
+  value = value.replace(/['"]/gu, '');
+  /* eslint-enable */
+  return value;
+}
+export function cloneAndNormalizeFieldForComparison(field) {
   // NB! This new field is for comparison purposes only.
   // Some of the normalizations might be considered a bit overkill for other purposes.
   const clonedField = normalizeField(clone(field));
   fieldStripPunctuation(clonedField);
   fieldRemoveDecomposedDiacritics(clonedField);
-  dropIrrelevantSubfields(clonedField);
   fieldSpecificHacks(clonedField);
   fieldTrimSubfieldValues(clonedField);
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
     sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag); // eslint-disable-line functional/immutable-data
+    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag);// eslint-disable-line functional/immutable-data
+
   });
 
   debugFieldComparison(field, clonedField); // For debugging purposes only

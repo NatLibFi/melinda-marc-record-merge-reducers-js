@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 //import clone from 'clone';
-import {cloneAndNormalizeField} from './normalize.js';
+import {cloneAndNormalizeFieldForComparison} from './normalize.js';
 //import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeAs, normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import {
@@ -47,19 +47,16 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   return false;
 }
 
-function mergeOrAddSubfieldNotRequired(targetField, candSubfield) {
-  // candSubfield has been stripped of punctuation.
-  const normalizedTargetField = cloneAndNormalizeField(targetField);
-
+function mergeOrAddSubfieldNotRequired(normalizedTargetField, normalizedCandSubfield) {
   nvdebug(`     Look for identical subfields in '${fieldToString(normalizedTargetField)}'`);
 
-  if (normalizedTargetField.subfields.some(sf => subfieldsAreIdentical(sf, candSubfield))) {
+  if (normalizedTargetField.subfields.some(sf => subfieldsAreIdentical(sf, normalizedCandSubfield))) {
     // Subfield with identical normalized value exists. Do nothing.
     // Not ideal 382‡n subfields, I guess... Nor 505‡trg repetitions... These need to be fixed...
     return true;
   }
 
-  if (mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield)) {
+  if (mergeOrAddSubfieldNotRequiredSpecialCases(normalizedTargetField, normalizedCandSubfield)) {
     return true;
   }
 
@@ -105,7 +102,7 @@ function resetPaired880(candFieldPair880, targetField, punctlessCandSubfield) {
 }
 
 export function mergeOrAddSubfield(targetField, normalizedCandSubfield, punctlessCandSubfield, candFieldPairs880 = []) {
-  const normalizedTargetField = cloneAndNormalizeField(targetField);
+  const normalizedTargetField = cloneAndNormalizeFieldForComparison(targetField);
 
   nvdebug(`   Q: mergeOrAddSubfield '${subfieldToString(punctlessCandSubfield)}'`, debug);
   nvdebug(`      with field '${fieldToString(targetField)}'?`, debug);

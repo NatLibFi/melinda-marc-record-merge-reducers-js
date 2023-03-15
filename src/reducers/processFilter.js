@@ -168,7 +168,7 @@ function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
   return filteredFields2;
 }
 
-
+/*
 function logRecordType(recordType) {
   if (['base', 'both', 'source'].includes(recordType)) {
     nvdebug(`Filter applies to record type ${recordType.toUpperCase()}`);
@@ -177,10 +177,11 @@ function logRecordType(recordType) {
   // Log warning/error here
   nvdebug(`ERROR: record type ${recordType} is not defined!`);
 }
+*/
 
 function getTargetRecordsForOperation(base, source, operation) {
   const {recordType} = operation;
-  logRecordType(recordType);
+  // logRecordType(recordType);
 
   // This is hard-coded exception/hack.
   // Can't use 'both' as swap rules might feed each other.
@@ -205,6 +206,9 @@ function getTargetRecordsForOperation(base, source, operation) {
 
 function operationRemoveField(record, fieldSpecification) {
   const deletableFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
+  if (deletableFields.length === 0) {
+    return;
+  }
   nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`);
   deletableFields.forEach(field => record.removeField(field));
 }
@@ -228,6 +232,9 @@ function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFi
 
 function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFilter) {
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
+  if (relevantFields.length === 0) {
+    return;
+  }
   nvdebug(`operationRemoveSubfield() got ${relevantFields.length} field(s)`);
   relevantFields.forEach(field => {
     nvdebug(`Try to remove subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`);
@@ -251,7 +258,7 @@ function operationRetag(record, fieldSpecification, newTag) {
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
   relevantFields.forEach(field => {
     const oldTag = field.tag;
-    resetCorrespondingField880(field, record, field.tag, newTag);
+    resetCorrespondingField880(field, record, newTag);
     field.tag = newTag; // eslint-disable-line functional/immutable-data
     nvdebug(`Retagged field ${oldTag} => ${fieldToString(field)}`); //, debug);
 
@@ -297,7 +304,7 @@ export function filterOperation(base, source, operation) {
     if (operation.requireBaseField) {
       const baseFields = getSpecifiedFieldsAndFilterThem(base, operation.requireBaseField);
       if (baseFields.length === 0) {
-        nvdebug(' Required base field not found!');
+        //nvdebug(' Required base field not found!');
         return;
       }
       nvdebug(` Base field ${fieldToString(baseFields[0])}`);
@@ -320,7 +327,7 @@ export function filterOperation(base, source, operation) {
       return;
     }
 
-    nvdebug(`current operation: ${operation.operation}, ${operation.comment ? operation.comment : 'no comment'}`);
+    //nvdebug(`current operation: ${operation.operation}, ${operation.comment ? operation.comment : 'no comment'}`);
     if (operation.operation === 'removeField') {
       operationRemoveField(targetRecord, operation.fieldSpecification);
       return;

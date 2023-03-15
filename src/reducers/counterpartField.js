@@ -2,7 +2,7 @@
 
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, nvdebugSubfieldArray, removeCopyright} from './utils';
-import {cloneAndNormalizeField} from './normalize';
+import {cloneAndNormalizeFieldForComparison} from './normalize';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
@@ -76,8 +76,8 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   // Here "optional subfield" means a subfield, that needs not to be present, but if present, it must be identical...
   // (Think of a better name...)
   // We use clones here, since these changes done below are not intented to appear on the actual records.
-  const field1 = cloneAndNormalizeField(originalBaseField);
-  const field2 = cloneAndNormalizeField(originalSourceField);
+  const field1 = cloneAndNormalizeFieldForComparison(originalBaseField);
+  const field2 = cloneAndNormalizeFieldForComparison(originalSourceField);
 
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
@@ -147,8 +147,8 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
 
 function mandatorySubfieldComparison(originalField1, originalField2, keySubfieldsAsString) {
   // NB! We use clones here, since these changes done below are not intented to appear on the actual records.
-  const field1 = cloneAndNormalizeField(originalField1);
-  const field2 = cloneAndNormalizeField(originalField2);
+  const field1 = cloneAndNormalizeFieldForComparison(originalField1);
+  const field2 = cloneAndNormalizeFieldForComparison(originalField2);
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
@@ -441,11 +441,11 @@ export function getCounterpart(record, field, config) {
 
   nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debug);
 
-  const normalizedField = cloneAndNormalizeField(field);
+  const normalizedField = cloneAndNormalizeFieldForComparison(field);
   nvdebug(` S: ${fieldToString(normalizedField)}`);
   // Then find (the index of) the first mathing candidate field and return it.
   const index = counterpartCands.findIndex((currCand) => {
-    const normalizedCurrCand = cloneAndNormalizeField(currCand);
+    const normalizedCurrCand = cloneAndNormalizeFieldForComparison(currCand);
     nvdebug(` B: ${fieldToString(normalizedCurrCand)}`);
     if (mergablePair(normalizedCurrCand, normalizedField, config)) {
       nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`);
