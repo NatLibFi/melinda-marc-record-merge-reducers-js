@@ -168,7 +168,7 @@ function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
   return filteredFields2;
 }
 
-
+/*
 function logRecordType(recordType) {
   if (['base', 'both', 'source'].includes(recordType)) {
     nvdebug(`Filter applies to record type ${recordType.toUpperCase()}`);
@@ -177,10 +177,11 @@ function logRecordType(recordType) {
   // Log warning/error here
   nvdebug(`ERROR: record type ${recordType} is not defined!`);
 }
+*/
 
 function getTargetRecordsForOperation(base, source, operation) {
   const {recordType} = operation;
-  logRecordType(recordType);
+  // logRecordType(recordType);
 
   // This is hard-coded exception/hack.
   // Can't use 'both' as swap rules might feed each other.
@@ -297,7 +298,7 @@ export function filterOperation(base, source, operation) {
     if (operation.requireBaseField) {
       const baseFields = getSpecifiedFieldsAndFilterThem(base, operation.requireBaseField);
       if (baseFields.length === 0) {
-        nvdebug(' Required base field not found!');
+        //nvdebug(' Required base field not found!');
         return;
       }
       nvdebug(` Base field ${fieldToString(baseFields[0])}`);
@@ -320,7 +321,7 @@ export function filterOperation(base, source, operation) {
       return;
     }
 
-    nvdebug(`current operation: ${operation.operation}, ${operation.comment ? operation.comment : 'no comment'}`);
+    //nvdebug(`current operation: ${operation.operation}, ${operation.comment ? operation.comment : 'no comment'}`);
     if (operation.operation === 'removeField') {
       operationRemoveField(targetRecord, operation.fieldSpecification);
       return;
