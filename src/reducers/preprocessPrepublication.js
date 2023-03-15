@@ -138,12 +138,12 @@ function copySource594ToSource500(record) {
   addables.forEach(field => {
     const subfieldA = field.subfields.find(sf => sf.code === 'a');
 
-
     if (!subfieldA) { // unneeded sanity check
       return;
     }
 
-    const newField = {'tag': '500', 'ind1': ' ', 'ind2': ' ', 'subfields': [{'code': 'a', 'value': subfieldA.value}]};
+    const newSubfieldAValue = subfieldA.value.slice(-1) === '.' ? subfieldA.value : `${subfieldA.value}.`;
+    const newField = {'tag': '500', 'ind1': ' ', 'ind2': ' ', 'subfields': [{'code': 'a', 'value': newSubfieldAValue}]};
     record.insertField(newField);
     nvdebug(`Added ${fieldToString(newField)}`);
   });
@@ -152,13 +152,15 @@ function copySource594ToSource500(record) {
 
 function preprocessSourceField594(base, source) {
   removeWorsePrepubField594s(source); // Keeps only the best prepub field(s) 594. (Keep/remove them in/from base?)
-  removeUnwantedSourceField500s(base, source); // Base > prepub, drop sources prepub fields
   removeUnwantedSourceField594s(base, source); // Source needs to keep only better prepub levels
   removeUninterestingSourceField594s(base, source); // Should we do this to 500 as well?
 
   // Prepub encoding level can't be worse that Fennica prepub level, can it?
   // Apply to source, but how about base?
   copySource594ToSource500(source);
+
+  removeUnwantedSourceField500s(base, source); // Base > prepub, drop sources prepub fields
+
 }
 
 function removeField263(record) {
