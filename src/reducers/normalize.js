@@ -193,7 +193,7 @@ function removeDecomposedDiacritics(value = '') {
 
 
 export function normalizeSubfieldValue(value, subfieldCode, tag) {
-  // For compasison values only
+  // NB! For comparison of values only
   /* eslint-disable */
   value = subfieldValueLowercase(value, subfieldCode, tag);
 
@@ -226,6 +226,16 @@ export function cloneAndRemovePunctuation(field) {
   return clonedField;
 }
 
+function removeCharsThatDontCarryMeaning(value, tag) {
+  if (tag === '080') {
+    return value;
+  }
+  /* eslint-disable */
+  // 3" refers to inches, but as this is for comparison only we don't mind...
+  value = value.replace(/['"]/gu, '');
+  /* eslint-enable */
+  return value;
+}
 export function cloneAndNormalizeFieldForComparison(field) {
   // NB! This new field is for comparison purposes only.
   // Some of the normalizations might be considered a bit overkill for other purposes.
@@ -236,6 +246,8 @@ export function cloneAndNormalizeFieldForComparison(field) {
   fieldTrimSubfieldValues(clonedField);
   clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
     sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag); // eslint-disable-line functional/immutable-data
+    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag);// eslint-disable-line functional/immutable-data
+
   });
 
   debugFieldComparison(field, clonedField); // For debugging purposes only
