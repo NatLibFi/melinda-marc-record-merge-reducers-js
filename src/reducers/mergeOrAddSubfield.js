@@ -47,19 +47,16 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield) {
   return false;
 }
 
-function mergeOrAddSubfieldNotRequired(targetField, candSubfield) {
-  // candSubfield has been stripped of punctuation.
-  const normalizedTargetField = cloneAndNormalizeFieldForComparison(targetField);
-
+function mergeOrAddSubfieldNotRequired(normalizedTargetField, normalizedCandSubfield) {
   nvdebug(`     Look for identical subfields in '${fieldToString(normalizedTargetField)}'`);
 
-  if (normalizedTargetField.subfields.some(sf => subfieldsAreIdentical(sf, candSubfield))) {
+  if (normalizedTargetField.subfields.some(sf => subfieldsAreIdentical(sf, normalizedCandSubfield))) {
     // Subfield with identical normalized value exists. Do nothing.
     // Not ideal 382‡n subfields, I guess... Nor 505‡trg repetitions... These need to be fixed...
     return true;
   }
 
-  if (mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfield)) {
+  if (mergeOrAddSubfieldNotRequiredSpecialCases(normalizedTargetField, normalizedCandSubfield)) {
     return true;
   }
 
