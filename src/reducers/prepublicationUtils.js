@@ -200,7 +200,7 @@ export function getEncodingLevel(record) {
 export function deleteAllPrepublicationNotesFromField500InNonPubRecord(record) {
   const encodingLevel = getEncodingLevel(record);
   // Skip prepublication (or theoretically even worse) records:
-  if (!encodingLevelIsBetterThanPrepublication(encodingLevel)) {
+  if (['2', '8'].includes(encodingLevel)) {
     return;
   }
 
