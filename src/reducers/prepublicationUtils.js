@@ -9,7 +9,7 @@ const ENNAKKOTIETO = 3;
 const encodingLevelPreferenceArray = [' ', '1', '3', '4', '5', '2', '7', 'u', 'z', '8']; // MET-145
 const prepublicationLevelIndex = encodingLevelPreferenceArray.indexOf('8');
 
-export function isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublicationLevel) {
+export function prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublicationLevel) {
   return prepublicationLevel === KONEELLISESTI_TUOTETTU_TIETUE || prepublicationLevel === TARKISTETTU_ENNAKKOTIETO;
 }
 
@@ -201,13 +201,16 @@ export function deleteAllPrepublicationNotesFromField500InNonPubRecord(record) {
   const encodingLevel = getEncodingLevel(record);
   // Skip prepublication (or theoretically even worse) records:
   if (!encodingLevelIsBetterThanPrepublication(encodingLevel)) {
+  //if (['2', '8'].includes(encodingLevel)) { // MET-306: added '2' here
     return;
   }
 
-  const f500 = getRelevant5XXFields(record, true, false);
+  // MET-306: keep "koneellisesti tuotettu tietue" if encodng level is '2':
+  const f500 = getRelevant5XXFields(record, true, false).filter(field => encodingLevel === '2' ? !fieldRefersToKoneellisestiTuotettuTietue(field) : true);
   if (f500.length === 0) {
     return;
   }
+
 
   nvdebug(`Delete all ${f500.length} instance(s) of field 500`);
   f500.forEach(field => record.removeField(field));

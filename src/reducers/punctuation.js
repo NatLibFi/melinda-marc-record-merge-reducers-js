@@ -92,7 +92,9 @@ const cleanValidPunctuationRules = {
     {'name': 'ABK:F', 'code': 'abk', 'followedBy': 'f', 'remove': /,$/u},
     {'name': 'ABFNP:C', 'code': 'abfnp', 'followedBy': 'c', 'remove': / \/$/u},
     {'name': 'ABN:N', 'code': 'abn', 'followedBy': 'n', 'remove': /\.$/u},
+    {'name': 'ABNP:#', 'code': 'abnp', 'followedBy': '#', 'remove': /\.$/u},
     {'name': 'N:P', 'code': 'n', 'followedBy': 'p', 'remove': /,$/u}
+
   ],
   '260': [
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},

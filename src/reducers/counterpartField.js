@@ -2,9 +2,9 @@
 
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, nvdebugSubfieldArray, removeCopyright} from './utils';
-import {cloneAndNormalizeField} from './normalize';
+import {cloneAndNormalizeFieldForComparison} from './normalize';
 // This should be done via our own normalizer:
-// import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
+import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
@@ -76,8 +76,8 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
   // Here "optional subfield" means a subfield, that needs not to be present, but if present, it must be identical...
   // (Think of a better name...)
   // We use clones here, since these changes done below are not intented to appear on the actual records.
-  const field1 = cloneAndNormalizeField(originalBaseField);
-  const field2 = cloneAndNormalizeField(originalSourceField);
+  const field1 = cloneAndNormalizeFieldForComparison(originalBaseField);
+  const field2 = cloneAndNormalizeFieldForComparison(originalSourceField);
 
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
@@ -147,8 +147,8 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
 
 function mandatorySubfieldComparison(originalField1, originalField2, keySubfieldsAsString) {
   // NB! We use clones here, since these changes done below are not intented to appear on the actual records.
-  const field1 = cloneAndNormalizeField(originalField1);
-  const field2 = cloneAndNormalizeField(originalField2);
+  const field1 = cloneAndNormalizeFieldForComparison(originalField1);
+  const field2 = cloneAndNormalizeFieldForComparison(originalField2);
   if (keySubfieldsAsString === null) { // does not currently happen
     // If keySubfieldsAsString is undefined, (practically) everything is the string.
     // When everything is the string, the strings need to be (practically) identical.
@@ -253,7 +253,7 @@ function mergablePair(baseField, sourceField, config) {
   return true;
 }
 
-/*
+
 function pairableAsteriIDs(baseField, sourceField) {
   //nvdebug(`ASTERI1 ${fieldToString(baseField)}`); // eslint-disable-line
   //nvdebug(`ASTERI2 ${fieldToString(sourceField)}`); // eslint-disable-line
@@ -285,7 +285,7 @@ function pairableAsteriIDs(baseField, sourceField) {
       .filter(val => val.substring(0, 7) === '(FIN11)');
   }
 }
-*/
+
 
 function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
   if (field.tag === '260' || field.tag === '264') {
@@ -332,13 +332,11 @@ function pairableName(baseField, sourceField) {
   // *NOT* sure whether this a good idea.
   // 2023-01-24 Disable this. Caretaker can fix these later on. Not a job for merge.
   // We can't be sure that $0 pair is corrent, nor which version (base or source) to use.
-  /*
+  // 2023-03-07: Enable this again!
   if (pairableAsteriIDs(baseField, sourceField)) {
     //nvdebug(`    name match based on ASTERI $0'`);
     return true;
   }
-  */
-
 
   nvdebug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
   return false;
@@ -384,7 +382,8 @@ function namePartThreshold(field) {
 
 function fieldToNamePart(field) {
   const index = namePartThreshold(field);
-  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i < index || index === -1)};
+  const relevantSubfields = field.subfields.filter((sf, i) => i < index || index === -1);
+  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
 
   /*
   if (index > -1) { // eslint-disable-line functional/no-conditional-statement
@@ -432,6 +431,7 @@ export function getCounterpart(record, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
   // Tags 260 and 264 are lumped together.
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
+  nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`);
   const counterpartCands = record.get(tagToRegexp(field.tag));
 
   if (!counterpartCands || counterpartCands.length === 0) {
@@ -441,11 +441,11 @@ export function getCounterpart(record, field, config) {
 
   nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debug);
 
-  const normalizedField = cloneAndNormalizeField(field);
+  const normalizedField = cloneAndNormalizeFieldForComparison(field);
   nvdebug(` S: ${fieldToString(normalizedField)}`);
   // Then find (the index of) the first mathing candidate field and return it.
   const index = counterpartCands.findIndex((currCand) => {
-    const normalizedCurrCand = cloneAndNormalizeField(currCand);
+    const normalizedCurrCand = cloneAndNormalizeFieldForComparison(currCand);
     nvdebug(` B: ${fieldToString(normalizedCurrCand)}`);
     if (mergablePair(normalizedCurrCand, normalizedField, config)) {
       nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`);

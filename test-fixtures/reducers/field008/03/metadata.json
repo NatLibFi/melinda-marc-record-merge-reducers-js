@@ -1,3 +1,4 @@
 {
-  "description":"If the character positions are not the same, keep existing 008"
+  "description":"If base 008 length != 40, use source that has the appropriate length",
+  "only": false
 }

@@ -16,7 +16,7 @@ import {default as fixRelatorTerms} from './fixRelatorTerms';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
 import {default as muuntajaMergeDataFields} from './muuntaja';
-import {default as postprocessSubfield6} from './postprocessSubfield6';
+//import {default as postprocessSubfield6} from './postprocessSubfield6';
 import {default as metatietosanastoNormalizations} from './preprocessMetatietosanasto';
 import postprocessor from './postprocessor';
 import {default as manufacturer260To264} from './transferManufacturerDataFrom260To264';
@@ -80,7 +80,7 @@ export const localReducers = [
   metatietosanastoNormalizations(),
   prepublicationPreprocessor(),
   fixRelatorTerms(),
-  removeDuplicatesFromSource(), // handles $6 and $8 chains as well
+  removeDuplicatesFromSource(), // handles $6 and $8 chains as well (but apparently badly)
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
   reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
   manufacturer260To264(),
@@ -93,7 +93,7 @@ export const localReducers = [
   field008(), // Tests 06, 07, and 08
   mergeDataFields(),
   addDataFields(),
-  postprocessSubfield6(), // Should this be part of generic postprocessor? Probably...
+  //postprocessSubfield6(), // Should this be part of generic postprocessor? Probably...
   postprocessor()
 ];
 
@@ -101,6 +101,6 @@ export const muuntajaReducers = [
   genericPreprocessor(),
   metatietosanastoNormalizations(),
   muuntajaMergeDataFields(),
-  addDataFields(),
-  postprocessSubfield6()
+  addDataFields()
+  //postprocessSubfield6()
 ];

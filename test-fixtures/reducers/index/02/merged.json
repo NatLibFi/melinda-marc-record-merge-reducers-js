@@ -19,6 +19,10 @@
           "value": "010b_base"
         }
       ]
-    }
+    },
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "666"},
+      {"code": "q", "value": "nidottu"}
+  ]}
   ]
 }

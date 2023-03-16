@@ -31,7 +31,7 @@ import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
 import {handleField6XX} from './preprocessPrepublicationField6XX';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
-  isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
+  prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
   removeWorsePrepubField594s} from './prepublicationUtils';
 import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries';
 
@@ -109,6 +109,7 @@ function removeUnwantedSourceField594s(base, source) {
 
 function removeUninterestingSourceField594s(base, source) {
   // Remove them source 594 fields that already have same or better base 594 source field
+  // Koneellisesti tuotettu tietue > Tarkistettu ennakkotieto > Ennakkotieto.
   const baseFields594 = getRelevant5XXFields(base, false, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
   if (baseFields594.length === 0) {
     return;
@@ -137,12 +138,12 @@ function copySource594ToSource500(record) {
   addables.forEach(field => {
     const subfieldA = field.subfields.find(sf => sf.code === 'a');
 
-
     if (!subfieldA) { // unneeded sanity check
       return;
     }
 
-    const newField = {'tag': '500', 'ind1': ' ', 'ind2': ' ', 'subfields': [{'code': 'a', 'value': subfieldA.value}]};
+    const newSubfieldAValue = subfieldA.value.slice(-1) === '.' ? subfieldA.value : `${subfieldA.value}.`;
+    const newField = {'tag': '500', 'ind1': ' ', 'ind2': ' ', 'subfields': [{'code': 'a', 'value': newSubfieldAValue}]};
     record.insertField(newField);
     nvdebug(`Added ${fieldToString(newField)}`);
   });
@@ -151,13 +152,15 @@ function copySource594ToSource500(record) {
 
 function preprocessSourceField594(base, source) {
   removeWorsePrepubField594s(source); // Keeps only the best prepub field(s) 594. (Keep/remove them in/from base?)
-  removeUnwantedSourceField500s(base, source); // Base > prepub, drop sources prepub fields
   removeUnwantedSourceField594s(base, source); // Source needs to keep only better prepub levels
   removeUninterestingSourceField594s(base, source); // Should we do this to 500 as well?
 
   // Prepub encoding level can't be worse that Fennica prepub level, can it?
   // Apply to source, but how about base?
   copySource594ToSource500(source);
+
+  removeUnwantedSourceField500s(base, source); // Base > prepub, drop sources prepub fields
+
 }
 
 function removeField263(record) {
@@ -192,7 +195,7 @@ function handleField263(base, source) {
   if (baseEncodingLevel === '8') { // LDR/17='8'
     const prepublicationLevel = getPrepublicationLevel(base, true, true); // NB! Any prepub info is used here!
     nvdebug(`handleField263: Prepublication level is ${prepublicationLevel}`);
-    if (isKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublicationLevel)) {
+    if (prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublicationLevel)) {
       removeField263(source);
       return;
     }
