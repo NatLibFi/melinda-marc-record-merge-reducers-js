@@ -1,14 +1,13 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-//import {fieldHasSubfield, fieldIsRepeatable, fieldToString, fieldsAreIdentical, debug, recordHasField} from './utils';
-
-import {fieldIsRepeatable, fieldToString, fieldsAreIdentical, nvdebug} from './utils';
+import {fieldIsRepeatable, fieldToString, nvdebug} from './utils';
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecords} from './mergeOrAddPostprocess.js';
 import {preprocessBeforeAdd} from './processFilter.js';
 import fs from 'fs';
 import path from 'path';
+import {isValidSubfield6} from './subfield6Utils';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
@@ -34,6 +33,9 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   // There are bunch of rules we want to apply after field merge and before field add.
   // They are run here.
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
+
+  // NR fields are removed from source if they can not be added to base.
+  removeNonRepeatableDataFieldsFromSourceIfFieldExistsInBase(baseRecord, sourceRecord);
 
   const activeTagPattern = getTagPattern(config);
   debug(`TAG PATTERN: ${JSON.stringify(activeTagPattern)}`);
@@ -61,16 +63,22 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   }
 };
 
+function removeNonRepeatableDataFieldsFromSourceIfFieldExistsInBase(base, source) {
+  source.fields = source.fields.filter(f => keepField(f)); // eslint-disable-line functional/immutable-data
 
-/*
-function getConfigDoNotCopyIfFieldPresentAsRegexp(config) {
-  if (config.doNotCopyIfFieldPresent) {
-    debug(`Regexpify: '${config.doNotCopyIfFieldPresent}'`);
-    return new RegExp(`^${config.doNotCopyIfFieldPresent}`, 'u');
+  function keepField(field) {
+    if (!field.subfields) {
+      return true;
+    }
+
+    if (repetitionBlocksAdding(base, field)) {
+      nvdebug(`Drop field ${fieldToString(field)}`);
+      return false;
+    }
+    return true;
   }
-  return undefined;
 }
-*/
+
 
 function recordHasOriginalFieldWithTag(record, tag) {
   const candidateFields = record.get(new RegExp(`^${tag}$`, 'u'));
@@ -79,7 +87,8 @@ function recordHasOriginalFieldWithTag(record, tag) {
 }
 
 
-function repetitionBlocksAdding(record, tag) {
+function repetitionBlocksAdding(record, field) {
+  const {tag} = field;
   // It's not a repetition:
   if (!recordHasOriginalFieldWithTag(record, tag)) {
     return false;
@@ -91,53 +100,25 @@ function repetitionBlocksAdding(record, tag) {
     return true; // blocked
   }
 
-  // config.doNotCopyIfFieldPresent  overrides only default regexp of repeatable tags
-  /*
-  const configRegexp = getConfigDoNotCopyIfFieldPresentAsRegexp(config);
-  if (configRegexp) {
-    return tag.match(configRegexp);
+  if (tag === '880') {
+    const subfield = field.subfields.find(sf => isValidSubfield6(sf));
+    if (subfield) {
+      const tag = subfield.value.substring(0, 3);
+      return !fieldIsRepeatable(tag);
+    }
   }
-  */
 
-  // Some of the fields are repeatable as per Marc21 specs, but we still don't want to multiple instances of the tag.
-  // The original listing is from https://workgroups.helsinki.fi/x/K1ohCw .
-  // However, we might have deviated from the specs.
-  //return tag.match(defaultDoNotCopyIfFieldPresentRegexp);
   return false;
 }
 
-/* // Handled by config.json
-function skipCertainRepeatableFieldsIfFieldAlreadyExists(record, tag) {
-  if (!['336', '337', '338'].includes(tag)) {
-    return false;
-  }
-  const originalFields = record.get(tag).filter(field => field.added);
-  return originalFields.length > 0;
-}
-*/
 
 function skipAddField(record, field) {
-  if (repetitionBlocksAdding(record, field.tag)) {
-    nvdebug(`Unrepeatable field already exists. Failed to add '${fieldToString(field)}'.`, nvdebug);
-    return true;
-  }
+  // - Non-addable NR fields have already been removed from source.
+  // - Add also duplicates. Postprocessing removes them. Not this files problem.
+  // - Repeatable (R) fields (26X, 33X...) we don't want to add already handle (through config file)
 
-  /*
-  if (skipCertainRepeatableFieldsIfFieldAlreadyExists(record, field.tag)) {
-    return true;
-  }
-  */
-
-  // We could block 260/264 pairs here.
-
-  // Skip duplicate field (Should we have something like config.forceAdd):
-  if (record.fields.some(baseField => fieldsAreIdentical(field, baseField))) {
-    //debug(`addField(): field '${fieldToString(field)}' already exists! No action required!`);
-    return true;
-  }
-
-  // NB! Subfieldless fields (and control fields (00X)) are not handled here.
-  if (field.subfields.length === 0) {
+  // Syntactic crap is handled here:
+  if (field.subfields && field.subfields.length === 0) {
     nvdebug(`WARNING or ERROR: No subfields in field-to-add`, debug);
     return true;
   }
@@ -153,8 +134,7 @@ function cloneAddableField(field) {
 
 
 export function addField(record, field, config = {}) {
-  // Skip duplicates and special cases:
-  if (skipAddField(record, field, config)) {
+  if (skipAddField(record, field, config)) { // syntactic crap or something else we don't like
     nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
     return false;
   }
