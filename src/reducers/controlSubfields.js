@@ -77,8 +77,8 @@ function controlSubfield9PermitsMerge(field1, field2) {
   // NB! We ignote checks on $9s that aren't keeps or drops. Maybe they should trigger false?
   // NB: If we have "whatever" and "whatever + DROP", the result should be "whatever + DROP"?
   // What should we check here anyway? Never merge FOO<KEEP> and FOO<DROP>? (not implemented)
-  const sf9lessField1 = field1.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
-  const sf9lessField2 = field2.subfields.filter(subfield => subfield.code !== '9' || !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
+  const sf9lessField1 = field1.subfields.filter(subfield => subfield.code === '9' && !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
+  const sf9lessField2 = field2.subfields.filter(subfield => subfield.code === '9' && !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
   const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2); // NB! Do we need to sort them subfields?
   if (!result) {
     debug(` control subfield 9 disallows merge`);
