@@ -93,7 +93,6 @@ export const localReducers = [
   field008(), // Tests 06, 07, and 08
   mergeDataFields(),
   addDataFields(),
-  //postprocessSubfield6(), // Should this be part of generic postprocessor? Probably...
   postprocessor()
 ];
 
@@ -101,6 +100,6 @@ export const muuntajaReducers = [
   genericPreprocessor(),
   metatietosanastoNormalizations(),
   muuntajaMergeDataFields(),
-  addDataFields()
-  //postprocessSubfield6()
+  addDataFields(),
+  postprocessor()
 ];
