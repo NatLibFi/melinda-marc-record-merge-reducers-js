@@ -12,16 +12,7 @@
         }
       ]
     },
-    {
-      "tag": "020",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "ISBN2"
-        }
-      ]
-    }
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "ISBN2" } ] },
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "ISBN2" } ] }
   ]
 }
