@@ -14,6 +14,23 @@
     { "tag": "534", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "p", "value": "Alun perin julkaistu:" },
       { "code": "c", "value": "2018." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, A.," },
+      { "code": "e", "value": "illustratör," },
+      { "code": "e", "value": "kuvittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, B.," },
+      { "code": "e", "value": "illustratör." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, C.," },
+      { "code": "e", "value": "illustratör." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, D.," },
+      { "code": "e", "value": "illustratör." }
     ]}
   ]
 }
