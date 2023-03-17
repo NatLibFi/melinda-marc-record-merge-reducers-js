@@ -157,13 +157,13 @@ const addPairedPunctuationRules = {
   ],
   '506': [{'code': 'a', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter2}],
   '534': [{'code': 'p', 'followedBy': 'c', 'add': ':', 'context': defaultNeedsPuncAfter2}],
-  '600': [addX00aComma, addX00aDot],
+  '600': [addX00aComma, addX00aComma2, addX00aDot],
   '610': addX10,
-  '700': [addX00aComma, addX00aDot],
+  '700': [addX00aComma, addX00aComma2, addX00aDot],
   '710': addX10,
   // 773 rules will be discussed soon... Ape that discussion here...
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'add': '. -', 'context': /[^-]$/u}],
-  '800': [addX00aComma, addX00aDot],
+  '800': [addX00aComma, addX00aComma2, addX00aDot],
   '810': addX10
 
 };
