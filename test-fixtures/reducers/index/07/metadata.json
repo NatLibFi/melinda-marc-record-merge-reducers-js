@@ -1,5 +1,6 @@
 {
   "description":"Normalize 024$q (despite both base and source have crappier values). MRA-309 and MRA-311: normalize 506$a and 534$p as well.",
   "comment": "NB! 506$a missing final punc is not added; as the base field is not changed, it stays as it is.",
+  "comment #2": "Source fields 020 double is a test relocated here after refactoring addField.js",
   "only": false
 }
