@@ -5,9 +5,9 @@
 
     { "tag": "245", "ind1": "0", "ind2": "0", "subfields": [ { "code": "a", "value": "Pakoretki mestauslavalta." } ] },
 
-    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 500 base." } ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 500 source." } ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 594 base" },
+        { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 594 source" },
         { "code": "5", "value": "FIKKA" }
       ]
     },

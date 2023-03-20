@@ -1,4 +1,5 @@
 {
-  "description":" add/copy two repeatable 020 fields from source to base, when base has one 020 (don't add/copy a duplicate field)",
-  "comment": "note that the duplicate field remains in modifiedSource.json. Should we delete it from source?"
+  "description":" add/copy all 020 fields from source to base, when even if source has double",
+  "comment": "note that addField.js does not check for doubles. They are handled whilst postprocessing.",
+  "only": false
 }

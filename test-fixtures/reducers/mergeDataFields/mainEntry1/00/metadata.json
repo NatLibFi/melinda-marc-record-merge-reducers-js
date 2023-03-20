@@ -1,4 +1,5 @@
 {
-  "description":"00 merge X00, keep 710. Now also test MRA-331.",
+  "description":"00 merge X00, keep 710. Now also test MRA-331, MRA-414.",
+  "MRA-414": "600 and 610 fields should merge",
   "only": false
 }
