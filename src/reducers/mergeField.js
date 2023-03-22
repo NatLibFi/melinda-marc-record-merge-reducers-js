@@ -40,9 +40,9 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   //debugData(JSON.stringify(baseRecord));
   //debugData(JSON.stringify(sourceRecord));
 
-  sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`));
+  //sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`));
 
-  nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debug);
+  //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debug);
 
   normalizeEncoding().fix(baseRecord);
   normalizeEncoding().fix(sourceRecord);
@@ -50,7 +50,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
 
-  sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`));
+  //sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`));
 
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
