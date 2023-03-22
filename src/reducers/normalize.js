@@ -5,7 +5,7 @@
 */
 import clone from 'clone';
 import {fieldStripPunctuation} from './punctuation.js';
-import {fieldToString, isControlSubfieldCode, nvdebug} from './utils.js';
+import {fieldToString, isControlSubfieldCode} from './utils.js';
 
 //import {fieldNormalizeControlNumbers} from './normalizeIdentifier';
 import {fieldNormalizeControlNumbers/*, normalizeControlSubfieldValue*/} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
@@ -15,6 +15,7 @@ import {normalizePartData, subfieldContainsPartData} from './normalizePart.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
 
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
+  /*
   // We may drop certain subfields:
   if (oldField.subfields.length === newField.subfields.length) { // eslint-disable-line functional/no-conditional-statement
     oldField.subfields.forEach((subfield, index) => {
@@ -24,12 +25,13 @@ function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
       }
     });
   }
+  */
   const oldString = fieldToString(oldField);
   const newString = fieldToString(newField);
   if (oldString === newString) {
     return;
   }
-  nvdebug(`NORMALIZE FIELD:\n '${fieldToString(oldField)}' =>\n '${fieldToString(newField)}'`);
+  //nvdebug(`NORMALIZE FIELD:\n '${fieldToString(oldField)}' =>\n '${fieldToString(newField)}'`);
 }
 
 function containsHumanName(tag = '???', subfieldCode = undefined) {

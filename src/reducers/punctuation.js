@@ -6,10 +6,10 @@
 * TODO: implement https://www.kiwi.fi/display/kumea/Loppupisteohje
 */
 import {validateSingleField} from '@natlibfi/marc-record-validators-melinda/dist/ending-punctuation';
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import {fieldToString, /*isControlSubfieldCode,*/ nvdebug} from './utils';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 //const stripCrap = / *[-;:,+]+$/u;
 const commaNeedsPuncAfter = /(?:[a-z0-9A-Z]|å|ä|ö|Å|Ä|Ö|\))$/u;
@@ -210,7 +210,7 @@ function ruleAppliesToNextSubfield(rule, nextSubfield) {
 }
 
 function checkRule(rule, subfield1, subfield2) {
-  const name = rule.name || 'UNNAMED';
+  //const name = rule.name || 'UNNAMED';
   if (!ruleAppliesToCurrentSubfield(rule, subfield1)) {
     //nvdebug(`${name}: FAIL ON LHS FIELD: '$${subfield1.code} ${subfield1.value}', SF=${rule.code}`, debug);
     return false;
@@ -223,7 +223,7 @@ function checkRule(rule, subfield1, subfield2) {
     return false;
   }
 
-  nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : '#'}`, debug);
+  //nvdebug(`${name}: ACCEPT ${rule.code}/${subfield1.code}, SF2=${rule.followedBy}/${subfield2 ? subfield2.code : '#'}`, debug);
   return true;
 }
 
@@ -252,16 +252,16 @@ function applyPunctuationRules(tag, subfield1, subfield2, ruleArray = null, oper
   activeRules.forEach(rule => {
     const originalValue = subfield1.value;
     if (rule.remove && [REMOVE, REMOVE_AND_ADD].includes(operation) && subfield1.value.match(rule.remove)) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
+      //nvdebug(`    PUNC REMOVAL TO BE PERFORMED FOR $${subfield1.code} '${subfield1.value}'`, debug);
       subfield1.value = subfield1.value.replace(rule.remove, ''); // eslint-disable-line functional/immutable-data
-      nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
+      //nvdebug(`    PUNC REMOVAL PERFORMED FOR '${subfield1.value}'`, debug);
     }
     if (rule.add && [ADD, REMOVE_AND_ADD].includes(operation)) { // eslint-disable-line functional/no-conditional-statement
       subfield1.value += rule.add; // eslint-disable-line functional/immutable-data
-      nvdebug(`    ADDED '${rule.add}' TO '${subfield1.value}'`, debug);
+      //nvdebug(`    ADDED '${rule.add}' TO '${subfield1.value}'`, debug);
     }
     if (subfield1.value !== originalValue) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug); // eslint-disable-line functional/immutable-data
+      //nvdebug(` PROCESS PUNC: '‡${subfield1.code} ${originalValue}' => '‡${subfield1.code} ${subfield1.value}'`, debug); // eslint-disable-line functional/immutable-data
     }
   });
 }
