@@ -1,9 +1,6 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {
-  fieldHasSubfield,
-  fieldToString
-} from './utils.js';
+import {fieldHasSubfield, fieldToString, nvdebug, nvdebugSubfieldArray, subfieldToString} from './utils.js';
 
 //import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
@@ -71,20 +68,122 @@ function controlSubfield5PermitsMerge(field1, field2) {
 }
 
 function controlSubfield9PermitsMerge(field1, field2) {
-  if (subfieldsAreEmpty(field1, field2, '9')) {
+  const field1Subfields9 = field1.subfields.filter(sf => sf.code === '9');
+  const field2Subfields9 = field2.subfields.filter(sf => sf.code === '9');
+
+  nvdebug('CHECK $9');
+  // There are no $9s. Skip:
+  if (field1Subfields9.length === 0 && field2Subfields9.length === 0) {
+    nvdebug(` No subfield $9 detected`);
     return true;
   }
-  // NB! We ignote checks on $9s that aren't keeps or drops. Maybe they should trigger false?
-  // NB: If we have "whatever" and "whatever + DROP", the result should be "whatever + DROP"?
-  // What should we check here anyway? Never merge FOO<KEEP> and FOO<DROP>? (not implemented)
-  const sf9lessField1 = field1.subfields.filter(subfield => subfield.code === '9' && !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
-  const sf9lessField2 = field2.subfields.filter(subfield => subfield.code === '9' && !(/(?:<KEEP>|<DROP>)/u).test(subfield.value));
-  const result = MarcRecord.isEqual(sf9lessField1, sf9lessField2); // NB! Do we need to sort them subfields?
-  if (!result) {
-    debug(` control subfield 9 disallows merge`);
+
+  if (keepOrDropPreventsMerge()) {
+    nvdebug(` Subfield $9 KEEPs and DROPs disallow merge`, debug);
     return false;
   }
+
+  if (transPreventsMerge()) {
+    nvdebug(` Subfield $9 <TRANS> mismatch disallows merge`, debug);
+    return false;
+  }
+
+  nvdebug('CHECK $9 OK');
+
   return true;
+
+  function subfieldHasKeepOrDrop(subfield) {
+    nvdebug(`Has <KEEP>? ${subfieldToString(subfield)}`);
+    return subfield.code === '9' && (/(?:<KEEP>|<DROP>)/u).test(subfield.value);
+  }
+
+  function subfieldHasTrans(subfield) {
+    return subfield.code === '9' && (/<TRANS>/u).test(subfield.value);
+  }
+
+  function transPreventsMerge() {
+    const trans1 = field1Subfields9.filter(sf => subfieldHasTrans(sf));
+    const trans2 = field2Subfields9.filter(sf => subfieldHasTrans(sf));
+    if (trans1.length > 0 && trans2.length > 0) {
+      if (!MarcRecord.isEqual(trans1, trans2)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function retainSubfieldForKeepComparison(subfield) {
+    // Don't compare keep, drop nor trans her (<TRANS> has it's own check)
+    if (subfieldHasKeepOrDrop(subfield) || subfieldHasTrans(subfield)) {
+      return false;
+    }
+
+    if (['0', '1'].includes(subfield.code)) {
+      return false;
+    }
+    if (['100', '600', '700', '800'].includes(field1.tag)) {
+      // Despite $9 KEEP/DROP, we are interested in merging $d years (better than two separate fields)
+      if (['d'].includes(subfield.code)) {
+        return false;
+      }
+    }
+
+
+    return true;
+  }
+  function keepOrDropPreventsMerge() {
+    const keepOrDrop1 = field1Subfields9.filter(sf => subfieldHasKeepOrDrop(sf));
+    const keepOrDrop2 = field2Subfields9.filter(sf => subfieldHasKeepOrDrop(sf));
+
+    if (keepOrDrop1.length === 0 && keepOrDrop2.length === 0) {
+      return false;
+    }
+
+
+    const sf9lessField1 = field1.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
+    const sf9lessField2 = field2.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
+
+    nvdebugSubfieldArray(field1.subfields, 'FIELD   ');
+    nvdebugSubfieldArray(sf9lessField1, 'FILTER  ');
+
+    nvdebugSubfieldArray(field2.subfields, 'FIELD2  ');
+    nvdebugSubfieldArray(sf9lessField2, 'FILTER2 ');
+
+
+    // Keepless field can be a subset of kept field:
+    if (keepOrDrop1.length === 0) {
+      return !sf9lessField1.every(sf => sf9lessField2.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
+    }
+    if (keepOrDrop2.length === 0) {
+      return !sf9lessField2.every(sf2 => sf9lessField1.some(sf => sf.code === sf2.code && sf.value === sf2.value));
+      //return !sf9lessField2.every(sf2 => sf9lessField1.some(sf => isIdenticalSubfieldPair(sf, sf2)));
+
+    }
+
+    //nvdebugSubfieldArray(sf9lessField2, 'SOURCE(?)');
+    //nvdebugSubfieldArray(sf9lessField1, 'BASE(?)  ');
+
+    // $9 <KEEP> or <DROP> detected on both fields.
+    // Non-keeps and non-drops must be equal, otherwise fail:
+    if (MarcRecord.isEqual(sf9lessField1, sf9lessField2)) {
+      return false;
+    }
+    // Prevent:
+    return true;
+  }
+
+  /*
+  function isIdenticalSubfieldPair(subfield1, subfield2) {
+    if (subfield1.code !== subfield2.code) {
+      return false;
+    }
+    if (subfield1.value !== subfield2.value) {
+      return false;
+    }
+    nvdebug(`SF-Paired ${subfieldToString(subfield1)}`);
+    return true;
+  }
+  */
 }
 
 function getPrefix(value) {
