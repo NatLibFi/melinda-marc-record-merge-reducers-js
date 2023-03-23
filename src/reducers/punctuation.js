@@ -57,9 +57,13 @@ const cleanCrappyPunctuationRules = {
   '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
   '245': [{'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u}],
   '300': [
-    {'code': 'a', 'followedBy': '!b', 'remove': / :$/u},
-    {'code': 'ab', 'followedBy': '!c', 'remove': / ;$/u},
-    {'code': 'abc', 'followedBy': '!e', 'remove': / \+$/u}
+    {'code': 'a', 'followedBy': '!b', 'remove': / *:$/u},
+    {'code': 'a', 'followedBy': 'b', 'remove': /:$/u, 'context': /[^ ]:$/u},
+    {'code': 'ab', 'followedBy': '!c', 'remove': / *;$/u},
+    {'code': 'ab', 'followedBy': 'c', 'remove': /;$/u, 'context': /[^ ];$/u},
+    {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u},
+    {'code': 'abc', 'followedBy': '!e', 'remove': / *\+$/u, 'context': /[^ ]\+$/u}
+
   ],
   '490': [{'code': 'a', 'followedBy': 'xy', 'remove': / ;$/u}]
 
@@ -110,13 +114,14 @@ const cleanValidPunctuationRules = {
     {'code': 'c', 'followedBy': '#', 'remove': /\.$/u}
   ],
   '300': [
+    // NB! Remove crap as well, thus the '*' in / *:$/
     {'code': 'a', 'followedBy': 'b', 'remove': / :$/u},
     {'code': 'ab', 'followedBy': 'c', 'remove': / ;$/u},
     {'code': 'abc', 'followedBy': 'e', 'remove': / \+$/u}
   ],
   '490': [
     {'code': 'axy', 'followedBy': 'xy', 'remove': /,$/u},
-    {'code': 'axy', 'followedBy': 'v', 'remove': / ;$/u}
+    {'code': 'axy', 'followedBy': 'v', 'remove': / *;$/u}
   ],
   '534': [{'code': 'p', 'followedBy': 'c', 'remove': /:$/u}],
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'remove': field773NeedsPunc}]
