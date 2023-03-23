@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright} from './utils';
+import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from './utils';
 import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from './normalize';
 import {mergeOrAddSubfield} from './mergeOrAddSubfield';
 import {mergeIndicators} from './mergeIndicator';
@@ -146,7 +146,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
     mergeOrAddSubfield(baseField, subfieldForComparison, subfieldForMergeOrAdd, candFieldPairs880); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(`  MERGING SUBFIELD '‡${fieldToString(subfieldForMergeOrAdd)}' TO '${originalValue}'`, debug);
+      nvdebug(`  MERGING SUBFIELD '${subfieldToString(subfieldForMergeOrAdd)}' TO '${originalValue}'`, debug);
       nvdebug(`   RESULT: '${newValue}'`, debug);
       //debug(`   TODO: sort subfields, handle punctuation...`);
     }
