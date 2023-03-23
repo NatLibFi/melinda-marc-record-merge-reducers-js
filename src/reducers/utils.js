@@ -177,25 +177,6 @@ export function fieldHasMultipleSubfields(field, subfieldCode/*, subfieldValue =
   return fieldHasNSubfields(field, subfieldCode) > 1;
 }
 
-/**
- * renameSubfieldCodes
- *
- * */
-/*
-export function fieldRenameSubfieldCodes(field, origCode, targetCode) {
-  // should we clone this?
-  field.subfields.map(currSub => {
-    if (currSub.code === origCode) {
-      nvdebug(`SUBFIELD SWAP: ${field.tag}${currSub.code} : ${origCode} => ${targetCode}`);
-      currSub.code = targetCode; // eslint-disable-line functional/immutable-data
-      return currSub;
-    }
-    return currSub;
-  });
-  return field;
-}
-*/
-
 /*
 export function recordHasField(record, tag) {
   const re = new RegExp(`^${tag}$`, 'u');
