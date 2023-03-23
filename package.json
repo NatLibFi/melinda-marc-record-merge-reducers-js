@@ -17,7 +17,7 @@
 	"version": "1.2.6",
 	"main": "./dist/index.js",
 	"engines": {
-		"node": ">=16"
+		"node": ">=18"
 	},
 	"publishConfig": {
 		"access": "public"
@@ -74,7 +74,7 @@
 				"@babel/preset-env",
 				{
 					"targets": {
-						"node": "16"
+						"node": "18"
 					}
 				}
 			]
