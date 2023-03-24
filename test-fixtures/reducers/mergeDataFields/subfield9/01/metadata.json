@@ -1,3 +1,4 @@
 {
-  "description":"merge none vs sf9keep"
+  "description":"merge none vs sf9keep",
+  "only": false
 }

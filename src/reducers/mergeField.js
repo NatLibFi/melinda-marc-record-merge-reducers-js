@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright} from './utils';
+import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from './utils';
 import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from './normalize';
 import {mergeOrAddSubfield} from './mergeOrAddSubfield';
 import {mergeIndicators} from './mergeIndicator';
@@ -40,9 +40,9 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   //debugData(JSON.stringify(baseRecord));
   //debugData(JSON.stringify(sourceRecord));
 
-  sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`));
+  //sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`));
 
-  nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debug);
+  //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debug);
 
   normalizeEncoding().fix(baseRecord);
   normalizeEncoding().fix(sourceRecord);
@@ -50,7 +50,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
 
-  sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`));
+  //sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`));
 
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
@@ -146,7 +146,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
     mergeOrAddSubfield(baseField, subfieldForComparison, subfieldForMergeOrAdd, candFieldPairs880); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(`  MERGING SUBFIELD '‡${fieldToString(subfieldForMergeOrAdd)}' TO '${originalValue}'`, debug);
+      nvdebug(`  MERGING SUBFIELD '${subfieldToString(subfieldForMergeOrAdd)}' TO '${originalValue}'`, debug);
       nvdebug(`   RESULT: '${newValue}'`, debug);
       //debug(`   TODO: sort subfields, handle punctuation...`);
     }

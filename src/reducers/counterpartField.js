@@ -1,7 +1,7 @@
 // For each incoming field that
 
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, nvdebugSubfieldArray, removeCopyright} from './utils';
+import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright} from './utils';
 import {cloneAndNormalizeFieldForComparison} from './normalize';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
@@ -120,15 +120,15 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
       return true;
     }
 
-    nvdebugSubfieldArray(subfields1, 'SF1', debug);
-    nvdebugSubfieldArray(subfields2, 'SF2', debug);
+    //nvdebugSubfieldArray(subfields1, 'SF1', debug);
+    //nvdebugSubfieldArray(subfields2, 'SF2', debug);
 
     // When pairing we can use stronger normalizations than the generic one:
     const subfieldValues1 = subfields1.map(sf => counterpartExtraNormalize(tag, subfieldCode, sf.value));
     const subfieldValues2 = subfields2.map(sf => counterpartExtraNormalize(tag, subfieldCode, sf.value));
 
-    nvdebug(`SF1 NORM: ${subfieldValues1.join(' --')}`, debug);
-    nvdebug(`SF2 NORM: ${subfieldValues2.join(' --')}`, debug);
+    //nvdebug(`SF1 NORM: ${subfieldValues1.join(' --')}`, debug);
+    //nvdebug(`SF2 NORM: ${subfieldValues2.join(' --')}`, debug);
 
     // If one set is a subset of the other, all is probably good (how about 653$a, 505...)
     if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
@@ -179,13 +179,12 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
 
 
 function tagToRegexp(tag) {
-  if (tag in counterpartRegexps) {
-    // Are the hard-coded hacks actually used? Check...
+  if (tag in counterpartRegexps) { // eg. 700 looks for tag /^[17]00$/...
     const regexp = counterpartRegexps[tag];
-    nvdebug(`regexp for ${tag} found: ${regexp}`, debug);
+    //nvdebug(`regexp for ${tag} found: ${regexp}`, debug);
     return regexp;
   }
-  nvdebug(`WARNING: tagToRegexp(${tag}): no precompiled regexp found.`, debug);
+  //nvdebug(`WARNING: tagToRegexp(${tag}): no precompiled regexp found.`, debug);
   return new RegExp(`^${tag}$`, 'u');
 }
 
@@ -309,7 +308,7 @@ function pairableName(baseField, sourceField) {
   const string1 = fieldToString(reducedField1);
   const string2 = fieldToString(reducedField2);
 
-  nvdebug(`IN: pairableName():\n '${string1}' vs\n '${string2}'`);
+  //nvdebug(`IN: pairableName():\n '${string1}' vs\n '${string2}'`);
   if (string1 === string2) {
     return true;
   }
@@ -431,27 +430,27 @@ export function getCounterpart(record, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
   // Tags 260 and 264 are lumped together.
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
-  nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`);
+  //nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`);
   const counterpartCands = record.get(tagToRegexp(field.tag));
 
   if (!counterpartCands || counterpartCands.length === 0) {
-    nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debug);
+    //nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debug);
     return null;
   }
 
-  nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debug);
+  //nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debug);
 
   const normalizedField = cloneAndNormalizeFieldForComparison(field);
-  nvdebug(` S: ${fieldToString(normalizedField)}`);
+  //nvdebug(` S: ${fieldToString(normalizedField)}`);
   // Then find (the index of) the first mathing candidate field and return it.
   const index = counterpartCands.findIndex((currCand) => {
     const normalizedCurrCand = cloneAndNormalizeFieldForComparison(currCand);
-    nvdebug(` B: ${fieldToString(normalizedCurrCand)}`);
+    //nvdebug(` B: ${fieldToString(normalizedCurrCand)}`);
     if (mergablePair(normalizedCurrCand, normalizedField, config)) {
-      nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`);
+      //nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`);
       return true;
     }
-    nvdebug(`  FAILED TO PAIR: '${fieldToString(currCand)}'. Skipping it!`);
+    //nvdebug(`  FAILED TO PAIR WITH: '${fieldToString(currCand)}'. Skipping it!`);
     return false;
   });
 
