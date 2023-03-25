@@ -1,0 +1,29 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "800", "ind1": "1", "ind2": " ",
+    "subfields": [
+      { "code": "a", "value": "Jaakko, Petteri," },
+      { "code": "e", "value": "kirjoittaja." },
+      { "code": "t", "value": "Etsiväsarja ;" },
+      { "code": "v", "value": "14,"},
+      { "code": "l", "value": "suomi."}
+    ]
+  },
+    { "tag": "800", "ind1": "1", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Mäki, Susanna," },
+        { "code": "t", "value": "Simo Senjasen tapaukset ;" },
+        { "code": "v", "value": "[4] ."}
+      ]
+    },
+    { "tag": "800", "ind1": "1", "ind2": " ",
+    "subfields": [
+      { "code": "a", "value": "Golffari, Krisu," },
+      { "code": "t", "value": "Tarinoiden maa;" },
+      { "code": "v", "value": "2,"},
+      { "code": "l", "value": "espanja."}
+    ]
+  }
+  ]
+}
