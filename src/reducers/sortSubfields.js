@@ -34,8 +34,8 @@ const subfieldSortOrder = [
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '773', 'sortOrder': ['7', 'w', 'a', 's', 't', 'd', 'm', 'h', 'g', 'k', 'o', 'x', 'z', 'g', 'q']},
   {'tag': '776', 'sortOrder': ['i', 'a']},
-  {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
-  {'tag': '810', 'sortOrder': ['a', 'b', 'n']},
+  {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'v', 'l', 'f', '0', '5', '9']},
+  {'tag': '810', 'sortOrder': ['a', 'b', 't', 'n', 'v', 'w']},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['6', 'a']},
