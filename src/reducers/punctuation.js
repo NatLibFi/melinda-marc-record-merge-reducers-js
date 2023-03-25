@@ -19,17 +19,23 @@ const field773NeedsPunc = /\. -$/u;
 const blocksPuncRHS = /^(?:\()/u;
 const allowsPuncRHS = /^(?:[A-Za-z0-9]|å|ä|ö|Å|Ä|Ö)/u;
 
+const dotIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö)\.$/u;
+const puncIsProbablyPunc = /(?:[a-z0-9)]|å|ä|ö) ?[.,:;]$/u;
 // NB! 65X: Finnish terms don't use punctuation, but international ones do. Neither one is currently (2021-11-08) coded here.
 
 // Will unfortunately trigger "Sukunimi, Th." type:
+const removeColons = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / *[;:]$/u};
 const removeX00Comma = {'code': 'abcqde', 'followedBy': 'abcqde#01459', 'context': /.,$/u, 'remove': /,$/u};
 const cleanRHS = {'code': 'abcd', 'followedBy': 'bcde', 'context': /(?:(?:[a-z0-9]|å|ä|ö)\.|,)$/u, 'contextRHS': blocksPuncRHS, 'remove': /[.,]$/u};
 const cleanX00dCommaOrDot = {'code': 'd', 'followedBy': 'et#01459', 'context': /[0-9]-[,.]$/u, 'remove': /[,.]$/u};
-const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
+const cleanX00aDot = {'code': 'abcde', 'followedBy': 'cdegj', 'context': dotIsProbablyPunc, 'remove': /\.$/u};
+const cleanCorruption = {'code': 'abcdefghijklmnopqrstuvwxyz', 'remove': / \.$/u};
 // These $e dot removals are tricky: before removing the comma, we should know that it ain't an abbreviation such as "esitt."...
 const cleanX00eDot = {'code': 'e', 'followedBy': 'egj#059', 'context': /(?:[ai]ja|jä)[.,]$/u, 'remove': /\.$/u};
 
 const X00RemoveDotAfterBracket = {'code': 'cq', 'context': /\)\.$/u, 'remove': /\.$/u};
+// 390, 800, 810, 830...
+const cleanPuncBeforeLanguage = {'code': 'atvxyz', 'followedBy': 'l', 'context': puncIsProbablyPunc, 'remove': / *[.,:;]$/u};
 
 
 const addX00aComma = {'add': ',', 'code': 'abcqdej', 'followedBy': 'cdeg', 'context': commaNeedsPuncAfter, 'contextRHS': allowsPuncRHS};
@@ -39,6 +45,11 @@ const addX00aDot = {'add': '.', 'code': 'abcde', 'followedBy': '#tu0159', 'conte
 const addX10bDot = {'name': 'Add X10 pre-$b dot', 'add': '.', 'code': 'ab', 'followedBy': 'b', 'context': defaultNeedsPuncAfter};
 const addX10eComma = {'add': ',', 'code': 'abe', 'followedBy': 'e', 'context': defaultNeedsPuncAfter};
 const addX10Dot = {'name': 'Add X10 final dot', 'add': '.', 'code': 'abe', 'followedBy': '#0159', 'context': defaultNeedsPuncAfter};
+const addLanguageComma = {'name': 'Add comma before 810$l', 'add': ',', 'code': 'tv', 'followedBy': 'l', 'context': defaultNeedsPuncAfter2};
+const addColonToRelationshipInformation = {'name': 'Add \':\' to 7X0 $i relationship info', 'add': ':', 'code': 'i', 'context': /[a-z)åäö]$/u};
+
+// 490:
+const addSemicolonBeforeVolumeDesignation = {'name': 'Add " ;" before $v', 'add': ' ;', 'code': 'atxy', 'followedBy': 'v', 'context': /[^;]$/u};
 
 const dotSpaceMinus773 = 'dghkoqtxyz';
 
@@ -49,12 +60,19 @@ const REMOVE_AND_ADD = 3;
 
 // Crappy punctuation consists of various crap that is somewhat common.
 // We strip crap for merge decisions. We are not trying to actively remove crap here.
+
+const removeX00Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket, removeColons, cleanPuncBeforeLanguage];
+const removeX10Whatever = [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanCorruption, removeColons, cleanPuncBeforeLanguage];
+
 const cleanCrappyPunctuationRules = {
-  '100': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, cleanRHS, X00RemoveDotAfterBracket],
-  '110': [removeX00Comma, cleanX00aDot, cleanX00eDot],
-  '600': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
-  '700': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket, cleanRHS],
-  '800': [removeX00Comma, cleanX00aDot, cleanX00eDot, cleanX00dCommaOrDot, X00RemoveDotAfterBracket],
+  '100': removeX00Whatever,
+  '110': removeX10Whatever,
+  '600': removeX00Whatever,
+  '610': removeX10Whatever,
+  '700': removeX00Whatever,
+  '710': removeX10Whatever,
+  '800': removeX00Whatever,
+  '810': removeX10Whatever,
   '245': [{'code': 'ab', 'followedBy': '!c', 'remove': / \/$/u}],
   '300': [
     {'code': 'a', 'followedBy': '!b', 'remove': / *:$/u},
@@ -72,14 +90,16 @@ const cleanCrappyPunctuationRules = {
 const cleanLegalX00Comma = {'code': 'abcde', 'followedBy': 'cdegj', 'context': /.,$/u, 'remove': /,$/u};
 // Accept upper case letters in X00$b, since they are probably Roman numerals.
 const cleanLegalX00bDot = {'code': 'b', 'followedBy': 't#01459', context: /^[IVXLCDM]+\.$/u, 'remove': /\.$/u};
-const cleanLegalX00Dot = {'code': 'abcde', 'followedBy': 'tu#01459', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
+const cleanLegalX00Dot = {'code': 'abcdetvl', 'followedBy': 'tu#01459', 'context': /(?:[a-z0-9)]|å|ä|ö)\.$/u, 'remove': /\.$/u};
+const cleanLanguageComma = {'name': 'language comma', 'code': 'tv', 'followedBy': 'l', 'context': /.,$/u, 'remove': /,$/u};
 
-const legalX00punc = [cleanLegalX00Comma, cleanLegalX00bDot, cleanLegalX00Dot];
+
+const legalX00punc = [cleanLegalX00Comma, cleanLegalX00bDot, cleanLegalX00Dot, cleanLanguageComma];
 
 const cleanLegalX10Comma = {'name': 'X10comma', 'code': 'abe', 'followedBy': 'e', 'context': /.,$/u, 'remove': /,$/u};
 const cleanLegalX10Dot = {'name': 'X10dot', 'code': 'ab', 'followedBy': 'b#059', 'context': /.\.$/u, 'remove': /\.$/u};
 
-const legalX10punc = [cleanLegalX10Comma, cleanLegalX10Dot, cleanX00eDot];
+const legalX10punc = [cleanLegalX10Comma, cleanLegalX10Dot, cleanX00eDot, cleanLanguageComma];
 
 const cleanValidPunctuationRules = {
   '100': legalX00punc,
@@ -127,9 +147,11 @@ const cleanValidPunctuationRules = {
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'remove': field773NeedsPunc}]
 };
 
-const addX10 = [addX10bDot, addX10eComma, addX10Dot];
+// addColonToRelationshipInformation only applies to 700/710 but as others don't have $i, it's fine
+const addX00 = [addX00aComma, addX00aComma2, addX00aDot, addLanguageComma, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
+const addX10 = [addX10bDot, addX10eComma, addX10Dot, addLanguageComma, addSemicolonBeforeVolumeDesignation, addColonToRelationshipInformation];
 const addPairedPunctuationRules = {
-  '100': [addX00aComma, addX00aComma2, addX00aDot],
+  '100': addX00,
   '110': addX10,
   '245': [
     // Blah! Also "$a = $b" and "$a ; $b" can be valid... But ' :' is better than nothing, I guess...
@@ -158,18 +180,24 @@ const addPairedPunctuationRules = {
   ],
   '490': [
     {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter},
-    {'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'context': defaultNeedsPuncAfter}
+    addSemicolonBeforeVolumeDesignation
+    //{'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'context': defaultNeedsPuncAfter}
   ],
   '506': [{'code': 'a', 'followedBy': '#', 'add': '.', 'context': defaultNeedsPuncAfter2}],
   '534': [{'code': 'p', 'followedBy': 'c', 'add': ':', 'context': defaultNeedsPuncAfter2}],
-  '600': [addX00aComma, addX00aComma2, addX00aDot],
+  '600': addX00,
   '610': addX10,
-  '700': [addX00aComma, addX00aComma2, addX00aDot],
+  '700': addX00,
   '710': addX10,
   // 773 rules will be discussed soon... Ape that discussion here...
   '773': [{'code': dotSpaceMinus773, 'followedBy': dotSpaceMinus773, 'add': '. -', 'context': /[^-]$/u}],
-  '800': [addX00aComma, addX00aComma2, addX00aDot],
-  '810': addX10
+  '800': addX00,
+  '810': addX10,
+  '830': [
+    {'code': 'axy', 'followedBy': 'xy', 'add': ',', 'context': defaultNeedsPuncAfter},
+    addSemicolonBeforeVolumeDesignation
+    //{'code': 'axy', 'followedBy': 'v', 'add': ' ;', 'context': defaultNeedsPuncAfter}
+  ]
 
 };
 
@@ -388,11 +416,11 @@ export function fieldStripPunctuation(field) {
   }
 
   field.subfields.forEach((sf, i) => {
-    //debug(`FSP1: '${sf.value}'`);
+    nvdebug(`FSP1: '${sf.value}'`);
     applyPunctuationRules(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanValidPunctuationRules, REMOVE);
-    //debug(`FSP2: '${sf.value}'`);
+    nvdebug(`FSP2: '${sf.value}'`);
     applyPunctuationRules(field.tag, sf, i + 1 < field.subfields.length ? field.subfields[i + 1] : null, cleanCrappyPunctuationRules, REMOVE);
-    //debug(`FSP3: '${sf.value}'`);
+    nvdebug(`FSP3: '${sf.value}'`);
   });
   return field;
 }
