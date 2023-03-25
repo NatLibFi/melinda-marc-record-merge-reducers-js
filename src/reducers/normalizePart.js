@@ -3,7 +3,7 @@ import {nvdebug} from './utils';
 // Normalizes at least 490$v and 773$g which contain information such as "Raita 5" vs "5", and "Osa 3" vs "Osa III".
 
 export function subfieldContainsPartData(tag, subfieldCode) {
-  if (tag === '490' && subfieldCode === 'v') {
+  if (subfieldCode === 'v' && ['490', '800', '810'].includes(tag)) {
     return true;
   }
   if (tag === '773' && subfieldCode === 'g') {
@@ -13,7 +13,7 @@ export function subfieldContainsPartData(tag, subfieldCode) {
 }
 
 function splitPartData(originalValue) {
-  const value = originalValue.replace(/^\[([0-9]+)\]$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  const value = originalValue.replace(/^\[([0-9]+)\][-.,:; ]*$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
   const splitPoint = value.lastIndexOf(' ');
   if (splitPoint === -1) {
     return [undefined, value];
