@@ -139,14 +139,18 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
   //nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}' (comparison)`);
   nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(strippedSourceField)}' (merge/add)`);
 
-  strippedSourceField.subfields.forEach((subfieldForMergeOrAdd, index) => {
-    const subfieldForComparison = normalizedSourceField.subfields[index];
+  sourceField.subfields.forEach((originalSubfield, index) => {
+  //strippedSourceField.subfields.forEach((subfieldForMergeOrAdd, index) => {
+    const normalizedSubfield = normalizedSourceField.subfields[index];
+    const punctlessSubfield = strippedSourceField.subfields[index];
     const originalValue = fieldToString(baseField);
 
-    mergeOrAddSubfield(baseField, subfieldForComparison, subfieldForMergeOrAdd, candFieldPairs880); // candSubfield);
+    const subfieldData = {'code': originalSubfield.code, 'originalValue': originalSubfield.value, 'normalizedValue': normalizedSubfield.value, 'punctuationlessValue': punctlessSubfield.value};
+
+    mergeOrAddSubfield(baseField, subfieldData, candFieldPairs880); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(`  MERGING SUBFIELD '${subfieldToString(subfieldForMergeOrAdd)}' TO '${originalValue}'`, debug);
+      nvdebug(`  MERGING SUBFIELD '${subfieldToString(punctlessSubfield)}' TO '${originalValue}'`, debug);
       nvdebug(`   RESULT: '${newValue}'`, debug);
       //debug(`   TODO: sort subfields, handle punctuation...`);
     }
