@@ -170,8 +170,21 @@ function hack490SubfieldA(field) {
   }
 }
 
+function subfieldRemoveHyphens(subfield, tag) {
+  // Remove hyphens for comparison purposes:
+  if (subfield.code === 'z' && ['776'].includes(tag)) {
+    subfield.value = subfield.value.replace(/-/ug, ''); // eslint-disable-line functional/immutable-data
+    return;
+  }
+}
+
+function fieldRemoveHyphens(field) {
+  field.subfields?.forEach(sf => subfieldRemoveHyphens(sf, field.tag));
+}
+
 function fieldSpecificHacks(field) {
   hack490SubfieldA(field);
+  fieldRemoveHyphens(field);
 }
 
 export function fieldTrimSubfieldValues(field) {
