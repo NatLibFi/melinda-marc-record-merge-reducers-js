@@ -255,10 +255,15 @@ function removeCharsThatDontCarryMeaning(value, tag) {
   /* eslint-enable */
   return value;
 }
+
+
 export function cloneAndNormalizeFieldForComparison(field) {
   // NB! This new field is for comparison purposes only.
   // Some of the normalizations might be considered a bit overkill for other purposes.
   const clonedField = normalizeField(clone(field));
+  if (fieldSkipNormalization(field)) {
+    return clonedField;
+  }
   fieldStripPunctuation(clonedField);
   fieldRemoveDecomposedDiacritics(clonedField);
   fieldSpecificHacks(clonedField);
@@ -274,4 +279,9 @@ export function cloneAndNormalizeFieldForComparison(field) {
   return clonedField;
 }
 
-
+function fieldSkipNormalization(field) {
+  if (['018', '066', '080', '083'].includes(field.tag)) {
+    return true;
+  }
+  return false;
+}
