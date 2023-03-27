@@ -1,4 +1,4 @@
 {
   "description":"MRA-450: merge various 600 fields",
-  "only": true
+  "only": false
 }
