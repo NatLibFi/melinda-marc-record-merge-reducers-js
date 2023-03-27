@@ -170,9 +170,10 @@ function hack490SubfieldA(field) {
   }
 }
 
+
 function subfieldRemoveHyphens(subfield, tag) {
-  // Remove hyphens for comparison purposes:
-  if (subfield.code === 'z' && ['776'].includes(tag)) {
+  // Remove hyphens for comparison purposes from various ISBN subfields:
+  if (subfield.code === 'z' && ['765', '767', '770', '772', '773', '774', '776', '777', '780', '785', '786', '787'].includes(tag)) {
     subfield.value = subfield.value.replace(/-/ug, ''); // eslint-disable-line functional/immutable-data
     return;
   }
@@ -237,6 +238,9 @@ export function normalizeSubfieldValue(value, subfieldCode, tag) {
 
 export function cloneAndRemovePunctuation(field) {
   const clonedField = clone(field);
+  if (fieldSkipNormalization(field)) {
+    return clonedField;
+  }
   fieldStripPunctuation(clonedField);
   fieldTrimSubfieldValues(clonedField);
   debug('PUNC');

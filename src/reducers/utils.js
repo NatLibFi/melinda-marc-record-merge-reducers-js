@@ -216,7 +216,7 @@ export function nvdebug(message, func = undefined) {
   if (func) { // eslint-disable-line functional/no-conditional-statement
     func(message);
   }
-  //console.info(message); // eslint-disable-line no-console
+  console.info(message); // eslint-disable-line no-console
 }
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
