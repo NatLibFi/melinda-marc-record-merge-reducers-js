@@ -1,0 +1,22 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "650", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "base_nothing_source_iso9_trans" },
+      { "code": "9", "value": "ISO9 <TRANS>"}
+    ]},
+    { "tag": "650", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "base_cyrillic_trans_source_iso9_trans" },
+      { "code": "9", "value": "CYRILLIC <TRANS>"}
+    ]},
+    { "tag": "650", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "base_cyrillic_trans_source_none" },
+      { "code": "9", "value": "CYRILLIC <TRANS>"}
+    ]},
+    { "tag": "650", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "base_cyrillic_trans_source_cyrillic_trans" },
+      { "code": "9", "value": "CYRILLIC <TRANS>"}
+    ]}
+
+  ]
+}

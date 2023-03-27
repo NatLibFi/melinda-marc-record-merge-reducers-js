@@ -1,4 +1,4 @@
-import {nvdebug} from './utils';
+//import {nvdebug} from './utils';
 
 export function valueCarriesMeaning(tag, subfieldCode, value) {
   if (tag === '260' || tag === '264') {
@@ -20,7 +20,7 @@ export function valueCarriesMeaning(tag, subfieldCode, value) {
 
 export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
   const value = normalizeForSamenessCheck2(tag, subfieldCode, originalValue);
-  nvdebug(`SAMENESS: ${originalValue} => ${value}`);
+  //nvdebug(`SAMENESS: ${originalValue} => ${value}`);
   return value;
 }
 

@@ -1,6 +1,6 @@
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 
-import {/*fieldRenameSubfieldCodes, */fieldToString, nvdebug} from './utils.js';
+import {fieldToString, nvdebug} from './utils.js';
 
 //import {sortAdjacentSubfields} from './sortSubfields';
 

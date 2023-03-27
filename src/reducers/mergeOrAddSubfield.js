@@ -64,8 +64,7 @@ function mergeOrAddSubfieldNotRequired(normalizedTargetField, normalizedCandSubf
 }
 
 function addSubfield(targetField, candSubfield) {
-  const str = `${candSubfield.code} ${candSubfield.value}`;
-  nvdebug(` Added subfield ‡'${str}' to field`, debug);
+  nvdebug(` Added subfield '${subfieldToString(candSubfield)}' to field`, debug);
   // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
   targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
 

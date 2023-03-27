@@ -1,0 +1,20 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Akeep, Bempty." },
+        { "code": "9", "value": "FENNI<KEEP>"}
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Akeep, Bempty-0." },
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Akeep, Bempty-d." },
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ]},    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Akeep, Bempty-e." },
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ]}
+  ]
+}

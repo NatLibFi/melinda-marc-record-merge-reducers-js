@@ -20,22 +20,11 @@
       ]
 
     },
-    {
-      "tag": "500",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Lisäpainos: 2. p. 2002."
-        }        
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lisäpainos: 2. p. 2002." }        
       ]
-
     },
-    {
-      "tag": "500",
-      "ind1": " ",
-      "ind2": " ",
+    { "tag": "500", "ind1": " ", "ind2": " ",
       "subfields": [
         {
           "code": "a",
@@ -43,7 +32,22 @@
         }        
       ]
 
-    }
+    },
+    { "tag": "774", "ind1": "0", "ind2": "8", "subfields": [ { "code": "n", "value": "31 osakohdetta"} ] },
+
+
+    { "tag": "776", "ind1": "0", "ind2": "8", "subfields": [
+      { "code": "i", "value": "Verkkoaineisto:"},
+      { "code": "z", "value": "9789518585728"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ]},
+    { "tag": "776", "ind1": "0", "ind2": "8", "subfields": [
+      { "code": "i", "value": "Verkkoaineisto:"},
+      { "code": "z", "value": "9789518585735"}
+    ]}
+  
+
+
   ],
   "leader": ""
 }
