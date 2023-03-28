@@ -8,6 +8,15 @@
       { "code": "i", "value": "Verkkoaineisto:" },
       { "code": "z", "value": "978-952-360-372-1"},
       { "code": "9", "value": "FENNI<KEEP>"}
+    ] },
+
+    { "tag": "776", "ind1": "0", "ind2": "8", "subfields": [
+      { "code": "i", "value": "Verkkoaineisto:" },
+      { "code": "z", "value": "9789518585728"}
+    ] },
+    { "tag": "776", "ind1": "0", "ind2": "8", "subfields": [
+      { "code": "i", "value": "Verkkoaineisto:" },
+      { "code": "z", "value": "9789518585735" }
     ] }
   ]
 }

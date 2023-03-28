@@ -1,5 +1,4 @@
 {
   "description":"MRA-510: base record's subset field 776 subset be removed",
-  "comment": "Needs PR https://github.com/NatLibFi/marc-record-validators-melinda/pull/160 to work. Skip until then!",
-  "skip": true 
+  "skip": false
 }
