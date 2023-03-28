@@ -3,8 +3,8 @@
   "fields": [
     { "tag": "773", "ind1": " ", "ind2": " ", "subfields": [
         { "code": "7", "value": "nnam" },
-        { "code": "t", "value": "Tittelintuure. -" },
-        { "code": "d", "value": "Paikka : Pulju, 2022. -" },
+        { "code": "t", "value": "Tittelintuure" },
+        { "code": "d", "value": "Paikka : Pulju, 2022" },
         { "code": "g", "value": "1" },
         { "code": "w", "value": "(FIN01)000123456" }
       ]

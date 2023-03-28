@@ -1,3 +1,4 @@
 {
-  "description":"773: normalize 773$w and merge"
+  "description":"773: normalize 773$w and merge",
+  "comment": "TODO: $t should have ending '.'!"
 }
