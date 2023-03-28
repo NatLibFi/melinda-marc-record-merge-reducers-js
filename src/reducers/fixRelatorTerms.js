@@ -1,4 +1,4 @@
-import {fieldFixPunctuation} from './punctuation';
+import {fieldFixPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2';
 import {fieldToString, getCatalogingLanguage, nvdebug, subfieldToString} from './utils';
 
 // NB! Make this a marc-record-validators-melinda validator/fixer eventually!

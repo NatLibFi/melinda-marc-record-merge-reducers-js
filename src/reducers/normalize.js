@@ -4,7 +4,7 @@
   - and NOT for modifying the actual data!
 */
 import clone from 'clone';
-import {fieldStripPunctuation} from './punctuation.js';
+import {fieldStripPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2';
 import {fieldToString, isControlSubfieldCode} from './utils.js';
 
 //import {fieldNormalizeControlNumbers} from './normalizeIdentifier';
