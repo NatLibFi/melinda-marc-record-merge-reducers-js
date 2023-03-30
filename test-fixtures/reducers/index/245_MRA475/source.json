@@ -10,7 +10,7 @@
       { "code": "9", "value": "SFS4900 <TRANS>" }
     ] },
     { "tag": "880", "ind1": "1", "ind2": "0", "subfields": [
-      { "code": "6", "value": "245-02" },
+      { "code": "6", "value": "245-02/(N" },
       { "code": "a", "value": "lorum1 /" },
       { "code": "c", "value": "ipsum1." }
     ] }
