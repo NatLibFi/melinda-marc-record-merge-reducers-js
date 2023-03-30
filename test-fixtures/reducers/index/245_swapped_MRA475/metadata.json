@@ -1,0 +1,6 @@
+{
+  "description":"MRA-475-ish (base and source swapped): source uses $9s and has two 880 $6 245-NNs, base has one identical pair (without $9)",
+  "comment": "note245  ind1 automagic fix (irrelevant to this test). Also occurence number drops down to 01",
+  "only": false,
+  "skip": true
+}
