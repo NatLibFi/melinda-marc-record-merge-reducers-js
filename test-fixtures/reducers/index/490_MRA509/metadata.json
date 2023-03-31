@@ -1,0 +1,5 @@
+{
+  "description":"MRA-509: field 490 $a repetition sucks. Don't repeat 490$a!",
+  "comment": "Base's 490$a is bad, but this will not touch it. Fix this issue in Melinda (outside merge)",
+  "only": false
+}
