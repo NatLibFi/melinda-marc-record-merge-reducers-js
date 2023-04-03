@@ -1,5 +1,10 @@
 import {/*encodingLevelIsBetterThanPrepublication,*/ getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from './prepublicationUtils';
 import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessPrepublicationField6XX');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 /* // MET-33 (comments):
 ENNAKKOTIETOMERKINNÄLLISET ASIASANAT (600-655) $gENNAKOTIETO / $9 ENNAKKOTIETO
@@ -72,13 +77,13 @@ export function handleField6XX(base, source) {
 
   function removeEnnakkotietoFieldIfPossible(field, counterpartValues) {
     const value = extractComparabledata(field);
-    nvdebug(`Matching ${value}`);
+    nvdebug(`Matching ${value}`, debugDev);
     if (!counterpartValues.includes(value)) {
       return;
     }
-    nvdebug(`Try to remove prepub subfields from ${fieldToString(field)}`);
+    nvdebug(`Try to remove prepub subfields from ${fieldToString(field)}`, debugDev);
     field.subfields = field.subfields.filter(sf => !isEnnakkotietoSubfield(sf)); // eslint-disable-line functional/immutable-data
-    nvdebug(`Result: ${fieldToString(field)}`);
+    nvdebug(`Result: ${fieldToString(field)}`, debugDev);
   }
 
   function handleSource6XXWhenBaseIsNotPrepublication(base, source) {
@@ -88,7 +93,7 @@ export function handleField6XX(base, source) {
     }
     // Can remove 6XX prepub fields from source:
     const removableFields = getFields6XX(source).filter(field => isEnnakkotietoField(field));
-    nvdebugFieldArray(removableFields, 'remove source 6XX ennakkotieto field');
+    nvdebugFieldArray(removableFields, 'remove source 6XX ennakkotieto field', debugDev);
     removableFields.forEach(field => source.removeField(field));
     return;
   }

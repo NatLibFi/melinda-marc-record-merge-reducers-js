@@ -1,7 +1,12 @@
-import {fieldFixPunctuation} from './punctuation';
+import {fieldFixPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2';
 import {fieldToString, getCatalogingLanguage, nvdebug, subfieldToString} from './utils';
+import createDebugLogger from 'debug';
 
 // NB! Make this a marc-record-validators-melinda validator/fixer eventually!
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:fixRelatorterms');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default () => (base, source) => {
   recordHandleRelatorTermAbbreviations(base);
@@ -56,7 +61,7 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
   if (subfield.code !== 'e') {
     return;
   }
-  nvdebug(`Relator cand subfield: ${subfieldToString(subfield)}`);
+  nvdebug(`Relator cand subfield: ${subfieldToString(subfield)}`, debugDev);
   const value = subfield.value.replace(/,$/u, '');
   const punc = value === subfield.value ? '' : ',';
 
@@ -64,10 +69,10 @@ function subfieldHandleRelatorTermAbbreviation(subfield, language) {
 
   // NB: Policy: if no language or multi-language: apply all rules! (Not much overlap I hope...)
   if (language === null || language === 'fin' || language === 'mul') {
-    nvdebug(`Relator try Finnish...`);
+    nvdebug(`Relator try Finnish...`, debugDev);
     if (lcValue in finnishAbbreviations) {
       const hit = `${finnishAbbreviations[lcValue]}${punc}`;
-      nvdebug(`Relator hit: ${hit}`);
+      nvdebug(`Relator hit: ${hit}`, debugDev);
       // NB! 'esitt.' => 'esittäjä'
       subfield.value = hit; // eslint-disable-line functional/immutable-data
       return;
@@ -126,7 +131,7 @@ function translateRelatorTerm(originalTerm, fromLanguage2, toLanguage) {
 
   // originalTerm is supposed to be normal version (abbrs have been expanded), possibly with punctuation
   const term = originalTerm.replace(/[,.]$/u, '');
-  nvdebug(`Try to translate '${term}' from ${fromLanguage2} to ${toLanguage}`);
+  nvdebug(`Try to translate '${term}' from ${fromLanguage2} to ${toLanguage}`, debugDev);
 
   // Kind of hacky... If term is in toLanguage, do nothing. 040$b isn't that reliable.
   if (termIsInGivenLanguage(term, toLanguage)) {
@@ -139,7 +144,7 @@ function translateRelatorTerm(originalTerm, fromLanguage2, toLanguage) {
   if (candRow) {
     const punc = term === originalTerm ? '' : originalTerm.slice(-1);
     const translation = `${candRow[toLanguage]}${punc}`;
-    nvdebug(`Translate relator term: ${originalTerm} => ${translation}`);
+    nvdebug(`Translate relator term: ${originalTerm} => ${translation}`, debugDev);
     return translation;
   }
   return originalTerm;

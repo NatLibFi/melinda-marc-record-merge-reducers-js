@@ -13,10 +13,10 @@ export default () => (base, source) => {
   // Should this be sourceRecord.leader?
   const baseFields = baseRecord.get(/^LDR$/u);
   const sourceFields = sourceRecord.get(/^LDR$/u);
-  debug(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
-  debug(`base.leader: ${base.leader}`);
-  debug(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
-  debug(`source.leader: ${source.leader}`);
+  debugDev(`baseFields: ${JSON.stringify(baseFields, undefined, 2)}`);
+  debugDev(`base.leader: ${base.leader}`);
+  debugDev(`sourceFields: ${JSON.stringify(sourceFields, undefined, 2)}`);
+  debugDev(`source.leader: ${source.leader}`);
   */
 
   // Test 01: If LDR 000/06 or 07 is different, do not merge
@@ -25,9 +25,31 @@ export default () => (base, source) => {
     throw new Error(`LDR 000/06 or 07 is different in base and source`);
   }
 
+  setRecordStatus(base, source); //
+
   setBaseEncodingLevel(base, source); // take the better LDR/17
   return {base, source};
 };
+
+function getRecordStatus(record) {
+  return record.leader.substring(5, 6);
+}
+
+
+function setRecordStatus(base, source) {
+  const baseStatus = getRecordStatus(base);
+
+  const sourceStatus = getRecordStatus(source);
+
+  if (baseStatus === 'n') {
+    // Replace 'n' with source's 'c'. Used the array in condition here, so that it's easy to expand it with other values if needed/wanted.
+    if (['c'].includes(sourceStatus)) {
+      base.leader = base.leader.substring(0, 5) + sourceStatus + base.leader.substring(6); // eslint-disable-line functional/immutable-data
+      return;
+    }
+  }
+}
+
 
 function setBaseEncodingLevel(base, source) { // See MET-33
   const baseEncodingLevel = getEncodingLevel(base);

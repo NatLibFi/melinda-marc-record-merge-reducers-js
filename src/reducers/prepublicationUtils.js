@@ -1,5 +1,9 @@
 import {fieldHasSubfield, nvdebug, nvdebugFieldArray} from './utils';
+import createDebugLogger from 'debug';
 
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:prepublicationUtils');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const KONEELLISESTI_TUOTETTU_TIETUE = 1; // Best
 const TARKISTETTU_ENNAKKOTIETO = 2;
@@ -104,9 +108,9 @@ export function isPrepublicationField6XX(field) {
 
 export function getRelevant5XXFields(record, f500 = false, f594 = false) {
   const cands = actualGetFields();
-  //nvdebugFieldArray(cands, 'gR5XXa: ');
+  //nvdebugFieldArray(cands, 'gR5XXa: ', debugDev);
   const filtered = cands.filter(field => hasRelevantPrepubData(field));
-  //nvdebugFieldArray(filtered, 'gR5XXb: ');
+  //nvdebugFieldArray(filtered, 'gR5XXb: ', debugDev);
   return filtered;
 
   //return actualGetFields().filter(field => hasRelevantPrepubData(field));
@@ -212,7 +216,7 @@ export function deleteAllPrepublicationNotesFromField500InNonPubRecord(record) {
   }
 
 
-  nvdebug(`Delete all ${f500.length} instance(s) of field 500`);
+  nvdebug(`Delete all ${f500.length} instance(s) of field 500`, debugDev);
   f500.forEach(field => record.removeField(field));
 }
 
@@ -220,9 +224,9 @@ export function deleteAllPrepublicationNotesFromField500InNonPubRecord(record) {
 export function removeWorsePrepubField500s(record) {
   // Remove lower-level entries:
   const fields = getRelevant5XXFields(record, true, false); // 500=false, 594=true
-  nvdebugFieldArray(fields, '  Candidates for non-best 500 b4 filtering: ');
+  nvdebugFieldArray(fields, '  Candidates for non-best 500 b4 filtering: ', debugDev);
   const nonBest = fields.filter(field => fields.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
-  nvdebugFieldArray(nonBest, '  Remove non-best 500: ');
+  nvdebugFieldArray(nonBest, '  Remove non-best 500: ', debugDev);
   nonBest.forEach(field => record.removeField(field));
 }
 
@@ -230,9 +234,9 @@ export function removeWorsePrepubField500s(record) {
 export function removeWorsePrepubField594s(record) {
   // Remove lower-level entries:
   const fields594 = getRelevant5XXFields(record, false, true); // 500=false, 594=true
-  nvdebugFieldArray(fields594, '  Candidates for non-best 594 b4 filtering: ');
+  nvdebugFieldArray(fields594, '  Candidates for non-best 594 b4 filtering: ', debugDev);
   const nonBest = fields594.filter(field => fields594.some(field2 => firstFieldHasBetterPrepubEncodingLevel(field2, field)));
-  nvdebugFieldArray(nonBest, '  Remove non-best 594: ');
+  nvdebugFieldArray(nonBest, '  Remove non-best 594: ', debugDev);
   nonBest.forEach(field => record.removeField(field));
 }
 

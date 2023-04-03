@@ -1,7 +1,7 @@
 // This field should be renamed, as it is called also from outside megre.
 
 //import {MarcRecord} from '@natlibfi/marc-record';
-import {fieldFixPunctuation} from './punctuation.js';
+import {fieldFixPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2';
 import {fieldTranslateRelatorTerm} from './fixRelatorTerms.js';
 import {getCatalogingLanguage} from './utils.js';
 import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields.js';

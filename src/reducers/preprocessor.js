@@ -1,5 +1,6 @@
 import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {MarcRecord} from '@natlibfi/marc-record';
+import createDebugLogger from 'debug';
 import {getCatalogingLanguage, nvdebug, subfieldToString} from './utils.js';
 import {translateRecord} from './fixRelatorTerms.js';
 import {filterOperations} from './processFilter.js';
@@ -9,6 +10,10 @@ import path from 'path';
 import {fieldTrimSubfieldValues} from './normalize.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
@@ -20,9 +25,9 @@ function normalizeField505Separator(record) {
   function fixField505(field) {
     const subfields = field.subfields.filter(sf => sf.code === 'a');
     subfields.forEach(sf => {
-      nvdebug(`Try to process ${subfieldToString(sf)}`);
+      nvdebug(`Try to process ${subfieldToString(sf)}`, debugDev);
       sf.value = sf.value.replace(/ ; /gu, ' -- '); // eslint-disable-line functional/immutable-data
-      nvdebug(`Result ${subfieldToString(sf)}`);
+      nvdebug(`Result ${subfieldToString(sf)}`, debugDev);
     });
   }
 
@@ -49,9 +54,9 @@ export default (config = defaultConfig) => (base, source) => {
   trimRecord(base);
   trimRecord(source);
 
-  nvdebug(`BASE: Reindex $6 duplicates`);
+  nvdebug(`BASE: Reindex $6 duplicates`, debugDev);
   reindexDuplicateSubfield6Indexes(base);
-  nvdebug(`SOURCE: Reindex $6 duplicates`);
+  nvdebug(`SOURCE: Reindex $6 duplicates`, debugDev);
   reindexDuplicateSubfield6Indexes(source);
 
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});

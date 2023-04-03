@@ -1,5 +1,5 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
 import {fieldToString, marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
@@ -9,8 +9,9 @@ import {fieldToString, marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value,
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
-// const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
-
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeIndicator');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const ind1NonFilingChars = ['130', '630', '730', '740'];
 const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];
@@ -46,9 +47,9 @@ export function mergeIndicators(toField, fromField, config) {
 
     function getIndicatorPreferredValuesForGivenTag(tag, indicatorNumber, config) {
       const preferredValues = indicatorNumber === 1 ? config.indicator1PreferredValues : config.indicator2PreferredValues;
-      nvdebug(`${tag} IND${indicatorNumber}: get preferred values...\nCONFIG: ${JSON.stringify(config)}`);
+      nvdebug(`${tag} IND${indicatorNumber}: get preferred values...\nCONFIG: ${JSON.stringify(config)}`, debugDev);
       if (preferredValues) {
-        //nvdebug(`${tag} PREF VALS: ${JSON.stringify(preferredValues)}`);
+        //nvdebug(`${tag} PREF VALS: ${JSON.stringify(preferredValues)}`, debugDev);
         if (tag in preferredValues) {
           return preferredValues[tag];
         }
@@ -122,18 +123,18 @@ export function mergeIndicators(toField, fromField, config) {
     const preferredValues = getIndicatorPreferredValues(toField.tag, 1, config);
 
     if (preferredValues) {
-      //nvdebug(`Try to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}'`);
-      //nvdebug(`PREF VALS: ${preferredValues}`);
+      //nvdebug(`Try to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}'`, debugDev);
+      //nvdebug(`PREF VALS: ${preferredValues}`, debugDev);
       const preferredValue = getPreferredValue(preferredValues, fromField.ind1, toField.ind1);
       if (typeof preferredValue !== 'undefined') {
-        //nvdebug(`${preferredValue} WINS!`);
+        //nvdebug(`${preferredValue} WINS!`, debugDev);
         toField.ind1 = preferredValue; // eslint-disable-line functional/immutable-data
         return;
       }
-      //nvdebug(`No winner found indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`);
+      //nvdebug(`No winner found indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`, debugDev);
       //return;
     }
-    //nvdebug(`TAG '${toField.tag}': No rule to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`);
+    //nvdebug(`TAG '${toField.tag}': No rule to merge indicator 1: '${toField.ind1}' vs '${fromField.ind1}', keep '${toField.ind1}'`, debugDev);
   }
 
 
@@ -147,14 +148,14 @@ export function mergeIndicators(toField, fromField, config) {
 
     // However, 260 contains data that cannot be converted to 264 as well
     if (toField.subfields.some(sf => ['e', 'f', 'g'].includes(sf.code))) {
-      nvdebug(`WARNING: can not change base 260 to 264 as it contains $e, $f and/or $g. Source IND2 info lost.`);
-      nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`);
+      nvdebug(`WARNING: can not change base 260 to 264 as it contains $e, $f and/or $g. Source IND2 info lost.`, debugDev);
+      nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`, debugDev);
       return;
     }
 
     // Convert 260 to 264 so that no information is lost:
-    nvdebug(`Apply base 260->264 tag swap hack`);
-    nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`);
+    nvdebug(`Apply base 260->264 tag swap hack`, debugDev);
+    nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`, debugDev);
 
     toField.tag = '264'; // eslint-disable-line functional/immutable-data
     toField.ind2 = fromField.ind2; // eslint-disable-line functional/immutable-data
@@ -165,19 +166,19 @@ export function mergeIndicators(toField, fromField, config) {
       return; // Do nothing
     }
 
-    //nvdebug(`Merge IND2`);
-    //nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`);
+    //nvdebug(`Merge IND2`, debugDev);
+    //nvdebug(` ${fieldToString(toField)}\n ${fieldToString(fromField)}`, debugDev);
 
 
     publisherTagSwapHack(toField, fromField); // Easter egg/hack for base-260 vs source-264
 
     // If source contains $9 FENNI<KEEP>, we might prefer it?
 
-    //nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`);
+    //nvdebug(`Try to merge indicator 2: '${toField.ind2}' vs '${fromField.ind2}'`, debugDev);
     const preferredValues = getIndicatorPreferredValues(toField.tag, 2, config);
 
     if (preferredValues) {
-      //nvdebug(`  Try to merge indicator 2. Got preferred values '${preferredValues}'`);
+      //nvdebug(`  Try to merge indicator 2. Got preferred values '${preferredValues}'`, debugDev);
       const preferredValue = getPreferredValue(preferredValues, fromField.ind2, toField.ind2);
       if (typeof preferredValue !== 'undefined') {
         toField.ind2 = preferredValue; // eslint-disable-line functional/immutable-data

@@ -55,8 +55,8 @@ import createDebugLogger from 'debug';
 // ### Kopioitu täältä: https://github.com/NatLibFi/melinda-record-import-transformer-helmet
 // ### Muokkaa vielä oikeat validaattorit mergeä varten
 export default async () => {
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-  debug(`### testing`);
+  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:validate');
+  debug(`### Run validate`);
   const validate = validateFactory([
     await NormalizeUTF8Diacritics(), // procompose å & ä & ö. Decompose the rest.
     await NormalizeControlNumber(), // (FI-MELINDA)/FCC/(FIN01) normalizations

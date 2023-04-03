@@ -1,0 +1,4 @@
+{
+  "description":"MRA-487: field 776 subset should not get through",
+  "only": false
+}

@@ -2,6 +2,11 @@ import chai from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
 import * as utils from './utils';
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils:test');
+//const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 const {expect} = chai;
@@ -13,7 +18,7 @@ describe('utils/getTags', () => {
     const {getFixture} = fixturesFactory(__dirname, '..', '..', 'test-fixtures', 'utils', 'getTags');
     // getFixture({components: ['foo', 'bar.txt'], reader: READERS.JSON})
     const test = getFixture({components: ['testi.json'], reader: READERS.JSON});
-    console.log(test); // eslint-disable-line
+    debug(test); // eslint-disable-line
     expect(utils.getTags(test.fields, [])).to.eql(['jotain']);
   });
 });
