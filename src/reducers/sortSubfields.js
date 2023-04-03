@@ -1,6 +1,8 @@
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:sortSubfields');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const defaultSortOrderString = '8673abcdefghijklmnopqrstuvwxyz420159';
 const defaultSortOrder = defaultSortOrderString.split('');

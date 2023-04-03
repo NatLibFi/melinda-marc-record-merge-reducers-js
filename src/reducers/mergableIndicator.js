@@ -10,6 +10,8 @@ import {marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergableIndicator');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const ind1NonFilingChars = ['130', '630', '730', '740'];
 const ind2NonFilingChars = ['222', '240', '242', '243', '245', '830'];
@@ -24,7 +26,7 @@ function marc21NoNeedToCheckInd1(tag) {
 
 function marc21NoNeedToCheckInd2(tag) {
   const cands = marc21GetTagsLegalInd2Value(tag);
-  nvdebug(`CHECK IND2 ${typeof cands} FOR ${tag}`, debug);
+  nvdebug(`CHECK IND2 ${typeof cands} FOR ${tag}`, debugDev);
   if (typeof cands === 'string') { // single cand
     return true;
   }
@@ -60,7 +62,7 @@ export function mergableIndicator2(field1, field2, config) {
     return true;
   }
 
-  // nvdebug(`mergableIndicator2\n '${fieldToString(field1)}' vs\n '${fieldToString(field2)}'`, debug);
+  // nvdebug(`mergableIndicator2\n '${fieldToString(field1)}' vs\n '${fieldToString(field2)}'`, debugDev);
 
   // NB! Our 260 vs 264 hacks...NB #2: We do this split check only for ind2, not for ind1.
   // Maybe reasons to this for ind1 will rise later on. None known yetr though.
