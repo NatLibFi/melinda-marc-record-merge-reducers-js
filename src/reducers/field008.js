@@ -33,7 +33,7 @@ function requiresModification(baseRecord, sourceRecord) {
 
 
   if (sourceFields.length !== 1) {
-    // debug('Identical fields in source and base');
+    // debugDev('Identical fields in source and base');
     return false;
   }
   if (baseFields.length === 0) {
@@ -176,7 +176,7 @@ export default () => (base, source) => {
     const sourceFields = sourceRecord.get(regexp008);
     // Test 06: If the level code of the source record is better (smaller number)
     // Replace base field 008 with field 008 from source
-    debug(`Replacing base field ${baseFields[0].tag}`);
+    debugDev(`Replacing base field ${baseFields[0].tag}`);
     // Field 008 is non-repeatable. This [0] is/should be a safe approach:
     //return {base: recordReplaceField(baseRecord, baseFields[0], sourceFields[0]), source};
     baseFields[0].value = `${baseFields[0].value.substring(0, 6)}${sourceFields[0].value.substring(6)}`; // eslint-disable-line functional/immutable-data
@@ -184,7 +184,7 @@ export default () => (base, source) => {
   }
   // Test 07: If the level code of the base record is better or the same, keep existing 008
   // Test 08: If the character positions for year, language and country are not the same, keep existing 008
-  debug('Keeping base field 008');
+  debugDev('Keeping base field 008');
   */
   return {base, source};
 };

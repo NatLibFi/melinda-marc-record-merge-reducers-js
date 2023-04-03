@@ -3,28 +3,38 @@ import path from 'path';
 
 import {fieldToString, nvdebug} from './utils.js';
 import {filterOperations} from './processFilter.js';
+import createDebugLogger from 'debug';
+
 //import {removeDuplicateDatafields as removeDuplicateDatafieldsOld} from './removeIdenticalDataFields';
 
 import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melinda/dist/indicator-fixes';
 import {removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
 import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/mergeField500Lisapainokset';
 import {recordResetSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/reindexSubfield6OccurenceNumbers';
+import {removeIndividualInferiorDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeInferiorDataFields';
+
+
 import {mtsProcessRecord} from './preprocessMetatietosanasto';
 import {removeDuplicateDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeDuplicateDataFields';
 import {recordFixSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/resolveOrphanedSubfield6s.js';
 import factoryForThereCanBeOnlyOneSubfield0 from '@natlibfi/marc-record-validators-melinda/dist/multiple-subfield-0';
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:postprocessor');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
+
 export default (config = defaultConfig) => (base, source) => {
-  nvdebug('ENTERING postprocessor.js');
-  base.fields.forEach(field => nvdebug(`WP0: ${fieldToString(field)}`));
+
+  nvdebug('ENTERING postprocessor.js', debugDev);
+  base.fields.forEach(field => nvdebug(`WP0: ${fieldToString(field)}`, debugDev));
 
   //nvdebug(JSON.stringify(base));
   //nvdebug(JSON.stringify(source));
 
   //nvdebug(JSON.stringify(config.postprocessorDirectives));
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
-  //nvdebug(`HSP CONF ${config}`);
+  //nvdebug(`HSP CONF ${config}`, debugDev);
   filterOperations(base, source, config.postprocessorDirectives); // declared in preprocessor
 
   //deleteAllPrepublicationNotesFromField500InNonPubRecord(base); // Already done when LDR/17 was copied from source
@@ -47,8 +57,9 @@ export default (config = defaultConfig) => (base, source) => {
 
   //const res =
   removeDuplicateDatafields(base, true);
-  //nvdebug(`Re-DUP ${JSON.stringify(res)}`);
+  //nvdebug(`Re-DUP ${JSON.stringify(res)}`, debugDev);
 
+  removeIndividualInferiorDatafields(base, true);
   //res.message.forEach(msg => nvdebug(msg));
 
   //removeDuplicateDatafieldsOld(base);

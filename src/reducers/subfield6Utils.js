@@ -6,7 +6,9 @@ import {fieldToString, nvdebug, subfieldToString} from './utils';
 
 // import {fieldToString, nvdebug} from './utils';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 // NB! Subfield 6 is non-repeatable and always comes first!
 // NB! Index size is always 2 (preceding 0 required for 01..09)
@@ -51,7 +53,7 @@ export function resetSubfield6Tag(subfield, tag) {
   }
   // NB! mainly for 1XX<->7XX transfers
   const newValue = `${tag}-${subfield.value.substring(4)}`;
-  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
+  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
@@ -68,7 +70,7 @@ export function resetSubfield6Index(subfield, strindex) {
     return;
   }
   const newValue = subfield.value.substring(0, 4) + strindex + getSubfield6Tail(subfield); // eslint-disable-line functional/immutable-data
-  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`);
+  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
@@ -114,27 +116,27 @@ export function isSubfield6Pair(field, otherField) {
   }
 
   if (!tagsArePairable6(field.tag, otherField.tag)) {
-    //nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`);
+    //nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`, debugDev);
     return false;
   }
 
-  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debug);
+  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debugDev);
 
   const fieldIndex = fieldGetIndex6(field);
   if (fieldIndex === undefined || fieldIndex === '00') {
-    nvdebug(` FAILED. REASON: NO INDEX FOUND`);
+    nvdebug(` FAILED. REASON: NO INDEX FOUND`, debugDev);
     return false;
   }
 
   const otherFieldIndex = fieldGetIndex6(otherField);
 
   if (fieldIndex !== otherFieldIndex) {
-    nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`);
+    nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`, debugDev);
     return false;
   }
 
   if (fieldGetTag6(field) !== otherField.tag || field.tag !== fieldGetTag6(otherField)) {
-    nvdebug(` FAILURE: TAG vs $6 TAG`);
+    nvdebug(` FAILURE: TAG vs $6 TAG`, debugDev);
     return false;
   }
   return true;
@@ -209,20 +211,20 @@ export function fieldsToNormalizedString(fields, index = 0) {
 export function removeField6IfNeeded(field, record, fieldsAsString) {
   const pairFields = fieldGetSubfield6Pairs(field, record);
   const asString = pairFields ? fieldsToNormalizedString([field].concat(pairFields)) : fieldToNormalizedString(field);
-  nvdebug(`SOURCE: ${asString} -- REALITY: ${fieldToString(field)}`);
+  nvdebug(`SOURCE: ${asString} -- REALITY: ${fieldToString(field)}`, debugDev);
   const tmp = pairFields.length ? fieldsToString(pairFields) : 'HUTI';
-  nvdebug(`PAIR: ${tmp}`);
-  nvdebug(`BASE:\n ${fieldsAsString.join('\n ')}`);
+  nvdebug(`PAIR: ${tmp}`, debugDev);
+  nvdebug(`BASE:\n ${fieldsAsString.join('\n ')}`, debugDev);
   if (!fieldsAsString.includes(asString)) {
     return;
   }
-  nvdebug(`Duplicate $6 removal: ${fieldToString(field)}`);
+  nvdebug(`Duplicate $6 removal: ${fieldToString(field)}`, debugDev);
   record.removeField(field);
 
   if (pairFields.length === 0) {
     return;
   }
-  nvdebug(`Duplicate $6 removal (pair): ${fieldsToString(pairFields)}`);
+  nvdebug(`Duplicate $6 removal (pair): ${fieldsToString(pairFields)}`, debugDev);
   pairFields.forEach(pairField => record.removeField(pairField));
 }
 

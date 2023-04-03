@@ -5,8 +5,9 @@ import {fieldGetIndex6, fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, int
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:reindexSubfield6');
 //const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default () => (base, source) => {
   // NV: Not actually sure why this is done...
@@ -28,7 +29,7 @@ function subfield6Index(subfield) {
   }
 
   const result = parseInt(indexPart, 10);
-  //nvdebug(`SF6: ${subfield.value} => ${indexPart} => ${result}`, debug);
+  //nvdebug(`SF6: ${subfield.value} => ${indexPart} => ${result}`, debugDev);
   return result;
 }
 
@@ -38,13 +39,13 @@ function getMaxSubfield6(record) {
   return Math.max(...vals);
 
   function fieldSubfield6Index(field) {
-    //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`);
+    //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`, debugDev);
     const sf6s = field.subfields ? field.subfields.filter(subfield => isValidSubfield6(subfield)) : [];
     if (sf6s.length === 0) {
       return 0;
     }
     // There should always be one, but here we check every subfield.
-    //nvdebug(`Got ${field.subfields.length} $6-subfield(s) from ${fieldToString(field)}`, debug);
+    //nvdebug(`Got ${field.subfields.length} $6-subfield(s) from ${fieldToString(field)}`, debugDev);
     const vals = sf6s.map(sf => subfield6Index(sf));
     return Math.max(...vals);
   }
@@ -56,7 +57,7 @@ function reindexSubfield6s(record, baseMax = 0) {
     return record;
   }
 
-  nvdebug(`Maximum subfield $6 index is ${baseMax}`, debug);
+  nvdebug(`Maximum subfield $6 index is ${baseMax}`, debugDev);
 
   record.fields.forEach(field => fieldUpdateSubfield6s(field, baseMax));
 }
@@ -107,15 +108,15 @@ export function reindexDuplicateSubfield6Indexes(record) {
     if (relevantFields.length < 3) { // Default 2: XXX $6 880-NN and 880 $6 XXX-NN
       return;
     }
-    
+
     const currTagFields = relevantFields.filter(f => f.tag === currField.tag);
     if ( currTagFields.length === 1) {
-      nvdebug(`NEED TO REINDEX ${fieldToString(currField)}`);
+      nvdebug(`NEED TO REINDEX ${fieldToString(currField)}`, debugDev);
       const max = getMaxSubfield6(record);
       if (max) {
         const pairFields = fieldGetSubfield6Pairs(currField, record);
         if (pairFields.length) {
-          nvdebug(` PAIR ${fieldsToString(pairFields)}`);
+          nvdebug(` PAIR ${fieldsToString(pairFields)}`, debugDev);
           fieldUpdateSubfield6s(currField, max);
           pairFields.forEach(pairField => fieldUpdateSubfield6s(pairField, max));;
         }

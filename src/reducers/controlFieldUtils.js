@@ -1,4 +1,9 @@
 import {nvdebug} from './utils';
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:controlFieldUtils');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 function fieldPositionValueContainsInformation(val) {
   if (val === '' || val === '|' || val === ' ' || val === '#') {
@@ -29,7 +34,7 @@ function hasLegalLength(field) {
   if (field.tag === '007') {
     const c0 = field.value.charAt(0);
     if (c0 in f007Lengths) {
-      nvdebug(`${c0}: COMPARE ${f007Lengths[c0]} vs ${field.value.length}`);
+      nvdebug(`${c0}: COMPARE ${f007Lengths[c0]} vs ${field.value.length}`, debugDev);
       return field.value.length === f007Lengths[c0];
     }
 

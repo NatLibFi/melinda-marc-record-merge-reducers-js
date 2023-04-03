@@ -1,4 +1,4 @@
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
 import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields';
@@ -9,8 +9,9 @@ import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
 
 // Do later: 300/773$h, X00$e Relator term...
 
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessMetatietosanasto');
 //const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default () => (base, source) => {
   mtsProcessRecord(base);
@@ -83,7 +84,7 @@ function translateMtsTerm(term, to, from = 'all') {
 function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
   if (['015', '020', '024', '028'].includes(tag) && subfield.code === 'q') {
     const tmpValue = fixMtsQualifyingInformationAbbreviations(subfield.value);
-    nvdebug(`Translate $q term '${tmpValue}' to ${catalogingLanguage}`);
+    nvdebug(`Translate $q term '${tmpValue}' to ${catalogingLanguage}`, debugDev);
     subfield.value = translateMtsTerm(tmpValue, catalogingLanguage, 'all'); // eslint-disable-line functional/immutable-data
     return;
   }
@@ -91,7 +92,7 @@ function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
   /* // Commented this after discussion with MH. We can have both Finnish and Swedish versio in same record.
   if (tag === '600' && subfield.code === 'c') { // (fiktiivinen hahmo) vs (fiktiv gestalt)
     const modValue = translateMtsTerm(subfield.value, catalogingLanguage, 'all');
-    nvdebug(`MTS: ${subfield.value} => ${modValue}`);
+    nvdebug(`MTS: ${subfield.value} => ${modValue}`, debugDev);
 
     subfield.value = modValue; // eslint-disable-line functional/immutable-data
     return;
@@ -110,7 +111,7 @@ function mtsCaseField(field, catalogingLanguage) {
   }
   fieldRemoveDuplicateSubfields(field);
   const modifiedValue = fieldToString(field);
-  nvdebug(`MODIFY FIELD:\n  ${originalValue} =>\n  ${modifiedValue}`);
+  nvdebug(`MODIFY FIELD:\n  ${originalValue} =>\n  ${modifiedValue}`, debugDev);
 }
 
 

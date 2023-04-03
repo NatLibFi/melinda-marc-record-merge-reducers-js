@@ -2,13 +2,15 @@ import {fieldToString, nvdebug} from './utils';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeSubfield9Linkage');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default () => (base, source) => {
-  //nvdebug(' IN1');
+  //nvdebug(' IN1', debugDev);
   recordNormalizeSubfield9Linkage(base);
-  //nvdebug(' IN2');
+  //nvdebug(' IN2', debugDev);
   recordNormalizeSubfield9Linkage(source);
-  //nvdebug(' IN3');
+  //nvdebug(' IN3', debugDev);
   return {base, source};
 };
 
@@ -30,7 +32,7 @@ export default function () { // (commented) validator/fixer style default functi
 
   function validate(record) {
     const res = {message: [], valid: true};
-    //nvdebug(`NORMALIZE CONTROL NUMBER VALIDATE`, debug);
+    //nvdebug(`NORMALIZE CONTROL NUMBER VALIDATE`, debugDev);
     // Actual parsing of all fields
 
     const position = getIndexOfNextLinkableField(record);
@@ -80,7 +82,7 @@ function canCombineTwoFields(field1, field2) {
 
   const linkageType = getRHSLinkage(field2); // either '^^' or '^'
 
-  nvdebug(`FOUND LHS LINKAGE. CHECK RHS: '${fieldToString(field2)}' has linkage ${linkageType ? linkageType : 'NONE'}`, debug);
+  nvdebug(`FOUND LHS LINKAGE. CHECK RHS: '${fieldToString(field2)}' has linkage ${linkageType ? linkageType : 'NONE'}`, debugDev);
   if (linkageType === '^') {
     return true;
   }
@@ -89,7 +91,7 @@ function canCombineTwoFields(field1, field2) {
       return true;
     }
   }
-  nvdebug('HOWEVER, RHS LINKAGE FAILED', debug);
+  nvdebug('HOWEVER, RHS LINKAGE FAILED', debugDev);
   return false;
 }
 
@@ -98,7 +100,7 @@ function getIndexOfNextLinkableField(record, currPosition = 0) {
     return -1;
   }
   if (canCombineTwoFields(record.fields[currPosition], record.fields[currPosition + 1])) {
-    nvdebug(`Combine two fields at ${currPosition}: ${fieldToString(record.fields[currPosition])} and ${fieldToString(record.fields[currPosition + 1])}`, debug);
+    nvdebug(`Combine two fields at ${currPosition}: ${fieldToString(record.fields[currPosition])} and ${fieldToString(record.fields[currPosition + 1])}`, debugDev);
     return currPosition;
   }
   // Recursion is ugly, but I'll do it anyway since this is JS.
@@ -107,16 +109,16 @@ function getIndexOfNextLinkableField(record, currPosition = 0) {
 
 function removeLHSLinkingCharacter(field, replacement) {
   const lastSubfield = getLastSubfield(field);
-  nvdebug(`Modify last subfield '${lastSubfield.value}', replacement: '${replacement}'`);
+  nvdebug(`Modify last subfield '${lastSubfield.value}', replacement: '${replacement}'`, debugDev);
   lastSubfield.value = lastSubfield.value.replace(/\^$/u, replacement); // eslint-disable-line functional/immutable-data
-  nvdebug(` Modified last subfield '${lastSubfield.value}'`);
+  nvdebug(` Modified last subfield '${lastSubfield.value}'`, debugDev);
 }
 
 function addSubfields(targetField, sourceField, subfieldIndex) {
   if (subfieldIndex >= sourceField.subfields.length) {
     return;
   }
-  nvdebug(` sf9-linking: Added subfield $${sourceField.subfields[subfieldIndex].code} ${sourceField.subfields[subfieldIndex].value}`);
+  nvdebug(` sf9-linking: Added subfield $${sourceField.subfields[subfieldIndex].code} ${sourceField.subfields[subfieldIndex].value}`, debugDev);
   // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
   targetField.subfields.push(sourceField.subfields[subfieldIndex]); // eslint-disable-line functional/immutable-data
   return addSubfields(targetField, sourceField, subfieldIndex + 1);
@@ -127,7 +129,7 @@ export function recordNormalizeSubfield9Linkage(record, startPosition = 0) {
   if (position === -1) {
     return;
   }
-  nvdebug(`TODO: STARTED FROM ${startPosition}, MERGE FIELDS AT ${position}`);
+  nvdebug(`TODO: STARTED FROM ${startPosition}, MERGE FIELDS AT ${position}`, debugDev);
   // NB! Add recursion only after merging is properly done.
   const currField = record.fields[position];
   const nextField = record.fields[position + 1];
@@ -135,17 +137,17 @@ export function recordNormalizeSubfield9Linkage(record, startPosition = 0) {
 
   removeLHSLinkingCharacter(currField, linkageType === '^^' ? ' ' : ''); // Replace '^' with either ' ' or ''.
   if (linkageType === '^^') { // eslint-disable-line functional/no-conditional-statement
-    nvdebug('CONCAT SUBS BASED ON "^^"', debug);
+    nvdebug('CONCAT SUBS BASED ON "^^"', debugDev);
     // Take 2nd subfield (1st is the '$9 ^^') from nextField and append it to the last subfield of currField
     currField.subfields[currField.subfields.length - 1].value += nextField.subfields[1].value; // eslint-disable-line functional/immutable-data
-    nvdebug(`POS${position} value is now ${currField.subfields[currField.subfields.length - 1].value}`);
+    nvdebug(`POS${position} value is now ${currField.subfields[currField.subfields.length - 1].value}`, debugDev);
   }
 
   // Linkage type is '^': copy all subfields except initial $9:
   addSubfields(currField, nextField, 1 + (linkageType === '^^' ? 1 : 0));
 
   // Remove next field:
-  nvdebug('TRY AND REMOVE NEXT FIELD, AS ITS DATA WAS MERGED', debug);
+  nvdebug('TRY AND REMOVE NEXT FIELD, AS ITS DATA WAS MERGED', debugDev);
   record.fields.splice(position + 1, 1); // eslint-disable-line functional/immutable-data
 
   // Recurse/continue from merged record.fields[position]

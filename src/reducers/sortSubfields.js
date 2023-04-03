@@ -1,9 +1,14 @@
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:sortSubfields');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const defaultSortOrderString = '8673abcdefghijklmnopqrstuvwxyz420159';
 const defaultSortOrder = defaultSortOrderString.split('');
+
+// X00, X10, X11 and X130 could also for their own sets...
+const sortOrderFor7XX = ['8', '6', '7', 'i', 'a', 's', 't', 'b', 'c', 'd', 'm', 'h', 'k', 'o', 'x', 'z', 'g', 'q', 'w'];
 
 // List *only* exceptional order here. Otherwise default order is used.
 const subfieldSortOrder = [
@@ -32,10 +37,24 @@ const subfieldSortOrder = [
   {'tag': '700', 'sortOrder': ['6', 'i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
   {'tag': '710', 'sortOrder': ['a', 'b', 'n', 'e']},
   {'tag': '711', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
-  {'tag': '773', 'sortOrder': ['7', 'w', 'a', 's', 't', 'd', 'm', 'h', 'g', 'k', 'o', 'x', 'z', 'g', 'q']},
-  {'tag': '776', 'sortOrder': ['i', 'a']},
-  {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'l', 'f', '0', '5', '9']},
-  {'tag': '810', 'sortOrder': ['a', 'b', 'n']},
+  {'tag': '760', 'sortOrder': sortOrderFor7XX},
+  {'tag': '762', 'sortOrder': sortOrderFor7XX},
+  {'tag': '765', 'sortOrder': sortOrderFor7XX},
+  {'tag': '767', 'sortOrder': sortOrderFor7XX},
+  {'tag': '770', 'sortOrder': sortOrderFor7XX},
+  {'tag': '772', 'sortOrder': sortOrderFor7XX},
+  {'tag': '773', 'sortOrder': sortOrderFor7XX},
+  {'tag': '774', 'sortOrder': sortOrderFor7XX},
+  {'tag': '775', 'sortOrder': sortOrderFor7XX},
+  {'tag': '776', 'sortOrder': sortOrderFor7XX},
+  {'tag': '777', 'sortOrder': sortOrderFor7XX},
+  {'tag': '780', 'sortOrder': sortOrderFor7XX},
+  {'tag': '785', 'sortOrder': sortOrderFor7XX},
+  {'tag': '786', 'sortOrder': sortOrderFor7XX},
+  {'tag': '787', 'sortOrder': sortOrderFor7XX},
+  {'tag': '788', 'sortOrder': sortOrderFor7XX},
+  {'tag': '800', 'sortOrder': ['i', 'a', 'b', 'c', 'q', 'd', 'e', 't', 'u', 'v', 'l', 'f', '0', '5', '9']},
+  {'tag': '810', 'sortOrder': ['a', 'b', 't', 'n', 'v', 'w']},
   {'tag': '811', 'sortOrder': ['a', 'n', 'd', 'c', 'e', 'g', 'j']},
   {'tag': '830', 'sortOrder': ['a', 'n', 'x', 'v']}, // INCOMPLETE, SAME AS 490? APPARENTLY NOT...
   {'tag': '880', 'sortOrder': ['6', 'a']},
@@ -46,7 +65,7 @@ const subfieldSortOrder = [
 function getSubfieldSortOrder(field) {
   const entry = subfieldSortOrder.filter(currEntry => field.tag === currEntry.tag);
   if (entry.length > 0 && 'sortOrder' in entry[0]) {
-    debug(`sort order for ${field.tag}: ${entry[0].sortOrder}`);
+    debugDev(`sort order for ${field.tag}: ${entry[0].sortOrder}`);
     return entry[0].sortOrder;
   }
   //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${field.tag}.`);

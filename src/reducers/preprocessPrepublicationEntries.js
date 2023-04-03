@@ -2,6 +2,11 @@ import {getCounterpart} from './counterpartField';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel, isEnnakkotietoField} from './prepublicationUtils';
 import {nvdebugFieldArray} from './utils';
 
+import createDebugLogger from 'debug';
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessPrepublicationEntries');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
+
 export function handlePrepublicationNameEntries(base, source) {
   const baseEncodingLevel = getEncodingLevel(base);
   if (!encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
@@ -15,7 +20,7 @@ export function handlePrepublicationNameEntries(base, source) {
   }
 
   const removableFields = fields.filter(field => !keepEntryField(base, field));
-  nvdebugFieldArray(removableFields, 'remove source entry field');
+  nvdebugFieldArray(removableFields, 'remove source entry field', debugDev);
   removableFields.forEach(field => source.removeField(field));
 }
 

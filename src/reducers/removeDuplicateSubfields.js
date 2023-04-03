@@ -3,10 +3,11 @@ import {nvdebug, subfieldToString} from './utils.js';
 import createDebugLogger from 'debug';
 import {cloneAndRemovePunctuation} from './normalize.js';
 import {sortAdjacentSubfields} from './sortSubfields.js';
-import {fieldFixPunctuation} from './punctuation.js';
-
+import {fieldFixPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:removeDuplicateSubfields');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export function recordRemoveDuplicateSubfieldsFromFields(record) {
   record.fields.forEach(field => fieldRemoveDuplicateSubfields(field));
@@ -34,11 +35,11 @@ export function fieldRemoveDuplicateSubfields(field) {
   function notSeenBefore(sf, index) {
     const subfieldAsString = subfieldToString(strippedField.subfields[index]); // use normalized form
     if (seen[subfieldAsString]) {
-      nvdebug(`Remove field-internal duplicate subfield ${subfieldToString(sf)}`, debug);
+      nvdebug(`Remove field-internal duplicate subfield ${subfieldToString(sf)}`, debugDev);
       field.collapsed = 1; // trigger punctuation reset
       return false;
     }
-    //nvdebug(`identical subfield removal: Add ${subfieldAsString} to seen[]`, debug);
+    //nvdebug(`identical subfield removal: Add ${subfieldAsString} to seen[]`, debugDev);
     seen[subfieldAsString] = subfieldAsString;
     return true;
   }

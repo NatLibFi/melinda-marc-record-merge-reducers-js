@@ -20,7 +20,7 @@ export function valueCarriesMeaning(tag, subfieldCode, value) {
 
 export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
   const value = normalizeForSamenessCheck2(tag, subfieldCode, originalValue);
-  //nvdebug(`SAMENESS: ${originalValue} => ${value}`);
+  //nvdebug(`SAMENESS: ${originalValue} => ${value}`, debug);
   return value;
 }
 
@@ -76,6 +76,12 @@ function normalizeEditionStatement(originalValue) {
   if (value.match(/^[1-9][0-9]*(?:\.|:a|nd|rd|st|th) (?:ed\.?|edition|p\.?|painos|uppl\.?|upplagan)[.\]]*$/ui)) {
     const nth = value.replace(/[^0-9].*$/u, '');
     return `${nth}. painos`;
+  }
+
+  // Quick and dirty fix for
+  if (value.match(/^[1-9][0-9]*(?:\.|:a|nd|rd|st|th)(?: förnyade|,? rev\.| uud\.| uudistettu) (?:ed\.?|edition|p\.?|painos|uppl\.?|upplagan)[.\]]*$/ui)) {
+    const nth = value.replace(/[^0-9].*$/u, '');
+    return `${nth}. uudistettu painos`;
   }
 
   if (value.match(/^(?:First|Första|Ensimmäinen) (?:ed\.?|edition|p\.?|painos|uppl\.?|upplagan)[.\]]*$/ui)) {

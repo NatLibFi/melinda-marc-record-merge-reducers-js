@@ -1,0 +1,52 @@
+{
+  "leader": "01331nam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "12345"},
+    { "tag": "600", "ind1": "0", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Acd09-Ac0," },
+      { "code": "c", "value": "Sussexin herttua,"},
+      { "code": "d", "value": "1984-"},
+      { "code": "0", "value": "(FI-ASTERI-N)000000001"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ] },
+
+    { "tag": "600", "ind1": "0", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Abcd09-Abc0" },
+      { "code": "b", "value": "II," },
+      { "code": "c", "value": "kuningatar,"},
+      { "code": "d", "value": "1926-2022"},
+      { "code": "0", "value": "(FI-ASTERI-N)000000002"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ] },
+
+    { "tag": "600", "ind1": "0", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Ad09-A," },
+      { "code": "d", "value": "1943-1991."},
+      { "code": "0", "value": "(FI-ASTERI-N)000000003"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ] },
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Ad09-A, Eelis," },
+      { "code": "d", "value": "1908-1976."},
+      { "code": "0", "value": "(FI-ASTERI-N)000000004"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ] },
+
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Adt09-A, Jacob," },
+      { "code": "d", "value": "1785-1863."},
+      { "code": "t", "value": "Solme kukkaa."},
+      { "code": "0", "value": "(FI-ASTERI-N)000000005"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ] },
+
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Adt09-A, Jacob," },
+      { "code": "d", "value": "1785-1863."},
+      { "code": "t", "value": "Frei Dedern."},
+      { "code": "0", "value": "(FI-ASTERI-N)000000005"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ] }
+   
+  ]
+}

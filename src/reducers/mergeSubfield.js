@@ -4,6 +4,8 @@ import {valueCarriesMeaning} from './worldKnowledge';
 import {nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 // NB! These are X00 specific. Should we somehow parametrize them?
 const onlyBirthYear = /^[1-9][0-9]*-[,.]?$/u;
@@ -182,7 +184,7 @@ export function mergeSubfield(targetField, candSubfield) {
     return false;
   }
 
-  nvdebug(`Got ${relevantSubfields.length} sf-cand(s) for field ${targetField.tag}‡${candSubfield.code}`, debug);
+  nvdebug(`Got ${relevantSubfields.length} sf-cand(s) for field ${targetField.tag}‡${candSubfield.code}`, debugDev);
 
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) ||
       mapBindingToCoverType(targetField, candSubfield, relevantSubfields)) {
