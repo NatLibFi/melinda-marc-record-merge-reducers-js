@@ -5,8 +5,9 @@ import {fieldsToNormalizedString, fieldToNormalizedString, isRelevantField6, pai
 import {fieldHasNSubfields, nvdebug} from './utils';
 
 // NB! It this file 'common' means 'normal' not 'identical'
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:removeIdenticalDatafields');
 //const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 // const sf8Regexp = /^([1-9][0-9]*)(?:\.[0-9]+)?(?:\\[acprux])?$/u; // eslint-disable-line prefer-named-capture-group
 
@@ -45,7 +46,7 @@ function recordGetAllSubfield8Indexes(record) {
     field.subfields.forEach(sf => {
       const index = getSubfield8Index(sf);
       if (index > 0 && !subfield8Values.includes(index)) {
-        //nvdebug(`Add subfield \$8 ${index} to seen values list`, debug);
+        //nvdebug(`Add subfield \$8 ${index} to seen values list`, debugDev);
         subfield8Values.push(index);
       }
     });
@@ -85,28 +86,28 @@ function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
     return;
   }
 
-  nvdebug(`base elements: ${baseIndexesToInspect.join(' -- ')}`, debug);
+  nvdebug(`base elements: ${baseIndexesToInspect.join(' -- ')}`, debugDev);
 
   const sourceIndexesToInspect = recordGetAllSubfield8Indexes(source);
   if (sourceIndexesToInspect.length === 0) {
     return;
   }
 
-  nvdebug(`source elements: ${sourceIndexesToInspect.join(' -- ')}`, debug);
+  nvdebug(`source elements: ${sourceIndexesToInspect.join(' -- ')}`, debugDev);
 
   baseIndexesToInspect.forEach(baseIndex => {
     const baseFields = getFieldsWithSubfield8Index(base, baseIndex);
     const baseFieldsAsString = fieldsToNormalizedString(baseFields, baseIndex);
-    nvdebug(`Results for BASE ${baseIndex}:`, debug);
-    nvdebug(`${baseFieldsAsString}`, debug);
+    nvdebug(`Results for BASE ${baseIndex}:`, debugDev);
+    nvdebug(`${baseFieldsAsString}`, debugDev);
     sourceIndexesToInspect.forEach(sourceIndex => {
       const sourceFields = getFieldsWithSubfield8Index(source, sourceIndex);
       const sourceFieldsAsString = fieldsToNormalizedString(sourceFields, sourceIndex);
       // If $8 source fields match with base fields, then remove them from source:
-      nvdebug(`Compare BASE and SOURCE:`, debug);
-      nvdebug(`${baseFieldsAsString} vs\n${sourceFieldsAsString}`, debug);
+      nvdebug(`Compare BASE and SOURCE:`, debugDev);
+      nvdebug(`${baseFieldsAsString} vs\n${sourceFieldsAsString}`, debugDev);
       if (sourceFieldsAsString === baseFieldsAsString) {
-        nvdebug(`Deletable subfield $8 group found: ${sourceFieldsAsString}`);
+        nvdebug(`Deletable subfield $8 group found: ${sourceFieldsAsString}`, debugDev);
         // FFS! Mainly theoretical, but what if record has multiple $8 indexes!?!
         // The other 8s might be different. If field has multiple $8s, only relevant $8 subfield
         // should be removed.
@@ -136,11 +137,11 @@ function removeCommonSharedDataFieldsFromSource(base, source) {
 
   function removeCommonDataFieldIfNeeded(field) {
     const fieldAsString = fieldToNormalizedString(field);
-    nvdebug(`Looking for '${fieldAsString}' in '${baseFieldsAsString.join('\', \'')}'`, debug);
+    nvdebug(`Looking for '${fieldAsString}' in '${baseFieldsAsString.join('\', \'')}'`, debugDev);
     if (!baseFieldsAsString.includes(fieldAsString)) {
       return;
     }
-    nvdebug(`rCSDFFS(): Remove ${fieldAsString}`, debug);
+    nvdebug(`rCSDFFS(): Remove ${fieldAsString}`, debugDev);
     source.removeField(field);
   }
 }
@@ -190,11 +191,11 @@ function getAllLinkedfields(field, record) {
 function getFirstField(record, fields) {
   const fieldsAsStrings = fields.map(field => fieldToString(field));
   record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`));
-  nvdebug(`INCOMING: ${fieldsAsStrings.join('\t')}`);
+  nvdebug(`INCOMING: ${fieldsAsStrings.join('\t')}`, debugDev);
   const i = record.fields.findIndex(field => fieldsAsStrings.includes(fieldToString(field)));
   if (i > -1) {
     const field = record.fields[i];
-    nvdebug(`1st F: ${i + 1}/${record.fields.length} ${fieldToString(field)}`);
+    nvdebug(`1st F: ${i + 1}/${record.fields.length} ${fieldToString(field)}`, debugDev);
     return field;
   }
   return undefined;
@@ -236,16 +237,16 @@ function isLoneOrFirstLinkedField(field, record) {
 //DEPRECATED//  fields.forEach(field => removeDuplicateDatafield(field));
 //DEPRECATED//
 //DEPRECATED//  function removeDuplicateDatafield(field) {
-//DEPRECATED//    nvdebug(`removeDuplicateDatafield? ${fieldToString(field)} (and friends)`);
+//DEPRECATED//    nvdebug(`removeDuplicateDatafield? ${fieldToString(field)} (and friends)`, debugDev);
 //DEPRECATED//    const fields = getAllLinkedfields(field, record);
 //DEPRECATED//    if(fields.length === 0) {
 //DEPRECATED//      return;
 //DEPRECATED//    }
 //DEPRECATED//
 //DEPRECATED//    const fieldsAsString = fieldsToNormalizedString(fields);
-//DEPRECATED//    nvdebug(` step 2 ${fieldsAsString}`);
+//DEPRECATED//    nvdebug(` step 2 ${fieldsAsString}`, debugDev);
 //DEPRECATED//    if (fieldsAsString in seen)  {
-//DEPRECATED//      nvdebug(` step 3 ${fieldsAsString}`);
+//DEPRECATED//      nvdebug(` step 3 ${fieldsAsString}`, debugDev);
 //DEPRECATED//      /*
 //DEPRECATED//      if (fields.some(currField => numberOfLinkageSubfields(currField) > 0) ) {
 //DEPRECATED//        // Fields with multi-$6 should only get the relevant $6 removed.
@@ -253,11 +254,11 @@ function isLoneOrFirstLinkedField(field, record) {
 //DEPRECATED//        return;
 //DEPRECATED//      }
 //DEPRECATED//      */
-//DEPRECATED//      nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldsAsString}`, debug);
+//DEPRECATED//      nvdebug(`DOUBLE REMOVAL: REMOVE ${fieldsAsString}`, debugDev);
 //DEPRECATED//      fields.forEach(currField => record.removeField(currField));
 //DEPRECATED//      return;
 //DEPRECATED//    }
-//DEPRECATED//    nvdebug(`DOUBLE REMOVAL: ADD2SEEN ${fieldsAsString}`, debug);
+//DEPRECATED//    nvdebug(`DOUBLE REMOVAL: ADD2SEEN ${fieldsAsString}`, debugDev);
 //DEPRECATED//    seen[fieldsAsString] = 1;
 //DEPRECATED//  }
 //DEPRECATED//

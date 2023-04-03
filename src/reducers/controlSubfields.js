@@ -5,7 +5,9 @@ import {fieldHasSubfield, fieldToString, nvdebug, nvdebugSubfieldArray, subfield
 //import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:controlSubfields');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 function subfieldsAreEqual(field1, field2, subfieldCode) {
   // Check OK if neither one has given subfield.
@@ -71,29 +73,29 @@ function controlSubfield9PermitsMerge(field1, field2) {
   const field1Subfields9 = field1.subfields.filter(sf => sf.code === '9');
   const field2Subfields9 = field2.subfields.filter(sf => sf.code === '9');
 
-  nvdebug('CHECK $9');
+  nvdebug('CHECK $9', debugDev);
   // There are no $9s. Skip:
   if (field1Subfields9.length === 0 && field2Subfields9.length === 0) {
-    nvdebug(` No subfield $9 detected`);
+    nvdebug(` No subfield $9 detected`, debugDev);
     return true;
   }
 
   if (keepOrDropPreventsMerge()) {
-    nvdebug(` Subfield $9 KEEPs and DROPs disallow merge`, debug);
+    nvdebug(` Subfield $9 KEEPs and DROPs disallow merge`, debugDev);
     return false;
   }
 
   if (transPreventsMerge()) {
-    nvdebug(` Subfield $9 <TRANS> mismatch disallows merge`, debug);
+    nvdebug(` Subfield $9 <TRANS> mismatch disallows merge`, debugDev);
     return false;
   }
 
-  nvdebug('CHECK $9 OK');
+  nvdebug('CHECK $9 OK', debugDev);
 
   return true;
 
   function subfieldHasKeepOrDrop(subfield) {
-    nvdebug(`Has <KEEP>? ${subfieldToString(subfield)}`);
+    nvdebug(`Has <KEEP>? ${subfieldToString(subfield)}`, debugDev);
     return subfield.code === '9' && (/(?:<KEEP>|<DROP>)/u).test(subfield.value);
   }
 
@@ -143,11 +145,11 @@ function controlSubfield9PermitsMerge(field1, field2) {
     const sf9lessField1 = field1.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
     const sf9lessField2 = field2.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
 
-    nvdebugSubfieldArray(field1.subfields, 'FIELD   ');
-    nvdebugSubfieldArray(sf9lessField1, 'FILTER  ');
+    nvdebugSubfieldArray(field1.subfields, 'FIELD   ', debugDev);
+    nvdebugSubfieldArray(sf9lessField1, 'FILTER  ', debugDev);
 
-    nvdebugSubfieldArray(field2.subfields, 'FIELD2  ');
-    nvdebugSubfieldArray(sf9lessField2, 'FILTER2 ');
+    nvdebugSubfieldArray(field2.subfields, 'FIELD2  ', debugDev);
+    nvdebugSubfieldArray(sf9lessField2, 'FILTER2 ', debugDev);
 
 
     // Keepless field can be a subset of kept field:
@@ -160,8 +162,8 @@ function controlSubfield9PermitsMerge(field1, field2) {
 
     }
 
-    //nvdebugSubfieldArray(sf9lessField2, 'SOURCE(?)');
-    //nvdebugSubfieldArray(sf9lessField1, 'BASE(?)  ');
+    //nvdebugSubfieldArray(sf9lessField2, 'SOURCE(?)', debugDev);
+    //nvdebugSubfieldArray(sf9lessField1, 'BASE(?)  ', debugDev);
 
     // $9 <KEEP> or <DROP> detected on both fields.
     // Non-keeps and non-drops must be equal, otherwise fail:
@@ -180,7 +182,7 @@ function controlSubfield9PermitsMerge(field1, field2) {
     if (subfield1.value !== subfield2.value) {
       return false;
     }
-    nvdebug(`SF-Paired ${subfieldToString(subfield1)}`);
+    nvdebug(`SF-Paired ${subfieldToString(subfield1)}`, debugDev);
     return true;
   }
   */

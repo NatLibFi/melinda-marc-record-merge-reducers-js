@@ -10,16 +10,17 @@ import {valueCarriesMeaning} from './worldKnowledge.js';
 import {resetSubfield6Tag} from './subfield6Utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeOrAddSubfield');
-
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 function catalogingSourceModifyingAgencyCandIsOriginalCatalogingSourceAgencyInTargetField(targetField, candSubfieldData) {
   if (targetField.tag !== '040' || candSubfieldData.code !== 'd') {
     return false;
   }
-  nvdebug(`${fieldToString(targetField)} vs $d ${candSubfieldData.originalValue}}`);
+  nvdebug(`${fieldToString(targetField)} vs $d ${candSubfieldData.originalValue}}`, debugDev);
   // Add hard-coded exceptions here
   if (targetField.subfields.some(sf => sf.code === 'a' && sf.value === candSubfieldData.originalValue)) {
-    nvdebug('040‡d matched 040‡a');
+    nvdebug('040‡d matched 040‡a', debugDev);
     return true;
   }
   return false;
@@ -68,9 +69,9 @@ function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
   if (relevantTargetSubfields.length === 0) {
     return false;
   }
-  nvdebug(`     Look for identical subfields in '${fieldToString(targetField)}' using`);
-  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.originalValue}`);
-  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.punctuationlessValue}`);
+  nvdebug(`     Look for identical subfields in '${fieldToString(targetField)}' using`, debugDev);
+  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.originalValue}`, debugDev);
+  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.punctuationlessValue}`, debugDev);
   if (relevantTargetSubfields.some(sf => sf.code === candSubfieldData.code && sf.value === candSubfieldData.originalValue)) {
     return true;
   }
@@ -79,8 +80,8 @@ function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
   }
 
   const normalizedTargetField = cloneAndNormalizeFieldForComparison(targetField);
-  nvdebug(`     Look for identical normalized subfields in '${fieldToString(normalizedTargetField)}'`);
-  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.normalizedValue})`);
+  nvdebug(`     Look for identical normalized subfields in '${fieldToString(normalizedTargetField)}'`, debugDev);
+  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.normalizedValue})`, debugDev);
 
   if (normalizedTargetField.subfields.some(sf => sf.code === candSubfieldData.code && sf.value === candSubfieldData.normalizedValue)) {
     // Subfield with identical normalized value exists. Do nothing.
@@ -93,7 +94,7 @@ function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
 }
 
 function addSubfield(targetField, candSubfield) {
-  nvdebug(` Added subfield '${subfieldToString(candSubfield)}' to field`, debug);
+  nvdebug(` Added subfield '${subfieldToString(candSubfield)}' to field`, debugDev);
   // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
   targetField.subfields.push(candSubfield); // eslint-disable-line functional/immutable-data
 
@@ -125,7 +126,7 @@ function resetPaired880(candFieldPair880, targetField, punctlessCandSubfield) {
     return;
 
   }
-  nvdebug(`880 contents: ${fieldToString(candFieldPair880)}`);
+  nvdebug(`880 contents: ${fieldToString(candFieldPair880)}`, debugDev);
   resetSubfield6Tag(candFieldPair880.subfields[0], targetField.tag);
 }
 
@@ -133,10 +134,10 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
 
   const candSubfieldAsString = `${candSubfieldData.code} ${candSubfieldData.originalValue}`;
 
-  nvdebug(`   Q: mergeOrAddSubfield '${candSubfieldAsString}'`, debug);
-  nvdebug(`      with field '${fieldToString(targetField)}'?`, debug);
+  nvdebug(`   Q: mergeOrAddSubfield '${candSubfieldAsString}'`, debugDev);
+  nvdebug(`      with field '${fieldToString(targetField)}'?`, debugDev);
   if (mergeOrAddSubfieldNotRequired(targetField, candSubfieldData)) {
-    nvdebug(`    A: No. No need to merge nor to add the subfield '${candSubfieldAsString}'`, debug);
+    nvdebug(`    A: No. No need to merge nor to add the subfield '${candSubfieldAsString}'`, debugDev);
     return;
   }
 
@@ -147,18 +148,18 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
   const original = fieldToString(targetField);
   if (mergeSubfield(targetField, candSubfield)) { // We might need the normalizedCandSubfield later on
     if (original !== fieldToString(targetField)) {
-      nvdebug(`    A: Merge. Subfield '${candSubfieldAsString}' replaces the original subfield.`, debug);
+      nvdebug(`    A: Merge. Subfield '${candSubfieldAsString}' replaces the original subfield.`, debugDev);
       targetField.merged = 1; // eslint-disable-line functional/immutable-data
       setPunctuationFlag(targetField, candSubfield);
       return;
     }
-    nvdebug(`      A: No. Field ${original} already had the same or  a better merge candidate than our subfield '${candSubfieldAsString}'.`, debug);
+    nvdebug(`      A: No. Field ${original} already had the same or  a better merge candidate than our subfield '${candSubfieldAsString}'.`, debugDev);
     return;
   }
 
   // Subfield codes missing from the original record can be added by default:
   if (!fieldHasSubfield(targetField, candSubfield.code)) {
-    nvdebug(`    A: Yes. Add previously unseen subfield '${subfieldToString(candSubfield)}'`, debug);
+    nvdebug(`    A: Yes. Add previously unseen subfield '${subfieldToString(candSubfield)}'`, debugDev);
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
     setPunctuationFlag(targetField, candSubfield);
     candFieldPairs880.forEach(pair => resetPaired880(pair, targetField, candSubfield));
@@ -168,12 +169,12 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
 
   // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
   if (subfieldIsRepeatable(targetField.tag, candSubfield.code)) {
-    nvdebug(`    A: Yes. Add repeatable subfield '${subfieldToString(candSubfield)}'`, debug);
+    nvdebug(`    A: Yes. Add repeatable subfield '${subfieldToString(candSubfield)}'`, debugDev);
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
     setPunctuationFlag(targetField, candSubfield);
     addSubfield(targetField, candSubfield);
     return;
   }
 
-  nvdebug(`    A: No. Non-repeatable subfield '${subfieldToString(candSubfield)}'`, debug);
+  nvdebug(`    A: No. Non-repeatable subfield '${subfieldToString(candSubfield)}'`, debugDev);
 }

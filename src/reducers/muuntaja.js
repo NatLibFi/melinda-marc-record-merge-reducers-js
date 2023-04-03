@@ -16,13 +16,14 @@ const muuntajaConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:muuntajaMergeField');
 //const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 //const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
 export default (tagPattern = false, config = muuntajaConfig) => (base, source) => {
   // Wrapper for mergeDatafields that uses muuntaja's config
-  nvdebug(`ENTERING muuntajaMergeField.js using fake ${tagPattern}`, debug);
-  //nvdebug(`MUUNTAJA CONFIG: ${JSON.stringify(config)}`);
+  nvdebug(`ENTERING muuntajaMergeField.js using fake ${tagPattern}`, debugDev);
+  //nvdebug(`MUUNTAJA CONFIG: ${JSON.stringify(config)}`, debugDev);
 
 
   copyLanguage(base, source); // Copy 008/35-37
@@ -41,7 +42,7 @@ export default (tagPattern = false, config = muuntajaConfig) => (base, source) =
   const addDataFields = addDataFieldsProto(config.addConfiguration); // base, source);
   const val2 = addDataFields(val.base, val.source); // eslint-disable-line functional/immutable-data
 
-  nvdebug(`PAST MERGE'N'ADD`);
+  nvdebug(`PAST MERGE'N'ADD`, debugDev);
 
   return {base: val2.base, source: val2.source};
 };

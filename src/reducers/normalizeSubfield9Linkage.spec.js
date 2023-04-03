@@ -4,6 +4,11 @@ import createReducer from './normalizeSubfield9Linkage';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import {nvdebug} from './utils';
+import createDebugLogger from 'debug';
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeSubfield9Linkage:test');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 describe('normalizeSubfield9Linkage tests: ', () => {
   generateTests({
@@ -22,17 +27,17 @@ describe('normalizeSubfield9Linkage tests: ', () => {
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
-    nvdebug('FFS WP 660');
+    nvdebug('FFS WP 660', debugDev);
     const expectedRecord = getFixture('merged.json');
     const expectedModifiedSourceRecord = getFixture('modifiedSource.json');
     const marcReducers = generateReducers(tagPattern, config);
-    nvdebug('FFS WP 663');
+    nvdebug('FFS WP 663', debugDev);
     const both = marcReducers(base, source);
     const mergedRecord = both.base;
     const modifiedSourceRecord = both.source;
-    nvdebug('FFS WP 664');
+    nvdebug('FFS WP 664', debugDev);
     expect(mergedRecord.toObject()).to.eql(expectedRecord);
-    nvdebug('FFS WP 666');
+    nvdebug('FFS WP 666', debugDev);
     expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
 
     function generateReducers(tagPattern, config = {}) {

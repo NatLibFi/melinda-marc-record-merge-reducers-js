@@ -1,11 +1,12 @@
 import createDebugLogger from 'debug';
 
 import {fieldHasControlSubfieldCode, fieldHasNSubfields, nvdebug, subfieldToString} from './utils';
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:transferManufacturerDataFrom260To264');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default () => (base, source) => {
-  nvdebug('260$efg to 264$abc transfer', debug);
+  nvdebug('260$efg to 264$abc transfer', debugDev);
   handleRecord(base);
   handleRecord(source);
   return {base, source};
@@ -34,7 +35,7 @@ function isRelevantField(field) {
 
 
 function renameSubfield(subfield) {
-  nvdebug(`renameSubfield(${subfieldToString(subfield)})`);
+  nvdebug(`renameSubfield(${subfieldToString(subfield)})`, debugDev);
   if (subfield.code === 'e') {
     subfield.code = 'a'; // eslint-disable-line functional/immutable-data
     return;

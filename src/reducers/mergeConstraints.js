@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeConstraints');
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.

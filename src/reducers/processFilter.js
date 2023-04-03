@@ -8,8 +8,9 @@ import createDebugLogger from 'debug';
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:processFilter');
 //const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 // fieldSpecs
 // - tagPattern (eg. '^(123|456)$' or
@@ -27,14 +28,14 @@ function getSpecifiedFields(record, fieldSpecs) {
 
   function regexpifyFieldSpecs(fieldSpecs) {
     if (fieldSpecs.tagPattern) {
-      //nvdebug(`Tag pattern to regexp: /${fieldSpecs.tagPattern}/`);
+      //nvdebug(`Tag pattern to regexp: /${fieldSpecs.tagPattern}/`, debugDev);
       return new RegExp(`${fieldSpecs.tagPattern}`, 'u');
     }
     if (fieldSpecs.tag) {
-      //nvdebug(`Tag to egexp: /^${fieldSpecs.tag}$/`);
+      //nvdebug(`Tag to egexp: /^${fieldSpecs.tag}$/`, debugDev);
       return new RegExp(`^${fieldSpecs.tag}$`, 'u');
     }
-    nvdebug(`TAG Regexp: NULL`);
+    nvdebug(`TAG Regexp: NULL`, debugDev);
     return null;
   }
 }
@@ -44,7 +45,7 @@ function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterC
   // Check subfield code as a string:
   if (filterCode) {
     if (filterCode !== subfieldCode) {
-      nvdebug(` REJECTED SUBFIELD. Reason: code`);
+      nvdebug(` REJECTED SUBFIELD. Reason: code`, debugDev);
       return false;
     }
   }
@@ -52,7 +53,7 @@ function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterC
   if (filterCodePattern) {
     const regExp = RegExp(`${filterCodePattern}`, 'u');
     if (!subfieldCode.match(regExp)) {
-      nvdebug(` REJECTED SUBFIELD. Reason: code regexp`);
+      nvdebug(` REJECTED SUBFIELD. Reason: code regexp`, debugDev);
       return false;
     }
   }
@@ -64,14 +65,14 @@ function subfieldFilterMatchesValue(subfieldValue, targetValue, targetValuePatte
   if (targetValuePattern) {
     const valueRegExp = RegExp(`${targetValuePattern}`, 'u');
     if (!subfieldValue.match(valueRegExp)) {
-      nvdebug(` REJECTED SUBFIELD. Reason: value regexp`);
+      nvdebug(` REJECTED SUBFIELD. Reason: value regexp`, debugDev);
       return false;
     }
   }
 
   if (targetValue) { // eg. 041$a 'zxx' removal
     if (subfieldValue !== targetValue) {
-      nvdebug(` REJECTED SUBFIELD. Reason: value string`);
+      nvdebug(` REJECTED SUBFIELD. Reason: value string`, debugDev);
       return false;
     }
   }
@@ -79,7 +80,7 @@ function subfieldFilterMatchesValue(subfieldValue, targetValue, targetValuePatte
 }
 
 function subfieldFilterMatches(subfield, subfieldFilter) {
-  nvdebug(`SF ${JSON.stringify(subfieldFilter)}`);
+  nvdebug(`SF ${JSON.stringify(subfieldFilter)}`, debugDev);
 
   if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.code, subfieldFilter.codePattern)) {
     return false;
@@ -89,7 +90,7 @@ function subfieldFilterMatches(subfield, subfieldFilter) {
     return false;
   }
 
-  nvdebug(` SUBFIELD ACCEPTED $${subfield.code} ${subfield.value}`);
+  nvdebug(` SUBFIELD ACCEPTED $${subfield.code} ${subfield.value}`, debugDev);
   return true;
 }
 
@@ -148,9 +149,9 @@ function filterFieldsUsingFieldToString(fields, value) {
   if (value === undefined) {
     return fields;
   }
-  nvdebug(`Looking for value '${value}'`);
+  nvdebug(`Looking for value '${value}'`, debugDev);
   return fields.filter(field => {
-    nvdebug(`              got '${fieldToString(field)}'`);
+    nvdebug(`              got '${fieldToString(field)}'`, debugDev);
     return fieldToString(field) === value;
   });
 }
@@ -160,22 +161,22 @@ function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
   if (targetFields.length === 0) {
     return targetFields;
   }
-  nvdebug(`Got ${targetFields.length} fields. Filter them...`);
+  nvdebug(`Got ${targetFields.length} fields. Filter them...`, debugDev);
   const filteredFields1 = filterFieldsUsingSubfieldFilters(targetFields, fieldSpecs.subfieldFilters);
-  nvdebug(`${filteredFields1.length} field(s) remain after subfield filters...`);
+  nvdebug(`${filteredFields1.length} field(s) remain after subfield filters...`, debugDev);
   const filteredFields2 = filterFieldsUsingFieldToString(filteredFields1, fieldSpecs.value);
-  nvdebug(`${filteredFields2.length} field(s) remain after whole value filtering...`);
+  nvdebug(`${filteredFields2.length} field(s) remain after whole value filtering...`, debugDev);
   return filteredFields2;
 }
 
 /*
 function logRecordType(recordType) {
   if (['base', 'both', 'source'].includes(recordType)) {
-    nvdebug(`Filter applies to record type ${recordType.toUpperCase()}`);
+    nvdebug(`Filter applies to record type ${recordType.toUpperCase()}`, debugDev);
     return;
   }
   // Log warning/error here
-  nvdebug(`ERROR: record type ${recordType} is not defined!`);
+  nvdebug(`ERROR: record type ${recordType} is not defined!`, debugDev);
 }
 */
 
@@ -209,19 +210,19 @@ function operationRemoveField(record, fieldSpecification) {
   if (deletableFields.length === 0) {
     return;
   }
-  nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`);
+  nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`, debugDev);
   deletableFields.forEach(field => record.removeField(field));
 }
 
 function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFilter) {
   const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
-  nvdebug(`operationRenameSubfield() got ${relevantFields.length} field(s)`);
+  nvdebug(`operationRenameSubfield() got ${relevantFields.length} field(s)`, debugDev);
   relevantFields.forEach(field => {
     renameSubfields(field, renamableSubfieldFilter);
   });
 
   function renameSubfields(field, renamableSubfieldFilter) {
-    nvdebug(`Try to rename subfields from ${fieldToString(field)} using ${JSON.stringify(renamableSubfieldFilter)}`);
+    nvdebug(`Try to rename subfields from ${fieldToString(field)} using ${JSON.stringify(renamableSubfieldFilter)}`, debugDev);
     field.subfields.forEach(sf => {
       if (subfieldFilterMatches(sf, renamableSubfieldFilter)) { // eslint-disable-line functional/no-conditional-statement
         sf.code = renamableSubfieldFilter.newCode; // eslint-disable-line functional/immutable-data
@@ -235,15 +236,15 @@ function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFi
   if (relevantFields.length === 0) {
     return;
   }
-  nvdebug(`operationRemoveSubfield() got ${relevantFields.length} field(s)`);
+  nvdebug(`operationRemoveSubfield() got ${relevantFields.length} field(s)`, debugDev);
   relevantFields.forEach(field => {
-    nvdebug(`Try to remove subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`);
+    nvdebug(`Try to remove subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`, debugDev);
     const remainingSubfields = field.subfields.filter(sf => !subfieldFilterMatches(sf, deletableSubfieldFilter));
     if (remainingSubfields.length < field.subfields.length) {
-      nvdebug(` Got ${remainingSubfields.length}/${field.subfields.length} keepable subfield(s)`);
+      nvdebug(` Got ${remainingSubfields.length}/${field.subfields.length} keepable subfield(s)`, debugDev);
       // Delete the whole field as last subfield gets deleted:
       if (remainingSubfields.length === 0) { // eslint-disable-line functional/no-conditional-statement
-        nvdebug('Delete subfieldless field');
+        nvdebug('Delete subfieldless field', debugDev);
         record.removeField(field);
         return;
       }
@@ -260,7 +261,7 @@ function operationRetag(record, fieldSpecification, newTag) {
     const oldTag = field.tag;
     resetCorrespondingField880(field, record, newTag);
     field.tag = newTag; // eslint-disable-line functional/immutable-data
-    nvdebug(`Retagged field ${oldTag} => ${fieldToString(field)}`); //, debug);
+    nvdebug(`Retagged field ${oldTag} => ${fieldToString(field)}`, debugDev); //, debugDev);
 
   });
 }
@@ -275,8 +276,8 @@ function operationSwapFields(record, otherRecord, fieldSpecification) {
   relevantFields1.forEach(field => otherRecord.insertField(field));
   relevantFields2.forEach(field => record.insertField(field));
 
-  nvdebug(`Moved ${relevantFields1.length} field(s) from base to source`, debug);
-  nvdebug(`Moved ${relevantFields2.length} field(s) from source to base`, debug);
+  nvdebug(`Moved ${relevantFields1.length} field(s) from base to source`, debugDev);
+  nvdebug(`Moved ${relevantFields2.length} field(s) from source to base`, debugDev);
 }
 
 export function filterOperation(base, source, operation) {
@@ -287,7 +288,7 @@ export function filterOperation(base, source, operation) {
   const targetRecords = getTargetRecordsForOperation(base, source, operation);
 
   if (targetRecords.length === 0) {
-    nvdebug('Failed to get the target record');
+    nvdebug('Failed to get the target record', debugDev);
     return;
   }
 
@@ -297,17 +298,17 @@ export function filterOperation(base, source, operation) {
     const targetFields = getSpecifiedFieldsAndFilterThem(targetRecord, operation.fieldSpecification);
 
     if (!targetFields) {
-      nvdebug(' No target fields found');
+      nvdebug(' No target fields found', debugDev);
       return;
     }
 
     if (operation.requireBaseField) {
       const baseFields = getSpecifiedFieldsAndFilterThem(base, operation.requireBaseField);
       if (baseFields.length === 0) {
-        //nvdebug(' Required base field not found!');
+        //nvdebug(' Required base field not found!', debugDev);
         return;
       }
-      nvdebug(` Base field ${fieldToString(baseFields[0])}`);
+      nvdebug(` Base field ${fieldToString(baseFields[0])}`, debugDev);
     }
 
     /*
@@ -323,11 +324,11 @@ export function filterOperation(base, source, operation) {
 
   function performActualOperation(targetRecord, operation, otherRecord) {
     if (!operation.operation) {
-      nvdebug('No operation defined');
+      nvdebug('No operation defined', debugDev);
       return;
     }
 
-    //nvdebug(`current operation: ${operation.operation}, ${operation.comment ? operation.comment : 'no comment'}`);
+    //nvdebug(`current operation: ${operation.operation}, ${operation.comment ? operation.comment : 'no comment'}`, debugDev);
     if (operation.operation === 'removeField') {
       operationRemoveField(targetRecord, operation.fieldSpecification);
       return;
@@ -348,7 +349,7 @@ export function filterOperation(base, source, operation) {
       operationSwapFields(targetRecord, otherRecord, operation.fieldSpecification);
       return;
     }
-    nvdebug(`Illegal/unknown operation: '${operation.operation}' skipped`);
+    nvdebug(`Illegal/unknown operation: '${operation.operation}' skipped`, debugDev);
   }
 }
 
@@ -359,7 +360,7 @@ export function filterOperations(base, source, config) {
 
 
 export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
-  // nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`);
+  // nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`, debugDev);
   if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
     return;
   }

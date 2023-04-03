@@ -15,6 +15,8 @@ const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..'
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
+
 
 // Default list of (repeatable) fields that we don't copy if the field is already present in the base record
 //const defaultDoNotCopyIfFieldPresentRegexp = /^(?:041|260|264|300|310|321|335|336|337|338)/u;
@@ -43,7 +45,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
   candidateFields.forEach(candField => {
-    nvdebug(`add field: Now processing ${fieldToString(candField)}`, debug);
+    nvdebug(`add field: Now processing ${fieldToString(candField)}`, debugDev);
     addField(baseRecord, candField, config);
   });
 
@@ -72,7 +74,7 @@ function removeNonRepeatableDataFieldsFromSourceIfFieldExistsInBase(base, source
     }
 
     if (repetitionBlocksAdding(base, field)) {
-      nvdebug(`Drop field ${fieldToString(field)}`);
+      nvdebug(`Drop field ${fieldToString(field)}`, debugDev);
       return false;
     }
     return true;
@@ -119,7 +121,7 @@ function skipAddField(record, field) {
 
   // Syntactic crap is handled here:
   if (field.subfields && field.subfields.length === 0) {
-    nvdebug(`WARNING or ERROR: No subfields in field-to-add`, debug);
+    nvdebug(`WARNING or ERROR: No subfields in field-to-add`, debugDev);
     return true;
   }
 
@@ -135,7 +137,7 @@ function cloneAddableField(field) {
 
 export function addField(record, field, config = {}) {
   if (skipAddField(record, field, config)) { // syntactic crap or something else we don't like
-    nvdebug(`addField(): don't add '${fieldToString(field)}'`, debug);
+    nvdebug(`addField(): don't add '${fieldToString(field)}'`, debugDev);
     return false;
   }
 
@@ -143,7 +145,7 @@ export function addField(record, field, config = {}) {
   const newField = cloneAddableField(field, config); // clone for base + set field.added = 1
   field.deleted = 1; // eslint-disable-line functional/immutable-data
 
-  nvdebug(`ADD NEW FIELD: '${fieldToString(field)}'`, debug);
+  nvdebug(`ADD NEW FIELD: '${fieldToString(field)}'`, debugDev);
   // NB! We don't we sort subfields in added fields.
   return record.insertField(newField);
 }

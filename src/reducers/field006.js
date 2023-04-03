@@ -7,8 +7,9 @@ import {fillControlFieldGaps, isFillableControlFieldPair} from './controlFieldUt
 // Test 03: If Leader 000/06 is something else, do nothing
 
 // NV: Moved these of the arrow function
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
-
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:field006');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default () => (base, source) => {
   // NB! This implementation differs from the specs. https://workgroups.helsinki.fi/x/K1ohCw
@@ -32,7 +33,7 @@ export default () => (base, source) => {
 
   // If and only if base contains no 006 fields, we *copy* what source has:
   if (baseFields.length === 0 && sourceFields.length > 0) {
-    nvdebug(`Copy ${sourceFields.length} source field(s), since host has no 006`, debug);
+    nvdebug(`Copy ${sourceFields.length} source field(s), since host has no 006`, debugDev);
     copyFields(baseRecord, sourceFields);
     return {base: baseRecord, source};
   }

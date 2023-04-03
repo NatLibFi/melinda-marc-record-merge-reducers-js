@@ -1,6 +1,11 @@
 import {nvdebug} from './utils';
+import createDebugLogger from 'debug';
 
 // Normalizes at least 490$v and 773$g which contain information such as "Raita 5" vs "5", and "Osa 3" vs "Osa III".
+
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizePart');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export function subfieldContainsPartData(tag, subfieldCode) {
   if (subfieldCode === 'v' && ['490', '800', '810'].includes(tag)) {
@@ -45,7 +50,7 @@ function normalizePartNumber(value) {
   // There's probably a library for our purposes..
   if (value in romanNumbers) {
     const arabicValue = romanNumbers[value];
-    nvdebug(` MAP ${value} to ${arabicValue}`);
+    nvdebug(` MAP ${value} to ${arabicValue}`, debugDev);
     return arabicValue;
   }
   return value.toLowerCase();
@@ -54,8 +59,8 @@ function normalizePartNumber(value) {
 function splitAndNormalizePartData(value) {
   // This is just a stub. Does not handle eg. "Levy 2, raita 15"
   const [lhs, rhs] = splitPartData(value);
-  nvdebug(`  LHS: '${lhs}'`);
-  nvdebug(`  RHS: '${rhs}'`);
+  nvdebug(`  LHS: '${lhs}'`, debugDev);
+  nvdebug(`  RHS: '${rhs}'`, debugDev);
   const partType = normalizePartType(lhs);
   const partNumber = normalizePartNumber(rhs);
   return [partType, partNumber];

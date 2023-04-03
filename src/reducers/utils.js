@@ -3,7 +3,9 @@ import createDebugLogger from 'debug';
 import fs from 'fs';
 import path from 'path';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 // Get array of field tags for use in other functions
 export function getTags(fields) {
@@ -112,7 +114,7 @@ function isNonStandardNonrepeatableSubfield(tag, subfieldCode) {
 export function subfieldIsRepeatable(tag, subfieldCode) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
-    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debug);
+    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debugDev);
     return true;
   }
 
@@ -215,16 +217,21 @@ export function isControlSubfieldCode(subfieldCode) {
 export function nvdebug(message, func = undefined) {
   if (func) { // eslint-disable-line functional/no-conditional-statement
     func(message);
+    return;
   }
-  console.info(message); // eslint-disable-line no-console
+  if (!func) {
+    // eslint-disable-next-line no-console
+    console.info(message);
+    return;
+  }
 }
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
-  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`), func);
+  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func));
 }
 
 export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
-  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`), func);
+  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func));
 }
 
 export function removeCopyright(value) {

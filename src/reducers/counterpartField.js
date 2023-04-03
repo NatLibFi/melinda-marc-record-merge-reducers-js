@@ -13,6 +13,8 @@ import {partsAgree} from './normalizePart';
 import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const counterpartRegexps = { // NB! tag is from source!
   // Note that in the normal case, all source 1XX fields have been converted to 7XX fields.
@@ -101,7 +103,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
 
 
   function hasCommonNominator(subfieldCode) {
-    nvdebug(`hasCommonNominator(${subfieldCode}): '${fieldToString(originalBaseField)}' vs '${fieldToString(originalSourceField)}'`);
+    nvdebug(`hasCommonNominator(${subfieldCode}): '${fieldToString(originalBaseField)}' vs '${fieldToString(originalSourceField)}'`, debugDev);
 
     // If base has $a and source has $b, there's no common nominator, thus fail...
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
@@ -120,15 +122,15 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
       return true;
     }
 
-    //nvdebugSubfieldArray(subfields1, 'SF1', debug);
-    //nvdebugSubfieldArray(subfields2, 'SF2', debug);
+    //nvdebugSubfieldArray(subfields1, 'SF1', debugDev);
+    //nvdebugSubfieldArray(subfields2, 'SF2', debugDev);
 
     // When pairing we can use stronger normalizations than the generic one:
     const subfieldValues1 = subfields1.map(sf => counterpartExtraNormalize(tag, subfieldCode, sf.value));
     const subfieldValues2 = subfields2.map(sf => counterpartExtraNormalize(tag, subfieldCode, sf.value));
 
-    //nvdebug(`SF1 NORM: ${subfieldValues1.join(' --')}`, debug);
-    //nvdebug(`SF2 NORM: ${subfieldValues2.join(' --')}`, debug);
+    //nvdebug(`SF1 NORM: ${subfieldValues1.join(' --')}`, debugDev);
+    //nvdebug(`SF2 NORM: ${subfieldValues2.join(' --')}`, debugDev);
 
     // If one set is a subset of the other, all is probably good (how about 653$a, 505...)
     if (subfieldValues1.every(val => subfieldValues2.includes(val)) || subfieldValues2.every(val => subfieldValues1.includes(val))) {
@@ -181,10 +183,10 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
 function tagToRegexp(tag) {
   if (tag in counterpartRegexps) { // eg. 700 looks for tag /^[17]00$/...
     const regexp = counterpartRegexps[tag];
-    //nvdebug(`regexp for ${tag} found: ${regexp}`, debug);
+    //nvdebug(`regexp for ${tag} found: ${regexp}`, debugDev);
     return regexp;
   }
-  //nvdebug(`WARNING: tagToRegexp(${tag}): no precompiled regexp found.`, debug);
+  //nvdebug(`WARNING: tagToRegexp(${tag}): no precompiled regexp found.`, debugDev);
   return new RegExp(`^${tag}$`, 'u');
 }
 
@@ -218,15 +220,15 @@ function arePairedSubfieldsInBalance(field1, field2) {
 function mergablePair(baseField, sourceField, config) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
   if (!mergableIndicator1(baseField, sourceField, config)) {
-    nvdebug(`non-mergable (reason: indicator1): ${JSON.stringify(config)}`);
+    nvdebug(`non-mergable (reason: indicator1): ${JSON.stringify(config)}`, debugDev);
     return false;
   }
   if (!mergableIndicator2(baseField, sourceField, config)) {
-    nvdebug(`non-mergable (reason: indicator2): ${JSON.stringify(config)}`);
+    nvdebug(`non-mergable (reason: indicator2): ${JSON.stringify(config)}`, debugDev);
     return false;
   }
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
-    nvdebug('non-mergable (reason: control subfield)');
+    nvdebug('non-mergable (reason: control subfield)', debugDev);
     return false;
   }
 
@@ -234,28 +236,28 @@ function mergablePair(baseField, sourceField, config) {
   // Note: Theoretically 260 $efg vs 264 with IND2=3 has already been handled by the preprocessor.
   // Thus check both:
   if (!areRequiredSubfieldsPresent(baseField) || !areRequiredSubfieldsPresent(sourceField)) {
-    nvdebug('non-mergable (reason: missing subfields)');
+    nvdebug('non-mergable (reason: missing subfields)', debugDev);
     return false;
   }
 
   // Stuff of Hacks! Eg. require that both fields either have or have not X00$t:
   if (!arePairedSubfieldsInBalance(baseField, sourceField)) {
-    nvdebug('required subfield pair check failed.');
+    nvdebug('required subfield pair check failed.', debugDev);
     return false;
   }
   //debug('Test semantics...');
   if (!semanticallyMergablePair(baseField, sourceField)) {
-    nvdebug('non-mergable (reason: semantics)');
+    nvdebug('non-mergable (reason: semantics)', debugDev);
     return false;
   }
-  nvdebug(`MERGABLE PAIR:\n  B: ${fieldToString(baseField)}\n  S: ${fieldToString(sourceField)}`);
+  nvdebug(`MERGABLE PAIR:\n  B: ${fieldToString(baseField)}\n  S: ${fieldToString(sourceField)}`, debugDev);
   return true;
 }
 
 
 function pairableAsteriIDs(baseField, sourceField) {
-  //nvdebug(`ASTERI1 ${fieldToString(baseField)}`); // eslint-disable-line
-  //nvdebug(`ASTERI2 ${fieldToString(sourceField)}`); // eslint-disable-line
+  //nvdebug(`ASTERI1 ${fieldToString(baseField)}`, debugDev); // eslint-disable-line
+  //nvdebug(`ASTERI2 ${fieldToString(sourceField)}`, debugDev); // eslint-disable-line
 
   // Check that relevant control subfield(s) exist in both records (as controlSubfieldsPermitMerge() doesn't check it):
   const fin11a = getAsteriIDs(baseField);
@@ -266,7 +268,7 @@ function pairableAsteriIDs(baseField, sourceField) {
   if (fin11b.length === 0) {
     return false;
   }
-  //nvdebug(`ASTERI WP3:\n${fin11a.join(", ")}\n${fin11b.join(", ")}`); // eslint-disable-line
+  //nvdebug(`ASTERI WP3:\n${fin11a.join(", ")}\n${fin11b.join(", ")}`, debugDev); // eslint-disable-line
 
   // Check that found control subfields agree. Use pre-existing generic function to reduce code.
   // (NB! We could optimize and just return true here, as control subfield check is done elsewhere as well.
@@ -308,7 +310,7 @@ function pairableName(baseField, sourceField) {
   const string1 = fieldToString(reducedField1);
   const string2 = fieldToString(reducedField2);
 
-  //nvdebug(`IN: pairableName():\n '${string1}' vs\n '${string2}'`);
+  //nvdebug(`IN: pairableName():\n '${string1}' vs\n '${string2}'`, debugDev);
   if (string1 === string2) {
     return true;
   }
@@ -321,7 +323,7 @@ function pairableName(baseField, sourceField) {
   // Compare the remaining subsets...
   // First check that name matches...
   if (uniqueKeyMatches(reducedField1, reducedField2)) {
-    nvdebug(`    name match: '${fieldToString(reducedField1)}'`);
+    nvdebug(`    name match: '${fieldToString(reducedField1)}'`, debugDev);
 
     return true;
   }
@@ -333,11 +335,11 @@ function pairableName(baseField, sourceField) {
   // We can't be sure that $0 pair is corrent, nor which version (base or source) to use.
   // 2023-03-07: Enable this again!
   if (pairableAsteriIDs(baseField, sourceField)) {
-    //nvdebug(`    name match based on ASTERI $0'`);
+    //nvdebug(`    name match based on ASTERI $0'`, debugDev);
     return true;
   }
 
-  nvdebug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`);
+  nvdebug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`, debugDev);
   return false;
 }
 
@@ -346,7 +348,7 @@ function semanticallyMergablePair(baseField, sourceField) {
   // On rare occasions a field contains also a title part. For these name part (= normally everything) and title part
   // must be checked separately:
   if (!titlePartsMatch(baseField, sourceField)) {
-    nvdebug(` ${baseField.tag} is unmergable: Title part mismatch.`);
+    nvdebug(` ${baseField.tag} is unmergable: Title part mismatch.`, debugDev);
     return false;
   }
 
@@ -354,7 +356,7 @@ function semanticallyMergablePair(baseField, sourceField) {
 
   // Handle the field specific "unique key" (=set of fields that make the field unique
   if (!pairableName(baseField, sourceField)) {
-    nvdebug('Unmergable: Name part mismatch');
+    nvdebug('Unmergable: Name part mismatch', debugDev);
     return false;
   }
   //debug(' Semantic checks passed! We are MERGABLE!');
@@ -430,27 +432,27 @@ export function getCounterpart(record, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
   // Tags 260 and 264 are lumped together.
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
-  //nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`);
+  //nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`, debugDev);
   const counterpartCands = record.get(tagToRegexp(field.tag));
 
   if (!counterpartCands || counterpartCands.length === 0) {
-    //nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debug);
+    //nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debugDev);
     return null;
   }
 
-  //nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debug);
+  //nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debugDev);
 
   const normalizedField = cloneAndNormalizeFieldForComparison(field);
-  //nvdebug(` S: ${fieldToString(normalizedField)}`);
+  //nvdebug(` S: ${fieldToString(normalizedField)}`, debugDev);
   // Then find (the index of) the first mathing candidate field and return it.
   const index = counterpartCands.findIndex((currCand) => {
     const normalizedCurrCand = cloneAndNormalizeFieldForComparison(currCand);
-    //nvdebug(` B: ${fieldToString(normalizedCurrCand)}`);
+    //nvdebug(` B: ${fieldToString(normalizedCurrCand)}`, debugDev);
     if (mergablePair(normalizedCurrCand, normalizedField, config)) {
-      //nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`);
+      //nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`, debugDev);
       return true;
     }
-    //nvdebug(`  FAILED TO PAIR WITH: '${fieldToString(currCand)}'. Skipping it!`);
+    //nvdebug(`  FAILED TO PAIR WITH: '${fieldToString(currCand)}'. Skipping it!`, debugDev);
     return false;
   });
 

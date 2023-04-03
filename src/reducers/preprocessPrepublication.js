@@ -34,15 +34,19 @@ import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
   removeWorsePrepubField594s} from './prepublicationUtils';
 import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries';
+import createDebugLogger from 'debug';
 
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessPrepublication');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
 export default () => (base, source) => {
-  nvdebug('BASE');
-  nvdebug(JSON.stringify(base));
-  nvdebug('SOURCE');
-  nvdebug(JSON.stringify(source));
+  nvdebug('BASE', debugDev);
+  nvdebug(JSON.stringify(base), debugDev);
+  nvdebug('SOURCE', debugDev);
+  nvdebug(JSON.stringify(source), debugDev);
 
   handlePrepublicationNameEntries(base, source);
   preprocessSourceField594(base, source);
@@ -75,7 +79,7 @@ function removeUnwantedSourceField500s(base, source) {
 
   const sourceFields500 = getRelevant5XXFields(source, true, false);
 
-  nvdebugFieldArray(sourceFields500, '  Remove unneeded source 500: ');
+  nvdebugFieldArray(sourceFields500, '  Remove unneeded source 500: ', debugDev);
   sourceFields500.forEach(field => source.removeField(field));
 }
 
@@ -87,7 +91,7 @@ function removeUnwantedSourceField594s(base, source) {
   }
 
   const sourceFields594 = getRelevant5XXFields(source, false, true);
-  nvdebugFieldArray(sourceFields594, '  Remove unwanted source 594: ');
+  nvdebugFieldArray(sourceFields594, '  Remove unwanted source 594: ', debugDev);
   sourceFields594.forEach(field => source.removeField(field));
 
   function keepSource594() {
@@ -117,7 +121,7 @@ function removeUninterestingSourceField594s(base, source) {
   const sourceFields594 = getRelevant5XXFields(source, false, true);
 
   const deletableFields = sourceFields594.filter(sourceField => !isKingOfTheHill(sourceField, baseFields594));
-  nvdebugFieldArray(deletableFields, '  Remove uninteresting source 594: ');
+  nvdebugFieldArray(deletableFields, '  Remove uninteresting source 594: ', debugDev);
   deletableFields.forEach(field => source.removeField(field));
 }
 
@@ -132,8 +136,8 @@ function copySource594ToSource500(record) {
   // Add if field 594 is better than anything in fields 500.
   // NB! This adds all the better values, not just the best.
   const addables = fields594.filter(field594 => isKingOfTheHill(field594, fields500));
-  nvdebugFieldArray(fields594, 'CAND4ADD: ');
-  nvdebugFieldArray(addables, 'ADDABLE: ');
+  nvdebugFieldArray(fields594, 'CAND4ADD: ', debugDev);
+  nvdebugFieldArray(addables, 'ADDABLE: ', debugDev);
   // NB: FIX LATER: there should be just one addable (even if 594 had many)
   addables.forEach(field => {
     const subfieldA = field.subfields.find(sf => sf.code === 'a');
@@ -145,7 +149,7 @@ function copySource594ToSource500(record) {
     const newSubfieldAValue = subfieldA.value.slice(-1) === '.' ? subfieldA.value : `${subfieldA.value}.`;
     const newField = {'tag': '500', 'ind1': ' ', 'ind2': ' ', 'subfields': [{'code': 'a', 'value': newSubfieldAValue}]};
     record.insertField(newField);
-    nvdebug(`Added ${fieldToString(newField)}`);
+    nvdebug(`Added ${fieldToString(newField)}`, debugDev);
   });
 }
 
@@ -165,7 +169,7 @@ function preprocessSourceField594(base, source) {
 
 function removeField263(record) {
   const deletableFields = record.get(/^263$/u);
-  nvdebug(`removeField263() got ${deletableFields.length} deletable field(s)`);
+  nvdebug(`removeField263() got ${deletableFields.length} deletable field(s)`, debugDev);
   deletableFields.forEach(field => record.removeField(field));
   removeEiVielaIlmestynyt500(record);
 }
@@ -173,7 +177,7 @@ function removeField263(record) {
 function removeEiVielaIlmestynyt500(record) {
 
   const deletableFields = record.get(/^500$/u).filter(field => isEVI(field));
-  nvdebugFieldArray(deletableFields, 'remove500(): ');
+  nvdebugFieldArray(deletableFields, 'remove500(): ', debugDev);
   deletableFields.forEach(field => record.removeField(field));
 
   function isEVI(field) {
@@ -194,13 +198,13 @@ function handleField263(base, source) {
   // NB! Here smaller is better. Skips only ENNAKKO_TIETO_OR_EOS.
   if (baseEncodingLevel === '8') { // LDR/17='8'
     const prepublicationLevel = getPrepublicationLevel(base, true, true); // NB! Any prepub info is used here!
-    nvdebug(`handleField263: Prepublication level is ${prepublicationLevel}`);
+    nvdebug(`handleField263: Prepublication level is ${prepublicationLevel}`, debugDev);
     if (prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto(prepublicationLevel)) {
       removeField263(source);
       return;
     }
   }
-  nvdebug(`handleField263() base field 263 removal not handled yet`);
+  nvdebug(`handleField263() base field 263 removal not handled yet`, debugDev);
 
   // If baseRecordLevel < prePub/tarkistettu ennakkotieto && baseRecord === databaseRecord && sourceRecord === incomingRecord && incomingCataloger === IMP_ENNAKK || IMP_VPKPK || ???  -> KEEP fromSource & DROP fromBase
 }

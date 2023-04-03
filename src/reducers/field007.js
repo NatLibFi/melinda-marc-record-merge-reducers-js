@@ -4,7 +4,7 @@ import {fillControlFieldGaps, isFillableControlFieldPair} from './controlFieldUt
 import {copyFields /*, fieldToString, getEncodingLevelRanking*/} from './utils.js';
 
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:field007');
 
 export default () => (base, source) => {
   // NB! This implementation differs from the specs. However, that's because the specs are bad. See comments for details.
