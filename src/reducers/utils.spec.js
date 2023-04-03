@@ -5,6 +5,8 @@ import * as utils from './utils';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils:test');
+//const debugData = debug.extend('data');
+//const debugDev = debug.extend('dev');
 
 MarcRecord.setValidationOptions({subfieldValues: false});
 const {expect} = chai;

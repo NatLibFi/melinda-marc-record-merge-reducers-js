@@ -5,6 +5,8 @@ import {copyFields /*, fieldToString, getEncodingLevelRanking*/} from './utils.j
 
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:field007');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 export default () => (base, source) => {
   // NB! This implementation differs from the specs. However, that's because the specs are bad. See comments for details.
@@ -27,7 +29,7 @@ export default () => (base, source) => {
 
   // If and only if base contains no 007 fields, we *source* what base has:
   if (baseFields.length === 0 && sourceFields.length > 0) {
-    debug(`Copy ${sourceFields.length} source field(s), since host has no 007`);
+    debugDev(`Copy ${sourceFields.length} source field(s), since host has no 007`);
     copyFields(baseRecord, sourceFields);
     return {base: baseRecord, source};
   }

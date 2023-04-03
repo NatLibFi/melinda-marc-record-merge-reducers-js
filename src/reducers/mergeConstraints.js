@@ -1,5 +1,8 @@
 import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeConstraints');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
+
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 // "key" is an unique key that must match (be absent or exist+be identical) in both.
@@ -286,12 +289,12 @@ function constraintToValue(tagsConstraints, constraintName) {
 export function getMergeConstraintsForTag(tag, constraintName) {
   const tagsConstraintsArray = mergeConstraints.filter(entry => tag === entry.tag);
   if (tagsConstraintsArray.length === 0) {
-    debug(`WARNING\tNo key found for ${tag}. Returning NULL!`);
+    debugDev(`WARNING\tNo key found for ${tag}. Returning NULL!`);
     return null;
   }
   // NB! should we support multiple contains for a field? Eg. 505$a vs 505($tg)+
   if (tagsConstraintsArray.length > 1) { // eslint-disable-line functional/no-conditional-statement
-    debug(`WARNING\tMultiple values for '${constraintName}' (N=${tagsConstraintsArray.length}) found in ${tag}. Using first values.`);
+    debugDev(`WARNING\tMultiple values for '${constraintName}' (N=${tagsConstraintsArray.length}) found in ${tag}. Using first values.`);
   }
   return constraintToValue(tagsConstraintsArray[0], constraintName);
 }

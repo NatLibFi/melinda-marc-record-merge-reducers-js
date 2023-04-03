@@ -30,7 +30,7 @@ function ennakkotietoInSubfieldG(candSubfieldData) {
   if (candSubfieldData.code === 'g' && candSubfieldData.originalValue === 'ENNAKKOTIETO.') {
     // Skip just ‡g subfield or the whole field?
     // We decided to skip just this subfield. We want at least $0 and maybe even more from ennakkotieto.
-    debug('Skip ‡g ENNAKKOTIETO.');
+    debugDev('Skip ‡g ENNAKKOTIETO.');
     return true;
   }
   return false;

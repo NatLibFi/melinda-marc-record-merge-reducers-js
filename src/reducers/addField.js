@@ -31,7 +31,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   debugData(`Base: ${JSON.stringify(base)}`);
   debugData(`Source: ${JSON.stringify(source)}`);
 
-  debug(`CONFIG: ${JSON.stringify(config.preprocessorDirectives)}`);
+  debugDev(`CONFIG: ${JSON.stringify(config.preprocessorDirectives)}`);
   // There are bunch of rules we want to apply after field merge and before field add.
   // They are run here.
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
@@ -40,7 +40,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   removeNonRepeatableDataFieldsFromSourceIfFieldExistsInBase(baseRecord, sourceRecord);
 
   const activeTagPattern = getTagPattern(config);
-  debug(`TAG PATTERN: ${JSON.stringify(activeTagPattern)}`);
+  debugDev(`TAG PATTERN: ${JSON.stringify(activeTagPattern)}`);
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 

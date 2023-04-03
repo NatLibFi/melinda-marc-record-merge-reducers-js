@@ -63,7 +63,7 @@ const subfieldSortOrder = [
 function getSubfieldSortOrder(field) {
   const entry = subfieldSortOrder.filter(currEntry => field.tag === currEntry.tag);
   if (entry.length > 0 && 'sortOrder' in entry[0]) {
-    debug(`sort order for ${field.tag}: ${entry[0].sortOrder}`);
+    debugDev(`sort order for ${field.tag}: ${entry[0].sortOrder}`);
     return entry[0].sortOrder;
   }
   //debug(`NO DROPPABLE SUBFIELDS FOUND FOR ${field.tag}.`);

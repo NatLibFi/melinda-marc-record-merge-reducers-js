@@ -51,7 +51,7 @@ function controlSubfield6PermitsMerge(field1, field2) {
 
   // There are two (plus) fields involved (Field XXX (one) and field 880 (one plus).
   // Thus this generic solution can't handle them. Use postprocess instead.
-  debug(`  controlSubfield6PermitsMerge() fails always on generic part (feature).`);
+  debugDev(`  controlSubfield6PermitsMerge() fails always on generic part (feature).`);
   return false;
 }
 
@@ -213,11 +213,11 @@ function isMatchAfterNormalization(currSubfield, otherField) {
   if (hits.length === 0 || // <-- Nothing found, so it can't be a mismatch
       // Every opposing subfields match:
       hits.every(sf2 => normalizedCurrSubfieldValue === normalizeControlSubfieldValue(sf2.value))) {
-    debug(`Subfield ‡${currSubfield.code} check OK: No opposing ${prefix} prefixes found.`);
+    debugDev(`Subfield ‡${currSubfield.code} check OK: No opposing ${prefix} prefixes found.`);
     return true;
   }
 
-  debug(`Subfield ‡${currSubfield.code} check FAILED: ‡${currSubfield.code} '${currSubfield.value}' vs ‡${currSubfield.code} '${hits[0].value}'.`);
+  debugDev(`Subfield ‡${currSubfield.code} check FAILED: ‡${currSubfield.code} '${currSubfield.value}' vs ‡${currSubfield.code} '${hits[0].value}'.`);
   return false;
 }
 
@@ -231,7 +231,7 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
       return true;
     }
 
-    debug(`Compare ‡${subfieldCode} '${subfield.value}' with '${fieldToString(field2)}'.`);
+    debugDev(`Compare ‡${subfieldCode} '${subfield.value}' with '${fieldToString(field2)}'.`);
     if (fieldHasSubfield(field2, field1.code, field1.value)) {
       return true;
     }
@@ -240,7 +240,7 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
   });
 
   if (!result) {
-    debug(`Control subfield '${subfieldCode}' check failed.`);
+    debugDev(`Control subfield '${subfieldCode}' check failed.`);
     return false;
   }
   return true;

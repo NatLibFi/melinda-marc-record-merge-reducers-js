@@ -170,7 +170,7 @@ function mandatorySubfieldComparison(originalField1, originalField2, keySubfield
     const subfieldValues2 = field2.subfields.filter(subfield => subfield.code === subfieldCode).map(sf => sf.value);
     // Assume that at least 1 instance must exist and that all instances must match
     if (subfieldValues1.length !== subfieldValues2.length) {
-      debug(`mSC: Unique key: subfield ${subfieldCode} issues...`);
+      debugDev(`mSC: Unique key: subfield ${subfieldCode} issues...`);
       return false;
     }
 
@@ -199,7 +199,7 @@ function areRequiredSubfieldsPresent(field) {
   return subfieldArray.every(sfcode => {
     const result = fieldHasSubfield(field, sfcode);
     if (!result) {
-      debug(`Required subfield ‡${sfcode} not found in '${fieldToString(field)}'!`);
+      debugDev(`Required subfield ‡${sfcode} not found in '${fieldToString(field)}'!`);
       return false;
     }
     return true;
@@ -388,7 +388,7 @@ function fieldToNamePart(field) {
 
   /*
   if (index > -1) { // eslint-disable-line functional/no-conditional-statement
-    debug(`Name subset: ${fieldToString(subsetField)}`);
+    debugDev(`Name subset: ${fieldToString(subsetField)}`);
   }
   */
   return subsetField;
@@ -398,7 +398,7 @@ function fieldToTitlePart(field) {
   // Take everything after 1st subfield $t...
   const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i >= index)};
-  debug(`Title subset: ${fieldToString(subsetField)}`);
+  debugDev(`Title subset: ${fieldToString(subsetField)}`);
   return subsetField;
 }
 
@@ -418,7 +418,7 @@ function titlePartsMatch(field1, field2) {
     return false;
   }
 
-  debug(`TITLE PARTS NEED TO BE COMPARED`);
+  debugDev(`TITLE PARTS NEED TO BE COMPARED`);
 
   // 100$a$t: remove $t and everything after that
   const subset1 = fieldToTitlePart(field1);

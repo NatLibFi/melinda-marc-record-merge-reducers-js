@@ -58,7 +58,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
 
   candidateFields.forEach(candField => {
-    debug(`Now merging (or trying to) field ${fieldToString(candField)}`);
+    debugDev(`Now merging (or trying to) field ${fieldToString(candField)}`);
     // If $6 is merged from 700 to 100, the corresponding 880 field will change!
     const candFieldPairs880 = candField.tag === '880' ? undefined : fieldGetSubfield6Pairs(candField, sourceRecord);
     nvdebug(`SELF: ${fieldToString(candField)}`, debugDev);
@@ -155,7 +155,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
       nvdebug(`   RESULT: '${newValue}'`, debugDev);
       //debug(`   TODO: sort subfields, handle punctuation...`);
     }
-    //else { debug(`  mergeOrAddSubfield() did not add '‡${fieldToString(subfieldForMergeOrAdd)}' to '${originalValue}'`); }
+    //else { debugDev(`  mergeOrAddSubfield() did not add '‡${fieldToString(subfieldForMergeOrAdd)}' to '${originalValue}'`); }
 
   });
 }
@@ -195,7 +195,7 @@ export function mergeField(baseRecord, sourceField, config, candFieldPairs880 = 
     return true;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  debug(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`);
+  debugDev(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`);
   return false;
 }
 
