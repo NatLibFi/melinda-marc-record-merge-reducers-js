@@ -3,7 +3,9 @@ import createDebugLogger from 'debug';
 import fs from 'fs';
 import path from 'path';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 // Get array of field tags for use in other functions
 export function getTags(fields) {
@@ -24,7 +26,7 @@ export function fieldsAreIdentical(field1, field2) {
 // Modified from copy functionality in marc-record-merge
 // Changed function name from checkIdenticalness to getNonIdenticalFields / SS 28.5.2021
 export function getNonIdenticalFields(baseFields, sourceFields) {
-  // debug(`gNIF() in... ${baseFields.length} vs ${sourceFields.length}`);
+  // debugDev(`gNIF() in... ${baseFields.length} vs ${sourceFields.length}`);
 
   /*
   const baseFieldsAsString = baseFields.map(field => fieldToString(field));
@@ -58,11 +60,11 @@ export function fieldToString(f) {
 // Copy all (typically non-identical in our context) fields from source to base
 export function copyFields(record, fields) {
   fields.forEach(f => {
-    debug(`Field ${fieldToString(f)} copied from source to base`);
+    debugDev(`Field ${fieldToString(f)} copied from source to base`);
     record.insertField(f);
   });
   // const tags = fields.map(field => field.tag);
-  // tags.forEach(tag => debug('Field '+ mapDataField(copied from source to base`));
+  // tags.forEach(tag => debugDev('Field '+ mapDataField(copied from source to base`));
   return record;
 }
 
@@ -112,7 +114,7 @@ function isNonStandardNonrepeatableSubfield(tag, subfieldCode) {
 export function subfieldIsRepeatable(tag, subfieldCode) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
-    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debug);
+    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debugDev);
     return true;
   }
 
@@ -142,7 +144,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
 export function fieldIsRepeatable(tag) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
-    debug(` WARNING! Getting field ${tag} data failed! Default to repeatable field.`);
+    debugDev(` WARNING! Getting field ${tag} data failed! Default to repeatable field.`);
     return true;
   }
   return fieldSpecs[0].repeatable;
@@ -189,7 +191,7 @@ export function recordHasField(record, tag) {
 export function recordReplaceField(record, originalField, newField) {
   const index = record.fields.findIndex(field => field === originalField);
   if (index === -1) {
-    debug('WARNING: recordReplaceField: Failed to find the original field');
+    debugDev('WARNING: recordReplaceField: Failed to find the original field');
     // Should this function return something for success or failure?
     return record;
   }
@@ -215,16 +217,21 @@ export function isControlSubfieldCode(subfieldCode) {
 export function nvdebug(message, func = undefined) {
   if (func) { // eslint-disable-line functional/no-conditional-statement
     func(message);
+    return;
   }
-  console.info(message); // eslint-disable-line no-console
+  if (!func) {
+    // eslint-disable-next-line no-console
+    console.info(message);
+    return;
+  }
 }
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
-  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`), func);
+  fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func));
 }
 
 export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
-  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`), func);
+  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func));
 }
 
 export function removeCopyright(value) {
@@ -243,10 +250,10 @@ export function getEncodingLevelRanking(record) {
   const ldr17 = record.leader.charAt(17); //record.leader[17];
   if (ldr17 in ldr17ToRanking) {
     const ranking = ldr17ToRanking[ldr17];
-    debug(`LDR/17 ranking is ${ranking}`);
+    debugDev(`LDR/17 ranking is ${ranking}`);
     return ranking;
   }
-  debug(`LDR/19 VALUE '${ldr17}' NOT FOUND. USING DEFAULT RANKING 10.`);
+  debugDev(`LDR/19 VALUE '${ldr17}' NOT FOUND. USING DEFAULT RANKING 10.`);
   return 10;
   //return levelCodes.filter(level => level.levelValue === record.leader[17])[0].levelCode;
 }

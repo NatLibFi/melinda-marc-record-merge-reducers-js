@@ -20,7 +20,7 @@ export function valueCarriesMeaning(tag, subfieldCode, value) {
 
 export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
   const value = normalizeForSamenessCheck2(tag, subfieldCode, originalValue);
-  //nvdebug(`SAMENESS: ${originalValue} => ${value}`);
+  //nvdebug(`SAMENESS: ${originalValue} => ${value}`, debug);
   return value;
 }
 

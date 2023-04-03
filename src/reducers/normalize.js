@@ -13,6 +13,8 @@ import createDebugLogger from 'debug';
 import {normalizePartData, subfieldContainsPartData} from './normalizePart.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalize');
+//const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   /*
@@ -21,7 +23,7 @@ function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
     oldField.subfields.forEach((subfield, index) => {
       const newValue = newField.subfields[index].value;
       if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statement
-        nvdebug(`NORMALIZE SUBFIELD: '${subfield.value}' => '${newValue}'`);
+        nvdebug(`NORMALIZE SUBFIELD: '${subfield.value}' => '${newValue}'`, debugDev);
       }
     });
   }
@@ -31,7 +33,7 @@ function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   if (oldString === newString) {
     return;
   }
-  //nvdebug(`NORMALIZE FIELD:\n '${fieldToString(oldField)}' =>\n '${fieldToString(newField)}'`);
+  //nvdebug(`NORMALIZE FIELD:\n '${fieldToString(oldField)}' =>\n '${fieldToString(newField)}'`, debugDev);
 }
 
 function containsHumanName(tag = '???', subfieldCode = undefined) {
@@ -99,8 +101,8 @@ function subfieldValueLowercase(value, subfieldCode, tag) {
   //return value.toLowerCase();
   const newValue = value.toLowerCase();
   if (newValue !== value) {
-    //nvdebug(`SVL ${tag} $${subfieldCode} '${value}' =>`);
-    //nvdebug(`SVL ${tag} $${subfieldCode} '${newValue}'`);
+    //nvdebug(`SVL ${tag} $${subfieldCode} '${value}' =>`, debugDev);
+    //nvdebug(`SVL ${tag} $${subfieldCode} '${newValue}'`, debugDev);
     return newValue;
   }
   return value;
@@ -243,7 +245,7 @@ export function cloneAndRemovePunctuation(field) {
   }
   fieldStripPunctuation(clonedField);
   fieldTrimSubfieldValues(clonedField);
-  debug('PUNC');
+  debugDev('PUNC');
   debugFieldComparison(field, clonedField);
 
   return clonedField;

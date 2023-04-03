@@ -2,13 +2,14 @@ import createDebugLogger from 'debug';
 import {isRelevantField6, isValidSubfield6, pairAndStringify6, removeField6IfNeeded, subfieldGetIndex6} from './subfield6Utils';
 import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preProcessSubfield6');
 //const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 
 // Remove unpaired
 export default () => (base, source) => {
-  //nvdebug(`ENTERING postprocessSubfield6.js`);
+  //nvdebug(`ENTERING postprocessSubfield6.js`, debugDev);
   //nvdebug(JSON.stringify(base));
   //nvdebug(JSON.stringify(source));
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
@@ -40,7 +41,7 @@ function subfieldApplies(subfield, lookFor) {
     return false;
   }
   const key = subfield.value.replace(/^([0-9][0-9][0-9]-[0-9][0-9]+).*$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-  nvdebug(` Compare '${key}' vs '${lookFor}'`);
+  nvdebug(` Compare '${key}' vs '${lookFor}'`, debugDev);
   return key === lookFor;
 }
 
@@ -64,7 +65,7 @@ function findPairForSubfield6(subfield6, myTag, fields) {
 
   //const index = subfield6.value.substring(4, 6);
   const lookFor = getPairValue(subfield6, myTag);
-  nvdebug(`Try to find  ${lookFor}...`);
+  nvdebug(`Try to find  ${lookFor}...`, debugDev);
   const relevantFields = fields.filter(field => field.tag === referredTag && field.subfields.some(sf => subfieldApplies(sf, lookFor)));
   if (relevantFields.length === 0) {
     return undefined;
@@ -83,7 +84,7 @@ function cleanAndReturnTrueIfDeletable(field, fields) {
       const remainingSubfields = field.subfields.filter(sf => pairlessSixes.every(sf2 => sf2.code !== sf.code || sf2.value !== sf.value));
       if (remainingSubfields.length) { // Just clean up the crappy $6s as decent $6 remains
         const removables = field.subfields.filter(sf => pairlessSixes.every(sf2 => sf2.code === sf.code && sf2.value === sf.value));
-        removables.forEach(sf => nvdebug(`Remove pairless $6 subfield: ${subfieldToString(sf)}`));
+        removables.forEach(sf => nvdebug(`Remove pairless $6 subfield: ${subfieldToString(sf)}`, debugDev));
 
         field.subfields = remainingSubfields; // eslint-disable-line functional/immutable-data
         return false;
@@ -111,7 +112,7 @@ export function removeDuplicatedDatafieldsWithSubfield6(record) {
   /* eslint-disable */
   let seen = {};
 
-  record.fields.forEach(field => nvdebug(`CHECK ${fieldToString(field)}`));
+  record.fields.forEach(field => nvdebug(`CHECK ${fieldToString(field)}`, debugDev));
   
   const fields6 = record.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
   
@@ -120,11 +121,11 @@ export function removeDuplicatedDatafieldsWithSubfield6(record) {
   function removeDuplicatedDatafieldWithSubfield6(field) {
     const fieldAsString = pairAndStringify6(field, record);
     if ( fieldAsString in seen ) {
-      nvdebug(`REMOVE? ${fieldAsString}`, debug);
+      nvdebug(`REMOVE? ${fieldAsString}`, debugDev);
       removeField6IfNeeded(field, record, [fieldAsString]);
       return;
     }
-    nvdebug(`ADD2SEEN ${fieldAsString}`, debug);
+    nvdebug(`ADD2SEEN ${fieldAsString}`, debugDev);
     seen[fieldAsString] = 1;
   }
 

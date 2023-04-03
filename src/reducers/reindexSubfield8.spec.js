@@ -22,13 +22,13 @@ describe('subfield 8 reindexing tests: ', () => {
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
-    //nvdebug('SF8 WP8');
+    //nvdebug('SF8 WP8', debug);
     const expectedRecord = getFixture('modifiedSource.json');
-    //nvdebug('SF8 WP9');
+    //nvdebug('SF8 WP9', debug);
     const marcReducers = generateReducers(tagPattern, config);
-    //nvdebug('SF8 WP10');
+    //nvdebug('SF8 WP10', debug);
     const modBaseAndSource = marcReducers(base, source);
-    //nvdebug('SF8 WP11');
+    //nvdebug('SF8 WP11', debug);
     const modifiedSource = modBaseAndSource.source; //modBaseAndSource[modBaseAndSource.length - 1];
     expect(modifiedSource.toObject()).to.eql(expectedRecord);
 

@@ -24,6 +24,7 @@ const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..'
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
 //const debugData = debug.extend('data');
+const debugDev = debug.extend('dev');
 
 const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
@@ -31,7 +32,7 @@ const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 // Should this load default configuration?
 //export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
 export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (baseRecord, sourceRecord) => {
-  nvdebug(`ENTERING mergeField.js`, debug);
+  nvdebug(`ENTERING mergeField.js`, debugDev);
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
   //const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
@@ -42,7 +43,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   //sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`));
 
-  //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debug);
+  //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debugDev);
 
   normalizeEncoding().fix(baseRecord);
   normalizeEncoding().fix(sourceRecord);
@@ -57,11 +58,11 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
 
   candidateFields.forEach(candField => {
-    debug(`Now merging (or trying to) field ${fieldToString(candField)}`);
+    debugDev(`Now merging (or trying to) field ${fieldToString(candField)}`);
     // If $6 is merged from 700 to 100, the corresponding 880 field will change!
     const candFieldPairs880 = candField.tag === '880' ? undefined : fieldGetSubfield6Pairs(candField, sourceRecord);
-    nvdebug(`SELF: ${fieldToString(candField)}`);
-    nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`);
+    nvdebug(`SELF: ${fieldToString(candField)}`, debugDev);
+    nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`, debugDev);
     mergeField(baseRecord, candField, config, candFieldPairs880);
   });
 
@@ -135,9 +136,9 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
   const normalizedSourceField = cloneAndNormalizeFieldForComparison(sourceField); //cloneAndRemovePunctuation(sourceField);
   const strippedSourceField = cloneAndRemovePunctuation(sourceField);
 
-  //nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(sourceField)}' (original)`);
-  //nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}' (comparison)`);
-  nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(strippedSourceField)}' (merge/add)`);
+  //nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(sourceField)}' (original)`, debugDev);
+  //nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}' (comparison)`, debugDev);
+  nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(strippedSourceField)}' (merge/add)`, debugDev);
 
   sourceField.subfields.forEach((originalSubfield, index) => {
   //strippedSourceField.subfields.forEach((subfieldForMergeOrAdd, index) => {
@@ -150,11 +151,11 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
     mergeOrAddSubfield(baseField, subfieldData, candFieldPairs880); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
-      nvdebug(`  MERGING SUBFIELD '${subfieldToString(punctlessSubfield)}' TO '${originalValue}'`, debug);
-      nvdebug(`   RESULT: '${newValue}'`, debug);
+      nvdebug(`  MERGING SUBFIELD '${subfieldToString(punctlessSubfield)}' TO '${originalValue}'`, debugDev);
+      nvdebug(`   RESULT: '${newValue}'`, debugDev);
       //debug(`   TODO: sort subfields, handle punctuation...`);
     }
-    //else { debug(`  mergeOrAddSubfield() did not add '‡${fieldToString(subfieldForMergeOrAdd)}' to '${originalValue}'`); }
+    //else { debugDev(`  mergeOrAddSubfield() did not add '‡${fieldToString(subfieldForMergeOrAdd)}' to '${originalValue}'`); }
 
   });
 }
@@ -162,13 +163,13 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
 
 function skipMergeField(baseRecord, sourceField, config) {
   if (!mergableTag(sourceField.tag, config)) {
-    nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' listed as skippable!`);
+    nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' listed as skippable!`, debugDev);
     return true;
   }
 
   // Skip duplicate field:
   if (baseRecord.fields.some(baseField => fieldsAreIdentical(sourceField, baseField))) {
-    nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' already exists! No merge required!`);
+    nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' already exists! No merge required!`, debugDev);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
@@ -177,24 +178,24 @@ function skipMergeField(baseRecord, sourceField, config) {
 }
 
 export function mergeField(baseRecord, sourceField, config, candFieldPairs880 = []) {
-  nvdebug(`MERGE SOURCE FIELD '${fieldToString(sourceField)}'`); //  mergeField config: ${JSON.stringify(config)}`);
+  nvdebug(`MERGE SOURCE FIELD '${fieldToString(sourceField)}'`, debugDev); //  mergeField config: ${JSON.stringify(config)}`, debugDev);
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
-    nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`);
+    nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debugDev);
     return false;
   }
 
-  nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`);
+  nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`, debugDev);
   const counterpartField = getCounterpart(baseRecord, sourceField, config);
 
   if (counterpartField) {
-    nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`);
+    nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debugDev);
     mergeField2(baseRecord, counterpartField, sourceField, config, candFieldPairs880);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
   }
   // NB! Counterpartless field is inserted to 7XX even if field.tag says 1XX:
-  debug(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`);
+  debugDev(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`);
   return false;
 }
 
