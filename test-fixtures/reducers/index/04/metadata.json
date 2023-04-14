@@ -3,5 +3,6 @@
   "comment": "Note that 594 field drops affect only $5 FENNI/FIKKA/VIOLA and thus the field with $5 WHATEVER is retained",
   "comment #2": "2023-02-28: Add MET-198-ish field-merge for field 245. NB! punc is added to 245$c!",
   "comment #3": "contains orphaned $6 removal stuff as well (though apparently not yet working properly)",
-  "only": false
+  "comment #4": "normalize (=dehyphenate and x-uppercase) ISBN in 020$a as per MELINDA-8362-ish",
+  "only": true
 }
