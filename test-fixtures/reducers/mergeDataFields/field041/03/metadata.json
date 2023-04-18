@@ -1,4 +1,5 @@
 {
-  "description":"041: drop base's crappy $a zxx. Not sure whether this is our task, but we'll do it anyway.",
-  "skip": "true"
+  "description":"041: Keep base's crappy $d zxx.",
+  "skip": false,
+  "only": false
 }
