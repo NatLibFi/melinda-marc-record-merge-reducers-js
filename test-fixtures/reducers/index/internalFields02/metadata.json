@@ -1,0 +1,7 @@
+{
+  "description":"Some identical, some different --> copy different from source to base",
+  "tagPattern": "^(LOW|CAT|SID)$",
+  "comment": "I need to check the logic behind new field position determination",
+  "skip": false,
+  "only": false
+}
