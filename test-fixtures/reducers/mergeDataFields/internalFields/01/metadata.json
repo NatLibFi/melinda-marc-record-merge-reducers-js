@@ -1,4 +1,0 @@
-{
-  "description":"Identical LOW, CAT, SID (2x each) --> keep base",
-  "tagPattern": "^(LOW|CAT|SID)$"
-}
