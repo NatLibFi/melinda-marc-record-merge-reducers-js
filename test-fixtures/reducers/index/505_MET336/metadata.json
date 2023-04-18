@@ -1,0 +1,6 @@
+{
+  "description":"MET-336: $8 chain + $9 FENNI<KEEP> vs $8-only",
+  "comment": "currently keepless version is kept, needs work on the validator side... thus SKIP for now",
+  "only": false,
+  "skip": true
+}
