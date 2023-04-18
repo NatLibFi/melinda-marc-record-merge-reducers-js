@@ -1,7 +1,7 @@
 {
   "description":"09 Field 490: MET-110: merge despite punctuation difference",
   "comment": "The trick here is to take the better punctuation from source or punctuate after.",
-  "comment#2": "However, typically we don't do neither if nothing is added to base... thus skip. Call it a FEATURE!",
+  "comment#2": "However, as nothing is added, punctuation does not get triggered... So merge (with no added subfields), but without punctuation... Call it a FEATURE!",
   "only": false,
-  "skip": true
+  "skip": false
 }
