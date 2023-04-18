@@ -12,14 +12,7 @@
     { "tag": "880", "ind1": "1", "ind2": "0", "subfields": [
       { "code": "6", "value": "245-01" },
       { "code": "a", "value": "lorum1 /" },
-      { "code": "c", "value": "ipsum1." },
-      { "code": "9", "value": "CYRILLIC <TRANS>" }
-    ] },
-    { "tag": "880", "ind1": "1", "ind2": "0", "subfields": [
-      { "code": "6", "value": "245-01" },
-      { "code": "a", "value": "lorum2 /" },
-      { "code": "c", "value": "ipsum2." },
-      { "code": "9", "value": "ISO9 <TRANS>" }
+      { "code": "c", "value": "ipsum1." }
     ] }
     
   ]
