@@ -219,28 +219,76 @@
 
             {
                 "operation": "removeField",
-                "comment": "Remove 260 so that a repeatable field won't be copied from source if base already has one",
-                "comment2": "Handling of 26X fields has changed after this rule was added. Can we remove this? Maybe not, even though all tests pass...",
+                "comment": "Remove 260 so that a repeatable field won't be copied from source if base already has 260/264 field",
+                "recordType": "source",
+                "fieldSpecification": { "tag": "260" },
+                "requireBaseField": { "tagPattern": "^26[04]$" }
+            },
+
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 264 so that a repeatable field won't be copied from source if base already has a 260 field",
+                "comment2": "Here we lose information, but can't add a 264 if there's a 260",
+                "recordType": "source",
+                "fieldSpecification": { "tag": "264" },
+                "requireBaseField": { "tagPattern": "^260$" }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove 264 ind2=0 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
                 "fieldSpecification": {
-                    "tag": "260"
+                    "tag": "264",
+                    "ind2": "0"
                 },
                 "requireBaseField": {
-                    "tagPattern": "^(260)$"
+                    "tagPattern": "^(264)$",
+                    "ind2": "0"
                 }
             },
 
             {
                 "operation": "removeField",
-                "comment": "Remove 264 so that a repeatable field won't be copied from source if base already has one",
+                "comment": "Remove source 264 ind2=0 if base has one, so that a repeatable field won't be copied from source",
                 "recordType": "source",
-                "fieldSpecification": {
-                    "tag": "264"
-                },
-                "requireBaseField": {
-                    "tagPattern": "^(264)$"
-                }
+                "fieldSpecification": { "tag": "264", "ind2": "0" },
+                "requireBaseField": { "tag": "264", "ind2": "0" }
             },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove source 264 ind2=1 if base has one, so that a repeatable field won't be copied from source",
+                "recordType": "source",
+                "fieldSpecification": { "tag": "264", "ind2": "1" },
+                "requireBaseField": { "tag": "264", "ind2": "1" }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove source 264 ind2=2 if base has one, so that a repeatable field won't be copied from source",
+                "recordType": "source",
+                "fieldSpecification": { "tag": "264", "ind2": "2" },
+                "requireBaseField": { "tag": "264", "ind2": "2" }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove source 264 ind2=3 if base has one, so that a repeatable field won't be copied from source",
+                "recordType": "source",
+                "fieldSpecification": { "tag": "264", "ind2": "3" },
+                "requireBaseField": { "tag": "264", "ind2": "3" }
+            },
+
+            {
+                "operation": "removeField",
+                "comment": "Remove source 264 ind2=4 if base has one, so that a repeatable field won't be copied from source",
+                "recordType": "source",
+                "fieldSpecification": { "tag": "264", "ind2": "2" },
+                "requireBaseField": { "tag": "264", "ind2": "2" }
+            },
+
 
             {
                 "operation": "removeField",
