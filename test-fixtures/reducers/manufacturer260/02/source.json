@@ -1,0 +1,14 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "260", "ind1": " ", "ind2": "3",
+      "subfields": [
+        { "code": "a", "value": "Paikkakunta :" },
+        { "code": "b", "value": "Kustantantaja" },
+        { "code": "c", "value": "YYYY" },
+        { "code": "f", "value": "(Whatever," },
+        { "code": "g", "value": "2021)" }
+      ]
+    }
+  ]
+}
