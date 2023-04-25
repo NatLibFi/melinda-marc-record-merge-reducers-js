@@ -290,7 +290,7 @@ function pairableAsteriIDs(baseField, sourceField) {
 
 function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
   if (field.tag === '260' || field.tag === '264') {
-    return ['a', 'b', 'c'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
+    return ['a', 'b', 'c', 'e', 'f', 'g'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
   }
   if (field.tag === '382') {
     return ['a', 'b', 'd', 'e', 'n', 'p'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
