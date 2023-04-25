@@ -1,0 +1,4 @@
+{
+  "description":"Convert source 260$efg (without $abc) to 264$abc, since base has 264",
+  "only": false
+}
