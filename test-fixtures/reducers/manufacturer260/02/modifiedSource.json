@@ -2,17 +2,17 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     {
-      "tag": "264",
+      "tag": "260",
       "ind1": " ",
       "ind2": "3",
       "subfields": [
         {
-          "code": "b",
-          "value": "Whatever,"
+          "code": "f",
+          "value": "(Whatever,"
         },
         {
-          "code": "c",
-          "value": "2021"
+          "code": "g",
+          "value": "2021)"
         }
       ]
     }
