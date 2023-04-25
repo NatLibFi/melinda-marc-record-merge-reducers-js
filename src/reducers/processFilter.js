@@ -22,7 +22,8 @@ const debugDev = debug.extend('dev');
 function getSpecifiedFields(record, fieldSpecs) {
   const regexp = regexpifyFieldSpecs(fieldSpecs);
   if (regexp) {
-    return record.get(regexp);
+    const fieldsByTag = record.get(regexp);
+    return fieldsByTag.filter(f => skipByIndicator(f));
   }
   return [];
 
@@ -37,6 +38,16 @@ function getSpecifiedFields(record, fieldSpecs) {
     }
     nvdebug(`TAG Regexp: NULL`, debugDev);
     return null;
+  }
+
+  function skipByIndicator(field) {
+    if ('ind1' in fieldSpecs && fieldSpecs.ind1 !== field.ind1) {
+      return false;
+    }
+    if ('ind2' in fieldSpecs && fieldSpecs.ind2 !== field.ind2) {
+      return false;
+    }
+    return true;
   }
 }
 
