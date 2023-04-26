@@ -40,7 +40,7 @@ describe('add data field tests: ', () => {
     expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
 
     function generateReducers(tagPattern, config) {
-      if (config && tagPattern) { // eslint-disable-line functional/no-conditional-statement
+      if (config && tagPattern) { // eslint-disable-line functional/no-conditional-statements
         config.tagPattern = tagPattern; // eslint-disable-line functional/immutable-data
       }
 

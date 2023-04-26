@@ -1,5 +1,4 @@
 {
-  "description":"Transfer 260$efg to 264$abc",
-  "comment": "Base: splits 260 into 260 and 264. Source: move 260 to 264.",
+  "description":"01: Transfer 260$efg to 264$abc? No, neither field has 264",
   "only": false
 }

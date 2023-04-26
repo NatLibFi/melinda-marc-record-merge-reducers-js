@@ -69,7 +69,7 @@ function fieldUpdateSubfield6s(field, max) {
   field.subfields.forEach(sf => updateSubfield6(sf, max));
 
   function updateSubfield6(sf, max) {
-    if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statement
+    if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statements
       const origIndex = subfield6Index(sf);
       if (origIndex === 0) {
         // "00" is valid exception value. It is not reindexed!

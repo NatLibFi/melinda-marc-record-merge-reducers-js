@@ -1,4 +1,6 @@
 {
-  "description":"041: drop incoming field as it's only subfield ($d zxx) gets dropped",
-  "skip": "true"
+  "description":"041: merge values, note that source's illegal zxx is not dropped here",
+  "comment": "it typically gets dropped in earleic generic preprocessing",
+  "skip": false,
+  "only": false
 }

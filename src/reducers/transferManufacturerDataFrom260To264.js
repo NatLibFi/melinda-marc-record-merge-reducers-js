@@ -7,8 +7,13 @@ const debugDev = debug.extend('dev');
 
 export default () => (base, source) => {
   nvdebug('260$efg to 264$abc transfer', debugDev);
-  handleRecord(base);
-  handleRecord(source);
+  const base264 = base.get('264');
+  const source264 = source.get('264');
+
+  //handleRecord(base);
+  if (source264.length === 0 && base264.length > 0) { // eslint-disable-line functional/no-conditional-statements
+    handleRecord(source);
+  }
   return {base, source};
 };
 
@@ -97,7 +102,7 @@ function extractField(field) {
   const e = extractSubfield(field, ePos);
   const subfields = [e, f, g].filter(val => val !== null);
 
-  subfieldArrayRemoveParentheses(subfields);
+  subfieldArrayRemoveParentheses(subfields); // NV: 264 does not want these parentheses
 
   return {'tag': '264', 'ind1': field.ind1, 'ind2': '3', subfields};
 

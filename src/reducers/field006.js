@@ -25,7 +25,7 @@ export default () => (base, source) => {
   // and they apparently are in the same order,
   // let's try to fill the gaps:
   if (baseFields.length > 0 && baseFields.length === sourceFields.length) {
-    if (baseFields.every((baseField, i) => isFillableControlFieldPair(baseField, sourceFields[i]))) { // eslint-disable-line functional/no-conditional-statement
+    if (baseFields.every((baseField, i) => isFillableControlFieldPair(baseField, sourceFields[i]))) { // eslint-disable-line functional/no-conditional-statements
       baseFields.forEach((baseField, i) => fillControlFieldGaps(baseField, sourceFields[i]));
     }
     return {base: baseRecord, source};

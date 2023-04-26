@@ -290,7 +290,7 @@ function pairableAsteriIDs(baseField, sourceField) {
 
 function hasRepeatableSubfieldThatShouldBeTreatedAsNonRepeatable(field) {
   if (field.tag === '260' || field.tag === '264') {
-    return ['a', 'b', 'c'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
+    return ['a', 'b', 'c', 'e', 'f', 'g'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
   }
   if (field.tag === '382') {
     return ['a', 'b', 'd', 'e', 'n', 'p'].some(subfieldCode => fieldHasMultipleSubfields(field, subfieldCode));
@@ -387,7 +387,7 @@ function fieldToNamePart(field) {
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
 
   /*
-  if (index > -1) { // eslint-disable-line functional/no-conditional-statement
+  if (index > -1) { // eslint-disable-line functional/no-conditional-statements
     debugDev(`Name subset: ${fieldToString(subsetField)}`);
   }
   */

@@ -11,7 +11,7 @@ import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melind
 import {removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
 import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/mergeField500Lisapainokset';
 import {recordResetSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/reindexSubfield6OccurenceNumbers';
-import {removeIndividualInferiorDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeInferiorDataFields';
+import {removeInferiorDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeInferiorDataFields';
 
 
 import {mtsProcessRecord} from './preprocessMetatietosanasto';
@@ -59,7 +59,7 @@ export default (config = defaultConfig) => (base, source) => {
   removeDuplicateDatafields(base, true);
   //nvdebug(`Re-DUP ${JSON.stringify(res)}`, debugDev);
 
-  removeIndividualInferiorDatafields(base, true);
+  removeInferiorDatafields(base, true);
   //res.message.forEach(msg => nvdebug(msg));
 
   //removeDuplicateDatafieldsOld(base);

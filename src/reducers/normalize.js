@@ -19,10 +19,10 @@ const debugDev = debug.extend('dev');
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   /*
   // We may drop certain subfields:
-  if (oldField.subfields.length === newField.subfields.length) { // eslint-disable-line functional/no-conditional-statement
+  if (oldField.subfields.length === newField.subfields.length) { // eslint-disable-line functional/no-conditional-statements
     oldField.subfields.forEach((subfield, index) => {
       const newValue = newField.subfields[index].value;
-      if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statement
+      if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statements
         nvdebug(`NORMALIZE SUBFIELD: '${subfield.value}' => '${newValue}'`, debugDev);
       }
     });
@@ -185,7 +185,30 @@ function fieldRemoveHyphens(field) {
   field.subfields?.forEach(sf => subfieldRemoveHyphens(sf, field.tag));
 }
 
+function normalizeISBN(field) {
+  if (!field.subfields || field.tag !== '020') {
+    return;
+  }
+
+  //nvdebug(`ISBN-field? ${fieldToString(field)}`);
+  field.subfields.forEach(sf => normalizeIsbnSubfield(sf));
+
+  function normalizeIsbnSubfield(sf) {
+    //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`);
+    if (sf.code !== 'a') {
+      return;
+    }
+    if (!sf.value.match(/^(?:[0-9]-?){9}(?:[0-9]-?[0-9]-?[0-9]-?)?[0-9Xx]$/u)) {
+      return;
+    }
+    sf.value = sf.value.replace(/-/ug, ''); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(/x/u, 'X'); // eslint-disable-line functional/immutable-data
+  }
+
+}
+
 function fieldSpecificHacks(field) {
+  normalizeISBN(field); // 020$a, not $z!
   hack490SubfieldA(field);
   fieldRemoveHyphens(field);
 }

@@ -1,0 +1,5 @@
+{
+  "description":"Convert source 260$efg (without $abc) to 264$abc and add the converted field to base",
+  "comment": "264 does not use parentheses, thus they are dropped",
+  "only": false
+}

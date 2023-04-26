@@ -22,7 +22,8 @@ const debugDev = debug.extend('dev');
 function getSpecifiedFields(record, fieldSpecs) {
   const regexp = regexpifyFieldSpecs(fieldSpecs);
   if (regexp) {
-    return record.get(regexp);
+    const fieldsByTag = record.get(regexp);
+    return fieldsByTag.filter(f => skipByIndicator(f));
   }
   return [];
 
@@ -37,6 +38,16 @@ function getSpecifiedFields(record, fieldSpecs) {
     }
     nvdebug(`TAG Regexp: NULL`, debugDev);
     return null;
+  }
+
+  function skipByIndicator(field) {
+    if ('ind1' in fieldSpecs && fieldSpecs.ind1 !== field.ind1) {
+      return false;
+    }
+    if ('ind2' in fieldSpecs && fieldSpecs.ind2 !== field.ind2) {
+      return false;
+    }
+    return true;
   }
 }
 
@@ -224,7 +235,7 @@ function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFi
   function renameSubfields(field, renamableSubfieldFilter) {
     nvdebug(`Try to rename subfields from ${fieldToString(field)} using ${JSON.stringify(renamableSubfieldFilter)}`, debugDev);
     field.subfields.forEach(sf => {
-      if (subfieldFilterMatches(sf, renamableSubfieldFilter)) { // eslint-disable-line functional/no-conditional-statement
+      if (subfieldFilterMatches(sf, renamableSubfieldFilter)) { // eslint-disable-line functional/no-conditional-statements
         sf.code = renamableSubfieldFilter.newCode; // eslint-disable-line functional/immutable-data
       }
     });
@@ -243,7 +254,7 @@ function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFi
     if (remainingSubfields.length < field.subfields.length) {
       nvdebug(` Got ${remainingSubfields.length}/${field.subfields.length} keepable subfield(s)`, debugDev);
       // Delete the whole field as last subfield gets deleted:
-      if (remainingSubfields.length === 0) { // eslint-disable-line functional/no-conditional-statement
+      if (remainingSubfields.length === 0) { // eslint-disable-line functional/no-conditional-statements
         nvdebug('Delete subfieldless field', debugDev);
         record.removeField(field);
         return;

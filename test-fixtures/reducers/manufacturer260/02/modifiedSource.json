@@ -1,19 +1,15 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
-    {
-      "tag": "264",
-      "ind1": " ",
-      "ind2": "3",
-      "subfields": [
-        {
-          "code": "b",
-          "value": "Whatever,"
-        },
-        {
-          "code": "c",
-          "value": "2021"
-        }
+    { "tag": "260", "ind1": " ", "ind2": "3",
+    "subfields": [
+      { "code": "a", "value": "Paikkakunta :" },
+      { "code": "b", "value": "Kustantantaja" },
+      { "code": "c", "value": "YYYY" }
+    ]},
+    { "tag": "264", "ind1": " ", "ind2": "3", "subfields": [
+        { "code": "b", "value": "Whatever," },
+        { "code": "c", "value": "2021" }
       ]
     }
   ]

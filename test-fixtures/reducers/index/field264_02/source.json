@@ -1,0 +1,14 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "source-ID"},
+    { "tag": "264", "ind1": " ", "ind2": "2","subfields": [
+      { "code": "b", "value": "Whatever," },
+      { "code": "c", "value": "2021" }
+    ]},
+    { "tag": "264", "ind1": " ", "ind2": "3","subfields": [
+      { "code": "b", "value": "Summanmutikka," },
+      { "code": "c", "value": "2021" }
+    ]}
+  ]
+}
