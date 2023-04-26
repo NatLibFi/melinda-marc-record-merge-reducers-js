@@ -60,7 +60,7 @@
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.3.7",
 		"cross-env": "^7.0.3",
-		"eslint": "^8.37.0",
+		"eslint": "^8.39.0",
 		"mocha": "^10.2.0",
 		"nodemon": "^2.0.22",
 		"nyc": "^15.1.0"
