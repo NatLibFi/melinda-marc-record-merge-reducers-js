@@ -136,7 +136,7 @@ export function recordNormalizeSubfield9Linkage(record, startPosition = 0) {
   const linkageType = getRHSLinkage(nextField); // either '^^' or '^'
 
   removeLHSLinkingCharacter(currField, linkageType === '^^' ? ' ' : ''); // Replace '^' with either ' ' or ''.
-  if (linkageType === '^^') { // eslint-disable-line functional/no-conditional-statement
+  if (linkageType === '^^') { // eslint-disable-line functional/no-conditional-statements
     nvdebug('CONCAT SUBS BASED ON "^^"', debugDev);
     // Take 2nd subfield (1st is the '$9 ^^') from nextField and append it to the last subfield of currField
     currField.subfields[currField.subfields.length - 1].value += nextField.subfields[1].value; // eslint-disable-line functional/immutable-data

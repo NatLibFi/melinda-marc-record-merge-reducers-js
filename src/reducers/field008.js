@@ -140,7 +140,7 @@ function process008(base, source) {
 
   const [base008] = base.get(regexp008);
   // Copy missing 008 from source (theoretical)
-  if (!base008) { // eslint-disable-line functional/no-conditional-statement
+  if (!base008) { // eslint-disable-line functional/no-conditional-statements
     const clonedField = clone(source008);
     base.insertField(clonedField); // Should we clone this?
     return;

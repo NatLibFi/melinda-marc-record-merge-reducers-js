@@ -11,7 +11,7 @@ export default () => (base, source) => {
   const source264 = source.get('264');
 
   //handleRecord(base);
-  if (source264.length === 0 && base264.length > 0) { // eslint-disable-line functional/no-conditional-statement
+  if (source264.length === 0 && base264.length > 0) { // eslint-disable-line functional/no-conditional-statements
     handleRecord(source);
   }
   return {base, source};

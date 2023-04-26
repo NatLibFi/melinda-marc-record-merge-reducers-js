@@ -88,7 +88,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
   // remove only iff some other subfield remains
-  if (tmp.length > 0) { // eslint-disable-line functional/no-conditional-statement
+  if (tmp.length > 0) { // eslint-disable-line functional/no-conditional-statements
     field.subfields = tmp; // eslint-disable-line functional/immutable-data
   }
 }
@@ -120,7 +120,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
   // If a base ennakkotieto is merged with real data, remove ennakkotieto subfield:
   // (If our prepub normalizations are ok, this should not be needed.
   //  However, it's simple and works well enough, so let's keep it here.)
-  if (fieldHasSubfield(baseField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) { // eslint-disable-line functional/no-conditional-statement
+  if (fieldHasSubfield(baseField, 'g', 'ENNAKKOTIETO.') && !fieldHasSubfield(sourceField, 'g', 'ENNAKKOTIETO.')) { // eslint-disable-line functional/no-conditional-statements
     removeEnnakkotieto(baseField);
     baseField.merged = 1; // eslint-disable-line functional/immutable-data
   }
@@ -150,7 +150,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
 
     mergeOrAddSubfield(baseField, subfieldData, candFieldPairs880); // candSubfield);
     const newValue = fieldToString(baseField);
-    if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statement
+    if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statements
       nvdebug(`  MERGING SUBFIELD '${subfieldToString(punctlessSubfield)}' TO '${originalValue}'`, debugDev);
       nvdebug(`   RESULT: '${newValue}'`, debugDev);
       //debug(`   TODO: sort subfields, handle punctuation...`);

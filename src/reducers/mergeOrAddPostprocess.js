@@ -10,11 +10,11 @@ function postprocessBaseRecord(base, source) {
   const fromLanguage = getCatalogingLanguage(source);
   const toLanguage = getCatalogingLanguage(base);
   base.fields.forEach(field => {
-    if (field.merged || field.added) { // eslint-disable-line functional/no-conditional-statement
+    if (field.merged || field.added) { // eslint-disable-line functional/no-conditional-statements
       fieldTranslateRelatorTerm(field, fromLanguage, toLanguage);
     }
     // remove merge-specific information:
-    if (field.merged) { // eslint-disable-line functional/no-conditional-statement
+    if (field.merged) { // eslint-disable-line functional/no-conditional-statements
       // Field level ideas about things that could be done here:
       // - Fix indicators?
       // Record level fixes should be implemented as validators/fixers
@@ -24,16 +24,16 @@ function postprocessBaseRecord(base, source) {
       delete field.merged; // eslint-disable-line functional/immutable-data
     }
 
-    if (field.useExternalEndPunctuation) { // eslint-disable-line functional/no-conditional-statement
+    if (field.useExternalEndPunctuation) { // eslint-disable-line functional/no-conditional-statements
       delete field.useExternalEndPunctuation; // eslint-disable-line functional/immutable-data
     }
 
-    if (field.added) { // eslint-disable-line functional/no-conditional-statement
+    if (field.added) { // eslint-disable-line functional/no-conditional-statements
       delete field.added; // eslint-disable-line functional/immutable-data
     }
 
     /*
-    if (field.deleted) { // eslint-disable-line functional/no-conditional-statement
+    if (field.deleted) { // eslint-disable-line functional/no-conditional-statements
       delete field.deleted; // eslint-disable-line functional/immutable-data
     }
 */

@@ -387,7 +387,7 @@ function fieldToNamePart(field) {
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
 
   /*
-  if (index > -1) { // eslint-disable-line functional/no-conditional-statement
+  if (index > -1) { // eslint-disable-line functional/no-conditional-statements
     debugDev(`Name subset: ${fieldToString(subsetField)}`);
   }
   */

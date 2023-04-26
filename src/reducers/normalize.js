@@ -19,10 +19,10 @@ const debugDev = debug.extend('dev');
 function debugFieldComparison(oldField, newField) { // NB: Debug-only function!
   /*
   // We may drop certain subfields:
-  if (oldField.subfields.length === newField.subfields.length) { // eslint-disable-line functional/no-conditional-statement
+  if (oldField.subfields.length === newField.subfields.length) { // eslint-disable-line functional/no-conditional-statements
     oldField.subfields.forEach((subfield, index) => {
       const newValue = newField.subfields[index].value;
-      if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statement
+      if (subfield.value !== newValue) { // eslint-disable-line functional/no-conditional-statements
         nvdebug(`NORMALIZE SUBFIELD: '${subfield.value}' => '${newValue}'`, debugDev);
       }
     });
