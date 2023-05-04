@@ -1,0 +1,4 @@
+{
+  "description":"merge 020$a ISBNs. If base has not hyphens, use value from source",
+  "only": false
+}
