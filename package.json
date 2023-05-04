@@ -39,11 +39,11 @@
 		"@natlibfi/marc-record": "^7.2.2",
 		"@natlibfi/marc-record-merge": "^6.0.0-beta.12",
 		"@natlibfi/marc-record-validate": "^8.0.0",
-		"@natlibfi/marc-record-validators-melinda": "^10.3.2",
+		"@natlibfi/marc-record-validators-melinda": "^10.5.1",
 		"@natlibfi/melinda-commons": "^13.0.4",
 		"clone": "^2.1.2",
 		"debug": "^4.3.4",
-		"isbn3": "^1.1.35",
+		"isbn3": "^1.1.36",
 		"normalize-diacritics": "^4.0.0"
 	},
 	"devDependencies": {
