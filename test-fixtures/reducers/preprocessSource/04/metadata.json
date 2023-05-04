@@ -1,3 +1,4 @@
 {
-  "description":"Field 020: Preprocessor hyphenate ISBN 020$a"
+  "description":"Field 020: Preprocessor hyphenate ISBN 020$a",
+  "skip": true
 }
