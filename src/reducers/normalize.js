@@ -172,35 +172,36 @@ function hack490SubfieldA(field) {
   }
 }
 
-
-function subfieldRemoveHyphens(subfield, tag) {
-  // Remove hyphens for comparison purposes from various ISBN subfields:
-  if (subfield.code === 'z' && ['765', '767', '770', '772', '773', '774', '776', '777', '780', '785', '786', '787'].includes(tag)) {
-    subfield.value = subfield.value.replace(/-/ug, ''); // eslint-disable-line functional/immutable-data
-    return;
+export function tagAndSubfieldCodeReferToIsbn(tag, subfieldCode) {
+  // NB! We don't do this to 020$z!
+  if (subfieldCode === 'z' && ['765', '767', '770', '772', '773', '774', '776', '777', '780', '785', '786', '787'].includes(tag)) {
+    return true;
   }
+  if (tag === '020' && subfieldCode === 'a') {
+    return true;
+  }
+  return false;
 }
 
-function fieldRemoveHyphens(field) {
-  field.subfields?.forEach(sf => subfieldRemoveHyphens(sf, field.tag));
+function looksLikeIsbn(value) {
+  // Does not check validity!
+  if (value.match(/^(?:[0-9]-?){9}(?:[0-9]-?[0-9]-?[0-9]-?)?[0-9Xx]$/u)) {
+    return true;
+  }
+  return false;
 }
 
 function normalizeISBN(field) {
-  if (!field.subfields || field.tag !== '020') {
+  if (!field.subfields) {
     return;
   }
 
   //nvdebug(`ISBN-field? ${fieldToString(field)}`);
-  field.subfields.forEach(sf => normalizeIsbnSubfield(sf));
+  const relevantSubfields = field.subfields.filter(sf => tagAndSubfieldCodeReferToIsbn(field.tag, sf.code) && looksLikeIsbn(sf.value));
+  relevantSubfields.forEach(sf => normalizeIsbnSubfield(sf));
 
   function normalizeIsbnSubfield(sf) {
     //nvdebug(` ISBN-subfield? ${subfieldToString(sf)}`);
-    if (sf.code !== 'a') {
-      return;
-    }
-    if (!sf.value.match(/^(?:[0-9]-?){9}(?:[0-9]-?[0-9]-?[0-9]-?)?[0-9Xx]$/u)) {
-      return;
-    }
     sf.value = sf.value.replace(/-/ug, ''); // eslint-disable-line functional/immutable-data
     sf.value = sf.value.replace(/x/u, 'X'); // eslint-disable-line functional/immutable-data
   }
@@ -210,7 +211,6 @@ function normalizeISBN(field) {
 function fieldSpecificHacks(field) {
   normalizeISBN(field); // 020$a, not $z!
   hack490SubfieldA(field);
-  fieldRemoveHyphens(field);
 }
 
 export function fieldTrimSubfieldValues(field) {

@@ -2,6 +2,7 @@ import createDebugLogger from 'debug';
 import {partsAgree, subfieldContainsPartData} from './normalizePart';
 import {valueCarriesMeaning} from './worldKnowledge';
 import {nvdebug} from './utils';
+import {tagAndSubfieldCodeReferToIsbn} from './normalize';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 //const debugData = debug.extend('data');
@@ -166,6 +167,25 @@ function mapBindingToCoverType(field, candSubfield, relevantSubfields) {
   return false;
 }
 
+function preferHyphenatedISBN(field, candSubfield, relevantSubfields) {
+  if (!tagAndSubfieldCodeReferToIsbn(field.tag, candSubfield.code) || candSubfield.value.includes('-') === -1) {
+    return false;
+  }
+
+  // Must not already exist:
+  if (relevantSubfields.some(sf => sf.value === candSubfield.value)) {
+    return false;
+  }
+
+  const hyphenlessSubfields = relevantSubfields.filter(sf => sf.value.includes('-') > -1);
+  const pair = hyphenlessSubfields.find(sf => sf.value === candSubfield.value.replace(/-/gu, ''));
+  if (!pair) {
+    return false;
+  }
+  pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+  return true;
+}
+
 export function mergeSubfield(targetField, candSubfield) {
   // Replace existing subfield with the incoming field. These replacements are by name rather hacky...
   // Currenty we only select the better X00$d.
@@ -186,8 +206,10 @@ export function mergeSubfield(targetField, candSubfield) {
 
   nvdebug(`Got ${relevantSubfields.length} sf-cand(s) for field ${targetField.tag}‡${candSubfield.code}`, debugDev);
 
+
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) ||
-      mapBindingToCoverType(targetField, candSubfield, relevantSubfields)) {
+      mapBindingToCoverType(targetField, candSubfield, relevantSubfields) ||
+      preferHyphenatedISBN(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
 

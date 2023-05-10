@@ -1,11 +1,10 @@
 import createDebugLogger from 'debug';
-//import clone from 'clone';
 import {cloneAndNormalizeFieldForComparison} from './normalize.js';
-//import {mayContainControlNumberIdentifier, normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeAs, normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import {fieldHasSubfield, fieldToString, isControlSubfieldCode, nvdebug, subfieldIsRepeatable, subfieldToString} from './utils.js';
 import {mergeSubfield} from './mergeSubfield.js';
-import {sortAdjacentSubfields} from './sortSubfields.js';
+import {sortAdjacentSubfields} from '@natlibfi/marc-record-validators-melinda/dist/sortSubfields'; //'./sortSubfields.js';
+
 import {valueCarriesMeaning} from './worldKnowledge.js';
 import {resetSubfield6Tag} from './subfield6Utils.js';
 
@@ -55,6 +54,14 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfieldData
   return false;
 }
 
+
+function skipNormalizedComparison(tag, subfieldCode) {
+  if (tag === '020' && subfieldCode === 'a') {
+    return true;
+  }
+  return false;
+}
+
 function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
   if (catalogingSourceModifyingAgencyCandIsOriginalCatalogingSourceAgencyInTargetField(targetField, candSubfieldData) || ennakkotietoInSubfieldG(candSubfieldData)) {
     return true;
@@ -79,16 +86,17 @@ function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
     return true;
   }
 
-  const normalizedTargetField = cloneAndNormalizeFieldForComparison(targetField);
-  nvdebug(`     Look for identical normalized subfields in '${fieldToString(normalizedTargetField)}'`, debugDev);
-  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.normalizedValue})`, debugDev);
+  if (!skipNormalizedComparison(targetField.tag, candSubfieldData.code)) {
+    const normalizedTargetField = cloneAndNormalizeFieldForComparison(targetField);
+    nvdebug(`     Look for identical normalized subfields in '${fieldToString(normalizedTargetField)}'`, debugDev);
+    nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.normalizedValue})`, debugDev);
 
-  if (normalizedTargetField.subfields.some(sf => sf.code === candSubfieldData.code && sf.value === candSubfieldData.normalizedValue)) {
-    // Subfield with identical normalized value exists. Do nothing.
-    // Not ideal 382‡n subfields, I guess... Nor 505‡trg repetitions... These need to be fixed...
-    return true;
+    if (normalizedTargetField.subfields.some(sf => sf.code === candSubfieldData.code && sf.value === candSubfieldData.normalizedValue)) {
+      // Subfield with identical normalized value exists. Do nothing.
+      // Not ideal 382‡n subfields, I guess... Nor 505‡trg repetitions... These need to be fixed...
+      return true;
+    }
   }
-
 
   return false; // (note that this is a double negation: not required is false)
 }
