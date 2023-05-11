@@ -2,7 +2,7 @@
 import {nvdebug, subfieldToString} from './utils.js';
 import createDebugLogger from 'debug';
 import {cloneAndRemovePunctuation} from './normalize.js';
-import {sortAdjacentSubfields} from './sortSubfields.js';
+import {sortAdjacentSubfields} from '@natlibfi/marc-record-validators-melinda/dist/sortSubfields'; //'./sortSubfields.js';
 import {fieldFixPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:removeDuplicateSubfields');

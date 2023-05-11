@@ -1,4 +1,4 @@
-import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
+//import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {getCatalogingLanguage, nvdebug, subfieldToString} from './utils.js';
@@ -10,6 +10,9 @@ import path from 'path';
 import {fieldTrimSubfieldValues} from './normalize.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
+import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melinda/dist/sanitize-vocabulary-source-codes.js';
+import {default as modernize540} from '@natlibfi/marc-record-validators-melinda/dist/update-field-540.js';
+
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
 //const debugData = debug.extend('data');
@@ -54,6 +57,13 @@ export default (config = defaultConfig) => (base, source) => {
   trimRecord(base);
   trimRecord(source);
 
+  fixSourceOfTerm().fix(base);
+  fixSourceOfTerm().fix(source);
+
+  modernize540().fix(base);
+  modernize540().fix(source);
+
+
   nvdebug(`BASE: Reindex $6 duplicates`, debugDev);
   reindexDuplicateSubfield6Indexes(base);
   nvdebug(`SOURCE: Reindex $6 duplicates`, debugDev);
@@ -67,7 +77,7 @@ export default (config = defaultConfig) => (base, source) => {
   // NB! Filter operations should be moved to their own file...
   filterOperations(base, clonedSource, config.preprocessorDirectives);
 
-  const source2 = hyphenateISBN(clonedSource, config); // Should these be done to base as well?
+  const source2 = clonedSource; // hyphenateISBN(clonedSource, config); // Should these be done to base as well?
 
   normalizeField505Separator(base);
   normalizeField505Separator(source2);
@@ -83,6 +93,7 @@ export default (config = defaultConfig) => (base, source) => {
   return result;
 
 
+  /*
   function hyphenateISBN(record) {
     // Not sure whether this should be done, or should we normalize ISBNs during comparison.
     const addHyphensToISBN = isbnIssn({hyphenateISBN: true});
@@ -90,5 +101,6 @@ export default (config = defaultConfig) => (base, source) => {
 
     return record;
   }
+  */
 };
 
