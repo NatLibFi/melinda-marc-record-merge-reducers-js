@@ -26,7 +26,7 @@ function catalogingSourceModifyingAgencyCandIsOriginalCatalogingSourceAgencyInTa
 }
 
 function ennakkotietoInSubfieldG(candSubfieldData) {
-  if (candSubfieldData.code === 'g' && candSubfieldData.originalValue === 'ENNAKKOTIETO.') {
+  if (candSubfieldData.code === 'g' && ['ENNAKKOTIETO.', 'ENNAKKOTIETO'].includes(candSubfieldData.originalValue)) {
     // Skip just ‡g subfield or the whole field?
     // We decided to skip just this subfield. We want at least $0 and maybe even more from ennakkotieto.
     debugDev('Skip ‡g ENNAKKOTIETO.');
