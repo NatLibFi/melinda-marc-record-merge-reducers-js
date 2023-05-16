@@ -429,6 +429,10 @@ function titlePartsMatch(field1, field2) {
 
 
 function getAlternativeNamesFrom9XX(record, field) {
+  // Should we support 6XX and 8XX as well? Prolly not...
+  if (!field.tag.match(/^(?:100|110|111|700|710|711)$/u)) {
+    return [];
+  }
   const tag = `9${field.tag.substring(1)}`;
   const cands = record.get(tag).filter(f => fieldHasSubfield(f, 'a') && fieldHasSubfield(f, 'y'));
   if (cands.length === 0) {
