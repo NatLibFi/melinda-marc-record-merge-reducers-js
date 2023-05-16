@@ -1,0 +1,36 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "source-313"},
+    {
+      "tag": "100", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lorum," },
+        { "code": "e", "value": "kirjoittaja" }
+      ]
+    },
+    {
+      "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Batman," },
+        { "code": "e", "value": "mies." }
+      ]
+    },
+    {
+      "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Teräsmies," },
+        { "code": "e", "value": "valokuvaaja." }
+      ]
+    },
+    {
+      "tag": "900", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lorum" },
+        { "code": "y", "value": "Ipsum" }
+      ]
+    },
+    {
+      "tag": "900", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lepakkomies" },
+        { "code": "y", "value": "Batman" }
+      ]
+    }
+  ]
+}
