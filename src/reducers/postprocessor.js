@@ -18,6 +18,8 @@ import {mtsProcessRecord} from './preprocessMetatietosanasto';
 import {removeDuplicateDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeDuplicateDataFields';
 import {recordFixSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/resolveOrphanedSubfield6s.js';
 import factoryForThereCanBeOnlyOneSubfield0 from '@natlibfi/marc-record-validators-melinda/dist/multiple-subfield-0';
+// import factoryForMergeingRelatorFields from '@natlibfi/marc-record-validators-melinda/dist/mergeRelatorField'; // Not yet in main
+
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:postprocessor');
