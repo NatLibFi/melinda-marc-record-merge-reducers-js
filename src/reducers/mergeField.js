@@ -183,7 +183,7 @@ function mergeField(baseRecord, sourceRecord, sourceField, config) {
   }
 
   nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`, debugDev);
-  const counterpartField = getCounterpart(baseRecord, sourceField, config);
+  const counterpartField = getCounterpart(baseRecord, sourceRecord, sourceField, config);
 
   if (counterpartField) {
     const candFieldPairs880 = sourceField.tag === '880' ? undefined : fieldGetSubfield6Pairs(sourceField, sourceRecord);

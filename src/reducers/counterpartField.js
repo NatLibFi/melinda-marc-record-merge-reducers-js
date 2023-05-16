@@ -428,12 +428,60 @@ function titlePartsMatch(field1, field2) {
 }
 
 
-export function getCounterpart(record, field, config) {
+function getAlternativeNamesFrom9XX(record, normalizedField) {
+  const tag = `9${normalizedField.tag.substring(1)}`;
+  const cands = record.get(tag).filter(f => fieldHasSubfield(f, 'a') && fieldHasSubfield(f, 'y'));
+  if (cands.length === 0) {
+    return [];
+  }
+  const [name] = normalizedField.subfields.filter(sf => sf.code === 'a');
+
+  return cands.map(candField => getAltName(candField)).filter(val => val !== undefined);
+
+
+  function getAltName(altField) {
+    const [altA] = altField.subfields.filter(sf => sf.code === 'a');
+    const [altY] = altField.subfields.filter(sf => sf.code === 'y');
+    if (name === altA) {
+      return altY;
+    }
+    if (name === altY) {
+      return altA;
+    }
+    return undefined;
+  }
+
+}
+
+
+function mergablePairWithAltName(normCandField, normalizedField, altName, config) {
+  // Replace source field $a name with alternative name and then compare:
+  normalizedField.subfields.forEach(subfield => {
+    if (subfield.code === 'a') { // eslint-disable-line functional/no-conditional-statements
+      subfield.value = altName; // eslint-disable-line functional/immutable-data
+    }
+  });
+
+  return mergablePair(normCandField, normalizedField, config);
+}
+
+function getCounterpartIndex(field, counterpartCands, altNames, config) {
+  const normalizedField = cloneAndNormalizeFieldForComparison(field);
+  const normalizedCounterpartCands = counterpartCands.map(f => cloneAndNormalizeFieldForComparison(f));
+  const index = normalizedCounterpartCands.findIndex(normCandField => mergablePair(normCandField, normalizedField, config));
+  if (index > -1) {
+    return index;
+  }
+
+  return normalizedCounterpartCands.findIndex(normCandField => altNames.some(altName => mergablePairWithAltName(normCandField, normalizedField, altName, config)));
+}
+
+export function getCounterpart(baseRecord, sourceRecord, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
   // Tags 260 and 264 are lumped together.
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
   //nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`, debugDev);
-  const counterpartCands = record.get(tagToRegexp(field.tag));
+  const counterpartCands = baseRecord.get(tagToRegexp(field.tag));
 
   if (!counterpartCands || counterpartCands.length === 0) {
     //nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debugDev);
@@ -443,21 +491,18 @@ export function getCounterpart(record, field, config) {
   //nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debugDev);
 
   const normalizedField = cloneAndNormalizeFieldForComparison(field);
+
+  // Try to look for alternative names from base and source record's 9XX fields:
+  const alternativeNames = getAlternativeNamesFrom9XX(baseRecord, field).concat(getAlternativeNamesFrom9XX(sourceRecord, field));
+  const uniqueAlternativeNames = alternativeNames.filter((name, i) => alternativeNames.indexOf(name) === i);
+
   //nvdebug(` S: ${fieldToString(normalizedField)}`, debugDev);
   // Then find (the index of) the first mathing candidate field and return it.
-  const index = counterpartCands.findIndex((currCand) => {
-    const normalizedCurrCand = cloneAndNormalizeFieldForComparison(currCand);
-    //nvdebug(` B: ${fieldToString(normalizedCurrCand)}`, debugDev);
-    if (mergablePair(normalizedCurrCand, normalizedField, config)) {
-      //nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`, debugDev);
-      return true;
-    }
-    //nvdebug(`  FAILED TO PAIR WITH: '${fieldToString(currCand)}'. Skipping it!`, debugDev);
-    return false;
-  });
+  const index = getCounterpartIndex(normalizedField, counterpartCands, uniqueAlternativeNames, config);
 
   if (index > -1) {
     return counterpartCands[index];
   }
+
   return null;
 }
