@@ -174,12 +174,10 @@ function skipMergeField(baseRecord, sourceField, config) {
 }
 
 function mergeField(baseRecord, sourceRecord, sourceField, config) {
+  nvdebug(`SELF: ${fieldToString(sourceField)}`, debugDev);
 
   const candFieldPairs880 = sourceField.tag === '880' ? undefined : fieldGetSubfield6Pairs(sourceField, sourceRecord);
-  nvdebug(`SELF: ${fieldToString(sourceField)}`, debugDev);
-  nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`, debugDev);
 
-  nvdebug(`MERGE SOURCE FIELD '${fieldToString(sourceField)}'`, debugDev); //  mergeField config: ${JSON.stringify(config)}`, debugDev);
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
     nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debugDev);
@@ -191,6 +189,7 @@ function mergeField(baseRecord, sourceRecord, sourceField, config) {
 
   if (counterpartField) {
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debugDev);
+    nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`, debugDev);
     mergeField2(baseRecord, counterpartField, sourceField, config, candFieldPairs880);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;
