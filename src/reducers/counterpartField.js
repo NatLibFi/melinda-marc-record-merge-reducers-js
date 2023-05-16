@@ -2,7 +2,7 @@
 
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright} from './utils';
-import {cloneAndNormalizeFieldForComparison} from './normalize';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from './normalize';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
@@ -428,26 +428,29 @@ function titlePartsMatch(field1, field2) {
 }
 
 
-function getAlternativeNamesFrom9XX(record, normalizedField) {
-  const tag = `9${normalizedField.tag.substring(1)}`;
+function getAlternativeNamesFrom9XX(record, field) {
+  const tag = `9${field.tag.substring(1)}`;
   const cands = record.get(tag).filter(f => fieldHasSubfield(f, 'a') && fieldHasSubfield(f, 'y'));
   if (cands.length === 0) {
     return [];
   }
-  const [name] = normalizedField.subfields.filter(sf => sf.code === 'a');
+  const punctuationlessField = cloneAndRemovePunctuation(field);
+  const [name] = punctuationlessField.subfields.filter(sf => sf.code === 'a').map(sf => sf.value);
 
   return cands.map(candField => getAltName(candField)).filter(val => val !== undefined);
 
 
   function getAltName(altField) {
-    const [altA] = altField.subfields.filter(sf => sf.code === 'a');
-    const [altY] = altField.subfields.filter(sf => sf.code === 'y');
+    const [altA] = altField.subfields.filter(sf => sf.code === 'a').map(sf => sf.value);
+    const [altY] = altField.subfields.filter(sf => sf.code === 'y').map(sf => sf.value);
+    nvdebug(`Compare '${name}' vs '${altA}'/'${altY}'`);
     if (name === altA) {
       return altY;
     }
     if (name === altY) {
       return altA;
     }
+    nvdebug(` miss`);
     return undefined;
   }
 
@@ -456,11 +459,11 @@ function getAlternativeNamesFrom9XX(record, normalizedField) {
 
 function mergablePairWithAltName(normCandField, normalizedField, altName, config) {
   // Replace source field $a name with alternative name and then compare:
-  normalizedField.subfields.forEach(subfield => {
-    if (subfield.code === 'a') { // eslint-disable-line functional/no-conditional-statements
-      subfield.value = altName; // eslint-disable-line functional/immutable-data
-    }
-  });
+  const [a] = normalizedField.subfields.filter(sf => sf.code === 'a');
+  if (!a) {
+    return false;
+  }
+  a.value = altName; // eslint-disable-line functional/immutable-data
 
   return mergablePair(normCandField, normalizedField, config);
 }
@@ -488,9 +491,12 @@ export function getCounterpart(baseRecord, sourceRecord, field, config) {
     return null;
   }
 
-  //nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debugDev);
+  nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debugDev);
 
   const normalizedField = cloneAndNormalizeFieldForComparison(field);
+
+  nvdebug(`Norm to: '${fieldToString(normalizedField)}'`, debugDev);
+
 
   // Try to look for alternative names from base and source record's 9XX fields:
   const alternativeNames = getAlternativeNamesFrom9XX(baseRecord, field).concat(getAlternativeNamesFrom9XX(sourceRecord, field));
