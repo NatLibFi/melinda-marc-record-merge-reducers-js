@@ -177,7 +177,7 @@ function skipMergeField(baseRecord, sourceField, config) {
   return false;
 }
 
-export function mergeField(baseRecord, sourceField, config, candFieldPairs880 = []) {
+function mergeField(baseRecord, sourceField, config, candFieldPairs880 = []) {
   nvdebug(`MERGE SOURCE FIELD '${fieldToString(sourceField)}'`, debugDev); //  mergeField config: ${JSON.stringify(config)}`, debugDev);
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
