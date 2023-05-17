@@ -1,0 +1,5 @@
+{
+  "description":"041: merge values, note that source's illegal zxx gets dropped in generic preprocessing, to in merge-specific content",
+  "skip": false,
+  "only": false
+}
