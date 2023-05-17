@@ -1,10 +1,11 @@
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 
 import {fieldToString, nvdebug} from './utils.js';
-
+import {getEncodingLevel} from './prepublicationUtils.js';
 //import {sortAdjacentSubfields} from './sortSubfields';
 
 import createDebugLogger from 'debug';
+
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
@@ -306,6 +307,11 @@ export function filterOperation(base, source, operation) {
   targetRecords.forEach(targetRecord => processOperationForTargetRecord(targetRecord, operation));
 
   function processOperationForTargetRecord(targetRecord, operation) {
+    if (operation.encodingLevel && !operation.encodingLevel.includes(getEncodingLevel(targetRecord))) {
+      nvdebug(' Skip. Reason: encoding level', debugDev);
+      return;
+    }
+
     const targetFields = getSpecifiedFieldsAndFilterThem(targetRecord, operation.fieldSpecification);
 
     if (!targetFields) {
