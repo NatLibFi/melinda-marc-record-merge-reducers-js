@@ -49,6 +49,7 @@
 
             {
                 "operation": "removeSubfield",
+                "comment": "based on https://www.kiwi.fi/display/kumea/2023-05-03#id-20230503-2)Kysymys:Kysymys040%E2%80%A1aISIL-tunnuksista",
                 "recordType": "source",
                 "encodingLevel": ["8"],
                 "fieldSpecification": {
