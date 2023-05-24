@@ -1,0 +1,6 @@
+{
+  "description":"MET-355: remove $g when merging (=adding source $g subfield to base field).",
+  "comment": "Eventually use relator term merge validator/fixer",
+  "only": false
+
+}

@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/melinda-marc-record-merge-reducers-js.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "2.0.4",
+	"version": "2.0.5-alpha.1",
 	"main": "./dist/index.js",
 	"engines": {
 		"node": ">=18"
@@ -39,7 +39,7 @@
 		"@natlibfi/marc-record": "^7.2.2",
 		"@natlibfi/marc-record-merge": "^7.0.0-alpha.1",
 		"@natlibfi/marc-record-validate": "^8.0.0",
-		"@natlibfi/marc-record-validators-melinda": "^10.6.0",
+		"@natlibfi/marc-record-validators-melinda": "^10.7.1",
 		"@natlibfi/melinda-commons": "^13.0.4",
 		"clone": "^2.1.2",
 		"debug": "^4.3.4",

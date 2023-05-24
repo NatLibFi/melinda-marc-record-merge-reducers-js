@@ -6,8 +6,7 @@
       ]
     },
     { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "d", "value": "FI-WHATEVER" },
-      { "code": "d", "value": "FI-NAL" }
+      { "code": "d", "value": "FI-WHATEVER" }
     ] }
   ]
 }

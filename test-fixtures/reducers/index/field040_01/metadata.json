@@ -1,5 +1,5 @@
 {
-  "description":"041: merge values, note that source's illegal zxx gets dropped in generic preprocessing, to in merge-specific content",
+  "description":"040: merge values. Note that FI-KV is retained since LDR/17 is not '8'",
   "skip": false,
   "only": false
 }

@@ -211,6 +211,7 @@ function normalizeISBN(field) {
 function fieldSpecificHacks(field) {
   normalizeISBN(field); // 020$a, not $z!
   hack490SubfieldA(field);
+
 }
 
 export function fieldTrimSubfieldValues(field) {
@@ -245,6 +246,10 @@ export function normalizeSubfieldValue(value, subfieldCode, tag) {
   // Normalize: s. = sivut = pp.
   value = normalizePartData(value, subfieldCode, tag);
   value = value.replace(/^\[([^[\]]+)\]/gu, '$1'); // eslint-disable-line functional/immutable-data, prefer-named-capture-group
+
+  if (['130', '730'].includes(tag) && subfieldCode === 'a') {
+    value = value.replace(' : ', ', '); // "Halloween ends (elokuva, 2022)" vs "Halloween ends (elokuva : 2023)"
+  }
   /* eslint-enable */
 
   // Not going to do these in the foreseeable future, but keeping them here for discussion:

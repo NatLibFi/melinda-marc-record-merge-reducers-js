@@ -1,0 +1,21 @@
+{
+  "leader": "01332cam a22003978i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456" },
+    { "tag": "100", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Etunimi, Sukunimi," },
+      { "code": "e", "value": "kirjoittaja." },
+      { "code": "g", "value": "ENNAKKOTIETO" }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Etunimi, Sukunimi," },
+      { "code": "e", "value": "kuvittaja." },
+      { "code": "g", "value": "ENNAKKOTIETO" }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Etunimi, Sukunimi," },
+      { "code": "e", "value": "kansikuva." },
+      { "code": "g", "value": "ENNAKKOTIETO" }
+    ]}
+  ]
+}

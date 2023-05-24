@@ -5,9 +5,10 @@
         { "code": "a", "value": "testing" }
       ]
     },
-    { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "eng" },
-      { "code": "h", "value": "swe" }
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "d", "value": "FI-WHATEVER" },
+      { "code": "d", "value": "FI-KV" },
+      { "code": "d", "value": "FI-NAL" }
     ] }
   ]
 }

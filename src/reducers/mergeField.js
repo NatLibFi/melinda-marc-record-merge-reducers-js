@@ -59,11 +59,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   candidateFields.forEach(candField => {
     debugDev(`Now merging (or trying to) field ${fieldToString(candField)}`);
-    // If $6 is merged from 700 to 100, the corresponding 880 field will change!
-    const candFieldPairs880 = candField.tag === '880' ? undefined : fieldGetSubfield6Pairs(candField, sourceRecord);
-    nvdebug(`SELF: ${fieldToString(candField)}`, debugDev);
-    nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`, debugDev);
-    mergeField(baseRecord, candField, config, candFieldPairs880);
+    mergeField(baseRecord, sourceRecord, candField, config);
   });
 
   // Remove deleted fields and field.merged marks:
@@ -177,8 +173,9 @@ function skipMergeField(baseRecord, sourceField, config) {
   return false;
 }
 
-export function mergeField(baseRecord, sourceField, config, candFieldPairs880 = []) {
-  nvdebug(`MERGE SOURCE FIELD '${fieldToString(sourceField)}'`, debugDev); //  mergeField config: ${JSON.stringify(config)}`, debugDev);
+function mergeField(baseRecord, sourceRecord, sourceField, config) {
+  nvdebug(`SELF: ${fieldToString(sourceField)}`, debugDev);
+
   // skip duplicates and special cases:
   if (skipMergeField(baseRecord, sourceField, config)) {
     nvdebug(`mergeField(): don't merge '${fieldToString(sourceField)}'`, debugDev);
@@ -186,10 +183,12 @@ export function mergeField(baseRecord, sourceField, config, candFieldPairs880 = 
   }
 
   nvdebug(`mergeField(): Try to merge '${fieldToString(sourceField)}'.`, debugDev);
-  const counterpartField = getCounterpart(baseRecord, sourceField, config);
+  const counterpartField = getCounterpart(baseRecord, sourceRecord, sourceField, config);
 
   if (counterpartField) {
+    const candFieldPairs880 = sourceField.tag === '880' ? undefined : fieldGetSubfield6Pairs(sourceField, sourceRecord);
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debugDev);
+    nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`, debugDev);
     mergeField2(baseRecord, counterpartField, sourceField, config, candFieldPairs880);
     sourceField.deleted = 1; // eslint-disable-line functional/immutable-data
     return true;

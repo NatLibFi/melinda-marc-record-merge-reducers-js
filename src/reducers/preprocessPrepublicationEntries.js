@@ -19,7 +19,7 @@ export function handlePrepublicationNameEntries(base, source) {
     return;
   }
 
-  const removableFields = fields.filter(field => !keepEntryField(base, field));
+  const removableFields = fields.filter(field => !keepEntryField(base, source, field));
   nvdebugFieldArray(removableFields, 'remove source entry field', debugDev);
   removableFields.forEach(field => source.removeField(field));
 }
@@ -33,6 +33,6 @@ function hasIsni(field) {
   return field.subfields.some(sf => sf.code === '0' && sf.value.includes('isni'));
 }
 
-function keepEntryField(base, sourceField) {
-  return hasIsni(sourceField) || getCounterpart(base, sourceField, {});
+function keepEntryField(baseRecord, sourceRecord, sourceField) {
+  return hasIsni(sourceField) || getCounterpart(baseRecord, sourceRecord, sourceField, {});
 }

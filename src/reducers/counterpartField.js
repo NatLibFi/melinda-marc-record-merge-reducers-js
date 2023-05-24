@@ -2,7 +2,7 @@
 
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright} from './utils';
-import {cloneAndNormalizeFieldForComparison} from './normalize';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from './normalize';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
@@ -428,36 +428,91 @@ function titlePartsMatch(field1, field2) {
 }
 
 
-export function getCounterpart(record, field, config) {
+function getAlternativeNamesFrom9XX(record, field) {
+  // Should we support 6XX and 8XX as well? Prolly not...
+  if (!field.tag.match(/^(?:100|110|111|600|610|611|700|710|711)$/u)) {
+    return [];
+  }
+  const tag = `9${field.tag.substring(1)}`;
+  const cands = record.get(tag).filter(f => fieldHasSubfield(f, 'a') && fieldHasSubfield(f, 'y'));
+  if (cands.length === 0) {
+    return [];
+  }
+  const punctuationlessField = cloneAndRemovePunctuation(field);
+  const [name] = punctuationlessField.subfields.filter(sf => sf.code === 'a').map(sf => sf.value);
+
+  return cands.map(candField => getAltName(candField)).filter(val => val !== undefined);
+
+
+  function getAltName(altField) {
+    const [altA] = altField.subfields.filter(sf => sf.code === 'a').map(sf => sf.value);
+    const [altY] = altField.subfields.filter(sf => sf.code === 'y').map(sf => sf.value);
+    nvdebug(`Compare '${name}' vs '${altA}'/'${altY}'`);
+    if (name === altA) {
+      return altY;
+    }
+    if (name === altY) {
+      return altA;
+    }
+    nvdebug(` miss`);
+    return undefined;
+  }
+
+}
+
+
+function mergablePairWithAltName(normCandField, normalizedField, altName, config) {
+  // Replace source field $a name with alternative name and then compare:
+  const [a] = normalizedField.subfields.filter(sf => sf.code === 'a');
+  if (!a) {
+    return false;
+  }
+  a.value = altName; // eslint-disable-line functional/immutable-data
+
+  return mergablePair(normCandField, normalizedField, config);
+}
+
+function getCounterpartIndex(field, counterpartCands, altNames, config) {
+  const normalizedField = cloneAndNormalizeFieldForComparison(field);
+  const normalizedCounterpartCands = counterpartCands.map(f => cloneAndNormalizeFieldForComparison(f));
+  const index = normalizedCounterpartCands.findIndex(normCandField => mergablePair(normCandField, normalizedField, config));
+  if (index > -1) {
+    return index;
+  }
+
+  return normalizedCounterpartCands.findIndex(normCandField => altNames.some(altName => mergablePairWithAltName(normCandField, normalizedField, altName, config)));
+}
+
+export function getCounterpart(baseRecord, sourceRecord, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
   // Tags 260 and 264 are lumped together.
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
   //nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`, debugDev);
-  const counterpartCands = record.get(tagToRegexp(field.tag));
+  const counterpartCands = baseRecord.get(tagToRegexp(field.tag));
 
   if (!counterpartCands || counterpartCands.length === 0) {
     //nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debugDev);
     return null;
   }
 
-  //nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debugDev);
+  nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debugDev);
 
   const normalizedField = cloneAndNormalizeFieldForComparison(field);
+
+  nvdebug(`Norm to: '${fieldToString(normalizedField)}'`, debugDev);
+
+
+  // Try to look for alternative names from base and source record's 9XX fields:
+  const alternativeNames = getAlternativeNamesFrom9XX(baseRecord, field).concat(getAlternativeNamesFrom9XX(sourceRecord, field));
+  const uniqueAlternativeNames = alternativeNames.filter((name, i) => alternativeNames.indexOf(name) === i);
+
   //nvdebug(` S: ${fieldToString(normalizedField)}`, debugDev);
   // Then find (the index of) the first mathing candidate field and return it.
-  const index = counterpartCands.findIndex((currCand) => {
-    const normalizedCurrCand = cloneAndNormalizeFieldForComparison(currCand);
-    //nvdebug(` B: ${fieldToString(normalizedCurrCand)}`, debugDev);
-    if (mergablePair(normalizedCurrCand, normalizedField, config)) {
-      //nvdebug(`  OK pair found:\n   B: '${fieldToString(currCand)}'\n   S: '${fieldToString(field)}\n  Returning it!`, debugDev);
-      return true;
-    }
-    //nvdebug(`  FAILED TO PAIR WITH: '${fieldToString(currCand)}'. Skipping it!`, debugDev);
-    return false;
-  });
+  const index = getCounterpartIndex(normalizedField, counterpartCands, uniqueAlternativeNames, config);
 
   if (index > -1) {
     return counterpartCands[index];
   }
+
   return null;
 }
