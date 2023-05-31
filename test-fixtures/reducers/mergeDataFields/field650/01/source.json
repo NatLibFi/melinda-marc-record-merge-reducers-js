@@ -1,6 +1,14 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
+    { "tag": "648", "ind1": " ", "ind2": "4", "subfields": [ { "code": "a", "value": "2001" } ] },
+    { "tag": "648", "ind1": " ", "ind2": "4", "subfields": [ { "code": "a", "value": "2002." } ] },
+    { "tag": "648", "ind1": " ", "ind2": "4", "subfields": [ { "code": "a", "value": "2003." } ] },
+    { "tag": "648", "ind1": " ", "ind2": "4", "subfields": [
+      { "code": "a", "value": "2004." },
+      { "code": "9", "value": "FENNI<KEEP>" }
+    ] },
+
     {
       "tag": "650",
       "ind1": " ",
@@ -10,7 +18,7 @@
           "code": "a",
           "value": "lorum"
         },
-        { 
+        {
           "code": "2",
           "value": "yso/fin"
         },
