@@ -1,3 +1,4 @@
 {
-  "description":"52 merge fields, base has KEEP while source doesn't"
+  "description":"52 merge fields, base has KEEP while source doesn't",
+  "only": false
 }
