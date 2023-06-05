@@ -21,6 +21,17 @@
       ]
     },
     {
+      "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Minnasson, Henrik," },
+        { "code": "e", "value": "toimittaja." }
+      ]
+    },
+    {
+      "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Litku, Linda I." }
+      ]
+    },
+    {
       "tag": "900", "ind1": " ", "ind2": " ", "subfields": [
         { "code": "a", "value": "Lorum" },
         { "code": "y", "value": "Ipsum" }
