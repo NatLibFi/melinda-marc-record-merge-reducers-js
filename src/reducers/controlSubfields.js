@@ -1,6 +1,6 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, nvdebug, nvdebugSubfieldArray, subfieldToString} from './utils.js';
+import {fieldHasSubfield, fieldToString, nvdebug, nvdebugSubfieldArray, subfieldIsRepeatable, subfieldToString, subfieldsAreIdentical} from './utils.js';
 
 //import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
@@ -69,13 +69,13 @@ function controlSubfield5PermitsMerge(field1, field2) {
   return true;
 }
 
-function controlSubfield9PermitsMerge(field1, field2) {
-  const field1Subfields9 = field1.subfields.filter(sf => sf.code === '9');
-  const field2Subfields9 = field2.subfields.filter(sf => sf.code === '9');
+function controlSubfield9PermitsMerge(baseField, sourceField) {
+  const baseFieldSubfields9 = baseField.subfields.filter(sf => sf.code === '9');
+  const sourceFieldSubfields9 = sourceField.subfields.filter(sf => sf.code === '9');
 
   nvdebug('CHECK $9', debugDev);
   // There are no $9s. Skip:
-  if (field1Subfields9.length === 0 && field2Subfields9.length === 0) {
+  if (baseFieldSubfields9.length === 0 && sourceFieldSubfields9.length === 0) {
     nvdebug(` No subfield $9 detected`, debugDev);
     return true;
   }
@@ -104,8 +104,8 @@ function controlSubfield9PermitsMerge(field1, field2) {
   }
 
   function transPreventsMerge() {
-    const trans1 = field1Subfields9.filter(sf => subfieldHasTrans(sf));
-    const trans2 = field2Subfields9.filter(sf => subfieldHasTrans(sf));
+    const trans1 = baseFieldSubfields9.filter(sf => subfieldHasTrans(sf));
+    const trans2 = sourceFieldSubfields9.filter(sf => subfieldHasTrans(sf));
     if (trans1.length > 0 && trans2.length > 0) {
       if (!MarcRecord.isEqual(trans1, trans2)) {
         return true;
@@ -123,7 +123,7 @@ function controlSubfield9PermitsMerge(field1, field2) {
     if (['0', '1'].includes(subfield.code)) {
       return false;
     }
-    if (['100', '600', '700', '800'].includes(field1.tag)) {
+    if (['100', '600', '700', '800'].includes(baseField.tag)) {
       // Despite $9 KEEP/DROP, we are interested in merging $d years (better than two separate fields)
       if (['d'].includes(subfield.code)) {
         return false;
@@ -133,33 +133,51 @@ function controlSubfield9PermitsMerge(field1, field2) {
 
     return true;
   }
+
+  function acceptKeeplessSourceSubfield(sourceSubfield, tag, subfieldCode, subfieldValue) {
+    if (sourceSubfield.code !== subfieldCode) {
+      return false;
+    }
+    // In this context, there's no need to check the value of a non-repeatable subfield.
+    // If value is different, pairing will fail when comparing the subfield itself.
+    // This allows us to tolerate little differences in punctuation: different punctuation does not get copied to base,
+    // so they don't alter base and and thus redundant when comparing.
+    if (!subfieldIsRepeatable(tag, subfieldCode)) {
+      return true;
+    }
+    return sourceSubfield.value === subfieldValue;
+  }
+
   function keepOrDropPreventsMerge() {
-    const keepOrDrop1 = field1Subfields9.filter(sf => subfieldHasKeepOrDrop(sf));
-    const keepOrDrop2 = field2Subfields9.filter(sf => subfieldHasKeepOrDrop(sf));
+    const keepOrDrop1 = baseFieldSubfields9.filter(sf => subfieldHasKeepOrDrop(sf));
+    const keepOrDrop2 = sourceFieldSubfields9.filter(sf => subfieldHasKeepOrDrop(sf));
 
     if (keepOrDrop1.length === 0 && keepOrDrop2.length === 0) {
       return false;
     }
 
+    const sf9lessField1 = baseField.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
+    const sf9lessField2 = sourceField.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
 
-    const sf9lessField1 = field1.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
-    const sf9lessField2 = field2.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
-
-    nvdebugSubfieldArray(field1.subfields, 'FIELD   ', debugDev);
+    nvdebugSubfieldArray(baseField.subfields, 'FIELD   ', debugDev);
     nvdebugSubfieldArray(sf9lessField1, 'FILTER  ', debugDev);
 
-    nvdebugSubfieldArray(field2.subfields, 'FIELD2  ', debugDev);
+    nvdebugSubfieldArray(sourceField.subfields, 'FIELD2  ', debugDev);
     nvdebugSubfieldArray(sf9lessField2, 'FILTER2 ', debugDev);
 
-
-    // Keepless field can be a subset of kept field:
+    // Keepless field can be a subset field with <KEEP>/<DROP>! Note that punctuation still causes remnants to fail.
     if (keepOrDrop1.length === 0) {
-      return !sf9lessField1.every(sf => sf9lessField2.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
+      return !sf9lessField1.every(sf => sf9lessField2.some(sf2 => subfieldsAreIdentical(sf, sf2)));
     }
+    // However, to alleviate the above-mentioned punctuation problem, we can check keep/drop-less *source* subfields
     if (keepOrDrop2.length === 0) {
-      return !sf9lessField2.every(sf2 => sf9lessField1.some(sf => sf.code === sf2.code && sf.value === sf2.value));
-      //return !sf9lessField2.every(sf2 => sf9lessField1.some(sf => isIdenticalSubfieldPair(sf, sf2)));
-
+      const unhandledSubfield = sf9lessField2.find(sf2 => !sf9lessField1.some(sf => acceptKeeplessSourceSubfield(sf2, baseField.tag, sf.code, sf.value)));
+      if (unhandledSubfield) {
+        //nvdebug(`Failed to pair ${subfieldToString(unhandledSubfield)}`);
+        return true;
+      }
+      //return !sf9lessField2.every(sf2 => sf9lessField1.some(sf => subfieldsAreIdentical(sf, sf2)));
+      return false;
     }
 
     //nvdebugSubfieldArray(sf9lessField2, 'SOURCE(?)', debugDev);
@@ -173,19 +191,6 @@ function controlSubfield9PermitsMerge(field1, field2) {
     // Prevent:
     return true;
   }
-
-  /*
-  function isIdenticalSubfieldPair(subfield1, subfield2) {
-    if (subfield1.code !== subfield2.code) {
-      return false;
-    }
-    if (subfield1.value !== subfield2.value) {
-      return false;
-    }
-    nvdebug(`SF-Paired ${subfieldToString(subfield1)}`, debugDev);
-    return true;
-  }
-  */
 }
 
 function getPrefix(value) {
@@ -248,30 +253,34 @@ function controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfiel
 
 const controlSubfieldsContainingIdentifier = ['w', '0', '1', '2']; // 2 ain't identifier, but the logic can be applied here as well
 
-export function controlSubfieldsPermitMerge(field1, field2) {
+export function controlSubfieldsPermitMerge(baseField, sourceField) {
   // Check $w, $0, $1, $2 (which isn't an identifier per se, but the sama logic can be applied)
-  if (!controlSubfieldsContainingIdentifier.every(subfieldCode => controlSubfieldContainingIdentifierPermitsMerge(field1, field2, subfieldCode))) {
+  if (!controlSubfieldsContainingIdentifier.every(subfieldCode => controlSubfieldContainingIdentifierPermitsMerge(baseField, sourceField, subfieldCode))) {
     //debug(' control subfields with identifiers failed');
     return false;
   }
 
-  if (!subfieldsAreEqual(field1, field2, '3')) {
+  if (!subfieldsAreEqual(baseField, sourceField, '3')) {
     //debug(' similar control subfield fails');
     return false;
   }
 
-  if (!controlSubfield5PermitsMerge(field1, field2) || !controlSubfield6PermitsMerge(field1, field2) || !controlSubfield9PermitsMerge(field1, field2)) {
+  if (!controlSubfield5PermitsMerge(baseField, sourceField) || !controlSubfield6PermitsMerge(baseField, sourceField) || !controlSubfield9PermitsMerge(baseField, sourceField)) {
     return false;
   }
   // We fully prevent merging $8 subfields here, as they affect multiple fields! Also these would get screwed:
   // 38211 |8 3\u |a kuoro |2 seko
   // 38211 |8 6\u |a kuoro |2 seko |9 VIOLA<DROP>
   // Thus only copy works with $8...
-  if (!subfieldsAreEmpty(field1, field2, '8')) {
+  if (!subfieldsAreEmpty(baseField, sourceField, '8')) {
     // We could alleviate this a bit esp. for non-repeatable fields.
     // At least, if the source has '8' and otherwise the two fields are identical...
-    const subsetOfField2 = {'tag': field2.tag, 'ind1': field2.ind1, 'ind2': field2.ind2, subfields: field2.subfields.filter(sf => sf.code !== '8')};
-    if (fieldToString(field1) === fieldToString(subsetOfField2)) {
+    const subsetOfSourceField = {
+      'tag': sourceField.tag,
+      'ind1': sourceField.ind1,
+      'ind2': sourceField.ind2, subfields: sourceField.subfields.filter(sf => sf.code !== '8')
+    };
+    if (fieldToString(baseField) === fieldToString(subsetOfSourceField)) {
       return true;
     }
     //debug(' csf8 failed');
