@@ -97,6 +97,19 @@ function setDates(base008, source008) { // 008/06-14 (stub, extend later on)
 }
 
 
+function getPlaceOfPublication(field008) {
+  return field008.value.substring(15, 18);
+}
+
+function setPlaceOfPublication(base008, source008) { // 008/15-17
+  const basePlaceOfPub = getPlaceOfPublication(base008);
+  if (['xx ', '|||'].includes(basePlaceOfPub)) {
+    base008.value = `${base008.value.substring(0, 15)}${getPlaceOfPublication(source008)}${base008.value.substring(18)}`; // eslint-disable-line functional/immutable-data
+    return;
+  }
+}
+
+
 function setLanguage(base008, source008) {
   const langB = getLanguage(base008);
   const langS = getLanguage(source008);
@@ -156,6 +169,7 @@ function process008(base, source) {
   setOlderDateToBase(base008, source008); // 008/00-05
 
   setDates(base008, source008); // 008/06,07-10,11-14
+  setPlaceOfPublication(base008, source008); // 008/15-17
 
   setLanguage(base008, source008); // 008/35-37
 

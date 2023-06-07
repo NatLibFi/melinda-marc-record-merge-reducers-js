@@ -447,14 +447,14 @@ function getAlternativeNamesFrom9XX(record, field) {
   function getAltName(altField) {
     const [altA] = altField.subfields.filter(sf => sf.code === 'a').map(sf => sf.value);
     const [altY] = altField.subfields.filter(sf => sf.code === 'y').map(sf => sf.value);
-    nvdebug(`Compare '${name}' vs '${altA}'/'${altY}'`);
+    nvdebug(`Compare '${name}' vs '${altA}'/'${altY}'`, debugDev);
     if (name === altA) {
       return altY;
     }
     if (name === altY) {
       return altA;
     }
-    nvdebug(` miss`);
+    nvdebug(` miss`, debugDev);
     return undefined;
   }
 
