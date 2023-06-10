@@ -9,7 +9,7 @@ import {default as createField776Proto} from './muuntaja776';
 import {filterOperations} from './processFilter';
 const muuntajaConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'muuntajaConfig.json'), 'utf8'));
 
-//import {sortAdjacentSubfields} from './sortSubfields';
+//import {sortAdjacentSubfields} from '@natlibfi/marc-record-validators-melinda/dist/sortSubfields';;
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...

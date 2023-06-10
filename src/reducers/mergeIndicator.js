@@ -1,11 +1,5 @@
-//import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-//import {/*fieldToString,*/ nvdebug} from './utils';
-
 import {fieldToString, marc21GetTagsLegalInd1Value, marc21GetTagsLegalInd2Value, nvdebug} from './utils';
-
-//import {sortAdjacentSubfields} from './sortSubfields';
-// import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
