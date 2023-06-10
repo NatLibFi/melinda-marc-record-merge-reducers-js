@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldIsRepeatable, fieldToString, nvdebug} from './utils';
+import {tagIsRepeatable, fieldToString, nvdebug} from './utils';
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {postprocessRecords} from './mergeOrAddPostprocess.js';
@@ -98,7 +98,7 @@ function repetitionBlocksAdding(record, field) {
 
   // Non-repeatable marc field:
   // NB! config.doNotCopyIfFieldPresent does not override this (as of 2022-08-10):
-  if (!fieldIsRepeatable(tag)) {
+  if (!tagIsRepeatable(tag)) {
     return true; // blocked
   }
 
@@ -106,7 +106,7 @@ function repetitionBlocksAdding(record, field) {
     const subfield = field.subfields.find(sf => isValidSubfield6(sf));
     if (subfield) {
       const tag = subfield.value.substring(0, 3);
-      return !fieldIsRepeatable(tag);
+      return !tagIsRepeatable(tag);
     }
   }
 
