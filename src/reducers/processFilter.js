@@ -219,7 +219,7 @@ function operationRemoveField(record, fieldSpecification) {
   }
   nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`, debugDev);
   deletableFields.forEach(field => {
-    nvdebug(`  DELETE FIELD: ${fieldToString(field)}`);
+    nvdebug(`  DELETE FIELD: ${fieldToString(field)}`, debugDev);
     record.removeField(field);
   });
 }
