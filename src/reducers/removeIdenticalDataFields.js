@@ -1,3 +1,5 @@
+// This reducer compares base and source and removes identical/paired datafields from source.
+
 import createDebugLogger from 'debug';
 import {getSubfield8Index, getSubfield8Value} from './reindexSubfield8';
 import {fieldsToNormalizedString, fieldToNormalizedString, isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';

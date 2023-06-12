@@ -17,9 +17,6 @@ import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/util
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
-//import {sortAdjacentSubfields} from './sortSubfields';
-// import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';
-
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');

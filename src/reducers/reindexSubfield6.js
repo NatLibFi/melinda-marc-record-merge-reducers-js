@@ -1,7 +1,8 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldToString, nvdebug} from './utils';
-import {fieldGetIndex6, fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6, isValidSubfield6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
+import {recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 
@@ -14,7 +15,7 @@ export default () => (base, source) => {
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
 
-  const baseMax = getMaxSubfield6(baseRecord);
+  const baseMax = recordGetMaxSubfield6OccurrenceNumberAsInteger(baseRecord);
 
   reindexSubfield6s(sourceRecord, baseMax);
 
@@ -32,25 +33,6 @@ function subfield6Index(subfield) {
   //nvdebug(`SF6: ${subfield.value} => ${indexPart} => ${result}`, debugDev);
   return result;
 }
-
-function getMaxSubfield6(record) {
-  // Should we cache the value here?
-  const vals = record.fields.map((field) => fieldSubfield6Index(field));
-  return Math.max(...vals);
-
-  function fieldSubfield6Index(field) {
-    //nvdebug(`Checking subfields $6 from ${JSON.stringify(field)}`, debugDev);
-    const sf6s = field.subfields ? field.subfields.filter(subfield => isValidSubfield6(subfield)) : [];
-    if (sf6s.length === 0) {
-      return 0;
-    }
-    // There should always be one, but here we check every subfield.
-    //nvdebug(`Got ${field.subfields.length} $6-subfield(s) from ${fieldToString(field)}`, debugDev);
-    const vals = sf6s.map(sf => subfield6Index(sf));
-    return Math.max(...vals);
-  }
-}
-
 
 function reindexSubfield6s(record, baseMax = 0) {
   if (baseMax === 0 || !record.fields) { // No action required
@@ -99,7 +81,7 @@ export function reindexDuplicateSubfield6Indexes(record) {
       return;
     }
 
-    const index = fieldGetIndex6(currField);
+    const index = fieldGetUnambiguousOccurrenceNumber(currField);
     if (index === undefined || index === '00') {
       return;
     }
@@ -112,7 +94,7 @@ export function reindexDuplicateSubfield6Indexes(record) {
     const currTagFields = relevantFields.filter(f => f.tag === currField.tag);
     if ( currTagFields.length === 1) {
       nvdebug(`NEED TO REINDEX ${fieldToString(currField)}`, debugDev);
-      const max = getMaxSubfield6(record);
+      const max = recordGetMaxSubfield6OccurrenceNumberAsInteger(record);
       if (max) {
         const pairFields = fieldGetSubfield6Pairs(currField, record);
         if (pairFields.length) {

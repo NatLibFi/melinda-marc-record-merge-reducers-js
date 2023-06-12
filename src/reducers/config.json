@@ -242,6 +242,16 @@
                 "fieldSpecification": { "tag": "260" },
                 "requireBaseField": { "tagPattern": "^26[04]$" }
             },
+            {
+                "operation": "removeField",
+                "comment": "Remove 880 $6 260-XX (see above rule for raison d'etrê",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "880",
+                    "subfieldFilters": [{"code": "6", "valuePattern": "^260-"}]
+                },
+                "requireBaseField": { "tagPattern": "^26[04]$" }
+            },
 
 
             {
@@ -250,6 +260,16 @@
                 "comment2": "Here we lose information, but can't add a 264 if there's a 260",
                 "recordType": "source",
                 "fieldSpecification": { "tag": "264" },
+                "requireBaseField": { "tagPattern": "^260$" }
+            },
+            {
+                "operation": "removeField",
+                "comment": "Remove 880 $6 264-XX (see above rule for raison r'etre)",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "880",
+                    "subfieldFilters": [{"code": "6", "valuePattern": "^264-"}]
+                },
                 "requireBaseField": { "tagPattern": "^260$" }
             },
 
@@ -267,6 +287,7 @@
                 }
             },
 
+
             {
                 "operation": "removeField",
                 "comment": "Remove source 264 ind2=0 if base has one, so that a repeatable field won't be copied from source",
@@ -277,10 +298,39 @@
 
             {
                 "operation": "removeField",
+                "comment": "Remove 880 $6 264-XX ind2=0 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "880",
+                    "ind2": "0",
+                    "subfieldFilters": [{"code": "6", "valuePattern": "^264-"}]
+                },
+                "requireBaseField": {
+                    "tagPattern": "^264$",
+                    "ind2": "0"
+                }
+            },
+
+            {
+                "operation": "removeField",
                 "comment": "Remove source 264 ind2=1 if base has one, so that a repeatable field won't be copied from source",
                 "recordType": "source",
                 "fieldSpecification": { "tag": "264", "ind2": "1" },
                 "requireBaseField": { "tag": "264", "ind2": "1" }
+            },
+            {
+                "operation": "removeField",
+                "comment": "Remove 880 $6 264-XX ind2=1 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "880",
+                    "ind2": "1",
+                    "subfieldFilters": [{"code": "6", "valuePattern": "^264-"}]
+                },
+                "requireBaseField": {
+                    "tagPattern": "^264$",
+                    "ind2": "1"
+                }
             },
 
             {
@@ -290,6 +340,20 @@
                 "fieldSpecification": { "tag": "264", "ind2": "2" },
                 "requireBaseField": { "tag": "264", "ind2": "2" }
             },
+            {
+                "operation": "removeField",
+                "comment": "Remove 880 $6 264-XX ind2=2 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "880",
+                    "ind2": "2",
+                    "subfieldFilters": [{"code": "6", "valuePattern": "^264-"}]
+                },
+                "requireBaseField": {
+                    "tagPattern": "^264$",
+                    "ind2": "2"
+                }
+            },
 
             {
                 "operation": "removeField",
@@ -298,13 +362,41 @@
                 "fieldSpecification": { "tag": "264", "ind2": "3" },
                 "requireBaseField": { "tag": "264", "ind2": "3" }
             },
+            {
+                "operation": "removeField",
+                "comment": "Remove 880 $6 264-XX ind2=3 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "880",
+                    "ind2": "3",
+                    "subfieldFilters": [{"code": "6", "valuePattern": "^264-"}]
+                },
+                "requireBaseField": {
+                    "tagPattern": "^264$",
+                    "ind2": "3"
+                }
+            },
 
             {
                 "operation": "removeField",
                 "comment": "Remove source 264 ind2=4 if base has one, so that a repeatable field won't be copied from source",
                 "recordType": "source",
-                "fieldSpecification": { "tag": "264", "ind2": "2" },
-                "requireBaseField": { "tag": "264", "ind2": "2" }
+                "fieldSpecification": { "tag": "264", "ind2": "4" },
+                "requireBaseField": { "tag": "264", "ind2": "4" }
+            },
+            {
+                "operation": "removeField",
+                "comment": "Remove 880 $6 264-XX ind2=4 so that a repeatable field won't be copied from source if base already has one",
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tag": "880",
+                    "ind2": "4",
+                    "subfieldFilters": [{"code": "6", "valuePattern": "^264-"}]
+                },
+                "requireBaseField": {
+                    "tagPattern": "^264$",
+                    "ind2": "4"
+                }
             },
 
 
