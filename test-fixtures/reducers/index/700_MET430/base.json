@@ -8,6 +8,13 @@
       { "code": "e", "value": "valokuvaaja,"},
       { "code": "e", "value": "kirjoittaja."},
       { "code": "0", "value": "(FI-ASTERI-N)000305825" }
+    ] },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Hihde, Alkka,"},
+      { "code": "d", "value": "1975-"},
+      { "code": "e", "value": "haastateltava,"},
+      { "code": "e", "value": "kannen tekijä."},
+      { "code": "0", "value": "(FI-ASTERI-N)000305826" }
     ] }
   ]
 }
