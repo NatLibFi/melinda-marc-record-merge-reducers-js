@@ -52,7 +52,7 @@ function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterC
   // Check subfield code as a string:
   if (filterCode) {
     if (filterCode !== subfieldCode) {
-      nvdebug(` REJECTED SUBFIELD. Reason: code`, debugDev);
+      //nvdebug(` REJECTED SUBFIELD. Reason: code`, debugDev);
       return false;
     }
   }
@@ -60,7 +60,7 @@ function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterC
   if (filterCodePattern) {
     const regExp = RegExp(`${filterCodePattern}`, 'u');
     if (!subfieldCode.match(regExp)) {
-      nvdebug(` REJECTED SUBFIELD. Reason: code regexp`, debugDev);
+      //nvdebug(` REJECTED SUBFIELD. Reason: code regexp`, debugDev);
       return false;
     }
   }
@@ -72,14 +72,14 @@ function subfieldFilterMatchesValue(subfieldValue, targetValue, targetValuePatte
   if (targetValuePattern) {
     const valueRegExp = RegExp(`${targetValuePattern}`, 'u');
     if (!subfieldValue.match(valueRegExp)) {
-      nvdebug(` REJECTED SUBFIELD. Reason: value regexp`, debugDev);
+      //nvdebug(` REJECTED SUBFIELD. Reason: value regexp`, debugDev);
       return false;
     }
   }
 
   if (targetValue) { // eg. 041$a 'zxx' removal
     if (subfieldValue !== targetValue) {
-      nvdebug(` REJECTED SUBFIELD. Reason: value string`, debugDev);
+      //nvdebug(` REJECTED SUBFIELD. Reason: value string`, debugDev);
       return false;
     }
   }
@@ -87,7 +87,7 @@ function subfieldFilterMatchesValue(subfieldValue, targetValue, targetValuePatte
 }
 
 function subfieldFilterMatches(subfield, subfieldFilter) {
-  nvdebug(`SF ${JSON.stringify(subfieldFilter)}`, debugDev);
+  //nvdebug(`SF ${JSON.stringify(subfieldFilter)}`, debugDev);
 
   if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.code, subfieldFilter.codePattern)) {
     return false;
@@ -97,7 +97,7 @@ function subfieldFilterMatches(subfield, subfieldFilter) {
     return false;
   }
 
-  nvdebug(` SUBFIELD ACCEPTED $${subfield.code} ${subfield.value}`, debugDev);
+  //nvdebug(` SUBFIELD ACCEPTED $${subfield.code} ${subfield.value}`, debugDev);
   return true;
 }
 
@@ -168,11 +168,11 @@ function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
   if (targetFields.length === 0) {
     return targetFields;
   }
-  nvdebug(`Got ${targetFields.length} fields. Filter them...`, debugDev);
+  //nvdebug(`Got ${targetFields.length} fields. Filter them...`, debugDev);
   const filteredFields1 = filterFieldsUsingSubfieldFilters(targetFields, fieldSpecs.subfieldFilters);
-  nvdebug(`${filteredFields1.length} field(s) remain after subfield filters...`, debugDev);
+  //nvdebug(`${filteredFields1.length} field(s) remain after subfield filters...`, debugDev);
   const filteredFields2 = filterFieldsUsingFieldToString(filteredFields1, fieldSpecs.value);
-  nvdebug(`${filteredFields2.length} field(s) remain after whole value filtering...`, debugDev);
+  //nvdebug(`${filteredFields2.length} field(s) remain after whole value filtering...`, debugDev);
   return filteredFields2;
 }
 
@@ -218,7 +218,10 @@ function operationRemoveField(record, fieldSpecification) {
     return;
   }
   nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`, debugDev);
-  deletableFields.forEach(field => record.removeField(field));
+  deletableFields.forEach(field => {
+    nvdebug(`  DELETE FIELD: ${fieldToString(field)}`);
+    record.removeField(field);
+  });
 }
 
 function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFilter) {
@@ -303,14 +306,14 @@ export function filterOperation(base, source, operation) {
 
   function processOperationForTargetRecord(targetRecord, operation) {
     if (operation.encodingLevel && !operation.encodingLevel.includes(getEncodingLevel(targetRecord))) {
-      nvdebug(' Skip. Reason: encoding level', debugDev);
+      //nvdebug(' Skip. Reason: encoding level', debugDev);
       return;
     }
 
     const targetFields = getSpecifiedFieldsAndFilterThem(targetRecord, operation.fieldSpecification);
 
     if (!targetFields) {
-      nvdebug(' No target fields found', debugDev);
+      //nvdebug(' No target fields found', debugDev);
       return;
     }
 
@@ -320,7 +323,7 @@ export function filterOperation(base, source, operation) {
         //nvdebug(' Required base field not found!', debugDev);
         return;
       }
-      nvdebug(` Base field ${fieldToString(baseFields[0])}`, debugDev);
+      //nvdebug(` Base field ${fieldToString(baseFields[0])}`, debugDev);
     }
 
     /*
