@@ -1,0 +1,5 @@
+{
+  "description":"MET-423: don't leave ghost 880 to 245-880 pair",
+  "only": false,
+  "skip": true
+}
