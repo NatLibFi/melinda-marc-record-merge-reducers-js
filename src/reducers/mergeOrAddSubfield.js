@@ -177,6 +177,11 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
 
   // melindaCustomMergeFields.json tells us whether the subfield is repeatable or not:
   if (subfieldIsRepeatable(targetField.tag, candSubfield.code)) {
+    // We don't want to add multiple, say, 260$c
+    if (['260', '264'].includes(targetField.tag)) {
+      nvdebug(`    A: Exceptionally skip repeatable existing subfield '${subfieldToString(candSubfield)}'`, debugDev);
+      return;
+    }
     nvdebug(`    A: Yes. Add repeatable subfield '${subfieldToString(candSubfield)}'`, debugDev);
     targetField.merged = 1; // eslint-disable-line functional/immutable-data
     setPunctuationFlag(targetField, candSubfield);
