@@ -1,0 +1,5 @@
+{
+  "description":"MET-443: don't copy $c, even though it's repeatable subfield (handle exception)",
+  "only": false,
+  "skip": false
+}
