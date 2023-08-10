@@ -216,17 +216,18 @@ function arePairedSubfieldsInBalance(field1, field2) {
   return subfieldArray.every(sfcode => fieldHasNSubfields(field1, sfcode) === fieldHasNSubfields(field2, sfcode));
 }
 
-
-function mergablePair(baseField, sourceField, config) {
+function syntacticallyMergablePair(baseField, sourceField, config) {
   // Indicators must typically be equal (there are exceptions such as non-filing characters though):
   if (!mergableIndicator1(baseField, sourceField, config)) {
     nvdebug(`non-mergable (reason: indicator1): ${JSON.stringify(config)}`, debugDev);
     return false;
   }
+
   if (!mergableIndicator2(baseField, sourceField, config)) {
     nvdebug(`non-mergable (reason: indicator2): ${JSON.stringify(config)}`, debugDev);
     return false;
   }
+
   if (!controlSubfieldsPermitMerge(baseField, sourceField)) {
     nvdebug('non-mergable (reason: control subfield)', debugDev);
     return false;
@@ -245,11 +246,21 @@ function mergablePair(baseField, sourceField, config) {
     nvdebug('required subfield pair check failed.', debugDev);
     return false;
   }
+
+  return true;
+}
+
+function mergablePair(baseField, sourceField, config) {
+  if (!syntacticallyMergablePair(baseField, sourceField, config)) {
+    return false;
+  }
+
   //debug('Test semantics...');
   if (!semanticallyMergablePair(baseField, sourceField)) {
     nvdebug('non-mergable (reason: semantics)', debugDev);
     return false;
   }
+
   nvdebug(`MERGABLE PAIR:\n  B: ${fieldToString(baseField)}\n  S: ${fieldToString(sourceField)}`, debugDev);
   return true;
 }
@@ -483,6 +494,21 @@ function getCounterpartIndex(field, counterpartCands, altNames, config) {
   return normalizedCounterpartCands.findIndex(normCandField => altNames.some(altName => mergablePairWithAltName(normCandField, normalizedField, altName, config)));
 }
 
+
+function field264Exception(baseField, sourceRecord, sourceField, config) {
+  nvdebug('Field 264 exception as per MET-456');
+  if (baseField.tag !== '264') {
+    return false;
+  }
+
+  if (sourceField.tag !== '264' || sourceRecord.get('264').length !== 1) {
+    return false;
+  }
+
+  // Don't worry about semantics:
+  return syntacticallyMergablePair(sourceField, baseField, config);
+}
+
 export function getCounterpart(baseRecord, sourceRecord, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
   // Tags 260 and 264 are lumped together.
@@ -512,6 +538,11 @@ export function getCounterpart(baseRecord, sourceRecord, field, config) {
 
   if (index > -1) {
     return counterpartCands[index];
+  }
+
+  // MET-456 exception
+  if (counterpartCands.length === 1 && field264Exception(counterpartCands[0], sourceRecord, field, config)) {
+    return counterpartCands[0];
   }
 
   return null;
