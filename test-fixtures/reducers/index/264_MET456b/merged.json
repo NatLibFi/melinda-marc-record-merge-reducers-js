@@ -1,0 +1,15 @@
+{
+  "leader": "01331nam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "12345"},
+    { "tag": "264", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "b", "value": "Ipsum,"},
+      { "code": "c", "value": "2021."}
+    ] },
+    { "tag": "264", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "b", "value": "Foobar,"},
+      { "code": "c", "value": "2021."}
+    ] }
+  ]
+}
+
