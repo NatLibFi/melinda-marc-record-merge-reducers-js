@@ -1,0 +1,5 @@
+{
+  "description":"MRA-512 (with f264 in base, and f260 in source)",
+  "only": false,
+  "skip": false
+}

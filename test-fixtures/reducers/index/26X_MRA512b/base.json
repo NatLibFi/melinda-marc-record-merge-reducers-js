@@ -1,0 +1,11 @@
+{
+  "leader": "01331nam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456"},
+    { "tag": "264", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "a", "value": "UK" },
+      { "code": "b", "value": "Vintage,"},
+      { "code": "c", "value": "2023."}
+    ] }
+  ]
+}
