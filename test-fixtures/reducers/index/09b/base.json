@@ -12,22 +12,14 @@
         {
           "code": "a",
           "value": "Lisäpainokset: 2. p. 2002."
-        }        
+        }
       ]
 
     },
-    {
-      "tag": "500",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "Lisäpainokset: 3. p. 2003. - 4. p. 2004."
-        }        
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lisäpainokset: 3. p. 2003. - 4. p. 2004." }
       ]
-
     }
   ],
-  "leader": ""
+  "leader": "01331com a22003494i 4500"
 }
