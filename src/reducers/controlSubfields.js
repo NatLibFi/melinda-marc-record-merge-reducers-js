@@ -31,10 +31,14 @@ function subfieldsAreEmpty(field1, field2, subfieldCode) {
   return false;
 }
 
-function fieldsAreEqualAfterRemovingSubfield(field1, field2, code) {
-  const strippedField1 = field1.subfields.filter(subfield => subfield.code !== code);
-  const strippedField2 = field2.subfields.filter(subfield => subfield.code !== code);
-  return MarcRecord.isEqual(strippedField1, strippedField2);
+
+function sixlessIsSubset(fieldWith6, fieldWithout6) {
+  // Remove $0 and $1, and then check that remaining $6-less field is a subset of the one with $6.
+  // No need to check indicators.
+  // NB! We could use punctuation-stripping here.
+  const subset = fieldWithout6.subfields.filter(subfield => !['0', '1'].includes(subfield.code));
+  return subset.every(sf => fieldWith6.subfields.some(sf2 => subfieldsAreIdentical(sf, sf2)));
+  //return MarcRecord.isEqual(strippedField1, strippedField2);
 }
 
 function controlSubfield6PermitsMerge(field1, field2) {
@@ -42,15 +46,17 @@ function controlSubfield6PermitsMerge(field1, field2) {
     return true;
   }
 
-  if (!fieldHasSubfield(field1, '6') && fieldHasSubfield(field2, '6') && fieldsAreEqualAfterRemovingSubfield(field1, field2, '6')) {
+  // Handle cases where one has a $6 and the other has not:
+  // Should this accept $0 (FI-ASTERI-N) vs none?
+  if (!fieldHasSubfield(field1, '6') && fieldHasSubfield(field2, '6') && sixlessIsSubset(field2, field1)) {
     return true;
   }
-  if (!fieldHasSubfield(field2, '6') && fieldHasSubfield(field1, '6') && fieldsAreEqualAfterRemovingSubfield(field1, field2, '6')) {
+  if (!fieldHasSubfield(field2, '6') && fieldHasSubfield(field1, '6') && sixlessIsSubset(field1, field2)) {
     return true;
   }
 
-  // There are two (plus) fields involved (Field XXX (one) and field 880 (one plus).
-  // Thus this generic solution can't handle them. Use postprocess instead.
+  // There are at least two (plus) fields involved (Field XXX (one) and field 880 (one plus).
+  // Thus this generic solution can't handle them. Postprocess step removes some chains instead!
   debugDev(`  controlSubfield6PermitsMerge() fails always on generic part (feature).`);
   return false;
 }

@@ -23,6 +23,10 @@
     { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [
       {"code": "a", "value": "666"},
       {"code": "q", "value": "nidottu"}
-  ]}
+    ]},
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "978-952-3335-19-6"},
+      {"code": "q", "value": "hårda pärmar"}
+    ]}
   ]
 }
