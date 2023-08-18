@@ -19,12 +19,6 @@ export function valueCarriesMeaning(tag, subfieldCode, value) {
 }
 
 export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
-  const value = normalizeForSamenessCheck2(tag, subfieldCode, originalValue);
-  //nvdebug(`SAMENESS: ${originalValue} => ${value}`, debug);
-  return value;
-}
-
-function normalizeForSamenessCheck2(tag, subfieldCode, originalValue) {
   if (subfieldCode === 'a' && ['100', '600', '700', '800'].includes(tag)) {
     return normalizePersonalName(originalValue);
   }
@@ -47,7 +41,7 @@ function normalizeForSamenessCheck2(tag, subfieldCode, originalValue) {
 }
 
 function normalizePersonalName(originalValue) {
-  // Use "Forename Surname" format:
+  // Use more readable "Forename Surname" format in comparisons:
   return originalValue.replace(/^([^,]+), ([^,]+)$/u, '$2 $1'); // eslint-disable-line prefer-named-capture-group
 }
 
