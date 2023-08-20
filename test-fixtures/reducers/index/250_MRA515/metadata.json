@@ -1,0 +1,5 @@
+{
+  "description":"MRA-515-ish: field 250: support uusi painos variants",
+  "comment": "if they don't merge, 250 is dropped...",
+  "only": false
+}
