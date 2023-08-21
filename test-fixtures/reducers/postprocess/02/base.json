@@ -1,4 +1,5 @@
 {
+  "leader": "01331com a22003494i 4500",
   "fields": [
     {
       "tag": "005",
@@ -34,7 +35,7 @@
         {
           "code": "a",
           "value": "An Example"
-        }        
+        }
       ]
 
     },

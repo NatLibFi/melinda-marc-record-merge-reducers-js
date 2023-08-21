@@ -26,7 +26,7 @@ const defaultNonMergableFields = [
   '662',
   '668',
   '752',
-  '753',
+  // '753', // NV: Commented because of MRA-465 (2023-08-20)
   '754',
   '758',
   '760',

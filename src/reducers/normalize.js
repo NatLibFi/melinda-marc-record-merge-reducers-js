@@ -132,26 +132,6 @@ function fieldLowercase(field) {
   }
 }
 
-/*
-export function lowercaseSubfieldValue(value, tag, subfieldCode) {
-  if (isControlSubfieldCode(subfieldCode)) {
-    return value;
-  }
-  if (tag === 'LOW' || tag === 'SID') { // Bit hacky
-    return value;
-  }
-  return value.toLowerCase();
-}
-*/
-
-function normalizeField(field) {
-  //sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
-  fieldStripPunctuation(field);
-  fieldLowercase(field);
-  fieldNormalizeControlNumbers(field); // FIN11 vs FI-MELINDA etc.
-  return field;
-}
-
 
 function hack490SubfieldA(field) {
   if (field.tag !== '490') {
@@ -211,7 +191,6 @@ function normalizeISBN(field) {
 function fieldSpecificHacks(field) {
   normalizeISBN(field); // 020$a, not $z!
   hack490SubfieldA(field);
-
 }
 
 export function fieldTrimSubfieldValues(field) {
@@ -237,8 +216,7 @@ function removeDecomposedDiacritics(value = '') {
   return String(value).replace(/\p{Diacritic}/gu, '');
 }
 
-
-export function normalizeSubfieldValue(value, subfieldCode, tag) {
+function normalizeSubfieldValue(value, subfieldCode, tag) {
   // NB! For comparison of values only
   /* eslint-disable */
   value = subfieldValueLowercase(value, subfieldCode, tag);
@@ -279,34 +257,48 @@ export function cloneAndRemovePunctuation(field) {
   return clonedField;
 }
 
-function removeCharsThatDontCarryMeaning(value, tag) {
+function removeCharsThatDontCarryMeaning(value, tag, subfieldCode) {
   if (tag === '080') {
     return value;
   }
   /* eslint-disable */
   // 3" refers to inches, but as this is for comparison only we don't mind...
   value = value.replace(/['"]/gu, '');
+  // MRA-273: Handle X00$a name initials.
+  // NB #1: that we remove spaces for comparison (as it simpler), though actually space should be used. Doesn't matter as this is comparison only.
+  // NB #2: we might/should eventually write a validator/fixer that adds those spaces. After that point, this expection should become obsolete.
+  if (subfieldCode === 'a' && ['100', '400', '600', '700', '800'].includes(tag)) { // 400 is used in auth records. It's not a bib field at all.
+    value = value.replace(/([A-Z]|Å|Ä|Ö)\. +/ugi, '$1.');
+  }
   /* eslint-enable */
   return value;
 }
 
+function normalizeField(field) {
+  //sf.value = removeDecomposedDiacritics(sf.value); // eslint-disable-line functional/immutable-data
+  fieldStripPunctuation(field);
+  fieldLowercase(field);
+  fieldNormalizeControlNumbers(field); // FIN11 vs FI-MELINDA etc.
+  return field;
+}
 
 export function cloneAndNormalizeFieldForComparison(field) {
   // NB! This new field is for comparison purposes only.
   // Some of the normalizations might be considered a bit overkill for other purposes.
-  const clonedField = normalizeField(clone(field));
+  const clonedField = clone(field);
   if (fieldSkipNormalization(field)) {
     return clonedField;
   }
-  fieldStripPunctuation(clonedField);
+  clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
+    sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag); // eslint-disable-line functional/immutable-data
+    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag, sf.code);// eslint-disable-line functional/immutable-data
+  });
+
+  normalizeField(clonedField); // eslint-disable-line functional/immutable-data
   fieldRemoveDecomposedDiacritics(clonedField);
   fieldSpecificHacks(clonedField);
   fieldTrimSubfieldValues(clonedField);
-  clonedField.subfields.forEach((sf) => { // Do this for all fields or some fields?
-    sf.value = normalizeSubfieldValue(sf.value, sf.code, field.tag); // eslint-disable-line functional/immutable-data
-    sf.value = removeCharsThatDontCarryMeaning(sf.value, field.tag);// eslint-disable-line functional/immutable-data
 
-  });
 
   debugFieldComparison(field, clonedField); // For debugging purposes only
 
