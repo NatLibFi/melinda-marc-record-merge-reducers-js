@@ -1,7 +1,8 @@
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 
 import {fieldToString, nvdebug} from './utils.js';
-import {getEncodingLevel} from './prepublicationUtils.js';
+import {getEncodingLevel} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
+
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:processFilter');

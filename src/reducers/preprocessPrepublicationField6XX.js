@@ -1,4 +1,5 @@
-import {/*encodingLevelIsBetterThanPrepublication,*/ getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from './prepublicationUtils';
+import {/*encodingLevelIsBetterThanPrepublication,*/ getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
+
 import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
 import createDebugLogger from 'debug';
 

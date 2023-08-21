@@ -8,7 +8,7 @@ import createDebugLogger from 'debug';
 //import {removeDuplicateDatafields as removeDuplicateDatafieldsOld} from './removeIdenticalDataFields';
 
 import {recordNormalizeIndicators} from '@natlibfi/marc-record-validators-melinda/dist/indicator-fixes';
-import {removeWorsePrepubField500s, removeWorsePrepubField594s} from './prepublicationUtils.js';
+import {removeWorsePrepubField500s, removeWorsePrepubField594s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
 import {mergeLisapainokset} from '@natlibfi/marc-record-validators-melinda/dist/mergeField500Lisapainokset';
 import {recordResetSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/reindexSubfield6OccurenceNumbers';
 import {removeInferiorDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeInferiorDataFields';

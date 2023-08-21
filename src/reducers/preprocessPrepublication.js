@@ -32,7 +32,7 @@ import {handleField6XX} from './preprocessPrepublicationField6XX';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
   prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
-  removeWorsePrepubField594s} from './prepublicationUtils';
+  removeWorsePrepubField594s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
 import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries';
 import createDebugLogger from 'debug';
 
