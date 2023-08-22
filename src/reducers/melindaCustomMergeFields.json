@@ -4949,6 +4949,25 @@
       ]
     },
     {
+      "tag": "946",
+      "repeatable": true,
+      "fieldType": "dataField",
+      "indicators": {"ind1": [" "], "ind2": [" "]},
+      "subfields": [
+        {"code": "a", "repeatable": false},
+        {"code": "b", "repeatable": false},
+        {"code": "f", "repeatable": false},
+        {"code": "g", "repeatable": true},
+        {"code": "h", "repeatable": false},
+        {"code": "i", "repeatable": false},
+        {"code": "n", "repeatable": true},
+        {"code": "p", "repeatable": true},
+        {"code": "5", "repeatable": false},
+        {"code": "6", "repeatable": false},
+        {"code": "8", "repeatable": true}
+      ]
+    },
+    {
       "tag": "960",
       "repeatable": true,
       "fieldType": "dataField",
