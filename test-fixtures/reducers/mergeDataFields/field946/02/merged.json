@@ -3,7 +3,8 @@
   "fields": [
     { "tag": "946", "ind1": " ", "ind2": " ",  "subfields": [
         { "code": "i", "value": "Nimeke Onixissa:" },
-        { "code": "a", "value": "whatever" }
+        { "code": "a", "value": "whatever" },
+        { "code": "5", "value": "FOOBAR" }
       ]
     }
   ]
