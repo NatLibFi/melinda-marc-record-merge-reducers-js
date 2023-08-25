@@ -1,6 +1,6 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import createDebugLogger from 'debug';
-import {baseHasEqualOrHigherEncodingLevel, deleteAllPrepublicationNotesFromField500InNonPubRecord, getEncodingLevel} from './prepublicationUtils';
+import {baseHasEqualOrHigherEncodingLevel, deleteAllPrepublicationNotesFromField500InNonPubRecord, getEncodingLevel} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
 
 export default () => (base, source) => {
   //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');

@@ -138,14 +138,14 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
     const normalizedSubfield = normalizedSourceField.subfields[index];
     const punctlessSubfield = strippedSourceField.subfields[index];
     const originalValue = fieldToString(baseField);
+    nvdebug(`  TRYING TO MERGE SUBFIELD '${subfieldToString(originalSubfield)}' TO '${originalValue}'`, debugDev);
 
     const subfieldData = {'code': originalSubfield.code, 'originalValue': originalSubfield.value, 'normalizedValue': normalizedSubfield.value, 'punctuationlessValue': punctlessSubfield.value};
 
     mergeOrAddSubfield(baseField, subfieldData, candFieldPairs880); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statements
-      nvdebug(`  MERGING SUBFIELD '${subfieldToString(punctlessSubfield)}' TO '${originalValue}'`, debugDev);
-      nvdebug(`   RESULT: '${newValue}'`, debugDev);
+      nvdebug(`   SUBFIELD MERGE RESULT: '${newValue}'`, debugDev);
       //debug(`   TODO: sort subfields, handle punctuation...`);
     }
     //else { debugDev(`  mergeOrAddSubfield() did not add '‡${fieldToString(subfieldForMergeOrAdd)}' to '${originalValue}'`); }
