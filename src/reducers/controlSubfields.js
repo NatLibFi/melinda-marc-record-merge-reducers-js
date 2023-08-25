@@ -67,6 +67,12 @@ function controlSubfield5PermitsMerge(field1, field2) {
     if (!fieldHasSubfield(field2, '5')) {
       return true; // If neither one has $5, it's ok to merge
     }
+    // If $5 contents are same, merge can be perfomed:
+    const fives1 = field1.subfields.filter(sf => sf.code === '5');
+    const fives2 = field2.subfields.filter(sf => sf.code === '5');
+    if (fives1.every(sf1 => fives2.some(sf2 => sf1.value === sf2.value)) && fives2.every(sf2 => fives1.some(sf1 => sf1.value === sf2.value))) {
+      return true;
+    }
     return false;
   }
   if (!fieldHasSubfield(field2, '5')) {
