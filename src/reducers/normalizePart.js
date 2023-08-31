@@ -8,7 +8,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:no
 const debugDev = debug.extend('dev');
 
 export function subfieldContainsPartData(tag, subfieldCode) {
-  if (subfieldCode === 'v' && ['490', '800', '810'].includes(tag)) {
+  if (subfieldCode === 'v' && ['490', '800', '810', '811', '830'].includes(tag)) {
     return true;
   }
   if (tag === '773' && subfieldCode === 'g') {
