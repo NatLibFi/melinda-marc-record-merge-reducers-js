@@ -101,6 +101,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
   }
 
   // These we know or "know":
+  // NB! $9 should really be non-repeatable (However, MET-300) and allowed in only certain tags (do fixer/validator for that?)....
   if ('0159'.indexOf(subfieldCode) > -1) {
     // Uh, can $0 appear on any field?
     return true;

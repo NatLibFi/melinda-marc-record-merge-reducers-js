@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {cloneAndNormalizeFieldForComparison} from './normalize.js';
+import {cloneAndNormalizeFieldForComparison} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
 import {normalizeAs, normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 import {fieldHasSubfield, fieldToString, isControlSubfieldCode, nvdebug, subfieldIsRepeatable, subfieldToString} from './utils.js';
 import {mergeSubfield} from './mergeSubfield.js';
