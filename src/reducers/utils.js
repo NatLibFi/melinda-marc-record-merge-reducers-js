@@ -23,23 +23,6 @@ export function fieldsAreIdentical(field1, field2) {
   // return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
 }
 
-// Modified from copy functionality in marc-record-merge
-// Changed function name from checkIdenticalness to getNonIdenticalFields / SS 28.5.2021
-export function getNonIdenticalFields(baseFields, sourceFields) {
-  // debugDev(`gNIF() in... ${baseFields.length} vs ${sourceFields.length}`);
-
-  /*
-  const baseFieldsAsString = baseFields.map(field => fieldToString(field));
-  return sourceFields.filter(sourceField => baseFieldsAsString.some(fieldAsString => fieldAsString === fieldToString(sourceField)));
-*/
-  // Return array of non-identical fields (source fields not present in base)
-  return sourceFields.filter(filterNonIdentical);
-
-  function filterNonIdentical(sourceField) {
-    return baseFields.some(baseField => fieldsAreIdentical(sourceField, baseField)) === false;
-  }
-}
-
 export function subfieldToString(sf) {
   return `‡${sf.code} ${sf.value}`;
 }
@@ -112,21 +95,20 @@ function isNonStandardNonrepeatableSubfield(tag, subfieldCode) {
 
 
 export function subfieldIsRepeatable(tag, subfieldCode) {
-  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
-  if (fieldSpecs.length !== 1) {
-    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debugDev);
-    return true;
-  }
-
 
   if (isNonStandardNonrepeatableSubfield(tag, subfieldCode)) {
     return false;
   }
 
-
   // These we know or "know":
   if ('0159'.indexOf(subfieldCode) > -1) {
     // Uh, can $0 appear on any field?
+    return true;
+  }
+
+  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  if (fieldSpecs.length !== 1) {
+    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debugDev);
     return true;
   }
 
@@ -187,21 +169,6 @@ export function recordHasField(record, tag) {
 }
 */
 
-// should this go to marc_record
-export function recordReplaceField(record, originalField, newField) {
-  const index = record.fields.findIndex(field => field === originalField);
-  if (index === -1) {
-    debugDev('WARNING: recordReplaceField: Failed to find the original field');
-    // Should this function return something for success or failure?
-    return record;
-  }
-  // I guess there are reasons for doing this like it...
-  //record.fields[index] = newField; // eslint-disable-line functional/immutable-data
-  record.removeField(originalField);
-  record.insertField(newField);
-  return record;
-}
-
 export function fieldHasControlSubfieldCode(field) {
   return field.subfields.some(sf => isControlSubfieldCode(sf.code));
 }
@@ -241,21 +208,6 @@ export function removeCopyright(value) {
 export function hasCopyright(value) {
   const modValue = removeCopyright(value);
   return value !== modValue;
-}
-
-// base record level codes from highest (1) to lowest (10)
-const ldr17ToRanking = {' ': 1, '^': 1, '4': 2, '1': 3, '5': 4, '7': 5, '2': 6, '3': 7, '8': 8, 'u': 9, 'z': 10};
-
-export function getEncodingLevelRanking(record) {
-  const ldr17 = record.leader.charAt(17); //record.leader[17];
-  if (ldr17 in ldr17ToRanking) {
-    const ranking = ldr17ToRanking[ldr17];
-    debugDev(`LDR/17 ranking is ${ranking}`);
-    return ranking;
-  }
-  debugDev(`LDR/19 VALUE '${ldr17}' NOT FOUND. USING DEFAULT RANKING 10.`);
-  return 10;
-  //return levelCodes.filter(level => level.levelValue === record.leader[17])[0].levelCode;
 }
 
 /*
