@@ -7,7 +7,7 @@ import {filterOperations} from './processFilter.js';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 import fs from 'fs';
 import path from 'path';
-import {fieldTrimSubfieldValues} from './normalize.js';
+import {fieldTrimSubfieldValues} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
 import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melinda/dist/sanitize-vocabulary-source-codes.js';

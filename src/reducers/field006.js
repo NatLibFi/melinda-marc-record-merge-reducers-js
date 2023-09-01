@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {/*getNonIdenticalFields,*/ copyFields, nvdebug} from './utils.js';
+import {copyFields, nvdebug} from './utils.js';
 import {fillControlFieldGaps, isFillableControlFieldPair} from './controlFieldUtils.js';
 
 // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field (2x)
@@ -42,22 +42,4 @@ export default () => (base, source) => {
   // And don't merge them either, as it is too risky. Let's just trust base record.
   return {base: baseRecord, source};
 
-  /*
-  // No action required, always keep base (do this first as we save, uh, like 0.01 ms by not doing unnecessary stuff):
-  if (source.leader[6] !== 'o' && source.leader[6] !== 'p') {
-    debugDev('Keeping base field 006');
-    return {base, source};
-  }
-
-
-  const nonIdenticalFields = getNonIdenticalFields(baseFields, sourceFields);
-
-  if (nonIdenticalFields.length === 0) {
-    debugDev('Identical fields in source and base');
-    return {base, source};
-  }
-
-  copyFields(baseRecord, nonIdenticalFields);
-  return {base: baseRecord, source};
-*/
 };

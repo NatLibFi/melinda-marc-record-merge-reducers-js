@@ -1,7 +1,7 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fillControlFieldGaps, isFillableControlFieldPair} from './controlFieldUtils.js';
-import {copyFields /*, fieldToString, getEncodingLevelRanking*/} from './utils.js';
+import {copyFields} from './utils.js';
 
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:field007');

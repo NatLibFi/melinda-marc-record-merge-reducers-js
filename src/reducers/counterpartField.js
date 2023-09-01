@@ -2,14 +2,14 @@
 
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldHasNSubfields, fieldHasMultipleSubfields, fieldToString, nvdebug, removeCopyright} from './utils';
-import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from './normalize';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison';
 // This should be done via our own normalizer:
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
 import {getMergeConstraintsForTag} from './mergeConstraints';
 import {controlSubfieldsPermitMerge} from './controlSubfields';
 import {mergableIndicator1, mergableIndicator2} from './mergableIndicator';
-import {partsAgree} from './normalizePart';
+import {partsAgree} from '@natlibfi/marc-record-validators-melinda/dist/normalizeSubfieldValueForComparison';
 import {normalizeForSamenessCheck, valueCarriesMeaning} from './worldKnowledge';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField:counterpart');
@@ -496,7 +496,7 @@ function getCounterpartIndex(field, counterpartCands, altNames, config) {
 
 
 function field264Exception(baseField, sourceRecord, sourceField, config) {
-  nvdebug('Field 264 exception as per MET-456');
+  nvdebug('Field 264 exception as per MET-456', debugDev);
   if (baseField.tag !== '264') {
     return false;
   }

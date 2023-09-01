@@ -1,7 +1,7 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from './utils';
-import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from './normalize';
+import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison';
 import {mergeOrAddSubfield} from './mergeOrAddSubfield';
 import {mergeIndicators} from './mergeIndicator';
 import {mergableTag} from './mergableTag';
@@ -126,8 +126,8 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
   // We want to add the incoming subfields without punctuation, and add puctuation later on.
   // (Cloning is harmless, but probably not needed.)
   // NEW: we also drag the normalized version along. It is needed for the merge-or-add decision
-  const normalizedSourceField = cloneAndNormalizeFieldForComparison(sourceField); //cloneAndRemovePunctuation(sourceField);
-  const strippedSourceField = cloneAndRemovePunctuation(sourceField);
+  const normalizedSourceField = cloneAndNormalizeFieldForComparison(sourceField); // This is for comparison
+  const strippedSourceField = cloneAndRemovePunctuation(sourceField); // This is for adding subfields
 
   //nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(sourceField)}' (original)`, debugDev);
   //nvdebug(`  MERGING SUBFIELDS OF '${fieldToString(normalizedSourceField)}' (comparison)`, debugDev);
@@ -138,14 +138,14 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
     const normalizedSubfield = normalizedSourceField.subfields[index];
     const punctlessSubfield = strippedSourceField.subfields[index];
     const originalValue = fieldToString(baseField);
+    nvdebug(`  TRYING TO MERGE SUBFIELD '${subfieldToString(originalSubfield)}' TO '${originalValue}'`, debugDev);
 
     const subfieldData = {'code': originalSubfield.code, 'originalValue': originalSubfield.value, 'normalizedValue': normalizedSubfield.value, 'punctuationlessValue': punctlessSubfield.value};
 
     mergeOrAddSubfield(baseField, subfieldData, candFieldPairs880); // candSubfield);
     const newValue = fieldToString(baseField);
     if (originalValue !== newValue) { // eslint-disable-line functional/no-conditional-statements
-      nvdebug(`  MERGING SUBFIELD '${subfieldToString(punctlessSubfield)}' TO '${originalValue}'`, debugDev);
-      nvdebug(`   RESULT: '${newValue}'`, debugDev);
+      nvdebug(`   SUBFIELD MERGE RESULT: '${newValue}'`, debugDev);
       //debug(`   TODO: sort subfields, handle punctuation...`);
     }
     //else { debugDev(`  mergeOrAddSubfield() did not add '‡${fieldToString(subfieldForMergeOrAdd)}' to '${originalValue}'`); }

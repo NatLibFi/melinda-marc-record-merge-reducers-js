@@ -271,6 +271,7 @@ const mergeConstraints = [
   {'tag': '910', 'required': ''},
   {'tag': '935', 'required': 'a', 'key': 'az'}, // Fono information at least
   {'tag': '940', 'required': ''},
+  {'tag': '946', 'required': 'a', 'key': 'abfnp'}, // Copied from 246. However, final version might contain some elements from field 245 as well
   {'tag': '960', 'required': ''},
   {'tag': '973', 'required': 'w', 'key': 'w'}, // Viola multi-hosts
   {'tag': '995', 'required': ''},
