@@ -127,7 +127,7 @@ function controlSubfield9PermitsMerge(baseField, sourceField) {
   }
 
   function retainSubfieldForKeepComparison(subfield) {
-    // Don't compare <KEEP>, <DROP> nor >TRANS> here (<TRANS> has it's own check)
+    // Don't compare <KEEP>, <DROP> nor <TRANS> here (<TRANS> has it's own check)
     if (subfieldHasKeepOrDrop(subfield) || subfieldHasTrans(subfield)) {
       return false;
     }
