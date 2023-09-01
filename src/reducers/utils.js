@@ -101,7 +101,7 @@ export function subfieldIsRepeatable(tag, subfieldCode) {
   }
 
   // These we know or "know":
-  // NB! $9 should really be non-repeatable (However, MET-300) and allowed in only certain tags (do fixer/validator for that?)....
+  // NB2! $5 is (according to MARC21 format) non-repeatable, and not usable in all fields, but Melinda has a local exception to this, see MET-300
   if ('0159'.indexOf(subfieldCode) > -1) {
     // Uh, can $0 appear on any field?
     return true;
