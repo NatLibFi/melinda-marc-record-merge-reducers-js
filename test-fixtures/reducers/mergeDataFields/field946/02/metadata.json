@@ -1,5 +1,5 @@
 {
-  "description":"946-01: part of MET-461",
+  "description":"946-02: part of MET-461",
   "motivation": "FIX: 946:t voi yhdistyä, jos toisessa on $i ja toisessa ei ja sisällöt on muuten samat. (Myös identtisen $5:n kanssa)",
   "skip": false,
   "only": false

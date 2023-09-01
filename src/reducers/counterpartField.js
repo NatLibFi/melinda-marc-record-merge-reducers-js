@@ -496,7 +496,7 @@ function getCounterpartIndex(field, counterpartCands, altNames, config) {
 
 
 function field264Exception(baseField, sourceRecord, sourceField, config) {
-  nvdebug('Field 264 exception as per MET-456');
+  nvdebug('Field 264 exception as per MET-456', debugDev);
   if (baseField.tag !== '264') {
     return false;
   }
