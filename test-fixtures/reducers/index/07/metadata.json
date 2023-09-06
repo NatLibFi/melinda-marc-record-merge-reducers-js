@@ -2,6 +2,6 @@
   "description":"Normalize 024$q (despite both base and source have crappier values). MRA-309 and MRA-311: normalize 506$a and 534$p as well.",
   "comment": "NB! 506$a missing final punc is not added; as the base field is not changed, it stays as it is.",
   "comment #2": "Source fields 020 double is a test relocated here after refactoring addField.js",
-  "comment #3": "MRA-422: illustratör translations. Only copied and merged 700 fields (B-D) are translated, (A) is not.",
+  "comment #3": "MRA-422: illustratör translations. As of 2023-09-XX base-specific X00$e subfields are translated as well",
   "only": false
 }

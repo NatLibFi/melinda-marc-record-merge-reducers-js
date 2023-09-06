@@ -17,8 +17,7 @@
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "a", "value": "Sukunimi, A.," },
-      { "code": "e", "value": "illustratör," },
-      { "code": "e", "value": "kuvittaja." }
+      { "code": "e", "value": "illustratör." }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "a", "value": "Sukunimi, B.," },
