@@ -2,7 +2,7 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {getCatalogingLanguage, nvdebug, subfieldToString} from './utils.js';
-import {translateRecord} from './fixRelatorTerms.js';
+import {recordFixRelatorTerms} from '@natlibfi/marc-record-validators-melinda/dist/fixRelatorTerms';
 import {filterOperations} from './processFilter.js';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 import fs from 'fs';
@@ -60,6 +60,12 @@ export default (config = defaultConfig) => (base, source) => {
   fixSourceOfTerm().fix(base);
   fixSourceOfTerm().fix(source);
 
+  const fromLanguage = getCatalogingLanguage(source);
+  const toLanguage = getCatalogingLanguage(base);
+  recordFixRelatorTerms(source, fromLanguage, fromLanguage); // Expand terms: "säv." => "säveltäjä"
+  recordFixRelatorTerms(source, fromLanguage, toLanguage); // "säveltäjä" => "composer"
+  recordFixRelatorTerms(base, toLanguage, toLanguage); // Expand terms: "säv." => "säveltäjä"
+
   modernize540().fix(base);
   modernize540().fix(source);
 
@@ -69,6 +75,8 @@ export default (config = defaultConfig) => (base, source) => {
   nvdebug(`SOURCE: Reindex $6 duplicates`, debugDev);
   reindexDuplicateSubfield6Indexes(source);
 
+
+  //source.fields.forEach(f => nvdebug(` SRC '${fieldToString(f)}'`));
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
 
   //const clonedSource = clone(source); // MRA-72
@@ -82,13 +90,14 @@ export default (config = defaultConfig) => (base, source) => {
   normalizeField505Separator(base);
   normalizeField505Separator(source2);
 
-  translateRecord(source2, getCatalogingLanguage(base)); // map stuff as per base's 040$b
+  recordFixRelatorTerms(source2, getCatalogingLanguage(base), getCatalogingLanguage(source2)); // map stuff as per base's 040$b
 
   recordRemoveDuplicateSubfieldsFromFields(source2);
   recordRemoveDuplicateSubfieldsFromFields(base);
 
 
   const result = {base, source: source2};
+  ///
   //nvdebug(JSON.stringify(result));
   return result;
 
