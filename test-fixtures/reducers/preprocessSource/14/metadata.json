@@ -1,4 +1,4 @@
 {
-  "description":"Normalize 505$a ' ; ' to ' -- '",
+  "description":"14: Normalize 505$a ' ; ' to ' -- ', both in base and source",
   "only": false
 }
