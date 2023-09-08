@@ -20,25 +20,12 @@ export default () => (base, source) => {
 };
 
 function fixMtsQualifyingInformationAbbreviations(value) {
-  if (value.match(/^hft[.,]?$/iu)) { // nidottu
-    return 'häftad';
-  }
-  if (value.match(/^inb[.,]?$/iu)) {
-    return 'inbunden';
-  }
   if (value.match(/^mp3[.,]?$/iu)) {
     return 'MP3';
-  }
-  if (value.match(/^nid[.,]?$/iu)) {
-    return 'nidottu';
   }
   if (value.match(/^\(?pdf\)?[.,]?$/iu)) {
     return 'PDF';
   }
-  if (value.match(/^sid[.,]?$/iu)) {
-    return 'sidottu';
-  }
-
   return value;
 }
 
