@@ -1,7 +1,7 @@
 //import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {getCatalogingLanguage, nvdebug, subfieldToString} from './utils.js';
+import {getCatalogingLanguage, nvdebug} from './utils.js';
 import {recordFixRelatorTerms} from '@natlibfi/marc-record-validators-melinda/dist/fixRelatorTerms';
 import {filterOperations} from './processFilter.js';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
@@ -10,40 +10,15 @@ import path from 'path';
 import {fieldTrimSubfieldValues} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
-import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melinda/dist/sanitize-vocabulary-source-codes.js';
-import {default as modernize540} from '@natlibfi/marc-record-validators-melinda/dist/update-field-540.js';
-
+import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melinda/dist/sanitize-vocabulary-source-codes';
+import {default as modernize540} from '@natlibfi/marc-record-validators-melinda/dist/update-field-540';
+import {default as normalize505} from '@natlibfi/marc-record-validators-melinda/dist/field-505-separators';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
-
-function normalizeField505Separator(record) {
-  const fields = record.fields.filter(field => isRelevantField505(field));
-
-  fields.forEach(field => fixField505(field));
-
-  function fixField505(field) {
-    const subfields = field.subfields.filter(sf => sf.code === 'a');
-    subfields.forEach(sf => {
-      nvdebug(`Try to process ${subfieldToString(sf)}`, debugDev);
-      sf.value = sf.value.replace(/ ; /gu, ' -- '); // eslint-disable-line functional/immutable-data
-      nvdebug(`Result ${subfieldToString(sf)}`, debugDev);
-    });
-  }
-
-  function isRelevantField505(field) {
-    if (field.tag !== '505') {
-      return false;
-    }
-    if (field.subfields.some(sf => ['g', 'r', 't'].includes(sf.code))) {
-      return false;
-    }
-    return true;
-  }
-}
 
 function trimRecord(record) {
   record.fields?.forEach(f => fieldTrimSubfieldValues(f));
@@ -66,9 +41,11 @@ export default (config = defaultConfig) => (base, source) => {
   recordFixRelatorTerms(source, fromLanguage, toLanguage); // "säveltäjä" => "composer"
   recordFixRelatorTerms(base, toLanguage, toLanguage); // Expand terms: "säv." => "säveltäjä"
 
+  normalize505().fix(base);
+  normalize505().fix(source);
+
   modernize540().fix(base);
   modernize540().fix(source);
-
 
   nvdebug(`BASE: Reindex $6 duplicates`, debugDev);
   reindexDuplicateSubfield6Indexes(base);
@@ -86,9 +63,6 @@ export default (config = defaultConfig) => (base, source) => {
   filterOperations(base, clonedSource, config.preprocessorDirectives);
 
   const source2 = clonedSource; // hyphenateISBN(clonedSource, config); // Should these be done to base as well?
-
-  normalizeField505Separator(base);
-  normalizeField505Separator(source2);
 
   recordFixRelatorTerms(source2, getCatalogingLanguage(base), getCatalogingLanguage(source2)); // map stuff as per base's 040$b
 
