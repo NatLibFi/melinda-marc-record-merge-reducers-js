@@ -1,12 +1,12 @@
-//import isbnIssn from '@natlibfi/marc-record-validators-melinda/dist/isbn-issn';
-import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
+import fs from 'fs';
+import path from 'path';
+
+import {MarcRecord} from '@natlibfi/marc-record';
 import {getCatalogingLanguage, nvdebug} from './utils.js';
 import {recordFixRelatorTerms} from '@natlibfi/marc-record-validators-melinda/dist/fixRelatorTerms';
 import {filterOperations} from './processFilter.js';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
-import fs from 'fs';
-import path from 'path';
 import {fieldTrimSubfieldValues} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
@@ -47,9 +47,9 @@ export default (config = defaultConfig) => (base, source) => {
   modernize540().fix(base);
   modernize540().fix(source);
 
-  nvdebug(`BASE: Reindex $6 duplicates`, debugDev);
+  //nvdebug(`BASE: Reindex $6 duplicates`, debugDev);
   reindexDuplicateSubfield6Indexes(base);
-  nvdebug(`SOURCE: Reindex $6 duplicates`, debugDev);
+  //nvdebug(`SOURCE: Reindex $6 duplicates`, debugDev);
   reindexDuplicateSubfield6Indexes(source);
 
 
@@ -75,15 +75,5 @@ export default (config = defaultConfig) => (base, source) => {
   //nvdebug(JSON.stringify(result));
   return result;
 
-
-  /*
-  function hyphenateISBN(record) {
-    // Not sure whether this should be done, or should we normalize ISBNs during comparison.
-    const addHyphensToISBN = isbnIssn({hyphenateISBN: true});
-    addHyphensToISBN.fix(record);
-
-    return record;
-  }
-  */
 };
 
