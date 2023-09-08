@@ -30,7 +30,7 @@
       "subfields": [
         {
           "code": "a",
-          "value": "Foo ; Bar -- Whatever2."
+          "value": "Foo -- Bar -- Whatever2."
         },
         {
           "code": "t",
