@@ -43,8 +43,10 @@ function fixMtsQualifyingInformationAbbreviations(value) {
 }
 
 const translationTable = [
-  {'eng': 'hardback', 'fin': 'sidottu', 'swe': 'inbunden'},
-  {'eng': 'paperback', 'fin': 'nidottu', 'swe': 'häftad'},
+  {'fin': 'sidottu', 'swe': 'inbunden'},
+  {'fin': 'nidottu', 'swe': 'häftad'},
+  {'eng': 'hardback', 'fin': 'kovakantinen', 'swe': 'hårda pärmar'},
+  {'eng': 'paperback', 'fin': 'pehmeäkantinen', 'swe': 'mjuka pärmar'},
   {'fin': '(fiktiivinen hahmo)', 'swe': '(fiktiv gestalt)'}
 ];
 
@@ -89,7 +91,7 @@ function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
     return;
   }
 
-  /* // Commented this after discussion with MH. We can have both Finnish and Swedish versio in same record.
+  /* // Commented this after discussion with MH. We can have both Finnish and Swedish version in same record.
   if (tag === '600' && subfield.code === 'c') { // (fiktiivinen hahmo) vs (fiktiv gestalt)
     const modValue = translateMtsTerm(subfield.value, catalogingLanguage, 'all');
     nvdebug(`MTS: ${subfield.value} => ${modValue}`, debugDev);
