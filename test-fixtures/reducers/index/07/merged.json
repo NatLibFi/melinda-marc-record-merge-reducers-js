@@ -4,8 +4,8 @@
     { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "1234567890" } ] },
     { "tag": "024", "ind1": " ", "ind2": " ", "subfields": [
         { "code": "a", "value": "FILNM9500119" },
-        { "code": "q", "value": "häftad" },
-        { "code": "q", "value": "inbunden" },
+        { "code": "q", "value": "mjuka pärmar" },
+        { "code": "q", "value": "hårda pärmar" },
         { "code": "q", "value": "MP3" },
         { "code": "q", "value": "PDF" }
     ]},
