@@ -1,9 +1,9 @@
-import createDebugLogger from 'debug';
+//import createDebugLogger from 'debug';
 import fs from 'fs';
 import path from 'path';
 
 import {MarcRecord} from '@natlibfi/marc-record';
-import {getCatalogingLanguage, nvdebug} from './utils.js';
+import {getCatalogingLanguage} from './utils.js';
 import {recordFixRelatorTerms} from '@natlibfi/marc-record-validators-melinda/dist/fixRelatorTerms';
 import {filterOperations} from './processFilter.js';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
@@ -13,10 +13,11 @@ import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
 import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melinda/dist/sanitize-vocabulary-source-codes';
 import {default as modernize540} from '@natlibfi/marc-record-validators-melinda/dist/update-field-540';
 import {default as normalize505} from '@natlibfi/marc-record-validators-melinda/dist/field-505-separators';
+import {default as normalizeQualifyingInformation} from '@natlibfi/marc-record-validators-melinda/dist/normalize-qualifying-information';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
 //const debugData = debug.extend('data');
-const debugDev = debug.extend('dev');
+//const debugDev = debug.extend('dev');
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
@@ -40,6 +41,9 @@ export default (config = defaultConfig) => (base, source) => {
   recordFixRelatorTerms(source, fromLanguage, fromLanguage); // Expand terms: "säv." => "säveltäjä"
   recordFixRelatorTerms(source, fromLanguage, toLanguage); // "säveltäjä" => "composer"
   recordFixRelatorTerms(base, toLanguage, toLanguage); // Expand terms: "säv." => "säveltäjä"
+
+  normalizeQualifyingInformation().fix(base); // Modernize 015/020/024/028$q
+  normalizeQualifyingInformation().fix(source);
 
   normalize505().fix(base);
   normalize505().fix(source);
