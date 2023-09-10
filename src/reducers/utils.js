@@ -187,11 +187,7 @@ export function nvdebug(message, func = undefined) {
     func(message);
     return;
   }
-  if (!func) {
-    // eslint-disable-next-line no-console
-    console.info(message);
-    return;
-  }
+  console.info(message); // eslint-disable-line no-console
 }
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
@@ -227,4 +223,8 @@ export function getCatalogingLanguage(record) {
     return null;
   }
   return b.value;
+}
+
+export function uniqArray(arr) {
+  return arr.filter((val, i) => arr.indexOf(val) === i);
 }
