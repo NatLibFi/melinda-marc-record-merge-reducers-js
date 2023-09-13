@@ -87,45 +87,7 @@ function isPehmeakantinen(value) {
   return ['mjuka pärmar', 'paperback', 'pehmeäkantinen', 'softcover'].includes(value);
 }
 
-function isRengaskirja(value) {
-  return ['rengaskirja', 'ringpärm'].includes(value);
-}
-
-function isSidottu(value) {
-  return ['inb.', 'inbunden', 'sid.', 'sidottu'].includes(value);
-}
-
-function isNidottu(value) {
-  return ['hfd.', 'häftad', 'nid.', 'nidottu'].includes(value);
-}
-
-function findReplaceableSidottu(candidateSubfields) {
-  return candidateSubfields.find(sf => sf.code === 'q' && isSidottu(sf.value));
-}
-
-function findReplaceableNidottu(candidateSubfields) {
-  return candidateSubfields.find(sf => sf.code === 'q' && isNidottu(sf.value));
-}
-
-function findReplaceableRengaskirja(candidateSubfields) {
-  return candidateSubfields.find(sf => sf.code === 'q' && isRengaskirja(sf.value));
-}
-
-
-function overrideBingingWithCoverType(coverType, candidateSubfields) {
-  if (isKovakantinen(coverType)) {
-    return findReplaceableSidottu(candidateSubfields);
-  }
-  if (isPehmeakantinen(coverType)) {
-    return findReplaceableNidottu(candidateSubfields);
-  }
-  if (isKierreselka(coverType)) {
-    return findReplaceableRengaskirja(candidateSubfields);
-  }
-  return null;
-}
-
-function candTypeIsSameOrWorse(candSubfield, relevantSubfields) {
+function coverTypesMatch(candSubfield, relevantSubfields) {
   if (isPehmeakantinen(candSubfield.value) && relevantSubfields.some(sf => isPehmeakantinen(sf.value))) {
     return true;
   }
@@ -138,22 +100,9 @@ function candTypeIsSameOrWorse(candSubfield, relevantSubfields) {
   return false;
 }
 
-function mapBindingToCoverType(field, candSubfield, relevantSubfields) {
-  if (candSubfield.code !== 'q' || !['015', '020', '024', '028'].includes(field.tag)) {
-    return false;
-  }
-  // 20230913: as we now have validator/fixer for encoding
-
-  // See if base's field has a binding and source subfield has a cover. If so, replace subfield value:
-  const originalSubfieldQ = overrideBingingWithCoverType(candSubfield.value, relevantSubfields);
-  if (originalSubfieldQ) {
-    originalSubfieldQ.value = candSubfield.value; // eslint-disable-line functional/immutable-data
-    return true;
-  }
-  // Vice versa (and equality): if original value is cover type and new value is ye olde binding, return true.
-  // Then change is considered to have happenened.
-  if (candTypeIsSameOrWorse(candSubfield, relevantSubfields)) {
-    return true;
+function isSynonym(field, candSubfield, relevantSubfields) {
+  if (candSubfield.code === 'q' || !['015', '020', '024', '028'].includes(field.tag)) {
+    return coverTypesMatch(candSubfield, relevantSubfields);
   }
 
   return false;
@@ -200,7 +149,7 @@ export function mergeSubfield(targetField, candSubfield) {
 
 
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) ||
-      mapBindingToCoverType(targetField, candSubfield, relevantSubfields) ||
+      isSynonym(targetField, candSubfield, relevantSubfields) ||
       preferHyphenatedISBN(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
