@@ -87,6 +87,36 @@ function isPehmeakantinen(value) {
   return ['mjuka pärmar', 'paperback', 'pehmeäkantinen', 'softcover'].includes(value);
 }
 
+function isItsenainenJatkoOsa(value) {
+  if (value.match(/^Fristående fortsättning på verket[^a-z]*$/ui)) {
+    return true;
+  }
+  if (value.match(/^Itsenäinen jatko-osa teokselle[^a-z]*$/ui)) {
+    return true;
+  }
+  return false;
+}
+
+function isSisaltaaTeos(value) {
+  if (value.match(/^Innehåller \(verk\)[^a-z]*$/ui)) {
+    return true;
+  }
+  if (value.match(/^Sisältää \(teos\)[^a-z]*$/ui)) {
+    return true;
+  }
+  return false;
+}
+function relationInformationMatches(candSubfield, relevantSubfields) {
+  if (isSisaltaaTeos(candSubfield.value) && relevantSubfields.some(sf => isSisaltaaTeos(sf.value))) {
+    return true;
+  }
+  if (isItsenainenJatkoOsa(candSubfield.value) && relevantSubfields.some(sf => isItsenainenJatkoOsa(sf.value))) {
+    return true;
+  }
+
+  return false;
+}
+
 function coverTypesMatch(candSubfield, relevantSubfields) {
   if (isPehmeakantinen(candSubfield.value) && relevantSubfields.some(sf => isPehmeakantinen(sf.value))) {
     return true;
@@ -101,8 +131,12 @@ function coverTypesMatch(candSubfield, relevantSubfields) {
 }
 
 function isSynonym(field, candSubfield, relevantSubfields) {
-  if (candSubfield.code === 'q' || !['015', '020', '024', '028'].includes(field.tag)) {
+  if (candSubfield.code === 'q' && ['015', '020', '024', '028'].includes(field.tag)) {
     return coverTypesMatch(candSubfield, relevantSubfields);
+  }
+
+  if (candSubfield.code === 'i') {
+    return relationInformationMatches(candSubfield, relevantSubfields);
   }
 
   return false;
