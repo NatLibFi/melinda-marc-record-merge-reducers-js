@@ -126,23 +126,13 @@ function overrideBingingWithCoverType(coverType, candidateSubfields) {
 }
 
 function candTypeIsSameOrWorse(candSubfield, relevantSubfields) {
-  if (isNidottu(candSubfield.value) && relevantSubfields.some(sf => isNidottu(sf.value) || isPehmeakantinen(sf.value))) {
-    return true;
-  }
-  if (isSidottu(candSubfield.value) && relevantSubfields.some(sf => isSidottu(sf.value) || isKovakantinen(sf.value))) {
-    return true;
-  }
-  if (isRengaskirja(candSubfield.value) && relevantSubfields.some(sf => isRengaskirja(sf.value) || isKierreselka(sf.value))) {
-    return true;
-  }
-
   if (isPehmeakantinen(candSubfield.value) && relevantSubfields.some(sf => isPehmeakantinen(sf.value))) {
     return true;
   }
   if (isKovakantinen(candSubfield.value) && relevantSubfields.some(sf => isKovakantinen(sf.value))) {
     return true;
   }
-  if (isRengaskirja(candSubfield.value) && relevantSubfields.some(sf => isRengaskirja(sf.value))) {
+  if (isKierreselka(candSubfield.value) && relevantSubfields.some(sf => isKierreselka(sf.value))) {
     return true;
   }
   return false;
@@ -152,6 +142,8 @@ function mapBindingToCoverType(field, candSubfield, relevantSubfields) {
   if (candSubfield.code !== 'q' || !['015', '020', '024', '028'].includes(field.tag)) {
     return false;
   }
+  // 20230913: as we now have validator/fixer for encoding
+
   // See if base's field has a binding and source subfield has a cover. If so, replace subfield value:
   const originalSubfieldQ = overrideBingingWithCoverType(candSubfield.value, relevantSubfields);
   if (originalSubfieldQ) {
