@@ -19,6 +19,9 @@ export function valueCarriesMeaning(tag, subfieldCode, value) {
 }
 
 export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
+  // NB! These work only for non-repeatable subfields!
+  // Repeatable subfields are currently handled in mergeSubfields.js. Only non-repeatable subfields block field merge,
+  // (This split is suboptiomal... Minimum fix: make this disctinction cleaner...)
   if (subfieldCode === 'a' && ['100', '600', '700', '800'].includes(tag)) {
     return normalizePersonalName(originalValue);
   }
@@ -39,6 +42,7 @@ export function normalizeForSamenessCheck(tag, subfieldCode, originalValue) {
 
   return originalValue;
 }
+
 
 function normalizePersonalName(originalValue) {
   // Use more readable "Forename Surname" format in comparisons:
