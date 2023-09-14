@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
 import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields';
-import {fieldToString, getCatalogingLanguage, nvdebug} from './utils';
+import {fieldToString, getCatalogingLanguage, nvdebug, uniqArray} from './utils';
 
 // Handle various MTS terms: open abbreviations, normalize to MTS format, translate
 
@@ -19,32 +19,29 @@ export default () => (base, source) => {
   return {base, source};
 };
 
-function fixMtsQualifyingInformationAbbreviations(value) {
-  if (value.match(/^hft[.,]?$/iu)) { // nidottu
-    return 'häftad';
-  }
-  if (value.match(/^inb[.,]?$/iu)) {
-    return 'inbunden';
-  }
+function isQualifierInformationTag(tag) {
+  return ['015', '020', '024', '028'].includes(tag);
+}
+
+function fixMtsQualifyingInformationAbbreviation(value) {
   if (value.match(/^mp3[.,]?$/iu)) {
     return 'MP3';
-  }
-  if (value.match(/^nid[.,]?$/iu)) {
-    return 'nidottu';
   }
   if (value.match(/^\(?pdf\)?[.,]?$/iu)) {
     return 'PDF';
   }
-  if (value.match(/^sid[.,]?$/iu)) {
-    return 'sidottu';
-  }
-
   return value;
 }
 
+function fixMtsQualifyingInformationAbbreviationSubfield(subfield) {
+  subfield.value = fixMtsQualifyingInformationAbbreviation(subfield.value); // eslint-disable-line functional/immutable-data
+}
+
 const translationTable = [
-  {'eng': 'hardback', 'fin': 'sidottu', 'swe': 'inbunden'},
-  {'eng': 'paperback', 'fin': 'nidottu', 'swe': 'häftad'},
+  {'fin': 'sidottu', 'swe': 'inbunden'},
+  {'fin': 'nidottu', 'swe': 'häftad'},
+  {'eng': 'hardback', 'fin': 'kovakantinen', 'swe': 'hårda pärmar'},
+  {'eng': 'paperback', 'fin': 'pehmeäkantinen', 'swe': 'mjuka pärmar'},
   {'fin': '(fiktiivinen hahmo)', 'swe': '(fiktiv gestalt)'}
 ];
 
@@ -83,13 +80,13 @@ function translateMtsTerm(term, to, from = 'all') {
 
 function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
   if (['015', '020', '024', '028'].includes(tag) && subfield.code === 'q') {
-    const tmpValue = fixMtsQualifyingInformationAbbreviations(subfield.value);
-    nvdebug(`Translate $q term '${tmpValue}' to ${catalogingLanguage}`, debugDev);
-    subfield.value = translateMtsTerm(tmpValue, catalogingLanguage, 'all'); // eslint-disable-line functional/immutable-data
+    fixMtsQualifyingInformationAbbreviationSubfield(subfield);
+    nvdebug(`Translate $q term '${subfield.value}' to ${catalogingLanguage}`, debugDev);
+    subfield.value = translateMtsTerm(subfield.value, catalogingLanguage, 'all'); // eslint-disable-line functional/immutable-data
     return;
   }
 
-  /* // Commented this after discussion with MH. We can have both Finnish and Swedish versio in same record.
+  /* // Commented this after discussion with MH. We can have both Finnish and Swedish version in same record.
   if (tag === '600' && subfield.code === 'c') { // (fiktiivinen hahmo) vs (fiktiv gestalt)
     const modValue = translateMtsTerm(subfield.value, catalogingLanguage, 'all');
     nvdebug(`MTS: ${subfield.value} => ${modValue}`, debugDev);
@@ -100,12 +97,41 @@ function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
   */
 }
 
+function fixQualifierInformation(field, catalogingLanguage) {
+  if (!isQualifierInformationTag(field.tag)) {
+    return;
+  }
+
+  const qs = field.subfields.filter(sf => sf.code === 'q');
+  if (qs.length === 0) {
+    return;
+  }
+
+  if (catalogingLanguage) {
+    qs.forEach(sf => mtsCaseSubfield(field.tag, sf, catalogingLanguage)); // eslint-disable-line functional/immutable-data
+    return;
+  }
+
+  // Multiple $q values and no language specifed... see if translation reduces the number of entries..
+  const mappings = uniqArray(qs.map(sf => translateMtsTerm(sf.value, 'fin')));
+  if (mappings.length < qs.length) {
+    // Translate all the values to Finnish (iffy, some other language might be better),
+    // so that the duplicates can be removed elsewhere...
+    // Not the best way to do this, but doing it properly is an overkill...
+    qs.forEach(sf => mtsCaseSubfield(field.tag, sf, 'fin')); // eslint-disable-line functional/immutable-data
+    return;
+  }
+
+}
+
 function mtsCaseField(field, catalogingLanguage) {
   if (!field.subfields) {
     return;
   }
   const originalValue = fieldToString(field);
-  field.subfields.forEach(sf => mtsCaseSubfield(field.tag, sf, catalogingLanguage));
+
+  fixQualifierInformation(field, catalogingLanguage);
+
   if (originalValue === fieldToString(field)) {
     return;
   }
@@ -116,6 +142,6 @@ function mtsCaseField(field, catalogingLanguage) {
 
 
 export function mtsProcessRecord(record) {
-  const catalogingLanguage = getCatalogingLanguage(record) || 'fin';
+  const catalogingLanguage = getCatalogingLanguage(record);
   record.fields.forEach(field => mtsCaseField(field, catalogingLanguage));
 }

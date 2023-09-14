@@ -490,36 +490,7 @@
     },
     "postprocessorDirectives" :
         [
-            {
-                "operation": "removeField",
-                "skip": true,
-                "comment": "MET-113 (partial): delete 500 if better sister field exists",
-                "recordType": "base",
-                "fieldSpecification": {
-                    "tag": "500",
-                    "value": "500    ‡a ENNAKKOTIETO / KIRJAVÄLITYS.",
-                    "comment": "NB! value corresponds with fieldToString(field) output"
-                },
-                "requireField": {
-                    "tag": "500",
-                    "value": "500    ‡a TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS."
-                }
-            },
-            {
-                "operation": "removeField",
-                "skip": true,
-                "comment": "MET-113 (partial): delete 594 if better sister field exists",
-                "recordType": "base",
-                "fieldSpecification": {
-                    "tag": "594",
-                    "value": "594    ‡a ENNAKKOTIETO / KIRJAVÄLITYS ‡9 FENNI<KEEP>",
-                    "comment": "NB! value corresponds with fieldToString(field) output"
-                },
-                "requireField": {
-                    "tag": "594",
-                    "value": "594    ‡a TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS ‡9 FENNI<KEEP>"
-                }
-            }
+
         ]
     
 

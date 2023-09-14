@@ -2,17 +2,13 @@
 
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldFixPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2';
-import {fieldTranslateRelatorTerm} from './fixRelatorTerms.js';
-import {getCatalogingLanguage} from './utils.js';
-import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields.js';
+import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields';
 
-function postprocessBaseRecord(base, source) {
-  const fromLanguage = getCatalogingLanguage(source);
-  const toLanguage = getCatalogingLanguage(base);
+function postprocessBaseRecord(base) {
+
   base.fields.forEach(field => {
-    if (field.merged || field.added) { // eslint-disable-line functional/no-conditional-statements
-      fieldTranslateRelatorTerm(field, fromLanguage, toLanguage);
-    }
+    // NB! Relator terms are now expanded and translated already at preprocess stage!
+
     // remove merge-specific information:
     if (field.merged) { // eslint-disable-line functional/no-conditional-statements
       // Field level ideas about things that could be done here:
@@ -49,6 +45,6 @@ function removeDeletedFields(record) {
 
 
 export function postprocessRecords(base, source) {
-  postprocessBaseRecord(base, source);
-  removeDeletedFields(source);
+  postprocessBaseRecord(base);
+  removeDeletedFields(source); // So that we may know what was used, and what not.
 }

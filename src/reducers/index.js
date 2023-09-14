@@ -12,7 +12,6 @@ import reindexSubfield8 from './reindexSubfield8';
 
 import genericPreprocessor from './preprocessor.js';
 import prepublicationPreprocessor from './preprocessPrepublication';
-import {default as fixRelatorTerms} from './fixRelatorTerms';
 import {default as addDataFields} from './addField.js';
 import {default as mergeDataFields} from './mergeField';
 import {default as muuntajaMergeDataFields} from './muuntaja';
@@ -43,10 +42,9 @@ export const localReducers = [
   genericPreprocessor(), // Should this be moved downward?
   metatietosanastoNormalizations(),
   prepublicationPreprocessor(),
-  fixRelatorTerms(),
   removeDuplicatesFromSource(), // handles $6 and $8 chains as well (but apparently badly)
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged.
-  reindexSubfield8(), // Reindex $6 subfields from source, base remains unchanged.
+  reindexSubfield8(), // Reindex $8 subfields from source, base remains unchanged.
   manufacturer260To264(),
 
   //// ACTUAL MERGE/ADD STUFF:

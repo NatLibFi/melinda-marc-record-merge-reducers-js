@@ -8,6 +8,22 @@
           { "code": "a", "value": "Nimi," },
           { "code": "e", "value": "säv.," },
           { "code": "e", "value": "san." }
-      ] }
+      ] },
+      { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "i", "value": "Elokuvaversion perustana (teos):" },
+        { "code": "a", "value": "Edam, Adam."},
+        { "code": "t", "value": "Them Movie." }
+      ]},
+      { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "i", "value": "Elokuvaversion perustana (teos):" },
+        { "code": "a", "value": "Edam, Adam,"},
+        { "code": "d", "value": "1900-2000."},
+        { "code": "t", "value": "Them Movie II." }
+      ]},
+      { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "i", "value": "Innehåller (verk):" },
+        { "code": "a", "value": "Tekijä."},
+        { "code": "t", "value": "Interlude." }
+      ]}
   ]
 }

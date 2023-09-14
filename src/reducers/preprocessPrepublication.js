@@ -32,7 +32,8 @@ import {handleField6XX} from './preprocessPrepublicationField6XX';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
   prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
-  removeWorsePrepubField594s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
+  removeWorsePrepubField594s,
+  removeWorsePrepubField500s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
 import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries';
 import createDebugLogger from 'debug';
 
@@ -48,8 +49,10 @@ export default () => (base, source) => {
   nvdebug('SOURCE', debugDev);
   nvdebug(JSON.stringify(source), debugDev);
 
+
   handlePrepublicationNameEntries(base, source);
-  preprocessSourceField594(base, source);
+
+  preprocessSourceFields594And500(base, source);
 
   handleField263(base, source); // Do this before tampering with LDR/17...
   handleField6XX(base, source);
@@ -78,7 +81,6 @@ function removeUnwantedSourceField500s(base, source) {
   }
 
   const sourceFields500 = getRelevant5XXFields(source, true, false);
-
   nvdebugFieldArray(sourceFields500, '  Remove unneeded source 500: ', debugDev);
   sourceFields500.forEach(field => source.removeField(field));
 }
@@ -132,10 +134,17 @@ function copySource594ToSource500(record) {
     return;
   }
   const fields594 = getRelevant5XXFields(record, false, true);
+  if (fields594.length === 0) {
+    return;
+  }
   const fields500 = getRelevant5XXFields(record, true, false);
+
   // Add if field 594 is better than anything in fields 500.
   // NB! This adds all the better values, not just the best.
   const addables = fields594.filter(field594 => isKingOfTheHill(field594, fields500));
+  if (addables.length === 0) {
+    return;
+  }
   nvdebugFieldArray(fields594, 'CAND4ADD: ', debugDev);
   nvdebugFieldArray(addables, 'ADDABLE: ', debugDev);
   // NB: FIX LATER: there should be just one addable (even if 594 had many)
@@ -151,10 +160,11 @@ function copySource594ToSource500(record) {
     record.insertField(newField);
     nvdebug(`Added ${fieldToString(newField)}`, debugDev);
   });
+
 }
 
 
-function preprocessSourceField594(base, source) {
+function preprocessSourceFields594And500(base, source) {
   removeWorsePrepubField594s(source); // Keeps only the best prepub field(s) 594. (Keep/remove them in/from base?)
   removeUnwantedSourceField594s(base, source); // Source needs to keep only better prepub levels
   removeUninterestingSourceField594s(base, source); // Should we do this to 500 as well?
@@ -162,6 +172,7 @@ function preprocessSourceField594(base, source) {
   // Prepub encoding level can't be worse that Fennica prepub level, can it?
   // Apply to source, but how about base?
   copySource594ToSource500(source);
+  removeWorsePrepubField500s(source); // Eg. if has "Koneellisesti tuotettu tietue", remove "ENNAKKOTIETO" etc
 
   removeUnwantedSourceField500s(base, source); // Base > prepub, drop sources prepub fields
 

@@ -1,5 +1,5 @@
 {
   "description":"MET-209 (X00$e translations) and MET-232 (020$q translations)",
   "only": false,
-  "comment": "Note that kirjoittaja does not get translated if both base and source contains it, as no merge nor add happens."
+  "comment": "Note that 700$e values are translated to base's 040$b cat language during preprocessing"
 }
