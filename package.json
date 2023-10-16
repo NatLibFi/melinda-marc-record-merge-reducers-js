@@ -14,7 +14,7 @@
 		"url": "git@github.com:natlibfi/melinda-marc-record-merge-reducers-js.git"
 	},
 	"license": "LGPL-3.0+",
-	"version": "2.0.17",
+	"version": "2.0.18-alpha.1",
 	"main": "./dist/index.js",
 	"engines": {
 		"node": ">=18"
@@ -38,9 +38,9 @@
 	"dependencies": {
 		"@natlibfi/marc-record": "^7.3.1",
 		"@natlibfi/marc-record-merge": "^7.0.0",
-		"@natlibfi/marc-record-validate": "^8.0.1",
+		"@natlibfi/marc-record-validate": "^8.0.3",
 		"@natlibfi/marc-record-validators-melinda": "^10.14.0",
-		"@natlibfi/melinda-commons": "^13.0.6",
+		"@natlibfi/melinda-commons": "^13.0.7",
 		"clone": "^2.1.2",
 		"debug": "^4.3.4",
 		"isbn3": "^1.1.42",
@@ -48,19 +48,18 @@
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.23.0",
-		"@babel/core": "^7.23.0",
-		"@babel/eslint-parser": "^7.22.15",
+		"@babel/core": "^7.23.2",
 		"@babel/node": "^7.22.19",
-		"@babel/preset-env": "^7.22.20",
+		"@babel/preset-env": "^7.23.2",
 		"@babel/register": "^7.22.15",
 		"@natlibfi/eslint-config-melinda-backend": "^3.0.2",
-		"@natlibfi/fixugen": "^2.0.1",
-		"@natlibfi/fixura": "^3.0.1",
+		"@natlibfi/fixugen": "^2.0.2",
+		"@natlibfi/fixura": "^3.0.2",
 		"babel-plugin-istanbul": "^6.1.1",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.3.10",
 		"cross-env": "^7.0.3",
-		"eslint": "^8.50.0",
+		"eslint": "^8.51.0",
 		"mocha": "^10.2.0",
 		"nodemon": "^3.0.1",
 		"nyc": "^15.1.0"
