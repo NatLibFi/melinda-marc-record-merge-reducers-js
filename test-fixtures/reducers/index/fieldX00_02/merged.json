@@ -15,17 +15,17 @@
       ]
     },
     {
-      "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "Lepakkomies," },
-        { "code": "e", "value": "lepakko," },
-        { "code": "e", "value": "mies." }
-      ]
-    },
-    {
       "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
         { "code": "a", "value": "Minnasson, Henrik L.," },
         { "code": "e", "value": "toimittaja." },
         { "code": "0", "value": "(FI-ASTERI-N)000666000" }
+      ]
+    },
+    {
+      "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lepakkomies," },
+        { "code": "e", "value": "lepakko," },
+        { "code": "e", "value": "mies." }
       ]
     },
     {
