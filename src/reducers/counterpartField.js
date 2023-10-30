@@ -57,7 +57,7 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
   // Mainly for field 260$c:
   value = removeCopyright(value);
 
-
+  value = value.replace(/http:\/\//ug, 'https://'); // MET-501: http vs https
   value = normalizeForSamenessCheck(tag, subfieldCode, value);
 
   /* eslint-enable */

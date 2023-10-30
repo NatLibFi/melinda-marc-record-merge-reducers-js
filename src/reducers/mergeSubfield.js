@@ -130,6 +130,16 @@ function coverTypesMatch(candSubfield, relevantSubfields) {
   return false;
 }
 
+function httpToHttps(val) {
+  return val.replace(/http:\/\//ug, 'https://');
+}
+
+function pairHttpAndHttps(candSubfield, relevantSubfields) {
+  const a = httpToHttps(candSubfield.value);
+  const bs = relevantSubfields.map(sf => httpToHttps(sf.value));
+  return bs.includes(a);
+}
+
 function isSynonym(field, candSubfield, relevantSubfields) {
   if (candSubfield.code === 'q' && ['015', '020', '024', '028'].includes(field.tag)) {
     return coverTypesMatch(candSubfield, relevantSubfields);
@@ -137,6 +147,9 @@ function isSynonym(field, candSubfield, relevantSubfields) {
 
   if (candSubfield.code === 'i') {
     return relationInformationMatches(candSubfield, relevantSubfields);
+  }
+  if (pairHttpAndHttps(candSubfield, relevantSubfields)) {
+    return true;
   }
 
   return false;
@@ -161,6 +174,22 @@ function preferHyphenatedISBN(field, candSubfield, relevantSubfields) {
   return true;
 }
 
+function preferHttpsOverHttp(candSubfield, relevantSubfields) {
+  if (candSubfield.value.substring(0, 8) !== 'https://') {
+    return false;
+  }
+
+  const httpVersion = `http://${candSubfield.value.substring(8)}`;
+  const pair = relevantSubfields.find(sf => sf.value === httpVersion);
+
+  if (!pair) {
+    return false;
+  }
+  pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+  return true;
+}
+
+
 export function mergeSubfield(targetField, candSubfield) {
   // Replace existing subfield with the incoming field. These replacements are by name rather hacky...
   // Currenty we only select the better X00$d.
@@ -183,8 +212,9 @@ export function mergeSubfield(targetField, candSubfield) {
 
 
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) ||
-      isSynonym(targetField, candSubfield, relevantSubfields) ||
-      preferHyphenatedISBN(targetField, candSubfield, relevantSubfields)) {
+      preferHyphenatedISBN(targetField, candSubfield, relevantSubfields) ||
+      preferHttpsOverHttp(candSubfield, relevantSubfields) ||
+      isSynonym(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
 
