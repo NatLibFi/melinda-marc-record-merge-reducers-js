@@ -44,10 +44,10 @@ const debugDev = debug.extend('dev');
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
 export default () => (base, source) => {
-  nvdebug('BASE', debugDev);
-  nvdebug(JSON.stringify(base), debugDev);
-  nvdebug('SOURCE', debugDev);
-  nvdebug(JSON.stringify(source), debugDev);
+  //nvdebug('BASE', debugDev);
+  //nvdebug(JSON.stringify(base), debugDev);
+  //nvdebug('SOURCE', debugDev);
+  //nvdebug(JSON.stringify(source), debugDev);
 
 
   handlePrepublicationNameEntries(base, source);
