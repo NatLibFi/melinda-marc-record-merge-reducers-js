@@ -43,7 +43,7 @@
 		"@natlibfi/melinda-commons": "^13.0.7",
 		"clone": "^2.1.2",
 		"debug": "^4.3.4",
-		"isbn3": "^1.1.42",
+		"isbn3": "^1.1.43",
 		"normalize-diacritics": "^4.0.3"
 	},
 	"devDependencies": {
@@ -52,14 +52,14 @@
 		"@babel/node": "^7.22.19",
 		"@babel/preset-env": "^7.23.2",
 		"@babel/register": "^7.22.15",
-		"@natlibfi/eslint-config-melinda-backend": "^3.0.2",
+		"@natlibfi/eslint-config-melinda-backend": "^3.0.3",
 		"@natlibfi/fixugen": "^2.0.2",
 		"@natlibfi/fixura": "^3.0.2",
 		"babel-plugin-istanbul": "^6.1.1",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.3.10",
 		"cross-env": "^7.0.3",
-		"eslint": "^8.51.0",
+		"eslint": "^8.52.0",
 		"mocha": "^10.2.0",
 		"nodemon": "^3.0.1",
 		"nyc": "^15.1.0"
