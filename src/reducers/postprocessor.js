@@ -18,6 +18,7 @@ import {mtsProcessRecord} from './preprocessMetatietosanasto';
 import {removeDuplicateDatafields} from '@natlibfi/marc-record-validators-melinda/dist/removeDuplicateDataFields';
 import {recordFixSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/resolveOrphanedSubfield6s.js';
 import factoryForThereCanBeOnlyOneSubfield0 from '@natlibfi/marc-record-validators-melinda/dist/multiple-subfield-0';
+import factoryForSortFields from '@natlibfi/marc-record-validators-melinda/dist/sortFields.js';
 // import factoryForMergeingRelatorFields from '@natlibfi/marc-record-validators-melinda/dist/mergeRelatorField'; // Not yet in main
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
@@ -66,8 +67,15 @@ export default (config = defaultConfig) => (base, source) => {
 
   //removeDuplicateDatafieldsOld(base);
 
+  const sorter = factoryForSortFields({});
+  sorter.fix(base);
+
   recordResetSubfield6OccurrenceNumbers(base);
+
+  sorter.fix(base);
+
   //base.fields.forEach(field => nvdebug(`WP99: ${fieldToString(field)}`));
+
   return {base, source};
 };
 
