@@ -212,7 +212,7 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
   const pairFields = fieldGetSubfield6Pairs(field, record);
   const asString = pairFields ? fieldsToNormalizedString([field].concat(pairFields)) : fieldToNormalizedString(field);
   nvdebug(`SOURCE: '${asString}' -- REALITY: ${fieldToString(field)}`, debugDev);
-  //fieldsAsString.forEach(str => nvdebug(`TARGET: '${str}'`));
+  //fieldsAsString.forEach(str => nvdebug(`TARGET: '${str}'`, debugDev));
   const tmp = pairFields.length ? fieldsToString(pairFields) : 'HUTI';
   nvdebug(`PAIR: ${tmp}`, debugDev);
   nvdebug(`BASE:\n ${fieldsAsString.join('\n ')}`, debugDev);

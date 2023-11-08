@@ -67,8 +67,8 @@ function corporateNamesAgree(value1, value2, tag, subfieldCode) {
   const [name1, qualifier1] = splitToNameAndQualifier(value1);
   const [name2, qualifier2] = splitToNameAndQualifier(value2);
 
-  nvdebug(`CN1: '${name1}', '${qualifier1}'`);
-  nvdebug(`CN2: '${name2}', '${qualifier2}'`);
+  nvdebug(`CN1: '${name1}', '${qualifier1}'`, debugDev);
+  nvdebug(`CN2: '${name2}', '${qualifier2}'`, debugDev);
 
   if (name1.toUpperCase() !== name2.toUpperCase()) {
     return false;

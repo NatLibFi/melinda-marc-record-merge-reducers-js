@@ -10,8 +10,8 @@ const debugDev = debug.extend('dev');
 // Remove unpaired
 export default () => (base, source) => {
   //nvdebug(`ENTERING postprocessSubfield6.js`, debugDev);
-  //nvdebug(JSON.stringify(base));
-  //nvdebug(JSON.stringify(source));
+  //nvdebug(JSON.stringify(base), debugDev);
+  //nvdebug(JSON.stringify(source), debugDev);
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
 
   recordRemovePairlessFields(base, false); // Or should pairless 880 $6 520-05 become $6 520-00 etc?

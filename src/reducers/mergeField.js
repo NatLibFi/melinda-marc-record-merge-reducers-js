@@ -38,7 +38,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   //debugData(JSON.stringify(baseRecord));
   //debugData(JSON.stringify(sourceRecord));
 
-  //sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`));
+  //sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`, debugDev));
 
   //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debugDev);
 
@@ -102,6 +102,7 @@ function copyrightYearHack(baseRecord, baseField, sourceField) {
   });
 }
 
+// eslint-disable-next-line max-params
 function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs880 = []) {
   //// Identical fields
   // No need to check every subfield separately.

@@ -192,7 +192,7 @@ function getAllLinkedfields(field, record) {
 /*
 function getFirstField(record, fields) {
   const fieldsAsStrings = fields.map(field => fieldToString(field));
-  record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`));
+  record.fields.forEach((field, i) => nvdebug(`${i}:\t${fieldToString(field)}`, debugDev));
   nvdebug(`INCOMING: ${fieldsAsStrings.join('\t')}`, debugDev);
   const i = record.fields.findIndex(field => fieldsAsStrings.includes(fieldToString(field)));
   if (i > -1) {
@@ -232,7 +232,7 @@ function isLoneOrFirstLinkedField(field, record) {
 //DEPRECATED//  /* eslint-disable */
 //DEPRECATED//  let seen = {};
 //DEPRECATED//
-//DEPRECATED//  record.fields.forEach(field => nvdebug(`DUPL-CHECK ${fieldToString(field)}`));
+//DEPRECATED//  record.fields.forEach(field => nvdebug(`DUPL-CHECK ${fieldToString(field)}`, debugDev));
 //DEPRECATED//
 //DEPRECATED//  const fields = record.fields.filter(field => isLoneOrFirstLinkedField(field, record));
 //DEPRECATED//
