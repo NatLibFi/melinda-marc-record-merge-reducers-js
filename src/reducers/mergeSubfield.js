@@ -189,6 +189,21 @@ function preferHttpsOverHttp(candSubfield, relevantSubfields) {
   return true;
 }
 
+function preferSourceCorporateName(field, candSubfield, pair) {
+  if (candSubfield.code !== 'a' || !['110', '610', '710', '810'].includes(field.tag)) {
+    return false;
+  }
+  nvdebug(`CORP base '${pair.value}' vs '${candSubfield.value}'`);
+  if (candSubfield.value.match(/^Werner Söderström/u) && pair.value.match(/^WSOY/ui)) {
+    pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    return true;
+  }
+  if (candSubfield.value.match(/^ntamo/u) && pair.value.match(/^N(?:tamo|TAMO)/u)) {
+    pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    return true;
+  }
+  return false;
+}
 
 export function mergeSubfield(targetField, candSubfield) {
   // Replace existing subfield with the incoming field. These replacements are by name rather hacky...
@@ -214,6 +229,7 @@ export function mergeSubfield(targetField, candSubfield) {
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) ||
       preferHyphenatedISBN(targetField, candSubfield, relevantSubfields) ||
       preferHttpsOverHttp(candSubfield, relevantSubfields) ||
+      preferSourceCorporateName(targetField, candSubfield, relevantSubfields[0]) || // SF is non-repeat
       isSynonym(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
