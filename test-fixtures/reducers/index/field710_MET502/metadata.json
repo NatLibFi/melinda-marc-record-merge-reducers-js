@@ -1,0 +1,6 @@
+{
+  "description":"MET-502: combine differently named orgs (support qualifiers, oy etc.)",
+  "NB #1": "We need to check ').' removal rules",
+  "only": true,
+  "skip": false
+}
