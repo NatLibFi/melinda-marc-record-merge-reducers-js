@@ -55,8 +55,13 @@ function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfieldData
 }
 
 
-function skipNormalizedComparison(tag, subfieldCode) {
+function skipNormalizedComparison(tag, subfieldCode, subfieldValue) {
   if (tag === '020' && subfieldCode === 'a') {
+    return true;
+  }
+  // Hackish: we want 'ntamo' to win 'Ntamo'...
+  // If there are other similar excepting put them into an array.
+  if (['110', '610', '710', '810'].includes(tag) && subfieldCode === 'a' && subfieldValue.substring(0, 5) === 'ntamo') {
     return true;
   }
   return false;
@@ -77,8 +82,8 @@ function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
     return false;
   }
   nvdebug(`     Look for identical subfields in '${fieldToString(targetField)}' using`, debugDev);
-  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.originalValue}`, debugDev);
-  nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.punctuationlessValue}`, debugDev);
+  nvdebug(`      ORIG.    ‡${candSubfieldData.code} ${candSubfieldData.originalValue}`, debugDev);
+  nvdebug(`      NO-PUNC  ‡${candSubfieldData.code} ${candSubfieldData.punctuationlessValue}`, debugDev);
   if (relevantTargetSubfields.some(sf => sf.code === candSubfieldData.code && sf.value === candSubfieldData.originalValue)) {
     return true;
   }
@@ -86,10 +91,10 @@ function mergeOrAddSubfieldNotRequired(targetField, candSubfieldData) {
     return true;
   }
 
-  if (!skipNormalizedComparison(targetField.tag, candSubfieldData.code)) {
+  if (!skipNormalizedComparison(targetField.tag, candSubfieldData.code, candSubfieldData.originalValue)) {
     const normalizedTargetField = cloneAndNormalizeFieldForComparison(targetField);
     nvdebug(`     Look for identical normalized subfields in '${fieldToString(normalizedTargetField)}'`, debugDev);
-    nvdebug(`      ${candSubfieldData.code} ${candSubfieldData.normalizedValue})`, debugDev);
+    nvdebug(`      NO-PUNC ‡${candSubfieldData.code} ${candSubfieldData.normalizedValue})`, debugDev);
 
     if (normalizedTargetField.subfields.some(sf => sf.code === candSubfieldData.code && sf.value === candSubfieldData.normalizedValue)) {
       // Subfield with identical normalized value exists. Do nothing.
@@ -151,7 +156,7 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
 
   const candSubfield = {'code': candSubfieldData.code, 'value': candSubfieldData.punctuationlessValue};
 
-  // Currently only X00$d 1984- => 1984-2000 type of changes. // WHAT ABOUT $6s AND FIELD 880!!!
+  // Currently only for X00$d 1984- => 1984-2000 type of changes, where source version is better that what base has.
   // It all other cases the original subfield is kept.
   const original = fieldToString(targetField);
   if (mergeSubfield(targetField, candSubfield)) { // We might need the normalizedCandSubfield later on

@@ -3,6 +3,7 @@ import {partsAgree, subfieldContainsPartData} from '@natlibfi/marc-record-valida
 import {valueCarriesMeaning} from './worldKnowledge';
 import {nvdebug} from './utils';
 import {tagAndSubfieldCodeReferToIsbn} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
+import {splitToNameAndQualifier} from './counterpartField';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 //const debugData = debug.extend('data');
@@ -189,6 +190,35 @@ function preferHttpsOverHttp(candSubfield, relevantSubfields) {
   return true;
 }
 
+function preferSourceCorporateName(field, candSubfield, pair) {
+  if (candSubfield.code !== 'a' || !['110', '610', '710', '810'].includes(field.tag)) {
+    return false;
+  }
+  nvdebug(`CORP base '${pair.value}' vs '${candSubfield.value}'`, debugDev);
+  const prefer = actualPrefenceCheck();
+  if (prefer) {
+    pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+    return true;
+  }
+  return false;
+
+  function actualPrefenceCheck() {
+    if (candSubfield.value.match(/^Werner Söderström/u) && pair.value.match(/^WSOY/ui)) {
+      return true;
+    }
+    if (candSubfield.value.match(/^ntamo/u) && pair.value.match(/^N(?:tamo|TAMO)/u)) {
+      return true;
+    }
+    // Prefer (qualifier):
+    const [name1, qualifier1] = splitToNameAndQualifier(candSubfield.value);
+    const [name2, qualifier2] = splitToNameAndQualifier(pair.value);
+    if (name1 === name2 && qualifier2 === undefined && qualifier1.match(/^ ?\(.*\)$/u)) {
+      return true;
+    }
+    return false;
+  }
+
+}
 
 export function mergeSubfield(targetField, candSubfield) {
   // Replace existing subfield with the incoming field. These replacements are by name rather hacky...
@@ -214,6 +244,7 @@ export function mergeSubfield(targetField, candSubfield) {
   if (replaceDatesAssociatedWithName(targetField, candSubfield, relevantSubfields) ||
       preferHyphenatedISBN(targetField, candSubfield, relevantSubfields) ||
       preferHttpsOverHttp(candSubfield, relevantSubfields) ||
+      preferSourceCorporateName(targetField, candSubfield, relevantSubfields[0]) || // SF is non-repeat
       isSynonym(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
