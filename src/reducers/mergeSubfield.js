@@ -3,6 +3,7 @@ import {partsAgree, subfieldContainsPartData} from '@natlibfi/marc-record-valida
 import {valueCarriesMeaning} from './worldKnowledge';
 import {nvdebug} from './utils';
 import {tagAndSubfieldCodeReferToIsbn} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
+import {splitToNameAndQualifier} from './counterpartField';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 //const debugData = debug.extend('data');
@@ -194,15 +195,29 @@ function preferSourceCorporateName(field, candSubfield, pair) {
     return false;
   }
   nvdebug(`CORP base '${pair.value}' vs '${candSubfield.value}'`);
-  if (candSubfield.value.match(/^Werner Söderström/u) && pair.value.match(/^WSOY/ui)) {
-    pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
-    return true;
-  }
-  if (candSubfield.value.match(/^ntamo/u) && pair.value.match(/^N(?:tamo|TAMO)/u)) {
+  const prefer = actualPrefenceCheck();
+  if (prefer) {
     pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
     return true;
   }
   return false;
+
+  function actualPrefenceCheck() {
+    if (candSubfield.value.match(/^Werner Söderström/u) && pair.value.match(/^WSOY/ui)) {
+      return true;
+    }
+    if (candSubfield.value.match(/^ntamo/u) && pair.value.match(/^N(?:tamo|TAMO)/u)) {
+      return true;
+    }
+    // Prefer (qualifier):
+    const [name1, qualifier1] = splitToNameAndQualifier(candSubfield.value);
+    const [name2, qualifier2] = splitToNameAndQualifier(pair.value);
+    if (name1 === name2 && qualifier2 === undefined && qualifier1.match(/^ ?\(.*\)$/u)) {
+      return true;
+    }
+    return false;
+  }
+
 }
 
 export function mergeSubfield(targetField, candSubfield) {
