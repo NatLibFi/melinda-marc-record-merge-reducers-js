@@ -73,10 +73,12 @@ function corporateNamesAgree(value1, value2, tag, subfieldCode) {
   if (name1.toUpperCase() !== name2.toUpperCase()) {
     return false;
   }
+
   // If both values have qualifiers, they must be equal!
   // Note this will reject ", kustannusosakeyhtiö" vs "(yhtiö)" pair
-
+  // Also qualifer pair "(foo)" and "(bar)" will result in a failure.
   if (qualifier1 !== undefined && qualifier2 !== undefined && qualifier1 !== qualifier2) {
+    // Should we support "Yhtiö ab" equals "Yhtiö oy"? If so, this is the place. Pretty marginal though
     return false;
   }
   return true;
