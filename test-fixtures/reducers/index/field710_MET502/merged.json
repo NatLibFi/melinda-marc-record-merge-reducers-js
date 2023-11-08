@@ -12,12 +12,11 @@
       { "code": "a", "value": "Qualifier Mismatch (foo)" }
     ]},
 
-    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
-      { "code": "a", "value": "WSOY" }
-    ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Werner Söderström osakeyhtiö." } ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "ntamo." } ]},
+    { "tag": "710", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Europacorp" } ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Qualifier Mismatch (bar)" } ]}
 
-    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
-      { "code": "a", "value": "Qualifier Mismatch (bar)" }
-    ]}
+
   ]
 }
