@@ -37,8 +37,55 @@ function differentPublisherSubfields(field1, field2) {
 }
 */
 
+
+export function splitToNameAndQualifier(name) {
+  const nameOnly = name.replace(/(?: \([^)]+\)| abp?|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
+  if (nameOnly === name) {
+    return [getBestName(name).toLowerCase(), undefined];
+  }
+
+  const bestName = getBestName(nameOnly);
+  return [bestName.toLowerCase(), name.substring(nameOnly.length)]; // NB! qualifier retains initial space in " (whatever)"
+
+  function getBestName(name) {
+    const NAME = name.toUpperCase();
+
+    if (NAME === 'WSOY') {
+      return 'Werner Söderström osakeyhtiö';
+    }
+    if (NAME === 'NTAMO') {
+      return 'ntamo';
+    }
+    return name;
+  }
+}
+
+function corporateNamesAgree(value1, value2, tag, subfieldCode) {
+  if (subfieldCode !== 'a' || !['110', '610', '710', '810'].includes(tag)) {
+    return false;
+  }
+  const [name1, qualifier1] = splitToNameAndQualifier(value1);
+  const [name2, qualifier2] = splitToNameAndQualifier(value2);
+
+  nvdebug(`CN1: '${name1}', '${qualifier1}'`, debugDev);
+  nvdebug(`CN2: '${name2}', '${qualifier2}'`, debugDev);
+
+  if (name1.toUpperCase() !== name2.toUpperCase()) {
+    return false;
+  }
+
+  // If both values have qualifiers, they must be equal!
+  // Note this will reject ", kustannusosakeyhtiö" vs "(yhtiö)" pair
+  // Also qualifer pair "(foo)" and "(bar)" will result in a failure.
+  if (qualifier1 !== undefined && qualifier2 !== undefined && qualifier1 !== qualifier2) {
+    // Should we support "Yhtiö ab" equals "Yhtiö oy"? If so, this is the place. Pretty marginal though
+    return false;
+  }
+  return true;
+}
+
 function pairableValue(tag, subfieldCode, value1, value2) {
-  if (partsAgree(value1, value2, tag, subfieldCode)) {
+  if (partsAgree(value1, value2, tag, subfieldCode) || corporateNamesAgree(value1, value2, tag, subfieldCode)) {
     // Pure baseness: here we assume that base's value1 is better than source's value2.
     return value1;
   }
@@ -52,8 +99,8 @@ function counterpartExtraNormalize(tag, subfieldCode, value) {
   // Remove trailing punctuation:
   value = value.replace(/(\S)(?:,|\.|\?|!|\. -| *:| *;| =| \/)$/u, '$1');
   // Remove brackets:
-  value = value.replace(/^\(([^()]+)\)$/u, '$1'); // Remove starting-'(' and ending-')'
-  value = value.replace(/^\[([^[\]]+)\]$/u, '$1'); // Remove starting-'[' and ending-']'
+  value = value.replace(/^\(([^()]+)\)$/u, '$1'); // Remove initial '(' and final ')' if both exist.
+  value = value.replace(/^\[([^[\]]+)\]$/u, '$1'); // Remove initial '[' and final ']' if both exist.
   // Mainly for field 260$c:
   value = removeCopyright(value);
 
@@ -523,7 +570,7 @@ export function getCounterpart(baseRecord, sourceRecord, field, config) {
 
   nvdebug(`Compare incoming '${fieldToString(field)}' with (up to) ${counterpartCands.length} existing field(s)`, debugDev);
 
-  const normalizedField = cloneAndNormalizeFieldForComparison(field);
+  const normalizedField = cloneAndNormalizeFieldForComparison(field); // mainly strip punctuation here
 
   nvdebug(`Norm to: '${fieldToString(normalizedField)}'`, debugDev);
 

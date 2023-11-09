@@ -19,8 +19,8 @@ export function mergeIndicators(toField, fromField, config) {
   // For other indicators the situation is trickier, as we don't know which one is the good value.
   //
   // NB! We could add fixes for various other indicator types as well. However, it gets quickly pretty ad hoc.
-  // nvdebug(fieldToString(toField));
-  // nvdebug(fieldToString(fromField));
+  // nvdebug(fieldToString(toField), debugDev);
+  // nvdebug(fieldToString(fromField), debugDev);
 
   mergeIndicator1(toField, fromField, config);
   mergeIndicator2(toField, fromField, config);

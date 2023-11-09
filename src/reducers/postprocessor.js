@@ -32,10 +32,10 @@ export default (config = defaultConfig) => (base, source) => {
   nvdebug('ENTERING postprocessor.js', debugDev);
   base.fields.forEach(field => nvdebug(`WP0: ${fieldToString(field)}`, debugDev));
 
-  //nvdebug(JSON.stringify(base));
-  //nvdebug(JSON.stringify(source));
+  //nvdebug(JSON.stringify(base), debugDev);
+  //nvdebug(JSON.stringify(source), debugDev);
 
-  //nvdebug(JSON.stringify(config.postprocessorDirectives));
+  //nvdebug(JSON.stringify(config.postprocessorDirectives), debugDev);
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
   //nvdebug(`HSP CONF ${config}`, debugDev);
   filterOperations(base, source, config.postprocessorDirectives); // declared in preprocessor
@@ -43,18 +43,18 @@ export default (config = defaultConfig) => (base, source) => {
   //deleteAllPrepublicationNotesFromField500InNonPubRecord(base); // Already done when LDR/17 was copied from source
   removeWorsePrepubField500s(base);
   removeWorsePrepubField594s(base);
-  //base.fields.forEach(field => nvdebug(`WP5: ${fieldToString(field)}`));
+  //base.fields.forEach(field => nvdebug(`WP5: ${fieldToString(field)}`, debugDev));
 
   recordNormalizeIndicators(base); // Fix 245 and non-filing indicators
-  //base.fields.forEach(field => nvdebug(`WP6: ${fieldToString(field)}`));
+  //base.fields.forEach(field => nvdebug(`WP6: ${fieldToString(field)}`, debugDev));
 
   mergeLisapainokset(base);
-  //base.fields.forEach(field => nvdebug(`WP7: ${fieldToString(field)}`));
+  //base.fields.forEach(field => nvdebug(`WP7: ${fieldToString(field)}`, debugDev));
   mtsProcessRecord(base);
 
-  //base.fields.forEach(field => nvdebug(`WP50: ${fieldToString(field)}`));
+  //base.fields.forEach(field => nvdebug(`WP50: ${fieldToString(field)}`, debugDev));
   recordFixSubfield6OccurrenceNumbers(base); // remove orphaned $6 fields or set them to 880 $6 700-00...
-  //base.fields.forEach(field => nvdebug(`WP51: ${fieldToString(field)}`));
+  //base.fields.forEach(field => nvdebug(`WP51: ${fieldToString(field)}`, debugDev));
   const thereCanBeOnlyOneSubfield0 = factoryForThereCanBeOnlyOneSubfield0({}); // MRA-392
   thereCanBeOnlyOneSubfield0.fix(base);
 
@@ -63,7 +63,7 @@ export default (config = defaultConfig) => (base, source) => {
   //nvdebug(`Re-DUP ${JSON.stringify(res)}`, debugDev);
 
   removeInferiorDatafields(base, true);
-  //res.message.forEach(msg => nvdebug(msg));
+  //res.message.forEach(msg => nvdebug(msg, debugDev));
 
   //removeDuplicateDatafieldsOld(base);
 
@@ -74,7 +74,7 @@ export default (config = defaultConfig) => (base, source) => {
 
   sorter.fix(base);
 
-  //base.fields.forEach(field => nvdebug(`WP99: ${fieldToString(field)}`));
+  //base.fields.forEach(field => nvdebug(`WP99: ${fieldToString(field)}`, debugDev));
 
   return {base, source};
 };
