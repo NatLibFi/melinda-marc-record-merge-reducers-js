@@ -39,7 +39,7 @@
 		"@natlibfi/marc-record": "^8.0.0",
 		"@natlibfi/marc-record-merge": "^7.0.0",
 		"@natlibfi/marc-record-validate": "^8.0.3",
-		"@natlibfi/marc-record-validators-melinda": "github:NatLibFi/marc-record-validators-melinda#245punc",
+		"@natlibfi/marc-record-validators-melinda": "^10.15.1",
 		"@natlibfi/melinda-commons": "^13.0.7",
 		"debug": "^4.3.4",
 		"isbn3": "^1.1.43",
