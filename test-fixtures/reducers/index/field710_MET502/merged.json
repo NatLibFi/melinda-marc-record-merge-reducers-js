@@ -7,6 +7,11 @@
       { "code": "e", "value": "kustantaja." },
       { "code": "0", "value": "(FI-ASTERI-N)000555888" }
     ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Paristo, kustannusosakeyhtiö," },
+      { "code": "e", "value": "kustantaja." },
+      {  "code": "0", "value": "(FI-ASTERI-N)000555889" }
+    ]},
 
     { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Qualifier Mismatch (foo)" } ]},
     { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Werner Söderström osakeyhtiö." } ]},

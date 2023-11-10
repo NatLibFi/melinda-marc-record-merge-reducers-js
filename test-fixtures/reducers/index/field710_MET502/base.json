@@ -7,6 +7,10 @@
       { "code": "e", "value": "kustantaja." },
       {  "code": "0", "value": "(FI-ASTERI-N)000555888" }
     ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Paristo" },
+      { "code": "e", "value": "kustantaja." }
+    ]},
     { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Qualifier Mismatch (foo)" } ]},
     { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "WSOY" } ]},
     { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Ntamo" } ]},
