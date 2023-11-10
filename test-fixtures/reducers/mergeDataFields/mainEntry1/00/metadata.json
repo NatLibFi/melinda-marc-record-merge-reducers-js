@@ -1,5 +1,6 @@
 {
   "description":"00 merge X00, keep 710. Now also test MRA-331, MRA-414.",
   "MRA-414": "600 and 610 fields should merge",
+  "NB #1": "MELINDA-506 prefers Harry and \"Joku Islantilainen\" field from source, since it has an Asteri $0 ",
   "only": false
 }
