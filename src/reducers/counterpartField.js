@@ -41,7 +41,7 @@ function differentPublisherSubfields(field1, field2) {
 
 
 export function splitToNameAndQualifier(name) {
-  const nameOnly = name.replace(/(?: \([^)]+\)| abp?|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
+  const nameOnly = name.replace(/(?: \([^)]+\)| abp?| Kustannus|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
   if (nameOnly === name) {
     return [getBestName(name).toLowerCase(), undefined];
   }
