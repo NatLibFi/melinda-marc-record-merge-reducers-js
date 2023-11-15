@@ -48,7 +48,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
 
-  //sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`));
+  //sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`, debugDev));
 
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well

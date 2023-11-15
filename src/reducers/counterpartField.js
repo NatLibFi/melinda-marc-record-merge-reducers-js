@@ -399,8 +399,8 @@ function pairableName(baseField, sourceField) {
     return true;
   }
 
-  nvdebug(`    name mismatch:`);
-  nvdebug(`     '${fieldToString(reducedField1)}' vs`);
+  nvdebug(`    name mismatch:`, debugDev);
+  nvdebug(`     '${fieldToString(reducedField1)}' vs`, debugDev);
   nvdebug(`     '${fieldToString(reducedField2)}'`, debugDev);
   return false;
 }
