@@ -270,7 +270,7 @@ const mergeConstraints = [
   {'tag': '881', 'required': ''},
   {'tag': '882', 'required': ''},
   {'tag': '883', 'required': ''},
-  {'tag': '884', 'required': ''},
+  {'tag': '884', 'required': '', 'paired': 'agkq'},
   {'tag': '885', 'required': ''},
   {'tag': '886', 'required': ''},
   {'tag': '887', 'required': ''},

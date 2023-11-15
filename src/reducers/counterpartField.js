@@ -16,6 +16,8 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:me
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
+const irrelevantSubfieldsInNameAndTitlePartComparison = '5689';
+
 const counterpartRegexps = { // NB! tag is from source!
   // Note that in the normal case, all source 1XX fields have been converted to 7XX fields.
   '100': /^[17]00$/u, '110': /^[17]10$/u, '111': /^[17]11$/u, '130': /^[17]30$/u,
@@ -39,7 +41,7 @@ function differentPublisherSubfields(field1, field2) {
 
 
 export function splitToNameAndQualifier(name) {
-  const nameOnly = name.replace(/(?: \([^)]+\)| abp?|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
+  const nameOnly = name.replace(/(?: \([^)]+\)| abp?| Kustannus|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
   if (nameOnly === name) {
     return [getBestName(name).toLowerCase(), undefined];
   }
@@ -133,8 +135,8 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
     // When everything is the string, the strings need to be (practically) identical.
     // (NB! Here order matters. We should probably make it matter everywhere.)
     // (However, keySubfieldsAsString === '' will always succeed. Used by 040 at least.)
-    // TEE: SKIPPAA INDIKAATTORIT!
-    return fieldToString(field1) === fieldToString(field2);
+    // NB! substring(6) skips "TAG II" (I=indicator. Thus we skip indicators)
+    return fieldToString(field1).substring(6) === fieldToString(field2).substring(6);
   }
   const subfieldArray = keySubfieldsAsString.split('');
 
@@ -397,7 +399,9 @@ function pairableName(baseField, sourceField) {
     return true;
   }
 
-  nvdebug(`    name mismatch: '${fieldToString(reducedField1)}' vs '${fieldToString(reducedField2)}'`, debugDev);
+  nvdebug(`    name mismatch:`, debugDev);
+  nvdebug(`     '${fieldToString(reducedField1)}' vs`, debugDev);
+  nvdebug(`     '${fieldToString(reducedField2)}'`, debugDev);
   return false;
 }
 
@@ -441,7 +445,8 @@ function namePartThreshold(field) {
 
 function fieldToNamePart(field) {
   const index = namePartThreshold(field);
-  const relevantSubfields = field.subfields.filter((sf, i) => i < index || index === -1);
+  const relevantSubfields = field.subfields.filter((sf, i) => i < index || index === -1).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
+
   const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
 
   /*
@@ -449,13 +454,17 @@ function fieldToNamePart(field) {
     debugDev(`Name subset: ${fieldToString(subsetField)}`);
   }
   */
+
+  // Ummm... Sometimes $0 comes after $t but belongs to name part
+
   return subsetField;
 }
 
 function fieldToTitlePart(field) {
   // Take everything after 1st subfield $t...
   const index = field.subfields.findIndex(currSubfield => currSubfield.code === 't');
-  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: field.subfields.filter((sf, i) => i >= index)};
+  const relevantSubfields = field.subfields.filter((sf, i) => i >= index).filter(sf => !irrelevantSubfieldsInNameAndTitlePartComparison.includes(sf.code));
+  const subsetField = {'tag': field.tag, 'ind1': field.ind1, 'ind2': field.ind2, subfields: relevantSubfields};
   debugDev(`Title subset: ${fieldToString(subsetField)}`);
   return subsetField;
 }

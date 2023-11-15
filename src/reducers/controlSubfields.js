@@ -185,7 +185,7 @@ function controlSubfield9PermitsMerge(baseField, sourceField) {
     if (keepOrDrop2.length === 0) {
       const unhandledSubfield = sf9lessField2.find(sf2 => !sf9lessField1.some(sf => acceptKeeplessSourceSubfield(sf2, baseField.tag, sf.code, sf.value)));
       if (unhandledSubfield) {
-        //nvdebug(`Failed to pair ${subfieldToString(unhandledSubfield)}`);
+        //nvdebug(`Failed to pair ${subfieldToString(unhandledSubfield)}`, debugDev);
         return true;
       }
       //return !sf9lessField2.every(sf2 => sf9lessField1.some(sf => subfieldsAreIdentical(sf, sf2)));

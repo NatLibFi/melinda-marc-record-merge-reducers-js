@@ -48,7 +48,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
 
-  //sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`));
+  //sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`, debugDev));
 
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
@@ -171,6 +171,41 @@ function skipMergeField(baseRecord, sourceField, config) {
   return false;
 }
 
+function sourceRecordIsBetter(baseField, sourceField) {
+  if (!baseField.subfields) {
+    return;
+  }
+  // MELINDA-8978: prefer Asteri version
+  if (isAsteriField(sourceField) && !isAsteriField(baseField)) {
+    return 1;
+  }
+
+  function isAsteriField(field) {
+    if (field.subfields.some(sf => sf.code === '0' && sf.value.match(/^\((?:FI-ASTERI-N|FIN11)\)[0-9]{9}$/u))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function swapDataBetweenFields(field1, field2) {
+  // NB! Does not support controlfields yet! Add support if the need arises.
+  if (field1.subfields) { // If field1 has subfields, then also field2 has them. No need to check the other field here.
+    swapNamedData('ind1');
+    swapNamedData('ind2');
+    swapNamedData('subfields');
+    return;
+  }
+  return;
+
+  function swapNamedData(name) {
+    const data = field1[name]; // eslint-disable-line functional/immutable-data
+    field1[name] = field2[name]; // eslint-disable-line functional/immutable-data
+    field2[name] = data; // eslint-disable-line functional/immutable-data
+  }
+
+}
+
 function mergeField(baseRecord, sourceRecord, sourceField, config) {
   nvdebug(`SELF: ${fieldToString(sourceField)}`, debugDev);
 
@@ -184,6 +219,11 @@ function mergeField(baseRecord, sourceRecord, sourceField, config) {
   const counterpartField = getCounterpart(baseRecord, sourceRecord, sourceField, config);
 
   if (counterpartField) {
+    if (sourceRecordIsBetter(counterpartField, sourceField)) { // eslint-disable-line functional/no-conditional-statements
+      swapDataBetweenFields(counterpartField, sourceField);
+    }
+
+
     const candFieldPairs880 = sourceField.tag === '880' ? undefined : fieldGetSubfield6Pairs(sourceField, sourceRecord);
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debugDev);
     nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`, debugDev);
