@@ -41,7 +41,7 @@ function differentPublisherSubfields(field1, field2) {
 
 
 export function splitToNameAndQualifier(name) {
-  const nameOnly = name.replace(/(?: \([^)]+\)| abp?| Kustannus|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
+  const nameOnly = name.replace(/(?: \([^)]+\)| abp?| Kustannus| Kustannus Oy|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
   if (nameOnly === name) {
     return [getBestName(name).toLowerCase(), undefined];
   }
@@ -76,14 +76,20 @@ function corporateNamesAgree(value1, value2, tag, subfieldCode) {
     return false;
   }
 
-  // If both values have qualifiers, they must be equal!
-  // Note this will reject ", kustannusosakeyhtiö" vs "(yhtiö)" pair
-  // Also qualifer pair "(foo)" and "(bar)" will result in a failure.
-  if (qualifier1 !== undefined && qualifier2 !== undefined && qualifier1 !== qualifier2) {
-    // Should we support "Yhtiö ab" equals "Yhtiö oy"? If so, this is the place. Pretty marginal though
-    return false;
+  // If either value does not have a qualifier, they are considered equals:
+  if (qualifier1 === undefined || qualifier2 === undefined || qualifier1 === qualifier2) {
+    return true;
   }
-  return true;
+
+  if (isKustantaja(qualifier1) && isKustantaja(qualifier2)) {
+    return true;
+  }
+
+  return false;
+
+  function isKustantaja(qualifier) {
+    return qualifier.match(/^(?: Kustannus| Kustannus oy|, kustannusosakeyhtiö)$/iu);
+  }
 }
 
 function pairableValue(tag, subfieldCode, value1, value2) {
