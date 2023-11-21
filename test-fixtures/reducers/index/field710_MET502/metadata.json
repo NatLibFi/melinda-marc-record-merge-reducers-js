@@ -1,5 +1,5 @@
 {
-  "description":"MET-502: combine differently named orgs (support qualifiers, oy etc.)",
+  "description":"MET-502 and MET-517: combine differently named orgs (support qualifiers, oy etc.)",
   "NB #1": "We need to check&fix ').' removal rules AND other 710 punc rules!",
   "only": false,
   "skip": false
