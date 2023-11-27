@@ -1,6 +1,6 @@
-import merger, {Reducers} from '@natlibfi/marc-record-merge';
+import merger from '@natlibfi/marc-record-merge';
 import {inspect} from 'util';
-import {MelindaReducers, MelindaCopyReducerConfigs} from './index';
+import {MelindaReducers} from './index';
 import createDebugLogger from 'debug';
 import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
@@ -28,7 +28,8 @@ function callback({getFixture}) {
 
   // Run first copy-reducers with Melinda-configs and then the specific MelindaReducers
 
-  const reducers = [...MelindaCopyReducerConfigs.map(conf => Reducers.copy(conf)), ...MelindaReducers];
+  //const reducers = [...MelindaCopyReducerConfigs.map(conf => Reducers.copy(conf)), ...MelindaReducers];
+  const reducers = MelindaReducers;
 
   debugData(`Reducers: ${inspect(reducers, {colors: true, maxArrayLength: 10, depth: 8})})}`);
 
