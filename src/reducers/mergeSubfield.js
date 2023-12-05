@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {partsAgree, subfieldContainsPartData} from '@natlibfi/marc-record-validators-melinda/dist/normalizeSubfieldValueForComparison';
 import {valueCarriesMeaning} from './worldKnowledge';
-import {nvdebug} from './utils';
+import {nvdebug, subfieldToString} from './utils';
 import {tagAndSubfieldCodeReferToIsbn} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
 import {splitToNameAndQualifier} from './counterpartField';
 
@@ -146,14 +146,50 @@ function isSynonym(field, candSubfield, relevantSubfields) {
     return coverTypesMatch(candSubfield, relevantSubfields);
   }
 
-  if (candSubfield.code === 'i') {
-    return relationInformationMatches(candSubfield, relevantSubfields);
+  nvdebug(`Looking for synonyms for '${subfieldToString(candSubfield)}'...`);
+
+  if (relationInformationMatches(candSubfield, relevantSubfields)) {
+    return true;
   }
+
   if (pairHttpAndHttps(candSubfield, relevantSubfields)) {
     return true;
   }
 
+  if (fieldAllowsQualifierInOneOfTheFields(field, candSubfield)) {
+    const [name1, qualifier1] = genericSplitToNameAndQualifier(candSubfield.value);
+    if (relevantSubfields.some(sf => subfieldQualifierCheck(sf, name1, qualifier1))) {
+      return true;
+    }
+  }
   return false;
+
+  function subfieldQualifierCheck(subfield, name, qualifier) {
+    const [name2, qualifier2] = genericSplitToNameAndQualifier(candSubfield.value);
+    if (name !== name2) {
+      return false;
+    }
+    if (!qualifier || !qualifier2 || qualifier === qualifier2) {
+      return true;
+    }
+    return false;
+  }
+
+  function genericSplitToNameAndQualifier(value) {
+    if (value.match(/^.* \([^()]+\)$/u)) {
+      const name = value.replace(/^(.*) \([^()]+\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+      const qualifier = value.replace(/^.* (\([^()]+\))$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+      return [name, qualifier];
+    }
+    return [value, undefined];
+  }
+
+  function fieldAllowsQualifierInOneOfTheFields(field, subfield) {
+    if (field.tag === '776' && subfield.code === 'i') {
+      return true;
+    }
+    return false;
+  }
 }
 
 function preferHyphenatedISBN(field, candSubfield, relevantSubfields) {
