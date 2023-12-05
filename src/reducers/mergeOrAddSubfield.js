@@ -166,7 +166,7 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
       setPunctuationFlag(targetField, candSubfield);
       return;
     }
-    nvdebug(`      A: No. Field ${original} already had the same or  a better merge candidate than our subfield '${candSubfieldAsString}'.`, debugDev);
+    nvdebug(`      A: No. Field ${original} already had the same or a synonymous or a better merge candidate than our subfield '${candSubfieldAsString}'.`, debugDev);
     return;
   }
 
