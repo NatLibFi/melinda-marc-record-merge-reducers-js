@@ -1,4 +1,5 @@
 {
   "description":"776: $i qualifier behaviour",
+  "comment": "NV: I changed this to prefe the qualifier version (here: source version), as this loses no information, as and is more compatible with, say, 300$a or 65X fields",
   "only": false
 }
