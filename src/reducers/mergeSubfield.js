@@ -194,7 +194,7 @@ function preferHttpsOverHttp(candSubfield, relevantSubfields) {
 }
 
 function preferQualifierVersion(field, candSubfield, relevantSubfields) {
-  if (!fieldAllowsQualifierInOneOfTheFields(field, candSubfield) || !candSubfield.value.includes('(')) {
+  if (!fieldAllowsQualifierInOneOfTheSubfields(field, candSubfield) || !candSubfield.value.includes('(')) {
     return false;
   }
 
@@ -203,6 +203,11 @@ function preferQualifierVersion(field, candSubfield, relevantSubfields) {
   if (!pair) {
     return false;
   }
+  // SN: "Kuvailuohjeiden näkökulmasta epubille ei pitäisi koskaan merkitä sivumäärää"
+  if (field.tag === '300' && candSubfield.code === 'a' && candSubfield.value.match(/(?:online|verkko)/iu)) {
+    return true; // True, but don't prefer the source value
+  }
+
   pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
   return true;
 
@@ -226,7 +231,7 @@ function preferQualifierVersion(field, candSubfield, relevantSubfields) {
     return [value, undefined];
   }
 
-  function fieldAllowsQualifierInOneOfTheFields(field, subfield) {
+  function fieldAllowsQualifierInOneOfTheSubfields(field, subfield) {
     if (field.tag === '300' && subfield.code === 'a') {
       return true;
     }
