@@ -1,0 +1,5 @@
+{
+  "only": false,
+  "description": "MET-515: use the source (having qualifier) version of 300$a",
+  "comment": "SN: Kuvailuohjeen näkökulmasta epubille ei pitäisi koskaan merkitä sivumäärää"
+}

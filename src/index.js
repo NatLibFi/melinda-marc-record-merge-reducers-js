@@ -26,6 +26,6 @@
 *
 */
 
-import {localReducers as MelindaReducers, localCopyReducerConfigs as MelindaCopyReducerConfigs} from './reducers';
+import {localReducers as MelindaReducers, muuntajaReducers as MuuntajaReducers} from './reducers';
 
-export {MelindaReducers, MelindaCopyReducerConfigs};
+export {MelindaReducers, MuuntajaReducers};
