@@ -62,6 +62,40 @@ export function splitToNameAndQualifier(name) {
   }
 }
 
+
+function withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode) {
+  if (!potentialWithAndWithoutContent()) {
+    return false;
+  }
+
+  const [name1, qualifier1] = splitToNameAndQualifier(value1);
+  const [name2, qualifier2] = splitToNameAndQualifier(value2);
+
+  //nvdebug(`CN1: '${name1}', '${qualifier1}'`, debugDev);
+  //nvdebug(`CN2: '${name2}', '${qualifier2}'`, debugDev);
+
+  if (name1 !== name2) {
+    return false;
+  }
+
+  // If either value does not have a qualifier, they are considered equals:
+  if (qualifier1 === undefined || qualifier2 === undefined || qualifier1 === qualifier2) {
+    return true;
+  }
+
+  return false;
+
+  function potentialWithAndWithoutContent() {
+    // 300$a needs to be explictly listed as our mergeConstraints.js use this as (part of) field 300 key.
+    // Note that 776$i is not needed here, as it is not part of of field 776 key.
+    if (subfieldCode === 'a') {
+      return ['300'].includes(tag);
+    }
+    return false;
+  }
+}
+
+
 function corporateNamesAgree(value1, value2, tag, subfieldCode) {
   if (subfieldCode !== 'a' || !['110', '610', '710', '810'].includes(tag)) {
     return false;
@@ -92,7 +126,14 @@ function corporateNamesAgree(value1, value2, tag, subfieldCode) {
   }
 }
 
+
 function pairableValue(tag, subfieldCode, value1, value2) {
+  // This function could just return true or false.
+  // I thought of preference when I wrote this, but preference is not currently implemented *here*.
+  if (withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode)) {
+    // 300$a "whatever" and "whatever (123 sivua)"
+    return value1;
+  }
   if (partsAgree(value1, value2, tag, subfieldCode) || corporateNamesAgree(value1, value2, tag, subfieldCode)) {
     // Pure baseness: here we assume that base's value1 is better than source's value2.
     return value1;
@@ -158,7 +199,7 @@ function optionalSubfieldComparison(originalBaseField, originalSourceField, keyS
 
 
   function hasCommonNominator(subfieldCode) {
-    nvdebug(`hasCommonNominator(${subfieldCode}): '${fieldToString(originalBaseField)}' vs '${fieldToString(originalSourceField)}'`, debugDev);
+    //nvdebug(`hasCommonNominator(${subfieldCode})? '${fieldToString(originalBaseField)}' vs '${fieldToString(originalSourceField)}'`, debugDev);
 
     // If base has $a and source has $b, there's no common nominator, thus fail...
     const subfields1 = field1.subfields.filter(subfield => subfield.code === subfieldCode && valueCarriesMeaning(field1.tag, subfield.code, subfield.value));
