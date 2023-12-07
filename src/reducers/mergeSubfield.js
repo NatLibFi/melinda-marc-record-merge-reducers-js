@@ -156,40 +156,7 @@ function isSynonym(field, candSubfield, relevantSubfields) {
     return true;
   }
 
-  if (fieldAllowsQualifierInOneOfTheFields(field, candSubfield)) {
-    const [name1, qualifier1] = genericSplitToNameAndQualifier(candSubfield.value);
-    if (relevantSubfields.some(sf => subfieldQualifierCheck(sf, name1, qualifier1))) {
-      return true;
-    }
-  }
   return false;
-
-  function subfieldQualifierCheck(subfield, name, qualifier) {
-    const [name2, qualifier2] = genericSplitToNameAndQualifier(candSubfield.value);
-    if (name !== name2) {
-      return false;
-    }
-    if (!qualifier || !qualifier2 || qualifier === qualifier2) {
-      return true;
-    }
-    return false;
-  }
-
-  function genericSplitToNameAndQualifier(value) {
-    if (value.match(/^.* \([^()]+\)$/u)) {
-      const name = value.replace(/^(.*) \([^()]+\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-      const qualifier = value.replace(/^.* (\([^()]+\))$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-      return [name, qualifier];
-    }
-    return [value, undefined];
-  }
-
-  function fieldAllowsQualifierInOneOfTheFields(field, subfield) {
-    if (field.tag === '776' && subfield.code === 'i') {
-      return true;
-    }
-    return false;
-  }
 }
 
 function preferHyphenatedISBN(field, candSubfield, relevantSubfields) {
@@ -224,6 +191,50 @@ function preferHttpsOverHttp(candSubfield, relevantSubfields) {
   }
   pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
   return true;
+}
+
+function preferQualifierVersion(field, candSubfield, relevantSubfields) {
+  if (!fieldAllowsQualifierInOneOfTheFields(field, candSubfield) || !candSubfield.value.includes('(')) {
+    return false;
+  }
+
+  const [name1, qualifier1] = genericSplitToNameAndQualifier(candSubfield.value);
+  const pair = relevantSubfields.find(sf => subfieldQualifierCheck(sf, name1, qualifier1));
+  if (!pair) {
+    return false;
+  }
+  pair.value = candSubfield.value; // eslint-disable-line functional/immutable-data
+  return true;
+
+  function subfieldQualifierCheck(subfield, name, qualifier) {
+    const [name2, qualifier2] = genericSplitToNameAndQualifier(candSubfield.value);
+    if (name !== name2) {
+      return false;
+    }
+    if (!qualifier || !qualifier2 || qualifier === qualifier2) {
+      return true;
+    }
+    return false;
+  }
+
+  function genericSplitToNameAndQualifier(value) {
+    if (value.match(/^.* \([^()]+\)$/u)) {
+      const name = value.replace(/^(.*) \([^()]+\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+      const qualifier = value.replace(/^.* (\([^()]+\))$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+      return [name, qualifier];
+    }
+    return [value, undefined];
+  }
+
+  function fieldAllowsQualifierInOneOfTheFields(field, subfield) {
+    if (field.tag === '300' && subfield.code === 'a') {
+      return true;
+    }
+    if (field.tag === '776' && subfield.code === 'i') {
+      return true;
+    }
+    return false;
+  }
 }
 
 function preferSourceCorporateName(field, candSubfield, pair) {
@@ -281,6 +292,7 @@ export function mergeSubfield(targetField, candSubfield) {
       preferHyphenatedISBN(targetField, candSubfield, relevantSubfields) ||
       preferHttpsOverHttp(candSubfield, relevantSubfields) ||
       preferSourceCorporateName(targetField, candSubfield, relevantSubfields[0]) || // SF is non-repeat
+      preferQualifierVersion(targetField, candSubfield, relevantSubfields) ||
       isSynonym(targetField, candSubfield, relevantSubfields)) {
     return true;
   }
