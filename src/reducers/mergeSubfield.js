@@ -146,7 +146,7 @@ function isSynonym(field, candSubfield, relevantSubfields) {
     return coverTypesMatch(candSubfield, relevantSubfields);
   }
 
-  nvdebug(`Looking for synonyms for '${subfieldToString(candSubfield)}'...`);
+  nvdebug(`Looking for synonyms for '${subfieldToString(candSubfield)}'...`, debugDev);
 
   if (relationInformationMatches(candSubfield, relevantSubfields)) {
     return true;
