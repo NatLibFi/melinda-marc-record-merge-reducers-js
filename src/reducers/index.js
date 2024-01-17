@@ -22,20 +22,6 @@ import {default as manufacturer260To264} from './transferManufacturerDataFrom260
 import {default as removeDuplicatesFromSource} from './removeIdenticalDataFields';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-export const localCopyReducerConfigs = [
-
-  /*
-
-  {tagPattern: copyIfDifferent},
-  {tagPattern: copyIfMissing, compareTagsOnly: true}
-
-  {tagPattern: copySpecial1, excludeSubfields: ['b', '6', '8']},
-  {tagPattern: copySpecial2, excludeSubfields: ['9']},
-  {tagPattern: copySpecial3, dropSubfields: ['4']},
-  {tagPattern: copySpecial4, excludeSubfields: ['9'], dropSubfields: ['4']}
-  */
-];
-
 export const localReducers = [
   //// PREPROCESSOR STUFF:
   // UTF-8 normalization: if wanted, see mergeField.js for an example

@@ -1,0 +1,13 @@
+{
+  "fields" : [
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields" : [
+        { "code": "a", "value": "1 verkkoaineisto :" },
+        { "code": "b", "value": "kuvitettu" }
+    ]},
+    { "tag": "300", "ind1": " ", "ind2": " ", "subfields" : [
+      { "code": "a", "value": "1 nide :" },
+      { "code": "b", "value": "kuvitettu" }
+  ]}
+  ],
+  "leader": "01331cam a22003494i 4500"
+}
