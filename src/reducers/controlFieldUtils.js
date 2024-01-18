@@ -6,6 +6,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:co
 const debugDev = debug.extend('dev');
 
 function fieldPositionValueContainsInformation(val) {
+  // NB! 008/39=# contains information (very unfortunately). Field 008 should not really be used here anyway...
   if (val === '' || val === '|' || val === ' ' || val === '#') {
     return false;
   }
@@ -49,6 +50,7 @@ function hasLegalLength(field) {
 }
 
 export function isFillableControlFieldPair(baseField, sourceField) {
+  // NB! Don't do 008 here!
   if (baseField.value.length !== sourceField.value.length) {
     return false;
   }
@@ -92,4 +94,52 @@ export function fillControlFieldGaps(baseField, sourceField, min = 0, max = 39) 
   const mergedCharArray = arr1.map((c, i) => i < min || i > max ? c : getBetterControlFieldPositionValue(c, arr2[i]));
 
   baseField.value = mergedCharArray.join(''); // eslint-disable-line functional/immutable-data
+}
+
+export function genericControlFieldCharPosFix(baseField, sourceField, typeOfMaterial, supportedTypesOfMaterial, legalValues, position, valueForUnknown, noAttemptToCode) { // eslint-disable-line max-params
+  // Initially written fro field 008, but may be applied to 006 and 007 as well (I guess).
+  if (supportedTypesOfMaterial.length > 0 && !supportedTypesOfMaterial.includes(typeOfMaterial)) {
+    return;
+  }
+
+  const len = legalValues[0].length;
+
+  const baseValue = baseField.value.substring(position, position + len);
+  const sourceValue = sourceField.value.substring(position, position + len);
+
+  console.info(`${position}: '${baseValue}' vs '${sourceValue}', UNKNOWN: '${valueForUnknown}', type of material: ${typeOfMaterial}`); // eslint-disable-line no-console
+
+  if (applyFix()) {
+    baseField.value = `${baseField.value.substring(0, position)}${sourceValue}${baseField.value.substring(position + len)}`; // eslint-disable-line functional/immutable-data
+
+    return;
+  }
+
+  function applyFix() {
+    if (baseValue === sourceValue || legalValues.includes(baseValue)) {
+      return false;
+    }
+    if (legalValues.includes(sourceValue)) {
+      return true;
+    }
+    if (valueForUnknown) {
+      if (baseValue === valueForUnknown) {
+        return false;
+      }
+      if (sourceValue === valueForUnknown) {
+        return true;
+      }
+    }
+    if (noAttemptToCode) {
+      if (baseValue === noAttemptToCode) {
+        return false;
+      }
+      if (sourceValue === noAttemptToCode) {
+        return true;
+      }
+    }
+    console.info(`DEFAULT:don't apply fix for ${baseValue} vs ${sourceValue}`); // eslint-disable-line no-console
+    return false;
+  }
+
 }
