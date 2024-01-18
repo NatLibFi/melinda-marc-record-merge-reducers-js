@@ -107,7 +107,7 @@ export function genericControlFieldCharPosFix(baseField, sourceField, typeOfMate
   const baseValue = baseField.value.substring(position, position + len);
   const sourceValue = sourceField.value.substring(position, position + len);
 
-  console.info(`${position}: '${baseValue}' vs '${sourceValue}', UNKNOWN: '${valueForUnknown}', type of material: ${typeOfMaterial}`); // eslint-disable-line no-console
+  //console.info(`${position}: '${baseValue}' vs '${sourceValue}', UNKNOWN: '${valueForUnknown}', type of material: ${typeOfMaterial}`); // eslint-disable-line no-console
 
   if (applyFix()) {
     baseField.value = `${baseField.value.substring(0, position)}${sourceValue}${baseField.value.substring(position + len)}`; // eslint-disable-line functional/immutable-data
@@ -138,7 +138,7 @@ export function genericControlFieldCharPosFix(baseField, sourceField, typeOfMate
         return true;
       }
     }
-    console.info(`DEFAULT:don't apply fix for ${baseValue} vs ${sourceValue}`); // eslint-disable-line no-console
+    //console.info(`DEFAULT:don't apply fix for ${baseValue} vs ${sourceValue}`); // eslint-disable-line no-console
     return false;
   }
 
