@@ -123,6 +123,35 @@ function setCatalogingSource(base008, source008) {
 }
 
 
+const singleCharacterPositionRules = [ // (Also fixed-value longer units)
+  {types: ['MU'], prioritizedValues: goodFormsOfComposition, startPosition: 18, valueForUnknown: 'uu', noAttemptToCode: '||'}, // Form of Composition (MU) 00/18-19
+  {types: ['CR'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'q', 's', 't', 'w', 'z'], startPosition: 18, valueForUnknown: 'u', noAttemptToCode: '|'}, // CR frequency
+  {types: ['CR'], prioritizedValues: ['n', 'r', 'x'], startPosition: 19, valueForUnknown: 'u', noAttemptToCode: '|'}, // CR regularity
+  {types: ['MU'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'p', 'z'], startPosition: 20, valueForUnknown: 'u', noAttemptToCode: '|'}, // Format of music
+  {types: ['MU'], prioritizedValues: [' ', 'd', 'e', 'f', 'n'], startPosition: 21, valueForUnknown: 'u', noAttemptToCode: '|'}, // Music parts
+  {types: ['CR'], prioritizedValues: [' ', 'd', 'g', 'h', 'j', 'l', 'm', 'n', 'p', 'r', 's', 't', 'w'], startPosition: 21, noAttemptToCode: '|'}, // Music parts
+  {types: ['BK', 'CF', 'MU', 'VM'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'j'], startPosition: 22, valueForUnknown: ' ', noAttemptToCode: '|'}, // Target audience, 008/22
+  {types: ['MP'], prioritizedValues: goodProjections, startPosition: 22, valueForUnknown: '  ', noAttemptToCode: '||'}, // MP projection 008/22-23
+  {types: ['CR'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'o', 'q', 's'], startPosition: 22, noAttemptToCode: '|'}, // CR 008/22
+  {types: ['BK', 'CR', 'MU', 'MX'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'f', 'o', 'q', 'r', 's'], startPosition: 23, noAttemptToCode: '|'}, // BK form of item
+  {types: ['CF'], prioritizedValues: [' ', 'o', 'q'], startPosition: 23, noAttemptToCode: '|'}, // CF form of item
+  {types: ['CR'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '5', '6'], startPosition: 24, noAttemptToCode: '|'}, // Music parts
+  {types: ['MP'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'z'], startPosition: 25, valueForUnknown: 'u', noAttemptToCode: '|'}, // MP type of cartographic material
+  {types: ['CF'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'm', 'z'], startPosition: 26, valueForUnknown: 'u', noAttemptToCode: '|'}, // Type of computer file 008/23
+  {types: ['BK', 'CF', 'CR', 'MP', 'VM'], prioritizedValues: [' ', 'a', 'c', 'f', 'i', 'l', 'm', 'o', 's', 'z'], startPosition: 28, valueForUnknown: 'u', noAttemptToCode: '|'}, // Government publication
+  {types: ['BK', 'CR'], prioritizedValues: ['0', '1'], startPosition: 29, noAttemptToCode: '|'}, // Conference publication
+  {types: ['MP', 'VM'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'f', 'o', 'q', 'r', 's'], startPosition: 29, noAttemptToCode: '|'}, // BK form of item
+  {types: ['BK'], prioritizedValues: ['0', '1'], startPosition: 30, noAttemptToCode: '|'}, // Festschrift
+  {types: ['BK', 'MP'], prioritizedValues: ['0', '1'], startPosition: 31, noAttemptToCode: '|'}, // Index
+  {types: ['BK'], prioritizedValues: ['0', '1', 'd', 'e', 'f', 'h', 'i', 'j', 'm', 'p', 's'], startPosition: 33, valueForUnknown: 'u', noAttemptToCode: '|'},
+  {types: ['MU'], prioritizedValues: [' ', 'a', 'b', 'c', 'n'], startPosition: 33, valueForUnknown: 'u', noAttemptToCode: '|'},
+  {types: ['CR'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'z'], startPosition: 33, valueForUnknown: 'u', noAttemptToCode: '|'}, // CR original alphabet or script of title
+  {types: ['VM'], prioritizedValues: ['a', 'b', 'c', 'd', 'f', 'g', 'i', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'], startPosition: 33, noAttemptToCode: '|'}, // VM type of visual material
+  {types: ['BK'], prioritizedValues: [' ', 'a', 'b', 'c', 'd'], startPosition: 34, noAttemptToCode: '|'},
+  {types: ['CR'], prioritizedValues: ['0', '1', '2'], startPosition: 34, noAttemptToCode: '|'}, // Entry convention
+  {types: ['VM'], prioritizedValues: ['a', 'c', 'l', 'n', 'z'], startPosition: 34, valueForUnknown: 'u', noAttemptToCode: '|'} // VM technique
+];
+
 function process008(base, source) {
   const [source008] = source.get(regexp008);
   // Stick with base if source if missing or no good:
@@ -156,7 +185,11 @@ function process008(base, source) {
   setLanguage(base008, source008); // 008/35-37
   setCatalogingSource(base008, source008); // 008/39
   // Type of material specific code:
-  const typeOfMaterial = base.getTypeOfMaterial();
+  const baseTypeOfMaterial = base.getTypeOfMaterial();
+  const sourceTypeOfMaterial = source.getTypeOfMaterial();
+  singleCharacterPositionRules.forEach(rule => genericFix(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial, rule));
+
+  /*
   if (typeOfMaterial !== source.getTypeOfMaterial()) { // Sanity check: make sure that type of material is same for both
     return;
   }
@@ -202,9 +235,12 @@ function process008(base, source) {
   genericFix(base008, source008, typeOfMaterial, ['BK'], [' ', 'a', 'b', 'c', 'd'], 34, undefined, '|');
   genericFix(base008, source008, typeOfMaterial, ['CR'], ['0', '1', '2'], 34, undefined, '|'); // Entry convention
   genericFix(base008, source008, typeOfMaterial, ['VM'], ['a', 'c', 'l', 'n', 'z'], 34, 'u', '|'); // VM technique
-
+  */
   // Non-generic rules:
-  setFormOfItem(base008, source008, typeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
+  if (baseTypeOfMaterial !== sourceTypeOfMaterial) {
+    return;
+  }
+  setFormOfItem(base008, source008, baseTypeOfMaterial, baseTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
 
   // I haven't yet worked out how to do char=val&&multiple char positions combos.
   // Some of the positions we still need to think about are listed below:

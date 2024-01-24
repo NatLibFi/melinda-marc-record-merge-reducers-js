@@ -96,11 +96,16 @@ export function fillControlFieldGaps(baseField, sourceField, min = 0, max = 39) 
   baseField.value = mergedCharArray.join(''); // eslint-disable-line functional/immutable-data
 }
 
-export function genericControlFieldCharPosFix(baseField, sourceField, typeOfMaterial, supportedTypesOfMaterial, legalValues, position, valueForUnknown, noAttemptToCode) { // eslint-disable-line max-params
+export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial, rule) { // eslint-disable-line max-params
   // Initially written fro field 008, but may be applied to 006 and 007 as well (I guess).
-  if (supportedTypesOfMaterial.length > 0 && !supportedTypesOfMaterial.includes(typeOfMaterial)) {
+  // We apply some rules (eg. for government publication) even if baseTypeOfMaterial !== sourceTypeOfMaterial
+  if (!rule.types.includes(baseTypeOfMaterial) || !rule.types.includes(sourceTypeOfMaterial)) {
     return;
   }
+  const legalValues = rule.prioritizedValues;
+  const position = rule.startPosition;
+  const valueForUnknown = 'valueForUnknown' in rule ? rule.valueForUnknown : undefined;
+  const [noAttemptToCode] = rule.noAttemptToCode;
 
   const len = legalValues[0].length;
 
