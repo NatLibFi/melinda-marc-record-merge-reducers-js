@@ -156,8 +156,10 @@ function process008(base, source) {
   setLanguage(base008, source008); // 008/35-37
   setCatalogingSource(base008, source008); // 008/39
   // Type of material specific code:
-  const typeOfMaterial = base.getTypeOfMaterial(); // Boldly assume that type of material is same for both...
-
+  const typeOfMaterial = base.getTypeOfMaterial();
+  if (typeOfMaterial !== source.getTypeOfMaterial()) { // Sanity check: make sure that type of material is same for both
+    return;
+  }
   //console.info(`TOM: ${typeOfMaterial}`); // eslint-disable-line no-console
   genericFix(base008, source008, typeOfMaterial, ['MU'], goodFormsOfComposition, 18, 'uu', '||'); // Form of Composition (MU) 00/18-19
   genericFix(base008, source008, typeOfMaterial, ['CR'], [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'q', 's', 't', 'w', 'z'], 18, 'u', '|'); // CR frequency
