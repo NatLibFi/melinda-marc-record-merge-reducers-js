@@ -102,6 +102,7 @@ export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOf
   if (!rule.types.includes(baseTypeOfMaterial) || !rule.types.includes(sourceTypeOfMaterial)) {
     return;
   }
+  //console.info(`Apply ${'description' in rule ? rule.description : 'nameless'} rule`); // eslint-disable-line no-console
   const legalValues = rule.prioritizedValues;
   const position = rule.startPosition;
   const valueForUnknown = 'valueForUnknown' in rule ? rule.valueForUnknown : undefined;
@@ -119,6 +120,7 @@ export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOf
 
     return;
   }
+  return;
 
   function applyFix() {
     if (baseValue === sourceValue || legalValues.includes(baseValue)) {
