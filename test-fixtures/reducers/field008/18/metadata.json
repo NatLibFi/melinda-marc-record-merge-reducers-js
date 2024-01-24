@@ -1,0 +1,6 @@
+{
+  "description":"17: merge 008/18-34, BK vs MU",
+  "comment": "Only 008/22 and 008/23 are shared between BK and MU",
+  "comment2": "NB! MU 008/22 'g' replaces BK's '|', and 008/23 '#' (which carries meaning) replaces 008/23 '|'",
+  "only": false
+}
