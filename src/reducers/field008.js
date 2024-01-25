@@ -64,21 +64,21 @@ function setDates(base008, source008) { // 008/06-14 (stub, extend later on)
 const goodFormsOfComposition = ['an', 'bd', 'bg', 'bl', 'bt', 'ca', 'cb', 'cc', 'cg', 'ch', 'cl', 'cn', 'co', 'cp', 'cr', 'cs', 'ct', 'cy', 'cz', 'df', 'dv', 'fg', 'fl', 'fm', 'ft', 'gm', 'hy', 'jz', 'mc', 'md', 'mi', 'mo', 'mp', 'mr', 'ms', 'mu', 'mz', 'nc', 'nn', 'op', 'or', 'ov', 'pg', 'pm', 'po', 'pp', 'pr', 'ps', 'pt', 'rc', 'rd', 'rg', 'ri', 'rp', 'rq', 'sd', 'sg', 'sn', 'sp', 'st', 'su', 'sy', 'tc', 'tl', 'ts', 'vi', 'vr', 'wz', 'za', 'zz'];
 const goodProjections = ['aa', 'ab', 'ac', 'ad', 'ae', 'af', 'ag', 'am', 'an', 'ap', 'au', 'az', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'bg', 'bh', 'bi', 'bj', 'bk', 'bl', 'bo', 'br', 'bs', 'bu', 'bz', 'ca', 'cb', 'cc', 'ce', 'cp', 'cu', 'cz', 'da', 'db', 'dc', 'dd', 'de', 'df', 'dg', 'dh', 'dl', 'zz']; // MP 008-22/23
 
-
-export function setFormOfItem(baseField, sourceField, typeOfRecord) {
-  const formOfItemPosition = getFormOfItemPosition();
-  const baseFormOfItem = baseField.value.charAt(formOfItemPosition);
+export function setFormOfItem(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
+  const baseFormOfItemPosition = getFormOfItemPosition(baseTypeOfMaterial);
+  const baseFormOfItem = baseField.value.charAt(baseFormOfItemPosition);
   // Use more specific value. o=online and q=direct electronic are better than generic s=electronic
   if (baseFormOfItem === 's') {
-    const sourceFormOfItem = sourceField.value.charAt(formOfItemPosition);
+    const sourceFormOfItemPosition = getFormOfItemPosition(sourceTypeOfMaterial);
+    const sourceFormOfItem = sourceField.value.charAt(sourceFormOfItemPosition);
     if (['o', 'q'].includes(sourceFormOfItem)) {
-      baseField.value = `${baseField.value.substring(0, formOfItemPosition)}${sourceFormOfItem}${baseField.value.substring(formOfItemPosition + 1)}`; // eslint-disable-line functional/immutable-data
+      baseField.value = `${baseField.value.substring(0, baseFormOfItemPosition)}${sourceFormOfItem}${baseField.value.substring(baseFormOfItemPosition + 1)}`; // eslint-disable-line functional/immutable-data
       return;
     }
   }
 
-  function getFormOfItemPosition() {
-    const f008Pos = ['VM', 'MP'].includes(typeOfRecord) ? 29 : 23;
+  function getFormOfItemPosition(typeOfMaterial) {
+    const f008Pos = ['VM', 'MP'].includes(typeOfMaterial) ? 29 : 23;
     if (baseField.tag === '006') {
       return f008Pos - 17;
     }
