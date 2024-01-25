@@ -17,20 +17,19 @@ export default () => (base, source) => {
   const baseFields = baseRecord.get(/^007$/u);
   const sourceFields = sourceRecord.get(/^007$/u);
 
-  // If both sides have same number of entries,
-  // and they apparently are in the same order,
-  // let's try to fill the gaps:
-  if (baseFields.length > 0 && baseFields.length === sourceFields.length) {
-    if (baseFields.every((baseField, i) => isFillableControlFieldPair(baseField, sourceFields[i]))) { // eslint-disable-line functional/no-conditional-statements
-      baseFields.forEach((baseField, i) => fillControlFieldGaps(baseField, sourceFields[i]));
-    }
-    return {base: baseRecord, source};
-  }
-
-  // If and only if base contains no 007 fields, we *source* what base has:
+  // If and only if base contains no 007 fields, we copy these fields from source:
   if (baseFields.length === 0 && sourceFields.length > 0) {
     debugDev(`Copy ${sourceFields.length} source field(s), since host has no 007`);
     copyFields(baseRecord, sourceFields);
+    return {base: baseRecord, source};
+  }
+
+  // If both sides have same number of entries,and they apparently are in the same order, let's try to fill them gaps:
+  if (baseFields.length > 0 && baseFields.length === sourceFields.length) {
+    if (baseFields.every((baseField, i) => isFillableControlFieldPair(baseField, sourceFields[i]))) { // eslint-disable-line functional/no-conditional-statements
+      // Umm.. 007/00=f has character groups 03-04, 06-08, and 007/00=h 06-08, and 007/00=r 09-10
+      baseFields.forEach((baseField, i) => fillControlFieldGaps(baseField, sourceFields[i]));
+    }
     return {base: baseRecord, source};
   }
 
