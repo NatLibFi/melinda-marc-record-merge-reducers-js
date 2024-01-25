@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {copyFields, nvdebug} from './utils.js';
-import {fillControlFieldGaps, hasLegalLength} from './controlFieldUtils.js';
-
+import {genericControlFieldCharPosFix, hasLegalLength} from './controlFieldUtils.js';
+import {getSingleCharacterPositionRules, setFormOfItem} from './field008.js';
 // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field (2x)
 // Test 03: If Leader 000/06 is something else, do nothing
 
@@ -24,7 +24,7 @@ export default () => (base, source) => {
   // If both sides have same number of entries, and they apparently are in the same order, let's try to fill the gaps:
   if (baseFields.length > 0 && baseFields.length === sourceFields.length) {
     if (baseFields.every((baseField, i) => areMergable006Pair(baseField, sourceFields[i]))) { // eslint-disable-line functional/no-conditional-statements
-      baseFields.forEach((baseField, i) => fillControlFieldGaps(baseField, sourceFields[i]));
+      baseFields.forEach((baseField, i) => fillField006Gaps(baseField, sourceFields[i]));
     }
     return {base: baseRecord, source};
   }
@@ -36,11 +36,22 @@ export default () => (base, source) => {
     return {base: baseRecord, source};
   }
 
-  // Defy specs: don't copy non-identical fields. Typically we should have only one 007 field.
+  // Defy specs: don't copy non-identical fields. Typically we should have only one 006 field.
   // And don't merge them either, as it is too risky. Let's just trust base record.
   return {base: baseRecord, source};
 
 };
+
+const singleCharacterPositionRules = getSingleCharacterPositionRules();
+function fillField006Gaps(baseField, sourceField) {
+  const typeOfMaterial = mapFieldToTypeOfMaterial(baseField);
+  singleCharacterPositionRules.forEach(rule => mergeTwo006Fields(baseField, sourceField, typeOfMaterial, rule));
+}
+
+function mergeTwo006Fields(baseField, sourceField, typeOfMaterial, rule) {
+  genericControlFieldCharPosFix(baseField, sourceField, typeOfMaterial, typeOfMaterial, rule);
+  setFormOfItem(baseField, sourceField, typeOfMaterial);
+}
 
 function areMergable006Pair(field1, field2) {
   // NB! We explicitly assume that only tag=006 stuff gets this far!
@@ -63,11 +74,11 @@ function areMergable006Pair(field1, field2) {
 
   const arr1 = field1.value.split('');
   const arr2 = field2.value.split('');
-  if (!arr1.every((c, i) => c === arr2[i] || !field006PositionValueContainsInformation(c) || !field006PositionValueContainsInformation(arr2[i]))) {
-    return false;
+  if (arr1.every((c, i) => c === arr2[i] || !field006PositionValueContainsInformation(c) || !field006PositionValueContainsInformation(arr2[i]))) {
+    return true;
   }
 
-  return true;
+  return false;
 
   function field006PositionValueContainsInformation(c, position) {
     if (c === '|') {
@@ -75,7 +86,7 @@ function areMergable006Pair(field1, field2) {
     }
 
     if (c === ' ') { // Typically false, but there are some notable exceptions:
-      return spaceContainsInformation(position, typeOfMaterial);
+      return spaceContainsInformation(position);
     }
 
     if (c === 'u') {
@@ -87,7 +98,7 @@ function areMergable006Pair(field1, field2) {
     return true;
   }
 
-  function spaceContainsInformation(position, typeOfMaterial) {
+  function spaceContainsInformation(position) {
     if (position === 1 && typeOfMaterial === 'CR') { // 008/18 frequency
       return true;
     }
