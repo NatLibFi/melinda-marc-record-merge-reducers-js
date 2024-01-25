@@ -1,0 +1,5 @@
+{
+  "description":"17: merge 006/01-17, BK vs MU: do nothing",
+  "comment": "Start state aped from field_008/17. However, behaviour is different!",
+  "only": false
+}
