@@ -46,11 +46,14 @@ const singleCharacterPositionRules = getSingleCharacterPositionRules();
 function fillField006Gaps(baseField, sourceField) {
   const typeOfMaterial = mapFieldToTypeOfMaterial(baseField);
   singleCharacterPositionRules.forEach(rule => mergeTwo006Fields(baseField, sourceField, typeOfMaterial, rule));
+  setFormOfItem(baseField, sourceField, typeOfMaterial);
+  //console.info(`FINAL:\n${fieldToString(baseField)}`); // eslint-disable-line no-console
 }
 
 function mergeTwo006Fields(baseField, sourceField, typeOfMaterial, rule) {
+  //console.info(`Apply ${'description' in rule ? rule.description : 'unnamed'} rule at ${rule.startPosition}:\n'${fieldToString(baseField)}' +\n'${fieldToString(sourceField)}' =`); // eslint-disable-line no-console
   genericControlFieldCharPosFix(baseField, sourceField, typeOfMaterial, typeOfMaterial, rule);
-  setFormOfItem(baseField, sourceField, typeOfMaterial);
+  //console.info(`'${fieldToString(baseField)}'`); // eslint-disable-line no-console
 }
 
 function areMergable006Pair(field1, field2) {
