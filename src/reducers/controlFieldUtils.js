@@ -102,7 +102,7 @@ export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOf
   }
   //console.info(`Apply ${'description' in rule ? rule.description : 'nameless'} rule`); // eslint-disable-line no-console
   const legalValues = rule.prioritizedValues;
-  const position = rule.startPosition;
+  const position = baseField.tag === '006' ? rule.startPosition - 17 : rule.startPosition; // Field 006 uses rules writted for field 008. 006/01=008/18 etc.
   const valueForUnknown = 'valueForUnknown' in rule ? rule.valueForUnknown : undefined;
   const [noAttemptToCode] = rule.noAttemptToCode;
 
