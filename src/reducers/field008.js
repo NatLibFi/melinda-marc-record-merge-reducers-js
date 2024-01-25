@@ -1,6 +1,8 @@
 import clone from 'clone';
 import {genericControlFieldCharPosFix as genericFix} from './controlFieldUtils';
 
+// NB! Used by field 006 as well as 008/18-34 = 006/01-17...
+
 //import {MarcRecord} from '@natlibfi/marc-record';
 //import createDebugLogger from 'debug';
 
@@ -62,16 +64,25 @@ function setDates(base008, source008) { // 008/06-14 (stub, extend later on)
 const goodFormsOfComposition = ['an', 'bd', 'bg', 'bl', 'bt', 'ca', 'cb', 'cc', 'cg', 'ch', 'cl', 'cn', 'co', 'cp', 'cr', 'cs', 'ct', 'cy', 'cz', 'df', 'dv', 'fg', 'fl', 'fm', 'ft', 'gm', 'hy', 'jz', 'mc', 'md', 'mi', 'mo', 'mp', 'mr', 'ms', 'mu', 'mz', 'nc', 'nn', 'op', 'or', 'ov', 'pg', 'pm', 'po', 'pp', 'pr', 'ps', 'pt', 'rc', 'rd', 'rg', 'ri', 'rp', 'rq', 'sd', 'sg', 'sn', 'sp', 'st', 'su', 'sy', 'tc', 'tl', 'ts', 'vi', 'vr', 'wz', 'za', 'zz'];
 const goodProjections = ['aa', 'ab', 'ac', 'ad', 'ae', 'af', 'ag', 'am', 'an', 'ap', 'au', 'az', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'bg', 'bh', 'bi', 'bj', 'bk', 'bl', 'bo', 'br', 'bs', 'bu', 'bz', 'ca', 'cb', 'cc', 'ce', 'cp', 'cu', 'cz', 'da', 'db', 'dc', 'dd', 'de', 'df', 'dg', 'dh', 'dl', 'zz']; // MP 008-22/23
 
-function setFormOfItem(base008, source008, typeOfRecord) {
-  const formOfItemLocation = ['VM', 'MP'].includes(typeOfRecord) ? 29 : 23;
-  const baseFormOfItem = base008.value.charAt(formOfItemLocation);
+
+export function setFormOfItem(baseField, sourceField, typeOfRecord) {
+  const formOfItemPosition = getFormOfItemPosition();
+  const baseFormOfItem = baseField.value.charAt(formOfItemPosition);
   // Use more specific value. o=online and q=direct electronic are better than generic s=electronic
   if (baseFormOfItem === 's') {
-    const sourceFormOfItem = source008.value.charAt(formOfItemLocation);
+    const sourceFormOfItem = sourceField.value.charAt(formOfItemPosition);
     if (['o', 'q'].includes(sourceFormOfItem)) {
-      base008.value = `${base008.value.substring(0, formOfItemLocation)}${sourceFormOfItem}${base008.value.substring(formOfItemLocation + 1)}`; // eslint-disable-line functional/immutable-data
+      baseField.value = `${baseField.value.substring(0, formOfItemPosition)}${sourceFormOfItem}${baseField.value.substring(formOfItemPosition + 1)}`; // eslint-disable-line functional/immutable-data
       return;
     }
+  }
+
+  function getFormOfItemPosition() {
+    const f008Pos = ['VM', 'MP'].includes(typeOfRecord) ? 29 : 23;
+    if (baseField.tag === '006') {
+      return f008Pos - 17;
+    }
+    return f008Pos;
   }
 }
 
@@ -151,6 +162,10 @@ const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['CR'], prioritizedValues: ['0', '1', '2'], startPosition: 34, noAttemptToCode: '|'}, // Entry convention
   {types: ['VM'], prioritizedValues: ['a', 'c', 'l', 'n', 'z'], startPosition: 34, valueForUnknown: 'u', noAttemptToCode: '|'} // VM technique
 ];
+
+export function getSingleCharacterPositionRules() {
+  return singleCharacterPositionRules;
+}
 
 function process008(base, source) {
   const [source008] = source.get(regexp008);
