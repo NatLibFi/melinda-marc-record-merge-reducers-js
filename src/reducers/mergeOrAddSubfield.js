@@ -147,8 +147,7 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
 
   const candSubfieldAsString = `${candSubfieldData.code} ${candSubfieldData.originalValue}`;
 
-  nvdebug(`   Q: mergeOrAddSubfield '${candSubfieldAsString}'`, debugDev);
-  nvdebug(`      with field '${fieldToString(targetField)}'?`, debugDev);
+  nvdebug(`   Q: mergeOrAddSubfield '${candSubfieldAsString}'\n      with field '${fieldToString(targetField)}'?`, debugDev);
   if (mergeOrAddSubfieldNotRequired(targetField, candSubfieldData)) {
     nvdebug(`    A: No. No need to merge nor to add the subfield '${candSubfieldAsString}'`, debugDev);
     return;
@@ -159,24 +158,14 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
   // Currently only for X00$d 1984- => 1984-2000 type of changes, where source version is better that what base has.
   // It all other cases the original subfield is kept.
   const original = fieldToString(targetField);
+
   if (mergeSubfield(targetField, candSubfield)) { // We might need the normalizedCandSubfield later on
-    if (original !== fieldToString(targetField)) {
-      nvdebug(`    A: Merge. Subfield '${candSubfieldAsString}' replaces the original subfield.`, debugDev);
-      targetField.merged = 1; // eslint-disable-line functional/immutable-data
-      setPunctuationFlag(targetField, candSubfield);
-      return;
-    }
-    nvdebug(`      A: No. Field ${original} already had the same or a synonymous or a better merge candidate than our subfield '${candSubfieldAsString}'.`, debugDev);
+    mergeSubfieldPostprocessor();
     return;
   }
 
   // Subfield codes missing from the original record can be added by default:
-  if (!fieldHasSubfield(targetField, candSubfield.code)) {
-    nvdebug(`    A: Yes. Add previously unseen subfield '${subfieldToString(candSubfield)}'`, debugDev);
-    targetField.merged = 1; // eslint-disable-line functional/immutable-data
-    setPunctuationFlag(targetField, candSubfield);
-    candFieldPairs880.forEach(pair => resetPaired880(pair, targetField, candSubfield));
-    addSubfield(targetField, candSubfield);
+  if (addSubfieldWithPreviouslyUnseenSubfieldCode()) {
     return;
   }
 
@@ -195,4 +184,28 @@ export function mergeOrAddSubfield(targetField, candSubfieldData, candFieldPairs
   }
 
   nvdebug(`    A: No. Non-repeatable subfield '${subfieldToString(candSubfield)}'`, debugDev);
+  return;
+
+  function mergeSubfieldPostprocessor() {
+    if (original !== fieldToString(targetField)) {
+      nvdebug(`    A: Merge. Subfield '${candSubfieldAsString}' replaces the original subfield.`, debugDev);
+      targetField.merged = 1; // eslint-disable-line functional/immutable-data
+      setPunctuationFlag(targetField, candSubfield);
+      return;
+    }
+    nvdebug(`      A: No. Field ${original} already had the same or a synonymous or a better merge candidate than our subfield '${candSubfieldAsString}'.`, debugDev);
+    return;
+  }
+
+  function addSubfieldWithPreviouslyUnseenSubfieldCode() {
+    if (!fieldHasSubfield(targetField, candSubfield.code)) {
+      nvdebug(`    A: Yes. Add previously unseen subfield '${subfieldToString(candSubfield)}'`, debugDev);
+      targetField.merged = 1; // eslint-disable-line functional/immutable-data
+      setPunctuationFlag(targetField, candSubfield);
+      candFieldPairs880.forEach(pair => resetPaired880(pair, targetField, candSubfield));
+      addSubfield(targetField, candSubfield);
+      return true;
+    }
+    return false;
+  }
 }
