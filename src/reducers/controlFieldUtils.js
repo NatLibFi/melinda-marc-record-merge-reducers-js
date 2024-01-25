@@ -26,7 +26,7 @@ function getBetterControlFieldPositionValue(c1, c2) {
 
 const f007Lengths = {a: 8, c: 14, d: 6, f: 10, g: 9, h: 13, k: 6, m: 23, o: 2, q: 2, r: 11, s: 14, t: 2, v: 9, z: 2};
 
-function hasLegalLength(field) {
+export function hasLegalLength(field) {
   if (field.tag === '006') {
     return field.value.length === 18;
   }
@@ -58,15 +58,12 @@ export function isFillableControlFieldPair(baseField, sourceField) {
     return false;
   }
 
-  if (baseField.tag === '006' && baseField.value[0] !== sourceField.value[0]) {
+  // Character position 00 must be same in both base and source field:
+  if (['006', '007'].includes(baseField.tag) && baseField.value[0] !== sourceField.value[0]) {
     return false;
   }
 
   if (baseField.tag === '007') {
-    // 007/00 values must be equal:
-    if (baseField.value.charAt(0) !== sourceField.value.charAt(0)) {
-      return false;
-    }
 
     // 007/01 values must match or contain '|' (undefined):
     if (baseField.value.charAt(1) === sourceField.value.charAt(1) || sourceField.value.charAt(1) === '|' || baseField.value.charAt(1) === '|') {
@@ -84,7 +81,8 @@ export function isFillableControlFieldPair(baseField, sourceField) {
 
 export function fillControlFieldGaps(baseField, sourceField, min = 0, max = 39) {
   // NB! Mergability must be checked before calling this!
-
+  // NB! This function *wrongly* assumes that character positions are treated separately...
+  // 007/00=f has character groups 03-04, 06-08, and 007/00=h 06-08, and 007/00=r 09-10
   if (baseField.value.length !== sourceField.value.length) {
     return;
   }
