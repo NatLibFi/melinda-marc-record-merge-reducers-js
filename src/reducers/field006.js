@@ -36,10 +36,9 @@ export default () => (base, source) => {
     return {base: baseRecord, source};
   }
 
-  // Defy specs: don't copy non-identical fields. Typically we should have only one 006 field.
-  // And don't merge them either, as it is too risky. Let's just trust base record.
+  // Defy specs: don't copy non-identical fields. Typically (but not always) we should have only one 006 field.
+  // Default behaviour: merging is too risky (might describe different materials), so let's just trust base record.
   return {base: baseRecord, source};
-
 };
 
 const singleCharacterPositionRules = getSingleCharacterPositionRules();
@@ -72,16 +71,34 @@ function areMergable006Pair(field1, field2) {
   if (!hasLegalLength(field1)) {
     return false;
   }
-  // We always try to merge 008/18-34. However we are much stricter with 006 pairs, as we can not be sure they mean the same thing...
-  // (There can be many in different order etc.)
+  // By default, we try to merge 008/18-34. However we are much stricter with 006 pairs, as we can not be sure they mean the same thing...
+  // (There is always one 008, but 006 has 0...n instances.) Thus this does not allow any subsetting etc of, say, BK 006/07-10.
+  // We should improve order stuff etc., but let's start with overstrict implementation, as the problem is largely theoretical.
+  // The proper solution will eventually be done in field008.js. We can then decide whether we can to use it in 006 as well.
 
   const arr1 = field1.value.split('');
   const arr2 = field2.value.split('');
-  if (arr1.every((c, i) => c === arr2[i] || !field006PositionValueContainsInformation(c) || !field006PositionValueContainsInformation(arr2[i]))) {
+  if (arr1.every((c, i) => c === arr2[i] || !field006PositionValueContainsInformation(c) || !field006PositionValueContainsInformation(arr2[i]) || isException(c, arr2[i], i))) {
     return true;
   }
 
   return false;
+
+  function isException(c1, c2, characterPosition) {
+    // We know that character position is same for both (type of record is always same) as base 006/00 must be source 006/00
+    if (characterPosition === 6) {
+      // 'o' (online resource)and 'q' are subsets of 'p'
+      if (['BK', 'CR', 'MU', 'MX'].includes(typeOfMaterial)) {
+        if (['o', 'q'].includes(c1) && c2 === 's') {
+          return true;
+        }
+        if (['o', 'q'].includes(c2) && c1 === 's') {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   function field006PositionValueContainsInformation(c, position) {
     if (c === '|') {
