@@ -137,9 +137,9 @@ function setCatalogingSource(base008, source008) {
 const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['MU'], prioritizedValues: goodFormsOfComposition, startPosition: 18, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'Form of Composition (MU) 00/18-19'},
   {types: ['CR'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'q', 's', 't', 'w', 'z'], startPosition: 18, valueForUnknown: 'u', noAttemptToCode: '|', description: 'CR frequency'},
-  {types: ['CR'], prioritizedValues: ['n', 'r', 'x'], startPosition: 19, valueForUnknown: 'u', noAttemptToCode: '|'}, // CR regularity
-  {types: ['MU'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'p', 'z'], startPosition: 20, valueForUnknown: 'u', noAttemptToCode: '|'}, // Format of music
-  {types: ['MU'], prioritizedValues: [' ', 'd', 'e', 'f', 'n'], startPosition: 21, valueForUnknown: 'u', noAttemptToCode: '|'}, // Music parts
+  {types: ['CR'], prioritizedValues: ['n', 'r', 'x'], startPosition: 19, valueForUnknown: 'u', noAttemptToCode: '|', description: 'CR regularity'},
+  {types: ['MU'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'p', 'z'], startPosition: 20, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Format of music'},
+  {types: ['MU'], prioritizedValues: [' ', 'd', 'e', 'f', 'n'], startPosition: 21, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Music parts'}, // Music parts
   {types: ['CR'], prioritizedValues: [' ', 'd', 'g', 'h', 'j', 'l', 'm', 'n', 'p', 'r', 's', 't', 'w'], startPosition: 21, noAttemptToCode: '|'}, // Music parts
   {types: ['BK', 'CF', 'MU', 'VM'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'j'], startPosition: 22, valueForUnknown: ' ', noAttemptToCode: '|', description: 'Target audience, 008/22'},
   {types: ['MP'], prioritizedValues: goodProjections, startPosition: 22, valueForUnknown: '  ', noAttemptToCode: '||'}, // MP projection 008/22-23
