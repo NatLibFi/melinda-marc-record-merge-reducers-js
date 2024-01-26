@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {copyFields, nvdebug} from './utils.js';
 import {genericControlFieldCharPosFix, hasLegalLength} from './controlFieldUtils.js';
-import {getSingleCharacterPositionRules, setFormOfItem} from './field008.js';
+import {getSingleCharacterPositionRules, isSpecificLiteraryForm, setFormOfItem, setLiteraryForm} from './field008.js';
 // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field (2x)
 // Test 03: If Leader 000/06 is something else, do nothing
 
@@ -45,7 +45,8 @@ const singleCharacterPositionRules = getSingleCharacterPositionRules();
 function fillField006Gaps(baseField, sourceField) {
   const typeOfMaterial = mapFieldToTypeOfMaterial(baseField);
   singleCharacterPositionRules.forEach(rule => mergeTwo006Fields(baseField, sourceField, typeOfMaterial, rule));
-  setFormOfItem(baseField, sourceField, typeOfMaterial);
+  setFormOfItem(baseField, sourceField, typeOfMaterial, typeOfMaterial);
+  setLiteraryForm(baseField, sourceField, typeOfMaterial, typeOfMaterial);
   //console.info(`FINAL:\n${fieldToString(baseField)}`); // eslint-disable-line no-console
 }
 
@@ -78,14 +79,14 @@ function areMergable006Pair(field1, field2) {
 
   const arr1 = field1.value.split('');
   const arr2 = field2.value.split('');
-  if (arr1.every((c, i) => c === arr2[i] || !field006PositionValueContainsInformation(c) || !field006PositionValueContainsInformation(arr2[i]) || isException(c, arr2[i], i))) {
+  if (arr1.every((c, i) => c === arr2[i] || !field006PositionValueContainsInformation(c, i) || !field006PositionValueContainsInformation(arr2[i], i) || isException(c, arr2[i], i))) {
     return true;
   }
 
   return false;
 
   function isException(c1, c2, characterPosition) {
-    // We know that character position is same for both (type of record is always same) as base 006/00 must be source 006/00
+    // (NB! We know that c1/c2 at character position means the same for both (type of record is always same) as base 006/00 must be source 006/00)
     if (characterPosition === 6) {
       // 'o' (online resource)and 'q' are subsets of 'p'
       if (['BK', 'CR', 'MU', 'MX'].includes(typeOfMaterial)) {
@@ -97,10 +98,20 @@ function areMergable006Pair(field1, field2) {
         }
       }
     }
+
+    if (characterPosition === 16 && typeOfMaterial === 'BK') {
+      if (c1 === '1' && isSpecificLiteraryForm(c2)) {
+        return 1;
+      }
+      if (c2 === '1' && isSpecificLiteraryForm(c1)) {
+        return 1;
+      }
+    }
     return false;
   }
 
   function field006PositionValueContainsInformation(c, position) {
+    console.info(`006/${position}: '${c}' (${typeOfMaterial})`); // eslint-disable-line no-console
     if (c === '|') {
       return false;
     }
@@ -109,7 +120,7 @@ function areMergable006Pair(field1, field2) {
       return spaceContainsInformation(position);
     }
 
-    if (c === 'u') {
+    if (c === 'u' && position === 16) {
       if (typeOfMaterial === 'BK' && position === 16) { // 008/33
         return false;
       }
@@ -119,6 +130,7 @@ function areMergable006Pair(field1, field2) {
   }
 
   function spaceContainsInformation(position) {
+    console.info(`Spaceman at ${typeOfMaterial} 006/${position}?`); // eslint-disable-line no-console
     if (position === 1 && typeOfMaterial === 'CR') { // 008/18 frequency
       return true;
     }
@@ -126,7 +138,7 @@ function areMergable006Pair(field1, field2) {
       return true;
     }
     // Skip map 006/05-06 on purpose
-    if (position === 5 && typeOfMaterial === 'CR') { // 008/22 form of original item
+    if ([5, 6].includes(position) && typeOfMaterial === 'MP') { // 008/22 form of original item
       return true;
     }
     if (position === 6 && ['BK', 'CR', 'MU', 'MX'].includes(typeOfMaterial)) { // 008/23 form of item '#' means "none of the following" 008/23
