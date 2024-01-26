@@ -1,4 +1,4 @@
 {
-  "description":"006/06 base '#' vs source 's' blocks merge. Thus source 006/17 '#' does not replace base's '|'.",
+  "description":"006/16: more specific source 'i' replaces more generic base '1'",
   "only": false
 }
