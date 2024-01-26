@@ -1,0 +1,5 @@
+{
+  "description":"Base and source share 006/00, but it does not map into any material type, so do nothing.",
+  "comment": "this test exists mainly to improve coverage...",
+  "only": true
+}
