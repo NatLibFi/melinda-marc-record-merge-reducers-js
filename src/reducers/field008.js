@@ -86,6 +86,26 @@ export function setFormOfItem(baseField, sourceField, baseTypeOfMaterial, source
   }
 }
 
+export function isSpecificLiteraryForm(literaryFormCharacter) {
+  return ['d', 'e', 'f', 'h', 'i', 'j', 'm', 'p', 's', 'u'].includes(literaryFormCharacter);
+}
+
+export function setLiteraryForm(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
+  if (baseTypeOfMaterial !== 'BK' || sourceTypeOfMaterial !== 'BK') {
+    return;
+  }
+  const literaryFormPosition = baseField.tag === '006' ? 16 : 33;
+  const baseLiteraryForm = baseField.value.charAt(literaryFormPosition);
+  // Use more specific value. o=online and q=direct electronic are better than generic s=electronic
+  if (baseLiteraryForm === '1') {
+    const sourceLiteraryForm = sourceField.value.charAt(literaryFormPosition);
+    if (isSpecificLiteraryForm(sourceLiteraryForm)) {
+      baseField.value = `${baseField.value.substring(0, literaryFormPosition)}${sourceLiteraryForm}${baseField.value.substring(literaryFormPosition + 1)}`; // eslint-disable-line functional/immutable-data
+      return;
+    }
+  }
+}
+
 
 function getPlaceOfPublication(field008) {
   return field008.value.substring(15, 18);
@@ -158,7 +178,7 @@ const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['MU'], prioritizedValues: [' ', 'a', 'b', 'c', 'n'], startPosition: 33, valueForUnknown: 'u', noAttemptToCode: '|'},
   {types: ['CR'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'z'], startPosition: 33, valueForUnknown: 'u', noAttemptToCode: '|'}, // CR original alphabet or script of title
   {types: ['VM'], prioritizedValues: ['a', 'b', 'c', 'd', 'f', 'g', 'i', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'], startPosition: 33, noAttemptToCode: '|'}, // VM type of visual material
-  {types: ['BK'], prioritizedValues: [' ', 'a', 'b', 'c', 'd'], startPosition: 34, noAttemptToCode: '|'},
+  {types: ['BK'], prioritizedValues: [' ', 'a', 'b', 'c', 'd'], startPosition: 34, noAttemptToCode: '|', description: 'biography'},
   {types: ['CR'], prioritizedValues: ['0', '1', '2'], startPosition: 34, noAttemptToCode: '|'}, // Entry convention
   {types: ['VM'], prioritizedValues: ['a', 'c', 'l', 'n', 'z'], startPosition: 34, valueForUnknown: 'u', noAttemptToCode: '|'} // VM technique
 ];
@@ -209,13 +229,12 @@ function process008(base, source) {
     return;
   }
   setFormOfItem(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
-
+  setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16
   // I haven't yet worked out how to do char=val&&multiple char positions combos.
   // Some of the positions we still need to think about are listed below:
   // NB! What about MP 009/33-34 Special format characteristics?
   // MU 008/24-29, 008/30-31
   // NB! We could theoretically have specific rule for BK 008/33 [defhijmps] > '1', couldn't we?
-
 
 }
 
