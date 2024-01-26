@@ -1,5 +1,5 @@
 {
   "description":"006/17: base '#' contains information, so it block merge",
   "comment": "this test exists mainly to improve coverage...",
-  "only": true
+  "only": false
 }
