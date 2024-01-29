@@ -1,7 +1,7 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {genericControlFieldCharPosFix, hasLegalLength} from './controlFieldUtils.js';
-import {copyFields, fieldToString} from './utils.js';
+import {copyFields} from './utils.js';
 
 // Author: Nicholas Volk
 const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer units)
@@ -152,7 +152,7 @@ function areMergable007Pair(field1, field2) {
   }
 
   function spaceContainsInformation(position) {
-    console.info(`Spaceman at ${categoryOfMaterial} 006/${position}?`); // eslint-disable-line no-console
+    //console.info(`Spaceman at ${categoryOfMaterial} 006/${position}?`); // eslint-disable-line no-console
     if (position === 5 && ['c', 'g', 'k', 'm', 'v'].includes(categoryOfMaterial)) { // No sound (silent)
       return true;
     }
@@ -204,7 +204,7 @@ function fillField007Gaps(baseField, sourceField) {
 }
 
 function mergeTwo007Fields(baseField, sourceField, categoryOfMaterial, rule) {
-  console.info(`Apply ${'description' in rule ? rule.description : 'unnamed'} rule at ${rule.startPosition}:\n'${fieldToString(baseField)}' +\n'${fieldToString(sourceField)}' =`); // eslint-disable-line no-console
+  //console.info(`Apply ${'description' in rule ? rule.description : 'unnamed'} rule at ${rule.startPosition}:\n'${fieldToString(baseField)}' +\n'${fieldToString(sourceField)}' =`); // eslint-disable-line no-console
   genericControlFieldCharPosFix(baseField, sourceField, categoryOfMaterial, categoryOfMaterial, rule);
-  console.info(`'${fieldToString(baseField)}'`); // eslint-disable-line no-console
+  //console.info(`'${fieldToString(baseField)}'`); // eslint-disable-line no-console
 }
