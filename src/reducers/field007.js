@@ -39,8 +39,8 @@ const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer un
   {types: ['g'], prioritizedValues: ['c', 'd', 'f', 'o', 's', 't', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'PGr 007/01: Specific material designation'},
   {types: ['g'], prioritizedValues: ['a', 'b', 'c', 'h', 'm', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'PGr 007/03: color'},
   {types: ['g'], prioritizedValues: ['d', 'e', 'j', 'k', 'm', 'o', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'PGr 007/06: Braille music format 1'},
-  {types: ['g'], prioritizedValues: [' ', 'a', 'b'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'PGr 007/05: sound on medium or separate'},
-  {types: ['g'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'z'], startPosition: 6, valueForUnknown: 'u', noAttemptToCode: '|', description: 'PGr 007/06: medium for sound'},
+  {types: ['g', 'm', 'v'], prioritizedValues: [' ', 'a', 'b'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'gmv007/05: sound on medium or separate'},
+  {types: ['g', 'm', 'v'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'z'], startPosition: 6, valueForUnknown: 'u', noAttemptToCode: '|', description: 'gmv007/06: medium for sound'},
   {types: ['g'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'j', 'k', 's', 't', 'v', 'w', 'x', 'y', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 'PGr 007/07: dimensions'},
   {types: ['g'], prioritizedValues: [' ', 'c', 'd', 'e', 'h', 'j', 'k', 'm', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/08: secondary support material'},
   // h=microform
@@ -56,7 +56,49 @@ const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer un
   {types: ['k'], prioritizedValues: ['a', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'o', 'p', 'q', 'r', 's', 'v', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/01: specific material designation'},
   {types: ['k'], prioritizedValues: ['a', 'b', 'c', 'h', 'm', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/03: color'},
   {types: ['k'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/04: primary support material'},
-  {types: ['k'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/05: secondary support material'}
+  {types: ['k'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/05: secondary support material'},
+  // m=motion picture 006/05-06: see g
+  {types: ['m'], prioritizedValues: ['c', 'f', 'o', 'r', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/01: specific material designation'},
+  {types: ['m'], prioritizedValues: ['b', 'c', 'h', 'm', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/03: color'},
+  {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/04: motion picture presentation format'},
+  {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/07: dimensions'},
+  {types: ['m'], prioritizedValues: ['k', 'm', 'n', 'q', 's', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/08: configuration of  playback channels'},
+  {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'z'], startPosition: 9, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/09: production elements'},
+  {types: ['m'], prioritizedValues: ['a', 'b', 'n', 'z'], startPosition: 10, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/10: positive/negative aspect'},
+  {types: ['m'], prioritizedValues: ['d', 'e', 'o', 'r', 'z'], startPosition: 11, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/11: generation'},
+  {types: ['m'], prioritizedValues: ['a', 'c', 'd', 'i', 'm', 'n', 'p', 'r', 't', 'z'], startPosition: 12, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/12: base of film'},
+  {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'z'], startPosition: 13, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/13: refined categories of color'},
+  {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'n', 'z'], startPosition: 14, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/14: kind of color stock or print'},
+  // {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'k', 'l', 'm'], startPosition: 15, noAttemptToCode: '|', description: 'm007/15: deterioration stage'},
+  {types: ['m'], prioritizedValues: ['c', 'i', 'n', 'z'], startPosition: 15, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/15: completeness'},
+  // m 17-22 not really relevant
+  // r=remove-sensing image
+  {types: ['r'], prioritizedValues: ['a', 'b', 'c', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/03: altitude of sensor'},
+  {types: ['r'], prioritizedValues: ['a', 'b', 'c', 'n', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/04: attitude of sensor'},
+  {types: ['r'], prioritizedValues: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'n', 'z'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/05: cloud cover'},
+  {types: ['r'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'n', 'z'], startPosition: 6, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/06: platform construction type'},
+  {types: ['r'], prioritizedValues: ['a', 'b', 'c', 'm', 'n', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/07: platform use category'},
+  {types: ['r'], prioritizedValues: ['a', 'b', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/08: sensor type'},
+  {types: ['r'], prioritizedValues: ['aa', 'da', 'db', 'dc', 'dd', 'de', 'df', 'dv', 'dz', 'ga', 'gb', 'gc', 'gd', 'ge', 'gf', 'gg', 'gu', 'gz', 'ja', 'jb', 'jc', 'jv', 'jz', 'ma', 'mb', 'mm', 'nn', 'pa', 'pb', 'pc', 'pd', 'pe', 'pz', 'ra', 'rb', 'rc', 'rd', 'sa', 'ta'], startPosition: 9, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'r007/09-10: data type'},
+  // s=sound recording
+  {types: ['s'], prioritizedValues: ['b', 'd', 'e', 'g', 'i', 'q', 'r', 's', 't', 'w', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/01: specific material designation'},
+  {types: ['s'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'h', 'i', 'k', 'l', 'm', 'n', 'o', 'r', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/03: speed'},
+  {types: ['s'], prioritizedValues: ['m', 'q', 's', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/04: conf of playback channels'},
+  {types: ['s'], prioritizedValues: ['m', 'n', 's', 'z'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/05: groove width/groove pitch'},
+  {types: ['s'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'j', 'n', 'o', 's', 'z'], startPosition: 6, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/06: dimensions'},
+  {types: ['s'], prioritizedValues: ['l', 'm', 'n', 'o', 'p', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/07: tape width'},
+  {types: ['s'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'n', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/08: tape configuration'},
+  {types: ['s'], prioritizedValues: ['a', 'b', 'd', 'i', 'm', 'n', 'r', 's', 't', 'z'], startPosition: 9, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/09: kind of disc, cylinder or tape'},
+  {types: ['s'], prioritizedValues: ['a', 'b', 'c', 'g', 'i', 'l', 'm', 'n', 'p', 'r', 's', 'w', 'z'], startPosition: 10, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/10: kind of material'},
+  {types: ['s'], prioritizedValues: ['h', 'l', 'n'], startPosition: 11, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/11: kind of cutting'},
+  {types: ['s'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'n', 'z'], startPosition: 12, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/12 special playback characteristics'},
+  {types: ['s'], prioritizedValues: ['a', 'b', 'd', 'e', 'z'], startPosition: 13, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/13: original capture and storage technique'},
+  // v=videorecording
+  {types: ['v'], prioritizedValues: ['c', 'd', 'f', 'r', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/01: specific material designations'},
+  {types: ['v'], prioritizedValues: ['a', 'b', 'c', 'm', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/03: color'},
+  {types: ['v'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'o', 'p', 'q', 's', 'v', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/04: videorecording format'},
+  {types: ['v'], prioritizedValues: ['a', 'm', 'o', 'p', 'q', 'r', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/07: dimensions'},
+  {types: ['v'], prioritizedValues: ['k', 'm', 'n', 'q', 's', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/08: configuration of playback channels'}
 
 ];
 
