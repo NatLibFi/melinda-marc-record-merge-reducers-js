@@ -153,6 +153,43 @@ function setCatalogingSource(base008, source008) {
   }
 }
 
+/*
+function mergeStrings(str1, str2, sort = true) {
+  function length = str1.length;
+  const concatenation = `${str1}${str2}`;
+  const arr = uniqArray(concatenation.value.split('').filter(c => c !== '|' && c !== ' ')); // Remove blanks ()
+  // Before sorting we take n first elements. Thus the original values are retained and they won't get lost when merging.
+  // Eg. if we have 4 slots and base has "def" and source has "abc", we get "defa", which will eventually be sorted to "adef".
+  const slicedArray = arr.slice(0, length);
+  ...
+}
+
+export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
+  if(baseTypeOfMaterial !== 'BK' || sourceTypeOfMaterial !== 'BK') {
+    return;
+  }
+  const sourceIllustrationString = getIllustrationString(sourceField);
+  if (sourceIllustrationString === '||||' || sourceIllustrationString === '####') {
+    return;
+  }
+
+  const baseIllustrationString = getIllustrationString(baseField);
+
+  function getStartPosition(field) {
+    if (field.tag === '006') {
+      return 1;
+    }
+    return 18;
+  }
+
+  function getIllustrationString(field) {
+    const startPosition = getStartPosition(field);
+    return field.value.substring(startPosition, startPosition+4);
+  }
+
+
+}
+*/
 
 const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['MU'], prioritizedValues: goodFormsOfComposition, startPosition: 18, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'Form of Composition (MU) 00/18-19'},
@@ -230,6 +267,7 @@ function process008(base, source) {
   }
   setFormOfItem(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
   setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16
+  //mergeIllustrations(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/18-21
   // I haven't yet worked out how to do char=val&&multiple char positions combos.
   // Some of the positions we still need to think about are listed below:
   // NB! What about MP 009/33-34 Special format characteristics?
