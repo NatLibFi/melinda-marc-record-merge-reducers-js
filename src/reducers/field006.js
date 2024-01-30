@@ -42,6 +42,7 @@ export default () => (base, source) => {
 };
 
 const singleCharacterPositionRules = getSingleCharacterPositionRules();
+
 function fillField006Gaps(baseField, sourceField) {
   const typeOfMaterial = mapFieldToTypeOfMaterial(baseField);
   singleCharacterPositionRules.forEach(rule => mergeTwo006Fields(baseField, sourceField, typeOfMaterial, rule));
@@ -120,10 +121,10 @@ function areMergable006Pair(field1, field2) {
       return spaceContainsInformation(position);
     }
 
-    if (c === 'u' && position === 16) {
-      if (typeOfMaterial === 'BK' && position === 16) { // 008/33
-        return false;
-      }
+    // Compare variable c against relevant rule.valueForUnknown values (NB! We should implement similar rule for field 006):
+    const relevantRules = singleCharacterPositionRules.filter(rule => rule.types.includes(typeOfMaterial) && rule.startPosition - 17 === position && 'valueForUnknown' in rule);
+    if (relevantRules.some(rule => rule.valueForUnknown === c)) {
+      return false;
     }
 
     return true;
@@ -153,7 +154,7 @@ function areMergable006Pair(field1, field2) {
     if (position === 12 && ['MP', 'VM'].includes(typeOfMaterial)) { // 008/29 form of item '#' means "none of the following"
       return true;
     }
-    if (position === 13 && ['MU'].includes(typeOfMaterial)) { // 008/30 Literaty text for sound recordings (code 1)
+    if (position === 13 && ['MU'].includes(typeOfMaterial)) { // 008/30 Literary text for sound recordings (code 1) (008/31 code is fine/meaningless, if 008/30 is a-z...)
       return true;
     }
     if (position === 17 && typeOfMaterial === 'BK') { // 008/34 technique
