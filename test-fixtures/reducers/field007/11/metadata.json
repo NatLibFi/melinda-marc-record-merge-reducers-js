@@ -1,0 +1,5 @@
+{
+  "description":"Merge two 007/00=c (electronic resource) fields, base is rather crappy, so data should come from source",
+  "comment": "note that 007/06-08 support will be added later, this test currently retains bases inferior '|||ä",
+  "only": false
+}
