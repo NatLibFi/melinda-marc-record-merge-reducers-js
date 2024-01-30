@@ -6,7 +6,7 @@ import {copyFields} from './utils.js';
 // Author: Nicholas Volk
 const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer units)
   // a=map, d=globe
-  {types: ['a'], prioritizedValues: ['d', 'g', 'j', 'k', 'q', 'r', 's', 'u', 'y', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Map 007/01: Specific material designation'},
+  {types: ['a'], prioritizedValues: ['d', 'g', 'j', 'k', 'q', 'r', 's', 'y', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Map 007/01: Specific material designation'},
   {types: ['a', 'd'], prioritizedValues: ['a', 'c'], startPosition: 3, noAttemptToCode: '|', description: 'Map/Globe 007/03: Color'},
   {types: ['a'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'l', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Map 007/04: Physical medium'},
   {types: ['a', 'd'], prioritizedValues: ['f', 'n', 'z'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Map/globe 007/05: Type of reproduction'},
@@ -26,14 +26,14 @@ const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer un
   // d=globe (007/03 and 007/05 are listed with maps)
   {types: ['d'], prioritizedValues: ['a', 'b', 'c', 'e', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Globe 007/01: specific material designation'},
   {types: ['d'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'i', 'l', 'n', 'p', 'v', 'w', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Globe 007/04: Physical medium'},
-  // f=tactile material, rules for multi-char-pos needs to be added...
+  // f=tactile material, rules for multi-char-pos needs to be added..., NB! 007/03-04 and 007/06-08 are validateOnly! Code that handles them will be added later on!
   {types: ['f'], prioritizedValues: ['a', 'b', 'c', 'd', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/01: specific material designation'},
-  //{types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'm', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/03: class of Braille writing #1'},
-  //{types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'm', 'n', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/04: class of Braille writing #2'},
+  {types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'm', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/03: class of Braille writing #1', validateOnly: true},
+  {types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'm', 'n', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/04: class of Braille writing #2', validateOnly: true},
   {types: ['f'], prioritizedValues: ['a', 'b', 'm', 'n', 'z'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/05: level of contraction'},
-  //{types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'z'], startPosition: 6, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/06: Braille music format 1'},
-  //{types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/07: Braille music format 2'},
-  //{types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/08: Braille music format 3'},
+  {types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'z'], startPosition: 6, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/06: Braille music format 1', validateOnly: true},
+  {types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/07: Braille music format 2', validateOnly: true},
+  {types: ['f'], prioritizedValues: [' ', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/08: Braille music format 3', validateOnly: true},
   {types: ['f'], prioritizedValues: ['a', 'b', 'n', 'z'], startPosition: 9, valueForUnknown: 'u', noAttemptToCode: '|', description: 'Tactile 007/09: special physical characteristics'},
   // g=projected graphic
   {types: ['g'], prioritizedValues: ['c', 'd', 'f', 'o', 's', 't', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'PGr 007/01: Specific material designation'},
@@ -56,7 +56,7 @@ const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer un
   {types: ['k'], prioritizedValues: ['a', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'n', 'o', 'p', 'q', 'r', 's', 'v', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/01: specific material designation'},
   {types: ['k'], prioritizedValues: ['a', 'b', 'c', 'h', 'm', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/03: color'},
   {types: ['k'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/04: primary support material'},
-  {types: ['k'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z'], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/05: secondary support material'},
+  {types: ['k'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'z', ' '], startPosition: 5, valueForUnknown: 'u', noAttemptToCode: '|', description: 'k007/05: secondary support material'},
   // m=motion picture 006/05-06: see g
   {types: ['m'], prioritizedValues: ['c', 'f', 'o', 'r', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/01: specific material designation'},
   {types: ['m'], prioritizedValues: ['b', 'c', 'h', 'm', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/03: color'},
@@ -70,8 +70,11 @@ const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer un
   {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'z'], startPosition: 13, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/13: refined categories of color'},
   {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'n', 'z'], startPosition: 14, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/14: kind of color stock or print'},
   // {types: ['m'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'k', 'l', 'm'], startPosition: 15, noAttemptToCode: '|', description: 'm007/15: deterioration stage'},
-  {types: ['m'], prioritizedValues: ['c', 'i', 'n', 'z'], startPosition: 15, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/15: completeness'},
+  {types: ['m'], prioritizedValues: ['c', 'i', 'n', 'z'], startPosition: 16, valueForUnknown: 'u', noAttemptToCode: '|', description: 'm007/15: completeness'},
   // m 17-22 not really relevant
+  // o=kit ,q=notated music
+  {types: ['o', 'q', 'r'], prioritizedValues: [], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'oq007/01: Specific material designation'},
+
   // r=remove-sensing image
   {types: ['r'], prioritizedValues: ['a', 'b', 'c', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/03: altitude of sensor'},
   {types: ['r'], prioritizedValues: ['a', 'b', 'c', 'n', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/04: attitude of sensor'},
@@ -79,7 +82,7 @@ const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer un
   {types: ['r'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'n', 'z'], startPosition: 6, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/06: platform construction type'},
   {types: ['r'], prioritizedValues: ['a', 'b', 'c', 'm', 'n', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/07: platform use category'},
   {types: ['r'], prioritizedValues: ['a', 'b', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'r007/08: sensor type'},
-  {types: ['r'], prioritizedValues: ['aa', 'da', 'db', 'dc', 'dd', 'de', 'df', 'dv', 'dz', 'ga', 'gb', 'gc', 'gd', 'ge', 'gf', 'gg', 'gu', 'gz', 'ja', 'jb', 'jc', 'jv', 'jz', 'ma', 'mb', 'mm', 'nn', 'pa', 'pb', 'pc', 'pd', 'pe', 'pz', 'ra', 'rb', 'rc', 'rd', 'sa', 'ta'], startPosition: 9, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'r007/09-10: data type'},
+  {types: ['r'], prioritizedValues: ['aa', 'da', 'db', 'dc', 'dd', 'de', 'df', 'dv', 'dz', 'ga', 'gb', 'gc', 'gd', 'ge', 'gf', 'gg', 'gu', 'gz', 'ja', 'jb', 'jc', 'jv', 'jz', 'ma', 'mb', 'mm', 'nn', 'pa', 'pb', 'pc', 'pd', 'pe', 'pz', 'ra', 'rb', 'rc', 'rd', 'sa', 'ta'], startPosition: 9, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'r007/09-10: data type', mergeOnly: true},
   // s=sound recording
   {types: ['s'], prioritizedValues: ['b', 'd', 'e', 'g', 'i', 'q', 'r', 's', 't', 'w', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/01: specific material designation'},
   {types: ['s'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'h', 'i', 'k', 'l', 'm', 'n', 'o', 'r', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/03: speed'},
@@ -93,12 +96,18 @@ const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer un
   {types: ['s'], prioritizedValues: ['h', 'l', 'n'], startPosition: 11, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/11: kind of cutting'},
   {types: ['s'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'n', 'z'], startPosition: 12, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/12 special playback characteristics'},
   {types: ['s'], prioritizedValues: ['a', 'b', 'd', 'e', 'z'], startPosition: 13, valueForUnknown: 'u', noAttemptToCode: '|', description: 's007/13: original capture and storage technique'},
+  // text
+  {types: ['t'], prioritizedValues: ['a', 'b', 'c', 'd', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 't007/01: specific material designations'},
+
+
   // v=videorecording
   {types: ['v'], prioritizedValues: ['c', 'd', 'f', 'r', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/01: specific material designations'},
   {types: ['v'], prioritizedValues: ['a', 'b', 'c', 'm', 'n', 'z'], startPosition: 3, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/03: color'},
   {types: ['v'], prioritizedValues: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'o', 'p', 'q', 's', 'v', 'z'], startPosition: 4, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/04: videorecording format'},
   {types: ['v'], prioritizedValues: ['a', 'm', 'o', 'p', 'q', 'r', 'z'], startPosition: 7, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/07: dimensions'},
-  {types: ['v'], prioritizedValues: ['k', 'm', 'n', 'q', 's', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/08: configuration of playback channels'}
+  {types: ['v'], prioritizedValues: ['k', 'm', 'n', 'q', 's', 'z'], startPosition: 8, valueForUnknown: 'u', noAttemptToCode: '|', description: 'v007/08: configuration of playback channels'},
+  // z=unspecified
+  {types: ['z'], prioritizedValues: ['m', 'z'], startPosition: 1, valueForUnknown: 'u', noAttemptToCode: '|', description: 'z007/01: specific material designations'}
 
 ];
 
@@ -126,26 +135,38 @@ function areMergable007Pair(field1, field2) {
 
   const arr1 = field1.value.split('');
   const arr2 = field2.value.split('');
-  if (arr1.every((c, i) => c === arr2[i] || !field007PositionValueContainsInformation(c, i) || !field007PositionValueContainsInformation(arr2[i], i))) {
+  // This fails to compare multiletter rules...
+  if (arr1.every((c, i) => characterPositionIsMergeable(c, arr2[i], i))) {
     return true;
   }
 
   return false;
 
-  /*
-  function isException007(c1, c2, characterPosition) {
+  function characterPositionIsMergeable(char1, char2, currCharPos) {
+    if (char1 === char2 || !field007PositionValueContainsInformation(char1, currCharPos) || !field007PositionValueContainsInformation(char2, currCharPos)) {
+      return true;
+    }
+
     return false;
   }
-  */
 
   function field007PositionValueContainsInformation(c, position) {
-    console.info(`007/${position}: '${c}' (${categoryOfMaterial})`); // eslint-disable-line no-console
+    //console.info(`007/${position}: '${c}' (${categoryOfMaterial})`); // eslint-disable-line no-console
     if (c === '|') {
       return false;
     }
 
     if (c === ' ') { // Typically false, but there are some notable exceptions:
       return spaceContainsInformation(position);
+    }
+
+    // Compare variable c against relevant rule.valueForUnknown values (NB! We should implement similar rule for field 006):
+    const relevantRules = singleCharacterPositionRulesForField007.filter(rule => rule.types.includes(field1.value[0]) && rule.startPosition === position && !rule.mergeOnly);
+    if (relevantRules.length === 0) { // Not interested
+      return false;
+    }
+    if (relevantRules.some(rule => 'valueForUnknown' in rule && rule.valueForUnknown === c)) { // what about 'u' vs 'uu'...
+      return false;
     }
 
     return true;

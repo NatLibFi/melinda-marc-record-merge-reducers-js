@@ -38,7 +38,6 @@ export function hasLegalLength(field) {
       nvdebug(`${c0}: COMPARE ${f007Lengths[c0]} vs ${field.value.length}`, debugDev);
       return field.value.length === f007Lengths[c0];
     }
-
     return false;
   }
 
@@ -97,7 +96,7 @@ export function fillControlFieldGaps(baseField, sourceField, min = 0, max = 39) 
 export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial, rule) { // eslint-disable-line max-params
   // Initially written fro field 008, but may be applied to 006 and 007 as well (I guess).
   // We apply some rules (eg. for government publication) even if baseTypeOfMaterial !== sourceTypeOfMaterial
-  if (!rule.types.includes(baseTypeOfMaterial) || !rule.types.includes(sourceTypeOfMaterial)) {
+  if (!rule.types.includes(baseTypeOfMaterial) || !rule.types.includes(sourceTypeOfMaterial) || rule.validateOnly) {
     return;
   }
   //console.info(`Apply ${'description' in rule ? rule.description : 'nameless'} rule`); // eslint-disable-line no-console
@@ -106,7 +105,7 @@ export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOf
   const valueForUnknown = 'valueForUnknown' in rule ? rule.valueForUnknown : undefined;
   const [noAttemptToCode] = rule.noAttemptToCode;
 
-  const len = legalValues[0].length;
+  const len = legalValues.length > 0 ? legalValues[0].length : noAttemptToCode.length;
 
   const baseValue = baseField.value.substring(position, position + len);
   const sourceValue = sourceField.value.substring(position, position + len);

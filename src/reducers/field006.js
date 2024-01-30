@@ -112,7 +112,7 @@ function areMergable006Pair(field1, field2) {
   }
 
   function field006PositionValueContainsInformation(c, position) {
-    console.info(`006/${position}: '${c}' (${typeOfMaterial})`); // eslint-disable-line no-console
+    //console.info(`006/${position}: '${c}' (${typeOfMaterial})`); // eslint-disable-line no-console
     if (c === '|') {
       return false;
     }
@@ -122,8 +122,11 @@ function areMergable006Pair(field1, field2) {
     }
 
     // Compare variable c against relevant rule.valueForUnknown values (NB! We should implement similar rule for field 006):
-    const relevantRules = singleCharacterPositionRules.filter(rule => rule.types.includes(typeOfMaterial) && rule.startPosition - 17 === position && 'valueForUnknown' in rule);
-    if (relevantRules.some(rule => rule.valueForUnknown === c)) {
+    const relevantRules = singleCharacterPositionRules.filter(rule => rule.types.includes(typeOfMaterial) && rule.startPosition - 17 === position);
+    if (relevantRules.length === 0) { // Not interested
+      return false;
+    }
+    if (relevantRules.some(rule => 'valueForUnknown' in rule && rule.valueForUnknown === c)) {
       return false;
     }
 
@@ -131,7 +134,7 @@ function areMergable006Pair(field1, field2) {
   }
 
   function spaceContainsInformation(position) {
-    console.info(`Spaceman at ${typeOfMaterial} 006/${position}?`); // eslint-disable-line no-console
+    // All/some of these should be checked via rules...
     if (position === 1 && typeOfMaterial === 'CR') { // 008/18 frequency
       return true;
     }
