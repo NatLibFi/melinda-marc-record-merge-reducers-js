@@ -122,16 +122,16 @@ function areMergable007Pair(field1, field2) {
     return false;
   }
   const categoryOfMaterial = field1.value.charAt(0);
-  if (!['a', 'c', 'd', 'f', 'g', 'h', 'k', 'm', 'o', 'q', 'r', 's', 't', 'v', 'z'].includes(categoryOfMaterial)) {
+  if (!['a', 'c', 'd', 'f', 'g', 'h', 'k', 'm', 'o', 'q', 'r', 's', 't', 'v', 'z'].includes(categoryOfMaterial)) { // Somewhat unnecessary, as these would fail the legal length requirement later on
     return false;
   }
-  if (field1.value.length !== field2.value.length) {
-    return false;
-  }
-  if (!hasLegalLength(field1)) {
+  if (!hasLegalLength(field2)) { // We are only intested in legally sized source fields
     return false;
   }
 
+  if (!hasLegalLength(field1)) {
+    return true; // At this point field2 has legal length, and it will replace field1 bad value...
+  }
 
   const arr1 = field1.value.split('');
   const arr2 = field2.value.split('');
@@ -151,7 +151,7 @@ function areMergable007Pair(field1, field2) {
   }
 
   function field007PositionValueContainsInformation(c, position) {
-    //console.info(`007/${position}: '${c}' (${categoryOfMaterial})`); // eslint-disable-line no-console
+    // console.info(`contains information? 007/${position}: '${c}' (${categoryOfMaterial})`); // eslint-disable-line no-console
     if (c === '|') {
       return false;
     }
@@ -173,7 +173,7 @@ function areMergable007Pair(field1, field2) {
   }
 
   function spaceContainsInformation(position) {
-    //console.info(`Spaceman at ${categoryOfMaterial} 006/${position}?`); // eslint-disable-line no-console
+    console.info(`Spaceman at ${categoryOfMaterial} 007/${position}?`); // eslint-disable-line no-console
     if (position === 5 && ['c', 'g', 'k', 'm', 'v'].includes(categoryOfMaterial)) { // No sound (silent)
       return true;
     }
@@ -218,14 +218,14 @@ export default () => (base, source) => {
 };
 
 function fillField007Gaps(baseField, sourceField) {
+  if (!hasLegalLength(baseField) && hasLegalLength(sourceField)) {
+    baseField.value = sourceField.value; // eslint-disable-line functional/immutable-data
+    return;
+  }
   const categoryOfMaterial = baseField.value.charAt(0);
-  singleCharacterPositionRulesForField007.forEach(rule => mergeTwo007Fields(baseField, sourceField, categoryOfMaterial, rule));
+
+  singleCharacterPositionRulesForField007.forEach(rule => genericControlFieldCharPosFix(baseField, sourceField, categoryOfMaterial, categoryOfMaterial, rule));
   // NB! Add rules for combos here!
   //console.info(`FINAL:\n${fieldToString(baseField)}`); // eslint-disable-line no-console
 }
 
-function mergeTwo007Fields(baseField, sourceField, categoryOfMaterial, rule) {
-  //console.info(`Apply ${'description' in rule ? rule.description : 'unnamed'} rule at ${rule.startPosition}:\n'${fieldToString(baseField)}' +\n'${fieldToString(sourceField)}' =`); // eslint-disable-line no-console
-  genericControlFieldCharPosFix(baseField, sourceField, categoryOfMaterial, categoryOfMaterial, rule);
-  //console.info(`'${fieldToString(baseField)}'`); // eslint-disable-line no-console
-}
