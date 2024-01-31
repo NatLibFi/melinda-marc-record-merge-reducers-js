@@ -1,5 +1,5 @@
 import clone from 'clone';
-import {genericControlFieldCharPosFix as genericFix} from './controlFieldUtils';
+import {genericControlFieldCharPosFix as genericFix, hasLegalLength} from './controlFieldUtils';
 
 // NB! Used by field 006 as well as 008/18-34 = 006/01-17...
 
@@ -227,15 +227,19 @@ export function getSingleCharacterPositionRules() {
 function process008(base, source) {
   const [source008] = source.get(regexp008);
   // Stick with base if source if missing or no good:
-  if (!source008 || source008.value.length !== 40) {
+  if (!source008 || !hasLegalLength(source008)) {
     return;
   }
 
   const [base008] = base.get(regexp008);
   // Copy missing 008 from source (theoretical)
-  if (!base008) { // eslint-disable-line functional/no-conditional-statements
+  if (!base008) {
     const clonedField = clone(source008);
     base.insertField(clonedField);
+    return;
+  }
+  if (!hasLegalLength(base008)) {
+    base008.value = source008.value; // eslint-disable-line functional/immutable-data
     return;
   }
 
