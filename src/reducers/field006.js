@@ -44,6 +44,10 @@ export default () => (base, source) => {
 const singleCharacterPositionRules = getSingleCharacterPositionRules();
 
 function fillField006Gaps(baseField, sourceField) {
+  if (!hasLegalLength(baseField) && hasLegalLength(sourceField)) {
+    baseField.value = sourceField.value; // eslint-disable-line functional/immutable-data
+    return;
+  }
   const typeOfMaterial = mapFieldToTypeOfMaterial(baseField);
   singleCharacterPositionRules.forEach(rule => mergeTwo006Fields(baseField, sourceField, typeOfMaterial, rule));
   setFormOfItem(baseField, sourceField, typeOfMaterial, typeOfMaterial);
@@ -60,13 +64,18 @@ function mergeTwo006Fields(baseField, sourceField, typeOfMaterial, rule) {
 function areMergable006Pair(field1, field2) {
   // NB! We explicitly assume that only tag=006 stuff gets this far!
   // Check 006/00:
-  if (field1.value[0] !== field2.value[0]) {
+  if (field1.value[0] !== field2.value[0] || !hasLegalLength(field2)) {
     return false;
   }
   const typeOfMaterial = mapFieldToTypeOfMaterial(field1);
   if (!typeOfMaterial) { // Must map to some type of material
     return false;
   }
+
+  if (!hasLegalLength(field1)) {
+    return true; // If base has illegal size, use source...
+  }
+
   if (field1.value.length !== field2.value.length) {
     return false;
   }
