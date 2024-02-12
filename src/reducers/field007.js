@@ -217,6 +217,36 @@ export default () => (base, source) => {
   return {base: baseRecord, source};
 };
 
+function mergeImageBitDepth(baseField, sourceField, categoryOfMaterial) {
+  if (categoryOfMaterial !== 'c') {
+    return;
+  }
+  const baseValue = baseField.value.substring(6, 9);
+  const sourceValue = sourceField.value.substring(6, 9);
+
+  const baseScore = scoreImageBitDepth(baseValue);
+  const sourceScore = scoreImageBitDepth(sourceValue);
+
+  if (sourceScore > baseScore) {
+    baseField.value = `${baseField.value.substring(0, 6)}${sourceValue}${baseField.value.substring(9)}`; // eslint-disable-line functional/immutable-data
+    return;
+  }
+  return;
+
+  function scoreImageBitDepth(value) {
+    if (value.match(/^[0-9][0-9][0-9]$/u) || value === 'mmm' || value === 'nnn') {
+      return 2;
+    }
+    if (value === '---') {
+      return 1;
+    }
+    if (value === '|||') {
+      return 0;
+    }
+    return 1;
+  }
+}
+
 function fillField007Gaps(baseField, sourceField) {
   if (!hasLegalLength(baseField) && hasLegalLength(sourceField)) {
     baseField.value = sourceField.value; // eslint-disable-line functional/immutable-data
@@ -225,7 +255,11 @@ function fillField007Gaps(baseField, sourceField) {
   const categoryOfMaterial = baseField.value.charAt(0);
 
   singleCharacterPositionRulesForField007.forEach(rule => genericControlFieldCharPosFix(baseField, sourceField, categoryOfMaterial, categoryOfMaterial, rule));
+
   // NB! Add rules for combos here!
+  mergeImageBitDepth(baseField, sourceField, categoryOfMaterial); // 007/06-08 when 007/00=c
+
+
   //console.info(`FINAL:\n${fieldToString(baseField)}`); // eslint-disable-line no-console
 }
 
