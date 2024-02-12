@@ -1,0 +1,5 @@
+{
+  "description":"007/01: merge: source '|' replaces illegal base value",
+  "comment": "coverage improvement",
+  "only": false
+}
