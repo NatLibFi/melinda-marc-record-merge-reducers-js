@@ -243,7 +243,70 @@ function mergeImageBitDepth(baseField, sourceField, categoryOfMaterial) {
     if (value === '|||') {
       return 0;
     }
-    return 1;
+    // crap:
+    return -1;
+  }
+}
+
+function mergeClassOfBrailleWriting(baseField, sourceField, categoryOfMaterial) {
+  // Melinda contains only 3992 '||', and 15 '##'. (And the latter should be '##' as well, I think.) Thus keep-it-simple fix suffices.
+  if (categoryOfMaterial !== 'f') {
+    return;
+  }
+
+  const baseValue = baseField.value.substring(3, 5);
+  const sourceValue = sourceField.value.substring(3, 5);
+  if (baseValue === '||' && !['||', '  '].includes(sourceValue)) {
+    baseField.value = `${baseField.value.substring(0, 3)}${sourceValue}${baseField.value.substring(5)}`; // eslint-disable-line functional/immutable-data
+    return;
+  }
+  return;
+}
+
+function mergeBrailleMusicFormat(baseField, sourceField, categoryOfMaterial) {
+  // Melinda contains only 3992 '|||', and 15 '###' and one '||#'. (And the latter should be '##' as well, I think.) Thus keep-it-simple fix suffices.
+  if (categoryOfMaterial !== 'f') {
+    return;
+  }
+
+  const start = 6;
+  const end = 9;
+  const baseValue = baseField.value.substring(start, end);
+  const sourceValue = sourceField.value.substring(start, end);
+  if (baseValue === '|||' && !['|||', '   '].includes(sourceValue)) {
+    baseField.value = `${baseField.value.substring(0, start)}${sourceValue}${baseField.value.substring(end)}`; // eslint-disable-line functional/immutable-data
+    return;
+  }
+  return;
+}
+
+function mergeMicroformReductionRatio(baseField, sourceField, categoryOfMaterial) {
+  if (categoryOfMaterial !== 'h') {
+    return;
+  }
+  const start = 6;
+  const end = 9;
+  const baseValue = baseField.value.substring(start, end);
+  const sourceValue = sourceField.value.substring(start, end);
+
+  const baseScore = scoreReductionRatio(baseValue);
+  const sourceScore = scoreReductionRatio(sourceValue);
+
+  if (sourceScore > baseScore) {
+    baseField.value = `${baseField.value.substring(0, start)}${sourceValue}${baseField.value.substring(end)}`; // eslint-disable-line functional/immutable-data
+    return;
+  }
+  return;
+
+  function scoreReductionRatio(value) {
+    if (value.match(/^(?:[0-9][0-9][0-9]|[0-9][0-9]-|[0-9]--|---)$/u)) {
+      return 1;
+    }
+    if (value === '|||') {
+      return 0;
+    }
+    // crap:
+    return -1;
   }
 }
 
@@ -259,6 +322,14 @@ function fillField007Gaps(baseField, sourceField) {
   // NB! Add rules for combos here!
   mergeImageBitDepth(baseField, sourceField, categoryOfMaterial); // 007/06-08 when 007/00=c
 
+  mergeClassOfBrailleWriting(baseField, sourceField, categoryOfMaterial); // 007/03-04 when 007/00=f
+  mergeBrailleMusicFormat(baseField, sourceField, categoryOfMaterial); // 007/06-08 when 007/00=f
+
+  mergeMicroformReductionRatio(baseField, sourceField, categoryOfMaterial); // 007/06-08 when 007/00=h
+
+  // Film inspection date has a sane value in only two Melinda records. Skip it.
+  // mergeFilmInspectionDate(baseField, sourceField, categoryOfMaterial); // film inspection date 007/17-22, when 007/00=m.
+  // And it gets better: Remove-Sensing Image (having multislot value for Data Type in 007/09-10 has no instances in our DB...
 
   //console.info(`FINAL:\n${fieldToString(baseField)}`); // eslint-disable-line no-console
 }
