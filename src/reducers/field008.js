@@ -1,5 +1,6 @@
 import clone from 'clone';
 import {genericControlFieldCharPosFix as genericFix, hasLegalLength} from './controlFieldUtils';
+import {uniqArray} from './utils';
 
 // NB! Used by field 006 as well as 008/18-34 = 006/01-17...
 
@@ -153,19 +154,65 @@ function setCatalogingSource(base008, source008) {
   }
 }
 
-/*
-function mergeStrings(str1, str2, sort = true) {
-  function length = str1.length;
-  const concatenation = `${str1}${str2}`;
-  const arr = uniqArray(concatenation.value.split('').filter(c => c !== '|' && c !== ' ')); // Remove blanks ()
-  // Before sorting we take n first elements. Thus the original values are retained and they won't get lost when merging.
-  // Eg. if we have 4 slots and base has "def" and source has "abc", we get "defa", which will eventually be sorted to "adef".
-  const slicedArray = arr.slice(0, length);
-  ...
+const BIG_BAD_VALUE = 999999999;
+
+function sortChars(string, reallySort) { // similiar code is in validator side. Refactor and export that code and use it later on.
+  // NB! Always moves '#' and '|' to the end, and meaningful data to the front, even if reallySort is false.
+  const charArray = string.split('');
+
+  charArray.sort(function(a, b) { // eslint-disable-line functional/immutable-data, prefer-arrow-callback
+    return scoreChar(a) - scoreChar(b);
+  });
+
+  return charArray.join('');
+
+  function scoreChar(c) {
+    if (c === '|' || c === ' ') {
+      return BIG_BAD_VALUE; // Max value, these should code last
+    }
+    if (!reallySort) {
+      return 1;
+    }
+    const asciiCode = c.charCodeAt(0);
+    // a-z get values 1-26:
+    if (asciiCode >= 97 && asciiCode <= 122) {
+      return asciiCode - 96;
+    }
+    // 0-9 get values 100-109 (sorting numbers *after* alphabets might not always be right...)
+    if (asciiCode >= 48 && asciiCode <= 57) {
+      return asciiCode + 52;
+    }
+    // Others (=crap) return something between '9' and BIG BAD VALUE
+    return asciiCode + 200;
+  }
+}
+
+function keepOnlyUniqueMeaningfulChars(str) {
+  console.info(`CONC: '${str}'`); // eslint-disable-line no-console
+  const arr = uniqArray(str.split('')).filter(c => c !== '|' && c !== ' '); // Remove blanks ()
+  return arr.join('');
+}
+
+function mergeStrings(str1, str2, applySort = true) {
+  console.info(`STR1: '${str1}'\nSTR2: '${str2}'`); // eslint-disable-line no-console
+  const targetLength = str1.length;
+  const concatenatedStrings = `${str1}${str2}`;
+  const meaningfulValuesAsString = keepOnlyUniqueMeaningfulChars(concatenatedStrings);
+  if (meaningfulValuesAsString.length === 0) {
+    // Sometimes '####' is right, but sometimes '||||' can be valid as well. Maybe we'll add some type of material + char pos based login here in the unseen future.
+    // Current implementation does not make a choise between then, and base's value is retained. (Current implementation also keeps '#|#|' style rubbish as well.)
+    return str1;
+  }
+  const waypointString = sortChars(meaningfulValuesAsString, applySort);
+
+  if (waypointString.length >= targetLength) {
+    return waypointString.substring(0, targetLength);
+  }
+  return `${waypointString}${' '.repeat(targetLength - waypointString.length())}`;
 }
 
 export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
-  if(baseTypeOfMaterial !== 'BK' || sourceTypeOfMaterial !== 'BK') {
+  if (baseTypeOfMaterial !== 'BK' || sourceTypeOfMaterial !== 'BK') {
     return;
   }
   const sourceIllustrationString = getIllustrationString(sourceField);
@@ -174,6 +221,13 @@ export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, s
   }
 
   const baseIllustrationString = getIllustrationString(baseField);
+
+  const startPosition = getStartPosition(baseField);
+
+  const mergedString = mergeStrings(baseIllustrationString, sourceIllustrationString, false);
+
+  baseField.value = `${baseField.value.substring(0, startPosition)}${mergedString}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
+  return;
 
   function getStartPosition(field) {
     if (field.tag === '006') {
@@ -184,12 +238,12 @@ export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, s
 
   function getIllustrationString(field) {
     const startPosition = getStartPosition(field);
-    return field.value.substring(startPosition, startPosition+4);
+    return field.value.substring(startPosition, startPosition + 4);
   }
 
 
 }
-*/
+
 
 const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['MU'], prioritizedValues: goodFormsOfComposition, startPosition: 18, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'Form of Composition (MU) 00/18-19'},
@@ -271,7 +325,7 @@ function process008(base, source) {
   }
   setFormOfItem(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
   setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16
-  //mergeIllustrations(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/18-21
+  mergeIllustrations(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/18-21
   // I haven't yet worked out how to do char=val&&multiple char positions combos.
   // Some of the positions we still need to think about are listed below:
   // NB! What about MP 009/33-34 Special format characteristics?
