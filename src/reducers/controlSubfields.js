@@ -168,6 +168,10 @@ function controlSubfield9PermitsMerge(baseField, sourceField) {
       return false;
     }
 
+    if (baseField.tag.charAt(0) === '1' && !keepOrDrop2.some(sf => (/<DROP>/u).test(sf.value))) {
+      return false;
+    }
+
     const sf9lessField1 = baseField.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
     const sf9lessField2 = sourceField.subfields.filter(subfield => retainSubfieldForKeepComparison(subfield));
 

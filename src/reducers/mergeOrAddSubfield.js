@@ -37,6 +37,13 @@ function ennakkotietoInSubfieldG(candSubfieldData) {
 
 
 function mergeOrAddSubfieldNotRequiredSpecialCases(targetField, candSubfieldData) {
+
+  // Don't bring WHATEVER<KEEP> from source 7XX to base 1XX.
+  // Exceptionally we can merge <KEEP>ed 7XX with un-<KEEP>ed 1XX as 1XX should not use <KEEP>s.
+  if (targetField.tag.charAt(0) === '1' && candSubfieldData.tag.charAt(0) === '7' && candSubfieldData.code === '9' && candSubfieldData.originalValue.match(/<KEEP>/u)) {
+    return true;
+  }
+
   // Don't add 264$b 'Kustannuspaikka tuntematon' etc
   if (!valueCarriesMeaning(targetField.tag, candSubfieldData.code, candSubfieldData.normalizedValue)) {
     return true;
