@@ -1,5 +1,5 @@
 {
   "description":"14: Various 008 tests for BK",
   "comment": "008/18-21 illustation: keep 'cba' from base and add 'e' from source to from sorted 'abce'.",
-  "only": true
+  "only": false
 }
