@@ -227,7 +227,7 @@ export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, s
     return; // Keep original 008/18-21. It *should* be either '####' or '||||', but might also be something stupid like '#|#|' or 'FOOB' (illegal value)
   }
   const finalValue = sortChars(resizeNewValue(mergedString, 4), true);
-  //console.info(`B: '${sourceString}' +\nS: '${sourceString}' =\n   '${finalValue}'`); // eslint-disable-line no-console
+  //console.info(`B: '${baseString}' +\nS: '${sourceString}' =\n   '${finalValue}'`); // eslint-disable-line no-console
   const startPosition = getIllustrationsStartPosition(baseField);
   baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
   return;
@@ -243,6 +243,59 @@ export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, s
     return extractLegalValues(field.value, startPosition, 4, 'abcdefghijklmop');
   }
 }
+
+// Export, so that field006.js can use this!
+export function mergeNatureOfContents(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
+  if (!['BK', 'CR'].includes(baseTypeOfMaterial) || !['BK', 'CR'].includes(sourceTypeOfMaterial)) {
+    return;
+  }
+  const baseString = getNatureOfContentsString(baseField, baseTypeOfMaterial);
+  const sourceString = getNatureOfContentsString(sourceField, baseTypeOfMaterial);
+  const mergedString = mergeStrings(baseString, sourceString);
+  if (mergedString === '' || baseString.length === mergedString.length) {
+    // Keep original 008/24-27.
+    // If mergedString is '', original value *should* be either '####' or '||||', but might also be something stupid like '#|#|' or 'FOOB' (illegal value)
+    // If baseString.length === mergedString.length, no new information was added.
+    return;
+  }
+  const finalValue = tuneNatureOfContentValue(mergedString);
+  console.info(`B: '${baseString}' +\nS: '${sourceString}' =\n   '${finalValue}'`); // eslint-disable-line no-console
+  const startPosition = getNatureOfContentsStartPosition(baseField);
+  baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
+  return;
+
+  function tuneNatureOfContentValue(string) {
+    if (baseTypeOfMaterial === 'BK') {
+      return sortChars(resizeNewValue(string, 4), true);
+    }
+    // SE is way trickier: one value goes to 008/24 and multivals go to 008/25-27. However, 008/24-27 can be '#a##', and we want to keep it that way.
+    // Base side has already been handled above (by keeping the original). Source side happens only if base contains no information:
+    if (baseString.length === 0) {
+      const startPosition = getNatureOfContentsStartPosition(sourceField);
+      return sourceField.value.substring(startPosition, startPosition + 4);
+    }
+    // At this point 008/24 should be handled, and only 008/25-27 remains, so 008/24=# and rest goes to 008/25-27:
+    return ` ${sortChars(resizeNewValue(string, 3), true)}`;
+  }
+
+  function getNatureOfContentsStartPosition(field) {
+    return field.tag === '006' ? 6 : 24;
+  }
+
+  function getNatureOfContentsString(field, baseTypeOfMaterial) {
+    // Bit of overhead here (rechecking the start position). I'm thinking of theoretical situaion where we want to enrich base 008, using data from corresponding
+    // source 006. This is unlikely to happen, but this makes things more robust.
+    const startPosition = getNatureOfContentsStartPosition(field);
+    // Pick only the values that are supported by base type of material ()
+    // Only BK: j/patert document and 2/offprints
+    // Only SE: h/Biography
+    const legalVals = baseTypeOfMaterial === 'BK' ? 'abcdefgijklmnopqrstuvwyz256' : 'abcdefghiklmnopqrstuvwyz56';
+    //                                                                              'abcdefghiklmnopqrstuvwyz56'
+    return extractLegalValues(field.value, startPosition, 4, legalVals);
+  }
+
+}
+
 
 const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['MU'], prioritizedValues: goodFormsOfComposition, startPosition: 18, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'Form of Composition (MU) 00/18-19'},
@@ -319,13 +372,10 @@ function process008(base, source) {
   singleCharacterPositionRules.forEach(rule => genericFix(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial, rule));
 
   // Non-generic rules:
-  if (baseTypeOfMaterial !== sourceTypeOfMaterial) {
-    return;
-  }
   setFormOfItem(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
   setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16
   mergeIllustrations(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/18-21
-  //mergeNatureOfContents(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/24-27
+  mergeNatureOfContents(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK and CR 008/24-27 (with CR 008/24 adn 008/25-27 being in either-or relation)
   // I haven't yet worked out how to do char=val&&multiple char positions combos.
   // Some of the positions we still need to think about are listed below:
   // NB! What about MP 009/33-34 Special format characteristics?
