@@ -187,17 +187,17 @@ function sortChars(string, reallySort) { // similiar code is in validator side. 
   }
 }
 
-function keepOnlyUniqueMeaningfulChars(str) {
-  console.info(`CONC: '${str}'`); // eslint-disable-line no-console
-  const arr = uniqArray(str.split('')).filter(c => c !== '|' && c !== ' '); // Remove blanks ()
+function keepOnlyUniqueMeaningfulChars(str, dataChars) {
+  //console.info(`CONC: '${str}'`); // eslint-disable-line no-console
+  const arr = uniqArray(str.split('')).filter(c => dataChars.indexOf(c) > -1); // Remove blanks '|', '#' and erronous values
   return arr.join('');
 }
 
-function mergeStrings(str1, str2, applySort = true) {
+function mergeStrings(str1, str2, dataChars, applySort = true) {
   console.info(`STR1: '${str1}'\nSTR2: '${str2}'`); // eslint-disable-line no-console
   const targetLength = str1.length;
   const concatenatedStrings = `${str1}${str2}`;
-  const meaningfulValuesAsString = keepOnlyUniqueMeaningfulChars(concatenatedStrings);
+  const meaningfulValuesAsString = keepOnlyUniqueMeaningfulChars(concatenatedStrings, dataChars);
   if (meaningfulValuesAsString.length === 0) {
     // Sometimes '####' is right, but sometimes '||||' can be valid as well. Maybe we'll add some type of material + char pos based login here in the unseen future.
     // Current implementation does not make a choise between then, and base's value is retained. (Current implementation also keeps '#|#|' style rubbish as well.)
@@ -210,6 +210,7 @@ function mergeStrings(str1, str2, applySort = true) {
   }
   return `${waypointString}${' '.repeat(targetLength - waypointString.length())}`;
 }
+
 
 export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
   if (baseTypeOfMaterial !== 'BK' || sourceTypeOfMaterial !== 'BK') {
@@ -224,7 +225,7 @@ export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, s
 
   const startPosition = getStartPosition(baseField);
 
-  const mergedString = mergeStrings(baseIllustrationString, sourceIllustrationString, false);
+  const mergedString = mergeStrings(baseIllustrationString, sourceIllustrationString, 'abcdefghijklmop', true);
 
   baseField.value = `${baseField.value.substring(0, startPosition)}${mergedString}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
   return;
