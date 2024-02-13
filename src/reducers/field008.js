@@ -156,8 +156,8 @@ function setCatalogingSource(base008, source008) {
 
 const BIG_BAD_VALUE = 999999999;
 
-function sortChars(string, reallySort) { // similiar code is in validator side. Refactor and export that code and use it later on.
-  // NB! Always moves '#' and '|' to the end, and meaningful data to the front, even if reallySort is false.
+function sortChars(string, reallySort = true) { // similiar code is in validator side. Refactor and export that code and use it later on.
+  // NB! If reallySort is false, we only move '#' and '|' to the end, and meaningful data to the front, even if reallySort is false.
   const charArray = string.split('');
 
   charArray.sort(function(a, b) { // eslint-disable-line functional/immutable-data, prefer-arrow-callback
@@ -187,64 +187,62 @@ function sortChars(string, reallySort) { // similiar code is in validator side. 
   }
 }
 
-function keepOnlyUniqueMeaningfulChars(str, dataChars) {
+function keepOnlyUniqueMeaningfulChars(str, dataChars = undefined) {
   //console.info(`CONC: '${str}'`); // eslint-disable-line no-console
-  const arr = uniqArray(str.split('')).filter(c => dataChars.indexOf(c) > -1); // Remove blanks '|', '#' and erronous values
+  const arr = uniqArray(str.split('')).filter(c => !dataChars || dataChars.indexOf(c) > -1); // Remove blanks '|', '#' and erronous values
   return arr.join('');
 }
 
-function mergeStrings(str1, str2, dataChars, applySort = true) {
-  console.info(`STR1: '${str1}'\nSTR2: '${str2}'`); // eslint-disable-line no-console
-  const targetLength = str1.length;
+function mergeStrings(str1, str2) {
+  //console.info(`STR1: '${str1}'\nSTR2: '${str2}'`); // eslint-disable-line no-console
   const concatenatedStrings = `${str1}${str2}`;
-  const meaningfulValuesAsString = keepOnlyUniqueMeaningfulChars(concatenatedStrings, dataChars);
-  if (meaningfulValuesAsString.length === 0) {
-    // Sometimes '####' is right, but sometimes '||||' can be valid as well. Maybe we'll add some type of material + char pos based login here in the unseen future.
-    // Current implementation does not make a choise between then, and base's value is retained. (Current implementation also keeps '#|#|' style rubbish as well.)
-    return str1;
-  }
-  const waypointString = sortChars(meaningfulValuesAsString, applySort);
-
-  if (waypointString.length >= targetLength) {
-    return waypointString.substring(0, targetLength);
-  }
-  return `${waypointString}${' '.repeat(targetLength - waypointString.length())}`;
+  return keepOnlyUniqueMeaningfulChars(concatenatedStrings);
 }
 
+function resizeNewValue(str, targetLength) {
+  const origLength = str.length;
+  if (origLength > targetLength) {
+    return str.substring(0, targetLength);
+  }
+  if (origLength < targetLength) {
+    return `${str}${' '.repeat(targetLength - origLength)}`;
+  }
+  return str;
+}
 
+function extractLegalValues(string, startPosition, length, legalValuesAsString) {
+  const originalValue = string.substring(startPosition, startPosition + length);
+  return keepOnlyUniqueMeaningfulChars(originalValue, legalValuesAsString);
+}
+
+// Export, so that field006.js can use this!
 export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
   if (baseTypeOfMaterial !== 'BK' || sourceTypeOfMaterial !== 'BK') {
     return;
   }
-  const sourceIllustrationString = getIllustrationString(sourceField);
-  if (sourceIllustrationString === '||||' || sourceIllustrationString === '####') {
-    return;
+  const sourceString = getIllustrationString(sourceField);
+  const baseString = getIllustrationString(baseField);
+  const mergedString = mergeStrings(baseString, sourceString);
+  if (mergedString === '') {
+    return; // Keep original 008/18-21. It *should* be either '####' or '||||', but might also be something stupid like '#|#|' or 'FOOB' (illegal value)
   }
-
-  const baseIllustrationString = getIllustrationString(baseField);
-
-  const startPosition = getStartPosition(baseField);
-
-  const mergedString = mergeStrings(baseIllustrationString, sourceIllustrationString, 'abcdefghijklmop', true);
-
-  baseField.value = `${baseField.value.substring(0, startPosition)}${mergedString}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
+  const finalValue = sortChars(resizeNewValue(mergedString, 4), true);
+  //console.info(`B: '${sourceString}' +\nS: '${sourceString}' =\n   '${finalValue}'`); // eslint-disable-line no-console
+  const startPosition = getIllustrationsStartPosition(baseField);
+  baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
   return;
 
-  function getStartPosition(field) {
-    if (field.tag === '006') {
-      return 1;
-    }
-    return 18;
+  function getIllustrationsStartPosition(field) {
+    return field.tag === '006' ? 1 : 18;
   }
 
   function getIllustrationString(field) {
-    const startPosition = getStartPosition(field);
-    return field.value.substring(startPosition, startPosition + 4);
+    // Bit of overhead here (rechecking the start position). I'm thinking of theoretical situaion where we want to enrich base 008, using data from corresponding
+    // source 006. This is unlikely to happen, but this makes things more robust.
+    const startPosition = getIllustrationsStartPosition(field);
+    return extractLegalValues(field.value, startPosition, 4, 'abcdefghijklmop');
   }
-
-
 }
-
 
 const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['MU'], prioritizedValues: goodFormsOfComposition, startPosition: 18, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'Form of Composition (MU) 00/18-19'},
@@ -327,6 +325,7 @@ function process008(base, source) {
   setFormOfItem(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
   setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16
   mergeIllustrations(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/18-21
+  //mergeNatureOfContents(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/24-27
   // I haven't yet worked out how to do char=val&&multiple char positions combos.
   // Some of the positions we still need to think about are listed below:
   // NB! What about MP 009/33-34 Special format characteristics?
