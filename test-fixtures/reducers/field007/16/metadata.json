@@ -1,0 +1,5 @@
+{
+  "description":"Merge two 007/00=h (microform) fields, base is rather crappy, so data should come from source",
+  "comment": "007/06-08 (reduction ratio( is not yet supported",
+  "only": false
+}

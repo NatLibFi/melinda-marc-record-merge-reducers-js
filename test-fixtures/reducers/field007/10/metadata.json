@@ -1,0 +1,5 @@
+{
+  "description":"Merge two 007/00=a (map) fields, base is rather crappy, so data should come from source",
+  "comment": "note that 007/02 is '|' but should be '#'. Fixing it does not belong field merge's score.",
+  "only": false
+}

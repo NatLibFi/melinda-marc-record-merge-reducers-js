@@ -1,3 +1,4 @@
 {
-  "description":"006 fields are similiar enough for gap-filling"
+  "description":"006 fields are similiar enough for gap-filling",
+  "only": false
 }

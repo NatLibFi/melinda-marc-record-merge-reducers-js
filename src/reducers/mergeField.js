@@ -141,7 +141,7 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
     const originalBaseValue = fieldToString(baseField);
     nvdebug(`  TRYING TO MERGE SUBFIELD '${subfieldToString(originalSubfield)}' TO '${originalBaseValue}'`, debugDev);
 
-    const subfieldData = {'code': originalSubfield.code, 'originalValue': originalSubfield.value, 'normalizedValue': normalizedSubfield.value, 'punctuationlessValue': punctlessSubfield.value};
+    const subfieldData = {'tag': sourceField.tag, 'code': originalSubfield.code, 'originalValue': originalSubfield.value, 'normalizedValue': normalizedSubfield.value, 'punctuationlessValue': punctlessSubfield.value};
 
     mergeOrAddSubfield(baseField, subfieldData, candFieldPairs880); // candSubfield);
     const newValue = fieldToString(baseField);

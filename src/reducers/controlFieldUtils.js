@@ -1,31 +1,13 @@
-import {nvdebug} from './utils';
-import createDebugLogger from 'debug';
+//import {nvdebug} from './utils';
+//import createDebugLogger from 'debug';
 
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:controlFieldUtils');
+//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:controlFieldUtils');
 //const debugData = debug.extend('data');
-const debugDev = debug.extend('dev');
-
-function fieldPositionValueContainsInformation(val) {
-  if (val === '' || val === '|' || val === ' ' || val === '#') {
-    return false;
-  }
-  return true;
-}
-
-function getBetterControlFieldPositionValue(c1, c2) {
-  if (fieldPositionValueContainsInformation(c1)) {
-    return c1;
-  }
-  if (fieldPositionValueContainsInformation(c2)) {
-    return c2;
-  }
-  return c1;
-}
-
+//const debugDev = debug.extend('dev');
 
 const f007Lengths = {a: 8, c: 14, d: 6, f: 10, g: 9, h: 13, k: 6, m: 23, o: 2, q: 2, r: 11, s: 14, t: 2, v: 9, z: 2};
 
-function hasLegalLength(field) {
+export function hasLegalLength(field) {
   if (field.tag === '006') {
     return field.value.length === 18;
   }
@@ -34,62 +16,73 @@ function hasLegalLength(field) {
   if (field.tag === '007') {
     const c0 = field.value.charAt(0);
     if (c0 in f007Lengths) {
-      nvdebug(`${c0}: COMPARE ${f007Lengths[c0]} vs ${field.value.length}`, debugDev);
+      //nvdebug(`${c0}: COMPARE ${f007Lengths[c0]} vs ${field.value.length}`, debugDev);
       return field.value.length === f007Lengths[c0];
     }
-
-    return false;
+    return false; // Sanity check. It's ok that no test reaches this poin.
   }
 
   if (field.tag === '008') {
     return field.value.length === 40;
   }
 
-  return false;
+  return false; // Again: a sanity check. No test should reach this point.
 }
 
-export function isFillableControlFieldPair(baseField, sourceField) {
-  if (baseField.value.length !== sourceField.value.length) {
-    return false;
-  }
-  if (!hasLegalLength(baseField)) {
-    return false;
-  }
 
-  if (baseField.tag === '006' && baseField.value[0] !== sourceField.value[0]) {
-    return false;
-  }
-
-  if (baseField.tag === '007') {
-    // 007/00 values must be equal:
-    if (baseField.value.charAt(0) !== sourceField.value.charAt(0)) {
-      return false;
-    }
-
-    // 007/01 values must match or contain '|' (undefined):
-    if (baseField.value.charAt(1) === sourceField.value.charAt(1) || sourceField.value.charAt(1) === '|' || baseField.value.charAt(1) === '|') {
-      return true;
-    }
-  }
-
-  const arr1 = baseField.value.split('');
-  const arr2 = sourceField.value.split('');
-  if (arr1.every((c, i) => c === arr2[i] || !fieldPositionValueContainsInformation(c) || !fieldPositionValueContainsInformation(arr2[i]))) {
-    return true;
-  }
-  return false;
-}
-
-export function fillControlFieldGaps(baseField, sourceField, min = 0, max = 39) {
-  // NB! Mergability must be checked before calling this!
-
-  if (baseField.value.length !== sourceField.value.length) {
+export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial, rule) { // eslint-disable-line max-params
+  // Initially written fro field 008, but may be applied to 006 and 007 as well (I guess).
+  // We apply some rules (eg. for government publication) even if baseTypeOfMaterial !== sourceTypeOfMaterial
+  if (!rule.types.includes(baseTypeOfMaterial) || !rule.types.includes(sourceTypeOfMaterial) || rule.validateOnly) {
     return;
   }
-  const arr1 = baseField.value.split('');
-  const arr2 = sourceField.value.split('');
+  //console.info(`Apply ${'description' in rule ? rule.description : 'nameless'} rule`); // eslint-disable-line no-console
+  const legalValues = rule.prioritizedValues;
+  const position = baseField.tag === '006' ? rule.startPosition - 17 : rule.startPosition; // Field 006 uses rules writted for field 008. 006/01=008/18 etc.
+  const valueForUnknown = 'valueForUnknown' in rule ? rule.valueForUnknown : undefined;
+  const [noAttemptToCode] = rule.noAttemptToCode;
 
-  const mergedCharArray = arr1.map((c, i) => i < min || i > max ? c : getBetterControlFieldPositionValue(c, arr2[i]));
+  const len = legalValues.length > 0 ? legalValues[0].length : noAttemptToCode.length;
 
-  baseField.value = mergedCharArray.join(''); // eslint-disable-line functional/immutable-data
+  const baseValue = baseField.value.substring(position, position + len);
+  const sourceValue = sourceField.value.substring(position, position + len);
+
+  //console.info(`${position}: '${baseValue}' vs '${sourceValue}', UNKNOWN: '${valueForUnknown}', type of material: ${typeOfMaterial}`); // eslint-disable-line no-console
+  //console.info(`Consider ${'description' in rule ? rule.description : 'unnamed'} rule at ${rule.startPosition}:\n'${fieldToString(baseField)}' +\n'${fieldToString(sourceField)}' =`); // eslint-disable-line no-console
+
+  if (applyFix()) {
+    //console.info(`Apply ${'description' in rule ? rule.description : 'unnamed'} rule at ${rule.startPosition}:\n'${fieldToString(baseField)}' +\n'${fieldToString(sourceField)}' =`); // eslint-disable-line no-console
+    baseField.value = `${baseField.value.substring(0, position)}${sourceValue}${baseField.value.substring(position + len)}`; // eslint-disable-line functional/immutable-data
+    //console.info(`'${fieldToString(baseField)}'`); // eslint-disable-line no-console
+    return;
+  }
+  return;
+
+  function applyFix() {
+    if (baseValue === sourceValue || legalValues.includes(baseValue)) {
+      return false;
+    }
+    if (legalValues.includes(sourceValue)) {
+      return true;
+    }
+    if (valueForUnknown) {
+      if (baseValue === valueForUnknown) {
+        return false;
+      }
+      if (sourceValue === valueForUnknown) {
+        return true;
+      }
+    }
+    if (noAttemptToCode) {
+      if (baseValue === noAttemptToCode) {
+        return false;
+      }
+      if (sourceValue === noAttemptToCode) {
+        return true;
+      }
+    }
+    //console.info(`DEFAULT:don't apply fix for ${baseValue} vs ${sourceValue}`); // eslint-disable-line no-console
+    return false;
+  }
+
 }

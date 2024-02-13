@@ -1,3 +1,4 @@
 {
-  "description":"Merge two 007 fields"
+  "description":"Merge two 007/00=s fields",
+  "only": false
 }

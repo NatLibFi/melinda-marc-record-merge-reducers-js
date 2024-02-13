@@ -187,7 +187,7 @@ export function nvdebug(message, func = undefined) {
     func(message);
     return;
   }
-  console.info(message); // eslint-disable-line no-console
+  //console.info(message); // eslint-disable-line no-console
 }
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {

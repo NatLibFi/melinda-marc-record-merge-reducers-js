@@ -1,0 +1,5 @@
+{
+  "description":"CR 008/25-27='#bc#' vs BK 008/24-27='a###' => 008/24-27='#abc'",
+  "comment": "note that multichar CR starts from 008/25 as 008/24 is for an individual value",
+  "only": false
+}

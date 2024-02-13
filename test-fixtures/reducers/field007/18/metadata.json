@@ -1,0 +1,5 @@
+{
+  "description":"Merge two 007/00=o (kit) fields",
+  "comment": "Rather meaningless 2-char field, base 007/01 has illegal value here",
+  "only": false
+}

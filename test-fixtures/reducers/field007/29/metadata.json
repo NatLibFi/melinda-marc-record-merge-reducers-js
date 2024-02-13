@@ -1,0 +1,5 @@
+{
+  "description":"007/01: don't write illegal value over '|' as illegal value is not listed by rule",
+  "comment": "coverage improvement",
+  "only": false
+}

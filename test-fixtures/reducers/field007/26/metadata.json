@@ -1,0 +1,5 @@
+{
+  "description":"00/01 is better/contains information, but don't merge since 007/00 illegal",
+  "commen": "trivial test to improve coverage",
+  "only": false
+}
