@@ -189,6 +189,8 @@ function sortChars(string, reallySort = true) { // similiar code is in validator
 
 function keepOnlyUniqueMeaningfulChars(str, dataChars = undefined) {
   //console.info(`CONC: '${str}'`); // eslint-disable-line no-console
+
+  //console.info(`WP2: '${str}', DC: '${dataChars ? dataChars : 'SKIP'}'`); // eslint-disable-line no-console
   const arr = uniqArray(str.split('')).filter(c => !dataChars || dataChars.indexOf(c) > -1); // Remove blanks '|', '#' and erronous values
   return arr.join('');
 }
@@ -212,8 +214,10 @@ function resizeNewValue(str, targetLength) {
 
 function extractLegalValues(string, startPosition, length, legalValuesAsString) {
   const originalValue = string.substring(startPosition, startPosition + length);
+  //console.info(`WP: '${string}' => '${originalValue}`); // eslint-disable-line no-console
   return keepOnlyUniqueMeaningfulChars(originalValue, legalValuesAsString);
 }
+
 
 // Export, so that field006.js can use this!
 export function mergeNatureOfContents(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
@@ -228,7 +232,7 @@ export function mergeNatureOfContents(baseField, sourceField, baseTypeOfMaterial
     return;
   }
   const finalValue = tuneNatureOfContentValue(mergedString);
-  console.info(`B: '${baseString}' +\nS: '${sourceString}' =\n   '${finalValue}'`); // eslint-disable-line no-console
+  //console.info(`B: '${baseString}' +\nS: '${sourceString}' =\n   '${finalValue}'`); // eslint-disable-line no-console
   const startPosition = getNatureOfContentsStartPosition(baseField);
   baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
   return;
@@ -277,6 +281,7 @@ export function genericMergeMultiCharRule(baseField, sourceField, rule) {
   }
 
   const finalValue = sortChars(resizeNewValue(mergedString, rule.length), rule.sort);
+  //console.info(`${rule.description}:\n '${baseString}' +\n '${sourceString}' =\n '${finalValue}'`); // eslint-disable-line no-console
   const startPosition = getMultiCharStartPosition(baseField);
   baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + rule.length)}`; // eslint-disable-line functional/immutable-data
   return;
