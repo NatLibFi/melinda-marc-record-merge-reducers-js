@@ -216,46 +216,15 @@ function extractLegalValues(string, startPosition, length, legalValuesAsString) 
 }
 
 // Export, so that field006.js can use this!
-export function mergeIllustrations(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
-  if (baseTypeOfMaterial !== 'BK' || sourceTypeOfMaterial !== 'BK') {
-    return;
-  }
-  const sourceString = getIllustrationString(sourceField);
-  const baseString = getIllustrationString(baseField);
-  const mergedString = mergeStrings(baseString, sourceString);
-  if (mergedString === '') {
-    return; // Keep original 008/18-21. It *should* be either '####' or '||||', but might also be something stupid like '#|#|' or 'FOOB' (illegal value)
-  }
-  const finalValue = sortChars(resizeNewValue(mergedString, 4), true);
-  //console.info(`B: '${baseString}' +\nS: '${sourceString}' =\n   '${finalValue}'`); // eslint-disable-line no-console
-  const startPosition = getIllustrationsStartPosition(baseField);
-  baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
-  return;
-
-  function getIllustrationsStartPosition(field) {
-    return field.tag === '006' ? 1 : 18;
-  }
-
-  function getIllustrationString(field) {
-    // Bit of overhead here (rechecking the start position). I'm thinking of theoretical situaion where we want to enrich base 008, using data from corresponding
-    // source 006. This is unlikely to happen, but this makes things more robust.
-    const startPosition = getIllustrationsStartPosition(field);
-    return extractLegalValues(field.value, startPosition, 4, 'abcdefghijklmop');
-  }
-}
-
-// Export, so that field006.js can use this!
 export function mergeNatureOfContents(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial) {
+  // Can't use generic code, as BK and CR behave a bit differently and have slightly different values
   if (!['BK', 'CR'].includes(baseTypeOfMaterial) || !['BK', 'CR'].includes(sourceTypeOfMaterial)) {
     return;
   }
   const baseString = getNatureOfContentsString(baseField, baseTypeOfMaterial);
   const sourceString = getNatureOfContentsString(sourceField, baseTypeOfMaterial);
   const mergedString = mergeStrings(baseString, sourceString);
-  if (mergedString === '' || baseString.length === mergedString.length) {
-    // Keep original 008/24-27.
-    // If mergedString is '', original value *should* be either '####' or '||||', but might also be something stupid like '#|#|' or 'FOOB' (illegal value)
-    // If baseString.length === mergedString.length, no new information was added.
+  if (baseString.length === mergedString.length) { // No additions
     return;
   }
   const finalValue = tuneNatureOfContentValue(mergedString);
@@ -279,7 +248,7 @@ export function mergeNatureOfContents(baseField, sourceField, baseTypeOfMaterial
   }
 
   function getNatureOfContentsStartPosition(field) {
-    return field.tag === '006' ? 6 : 24;
+    return field.tag === '006' ? 7 : 24;
   }
 
   function getNatureOfContentsString(field, baseTypeOfMaterial) {
@@ -296,6 +265,32 @@ export function mergeNatureOfContents(baseField, sourceField, baseTypeOfMaterial
 
 }
 
+
+// Export, so that field006.js can use this!
+export function genericMergeMultiCharRule(baseField, sourceField, rule) {
+  // Type of material has already been checked at this point.
+  const baseString = getMultiCharString(baseField);
+  const sourceString = getMultiCharString(sourceField);
+  const mergedString = mergeStrings(baseString, sourceString);
+  if (mergedString.length === baseString.length) { // No new data
+    return;
+  }
+
+  const finalValue = sortChars(resizeNewValue(mergedString, rule.length), rule.sort);
+  const startPosition = getMultiCharStartPosition(baseField);
+  baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + rule.length)}`; // eslint-disable-line functional/immutable-data
+  return;
+
+  function getMultiCharStartPosition(field) {
+    return field.tag === '006' ? rule.startPosition - 16 : rule.startPosition;
+  }
+
+  function getMultiCharString(field) {
+    // Very theoretically we might merge data from 006 and 008. Thus start position is checked for both fields.
+    const startPosition = getMultiCharStartPosition(field);
+    return extractLegalValues(field.value, startPosition, rule.length, rule.relevantValues);
+  }
+}
 
 const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['MU'], prioritizedValues: goodFormsOfComposition, startPosition: 18, valueForUnknown: 'uu', noAttemptToCode: '||', description: 'Form of Composition (MU) 00/18-19'},
@@ -326,8 +321,20 @@ const singleCharacterPositionRules = [ // (Also fixed-value longer units)
   {types: ['VM'], prioritizedValues: ['a', 'c', 'l', 'n', 'z'], startPosition: 34, valueForUnknown: 'u', noAttemptToCode: '|'} // VM technique
 ];
 
+const allGenericMulticharRules = [
+  {types: ['BK'], startPosition: 18, length: 4, relevantValues: 'abcdefghijklmop', sort: true, description: 'Illustrations'},
+  {types: ['MP'], startPosition: 18, length: 4, relevantValues: 'abcdefgijkmz', sort: false, description: 'Relief'},
+  {types: ['MP'], startPosition: 33, length: 2, relevantValues: 'ejklnoprz', sort: false, description: 'Special format characteristics'},
+  {types: ['MU'], startPosition: 24, length: 6, relevantValues: 'abcdefghikrsz', sort: true, description: 'Accompanying matter'},
+  {types: ['MU'], startPosition: 30, length: 2, relevantValues: 'abcdefghijklmnoprstz', sort: true, description: 'Literary text for sound recordings'}
+];
+
 export function getSingleCharacterPositionRules() {
   return singleCharacterPositionRules;
+}
+
+export function getMultiCharacterPositionRules() {
+  return allGenericMulticharRules;
 }
 
 function process008(base, source) {
@@ -371,16 +378,13 @@ function process008(base, source) {
   const sourceTypeOfMaterial = source.getTypeOfMaterial();
   singleCharacterPositionRules.forEach(rule => genericFix(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial, rule));
 
-  // Non-generic rules:
+  // Non-generic rules that require non-generic code:
   setFormOfItem(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
-  setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16
-  mergeIllustrations(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/18-21
+  setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16 (selects more specific value if possible)
   mergeNatureOfContents(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK and CR 008/24-27 (with CR 008/24 adn 008/25-27 being in either-or relation)
-  // I haven't yet worked out how to do char=val&&multiple char positions combos.
-  // Some of the positions we still need to think about are listed below:
-  // NB! What about MP 009/33-34 Special format characteristics?
-  // MU 008/24-29, 008/30-31
-  // NB! We could theoretically have specific rule for BK 008/33 [defhijmps] > '1', couldn't we?
+  // Generic rules:
+  const relevantMulticharRules = allGenericMulticharRules.filter(rule => rule.types.includes(baseTypeOfMaterial) && rule.types.includes(sourceTypeOfMaterial));
+  relevantMulticharRules.forEach(rule => genericMergeMultiCharRule(base008, source008, rule));
 
 }
 
