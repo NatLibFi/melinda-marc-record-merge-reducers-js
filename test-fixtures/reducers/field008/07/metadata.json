@@ -1,0 +1,5 @@
+{
+  "description":"07: use better form of item for electronic content (here 008/23)",
+  "comment": "source 008/22 (target audience) is illegal on purpose (2ndary test)",
+  "only": false
+}

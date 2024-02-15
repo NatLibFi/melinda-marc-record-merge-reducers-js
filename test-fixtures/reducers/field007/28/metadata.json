@@ -1,0 +1,5 @@
+{
+  "description":"Mismatch in field lengths (source correct): use source value",
+  "comment": "Note that base 007/01 looks valid and better than source's '|', but as the field is suspicious, we replace base anyway",
+  "only": false
+}

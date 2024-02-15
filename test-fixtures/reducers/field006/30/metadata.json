@@ -1,0 +1,5 @@
+{
+  "description":"CF 006/11 government publication blocks merge",
+  "comment": "this test exists mainly to improve coverage...",
+  "only": false
+}

@@ -1,0 +1,5 @@
+{
+  "description":"Merge two 007/00=f (tactile material) fields, base is rather crappy, so data should come from source",
+  "comment": "TODO: 007/03-04,06-08",
+  "only": false
+}

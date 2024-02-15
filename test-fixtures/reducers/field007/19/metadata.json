@@ -1,0 +1,5 @@
+{
+  "description":"Merge two 007/00=r (remote-sensing image) fields",
+  "comment": "Note tha base 007/09-10 contains an illegal value",
+  "only": false
+}

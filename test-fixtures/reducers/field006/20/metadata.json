@@ -1,0 +1,4 @@
+{
+  "description":"Do nothing since illegal 006/00 does not match to any type of record",
+  "only": false
+}

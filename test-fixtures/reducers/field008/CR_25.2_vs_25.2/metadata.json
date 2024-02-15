@@ -1,0 +1,5 @@
+{
+  "description":"008/25-27 vs 008/25-27: as base's 'cd#' and sources 'ab#', are merged into 'acd'",
+  "comment": "cd + ab = cdab. Then shorten to cda and sort to acd",
+  "only": false
+}

@@ -1,0 +1,10 @@
+{
+  "leader": "01331ccm a2200349 i 4500",
+  "fields": [
+    { "tag": "006", "value": "c    g            " },
+    { "tag": "010", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "010a_source" },
+      { "code": "b", "value": "010b_source" }
+    ]}
+  ]
+}
