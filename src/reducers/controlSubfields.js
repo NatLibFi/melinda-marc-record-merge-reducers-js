@@ -1,6 +1,6 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, nvdebug, nvdebugSubfieldArray, subfieldIsRepeatable, subfieldToString, subfieldsAreIdentical} from './utils.js';
+import {fieldHasSubfield, fieldToString, nvdebug, nvdebugSubfieldArray, subfieldIsRepeatable, subfieldsAreIdentical} from './utils.js';
 
 //import {normalizeControlSubfieldValue} from './normalizeIdentifier';
 import {normalizeControlSubfieldValue} from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
@@ -85,10 +85,10 @@ function controlSubfield9PermitsMerge(baseField, sourceField) {
   const baseFieldSubfields9 = baseField.subfields.filter(sf => sf.code === '9');
   const sourceFieldSubfields9 = sourceField.subfields.filter(sf => sf.code === '9');
 
-  nvdebug('CHECK $9', debugDev);
+  //nvdebug('CHECK $9', debugDev);
   // There are no $9s. Skip:
   if (baseFieldSubfields9.length === 0 && sourceFieldSubfields9.length === 0) {
-    nvdebug(` No subfield $9 detected`, debugDev);
+    //nvdebug(` No subfield $9 detected`, debugDev);
     return true;
   }
 
@@ -102,12 +102,12 @@ function controlSubfield9PermitsMerge(baseField, sourceField) {
     return false;
   }
 
-  nvdebug('CHECK $9 OK', debugDev);
+  //nvdebug('CHECK $9 OK', debugDev);
 
   return true;
 
   function subfieldHasKeepOrDrop(subfield) {
-    nvdebug(`Has <KEEP>? ${subfieldToString(subfield)}`, debugDev);
+    // nvdebug(`Has <KEEP>? ${subfieldToString(subfield)}`, debugDev);
     return subfield.code === '9' && (/(?:<KEEP>|<DROP>)/u).test(subfield.value);
   }
 
