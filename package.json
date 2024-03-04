@@ -42,7 +42,7 @@
 		"@natlibfi/marc-record-validators-melinda": "git://github.com/NatLibFi/marc-record-validators-melinda#MELKEHITYS-2591",
 		"@natlibfi/melinda-commons": "^13.0.12",
 		"debug": "^4.3.4",
-		"isbn3": "^1.1.45",
+		"isbn3": "^1.1.46",
 		"normalize-diacritics": "^4.0.3"
 	},
 	"devDependencies": {
