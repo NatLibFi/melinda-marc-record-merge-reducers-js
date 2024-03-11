@@ -194,7 +194,7 @@ function preferHttpsOverHttp(candSubfield, relevantSubfields) {
 }
 
 function preferQualifierVersion(field, candSubfield, relevantSubfields) {
-  if (!fieldAllowsQualifierInOneOfTheSubfields(field, candSubfield) || !candSubfield.value.includes('(')) {
+  if (!fieldAllowsQualifierInOneOfTheSubfields(field, candSubfield)) { // || !candSubfield.value.includes('(')) {
     return false;
   }
 
