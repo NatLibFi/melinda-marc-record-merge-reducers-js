@@ -1,0 +1,5 @@
+{
+  "description":"MET-553 test 3: merge field 300 and merge pairs' $a subfields",
+  "comment": "$a subfields have different qualifiers: keep base version",
+  "only": false
+}
