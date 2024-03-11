@@ -164,12 +164,26 @@ function filterFieldsUsingFieldToString(fields, value) {
   });
 }
 
+function hasValidEncodingLevel(record, fieldSpecs) {
+  if (!fieldSpecs.encodingLevel) {
+    return true;
+  }
+  const recordEncodingLevel = getEncodingLevel(record);
+  //nvdebug(`ENC: ${recordEncodingLevel} in [${fieldSpecs.encodingLevel.join('')}]?`);
+  return fieldSpecs.encodingLevel.includes(recordEncodingLevel);
+}
+
 function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
+  if (!hasValidEncodingLevel(record, fieldSpecs)) {
+    return [];
+  }
+
   const targetFields = getSpecifiedFields(record, fieldSpecs);
+  //nvdebug(`Got ${targetFields.length} fields. Filter them...`, debugDev);
   if (targetFields.length === 0) {
     return targetFields;
   }
-  //nvdebug(`Got ${targetFields.length} fields. Filter them...`, debugDev);
+
   const filteredFields1 = filterFieldsUsingSubfieldFilters(targetFields, fieldSpecs.subfieldFilters);
   //nvdebug(`${filteredFields1.length} field(s) remain after subfield filters...`, debugDev);
   const filteredFields2 = filterFieldsUsingFieldToString(filteredFields1, fieldSpecs.value);
