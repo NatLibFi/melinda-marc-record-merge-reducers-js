@@ -232,7 +232,7 @@ function operationRemoveField(record, fieldSpecification) {
   if (deletableFields.length === 0) {
     return;
   }
-  nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`, debugDev);
+  //nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`, debugDev);
   deletableFields.forEach(field => {
     nvdebug(`  DELETE FIELD: ${fieldToString(field)}`, debugDev);
     record.removeField(field);
@@ -311,7 +311,7 @@ export function filterOperation(base, source, operation) {
     return;
   }
   const targetRecords = getTargetRecordsForOperation(base, source, operation);
-
+  //nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'}`);
   if (targetRecords.length === 0) {
     nvdebug('Failed to get the target record', debugDev);
     return;
@@ -341,6 +341,15 @@ export function filterOperation(base, source, operation) {
       //nvdebug(` Base field ${fieldToString(baseFields[0])}`, debugDev);
     }
 
+    if (operation.requireSourceField) {
+      const sourceFields = getSpecifiedFieldsAndFilterThem(source, operation.requireSourceField);
+      if (sourceFields.length === 0) {
+        //nvdebug(' Required source field not found!', debugDev);
+        return;
+      }
+      //nvdebug(` Base field ${fieldToString(baseFields[0])}`, debugDev);
+    }
+
     /*
     if (operation.requireOtherField) {
       // Does base === targetRecord work or do I need to clone this?
@@ -353,6 +362,7 @@ export function filterOperation(base, source, operation) {
   }
 
   function performActualOperation(targetRecord, operation, otherRecord) {
+    //nvdebug(' PERFORM OP');
     if (!operation.operation) {
       nvdebug('No operation defined', debugDev);
       return;
