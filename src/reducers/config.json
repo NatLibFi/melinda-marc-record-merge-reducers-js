@@ -14,6 +14,42 @@
             {
                 "operation": "removeField",
                 "recordType": "source",
+                "comment": "MRA-763: remove many fields from a source prepublication if base record is good enough",
+                "fieldSpecification": {
+                    "tagPattern": "^((?!LOW|SID|00[135678]|035|040|042|500|506|540|594|776|884|946|974).)*$",
+                    "encodingLevel": ["8"]
+                },
+                "requireSourceField": {
+                    "tag": "500",
+                    "subfieldFilters": [{"code": "a", "valuePattern": "^(?:TARKISTETTU )?ENNAKKOTIETO"}]
+                },
+                "requireBaseField": {
+                    "tag": "...",
+                    "encodingLevel": [" ", "4", "5"]
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "recordType": "source",
+                "comment": "MRA-763: remove many fields from a source prepublication if base record is good enough (Koneellisesti tuotettu tietue)",
+                "fieldSpecification": {
+                    "tagPattern": "^((?!LOW|SID|00[135678]|035|040|042|500|506|540|594|776|884|946|974).)*$",
+                    "encodingLevel": ["2", "8"]
+                },
+                "requireSourceField": {
+                    "tag": "500",
+                    "subfieldFilters": [{"code": "a", "valuePattern": "^Koneellisesti tuotettu tietue"}]
+                },
+                "requireBaseField": {
+                    "tagPattern": "...",
+                    "encodingLevel": [" ", "4", "5"]
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "recordType": "source",
                 "comment": "Remove 65X $g ENNAKKOTIETO fields from source if base has 65X without a $g ENNAKKOTIETO",
                 "fieldSpecification": {
                     "tagPattern": "^(648|650|651|653|655)$",
@@ -24,6 +60,8 @@
                     "subfieldFilters": [{"missingCode": "g"}]
                 }
             },
+
+
 
             {
                 "operation": "removeSubfield",

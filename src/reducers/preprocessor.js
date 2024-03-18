@@ -14,6 +14,7 @@ import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melin
 import {default as modernize540} from '@natlibfi/marc-record-validators-melinda/dist/update-field-540';
 import {default as normalize505} from '@natlibfi/marc-record-validators-melinda/dist/field-505-separators';
 import {default as normalizeQualifyingInformation} from '@natlibfi/marc-record-validators-melinda/dist/normalize-qualifying-information';
+import {default as normalizeVariousSubfields} from '@natlibfi/marc-record-validators-melinda/dist/subfieldValueNormalizations';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
 //const debugData = debug.extend('data');
@@ -45,6 +46,9 @@ export default (config = defaultConfig) => (base, source) => {
 
   normalizeQualifyingInformation().fix(base); // Modernize 015/020/024/028$q
   normalizeQualifyingInformation().fix(source);
+
+  normalizeVariousSubfields().fix(base); // Capitalize 130/240/243/600/.../830$l value etc
+  normalizeVariousSubfields().fix(source);
 
   normalize505().fix(base);
   normalize505().fix(source);

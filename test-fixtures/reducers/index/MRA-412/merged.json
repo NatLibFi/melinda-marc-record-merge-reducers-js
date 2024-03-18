@@ -7,7 +7,7 @@
       { "code": "e", "value": "kirjoittaja." },
       { "code": "t", "value": "Etsiväsarja ;" },
       { "code": "v", "value": "14."},
-      { "code": "l", "value": "suomi."}
+      { "code": "l", "value": "Suomi."}
     ]
   },
     { "tag": "800", "ind1": "1", "ind2": " ",
@@ -19,10 +19,10 @@
     },
     { "tag": "800", "ind1": "1", "ind2": " ",
     "subfields": [
-      { "code": "a", "value": "Golffari, Krisu," },
-      { "code": "t", "value": "Tarinoiden maa;" },
-      { "code": "v", "value": "2,"},
-      { "code": "l", "value": "espanja."}
+      { "code": "a", "value": "Golffari, Krisu." },
+      { "code": "t", "value": "Tarinoiden maa ;" },
+      { "code": "v", "value": "2."},
+      { "code": "l", "value": "Espanja."}
     ]
   }
   ]
