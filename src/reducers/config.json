@@ -16,7 +16,7 @@
                 "recordType": "source",
                 "comment": "MRA-763: remove many fields from a source prepublication if base record is good enough",
                 "fieldSpecification": {
-                    "tagPattern": "^((?!LOW|SID|00[135678]|035|040|042|500|506|540|594|776|884|946|974).)*$",
+                    "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|500|506|540|594|776|884|946|974).)*$",
                     "encodingLevel": ["8"]
                 },
                 "requireSourceField": {
@@ -34,7 +34,7 @@
                 "recordType": "source",
                 "comment": "MRA-763: remove many fields from a source prepublication if base record is good enough (Koneellisesti tuotettu tietue)",
                 "fieldSpecification": {
-                    "tagPattern": "^((?!LOW|SID|00[135678]|035|040|042|500|506|540|594|776|884|946|974).)*$",
+                    "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|500|506|540|594|776|884|946|974).)*$",
                     "encodingLevel": ["2", "8"]
                 },
                 "requireSourceField": {
@@ -158,7 +158,7 @@
 
         ],
     "mergeConfiguration" :
-    {   
+    {
         "comment #1" : "Meaningless indicators (=indicators having but one legal value) are derived from melindaCustomMergeFields.",
         "comment #2" : "Meaningless indicators and non-filing indicators never prevent merge. (Hard-coded in mergableIndicator.js)",
         "comment #3" : "When merging, indicator preference defaults are defined in mergeIndicators.js. However, these can be overridden here.",
@@ -530,6 +530,5 @@
         [
 
         ]
-    
 
 }
