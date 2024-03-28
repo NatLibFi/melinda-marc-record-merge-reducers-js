@@ -39,15 +39,49 @@ function differentPublisherSubfields(field1, field2) {
 }
 */
 
+export function splitToNameAndQualifier(value) {
+  if (value.match(/^.* \([^()]+\)$/u)) {
+    const name = value.replace(/^(.*) \([^()]+\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+    const qualifier = value.replace(/^.* (\([^()]+\))$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+    return [name, qualifier];
+  }
+  return [value, undefined];
+}
 
-export function splitToNameAndQualifier(name) {
-  const nameOnly = name.replace(/(?: \([^)]+\)| abp?| Kustannus| Kustannus Oy|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
-  if (nameOnly === name) {
-    return [getBestName(name).toLowerCase(), undefined];
+export function splitToNameAndQualifierAndProcessName(name) {
+  //const nameOnly = name.replace(/(?: \([^)]+\)| abp?| Kustannus| Kustannus Oy|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
+  const [qualifierlessName, qualifier] = splitToNameAndQualifier(name);
+
+  const [prefix, basename, suffix] = stripPrefixAndSuffix(qualifierlessName);
+
+  return {name: getBestName(basename).toLowerCase(), prefix, suffix, qualifier};
+
+  function stripPrefixAndSuffix(companyName) {
+    const [nameOnly, suffix] = extractSuffix(companyName);
+    // NB! Currently we only have either prefix or suffix. However, we could/should support type "Oy Lukko Ab"...
+    if (nameOnly !== companyName) {
+      // Currently we only have either prefix or suffix
+      return [undefined, nameOnly, suffix];
+    }
+    const [nameOnly2, prefix] = extractPrefix(companyName);
+    return [prefix, nameOnly2, suffix];
   }
 
-  const bestName = getBestName(nameOnly);
-  return [bestName.toLowerCase(), name.substring(nameOnly.length)]; // NB! qualifier retains initial space in " (whatever)"
+  function extractSuffix(name) {
+    const nameOnly = name.replace(/(?: \([^)]+\)| abp?| Kustannus| Kustannus Oy|, kustannusosakeyhtiö| oyj?| ry)$/ugi, '');
+    if (nameOnly === name) {
+      return [name, undefined];
+    }
+    return [nameOnly, name.substring(nameOnly.length).replace(/^,? /u, '')];
+  }
+
+  function extractPrefix(name) {
+    const nameOnly = name.replace(/^(?:Kustannusosakeyhtiö|Kustannus Oy) /ugi, '');
+    if (nameOnly === name) {
+      return [name, undefined];
+    }
+    return [nameOnly, name.substring(0, name.length - nameOnly.length - 1)]; // -1 removes final space
+  }
 
   function getBestName(name) {
     const NAME = name.toUpperCase();
@@ -62,9 +96,20 @@ export function splitToNameAndQualifier(name) {
   }
 }
 
+export function canContainOptionalQualifier(tag, subfieldCode) {
+  // We have made 300$a NON-repeatable (against specs), as we newer want there to repeat (probably near-duplicates)
+  if (tag === '300' && subfieldCode === 'a') {
+    return true;
+  }
+  // 776$i is actually not needed for counterpart stuff (since it's repeatable), but it is needed in merge subfield stage.
+  if (tag === '776' && subfieldCode === 'i') {
+    return true;
+  }
+  return false;
+}
 
 function withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode) {
-  if (!potentialWithAndWithoutContent()) {
+  if (!canContainOptionalQualifier(tag, subfieldCode)) {
     return false;
   }
 
@@ -74,25 +119,18 @@ function withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode) {
   //nvdebug(`CN1: '${name1}', '${qualifier1}'`, debugDev);
   //nvdebug(`CN2: '${name2}', '${qualifier2}'`, debugDev);
 
-  if (name1 !== name2) {
+  if (name1.toLowerCase() !== name2.toLowerCase()) {
     return false;
   }
 
   // If either value does not have a qualifier, they are considered equals:
-  if (qualifier1 === undefined || qualifier2 === undefined || qualifier1 === qualifier2) {
+  if (qualifier1 === undefined || qualifier2 === undefined || qualifier1.toLowerCase() === qualifier2.toLowerCase()) {
     return true;
   }
 
   return false;
 
-  function potentialWithAndWithoutContent() {
-    // 300$a needs to be explictly listed as our mergeConstraints.js use this as (part of) field 300 key.
-    // Note that 776$i is not needed here, as it is not part of of field 776 key.
-    if (subfieldCode === 'a') {
-      return ['300'].includes(tag);
-    }
-    return false;
-  }
+
 }
 
 
@@ -100,30 +138,34 @@ function corporateNamesAgree(value1, value2, tag, subfieldCode) {
   if (subfieldCode !== 'a' || !['110', '610', '710', '810'].includes(tag)) {
     return false;
   }
-  const [name1, qualifier1] = splitToNameAndQualifier(value1);
-  const [name2, qualifier2] = splitToNameAndQualifier(value2);
+  const nameData1 = splitToNameAndQualifierAndProcessName(value1);
+  const nameData2 = splitToNameAndQualifierAndProcessName(value2);
 
-  nvdebug(`CN1: '${name1}', '${qualifier1}'`, debugDev);
-  nvdebug(`CN2: '${name2}', '${qualifier2}'`, debugDev);
+  nvdebug(`CN1: '${nameData1.name}', '${nameData1.qualifier}'`, debugDev);
+  nvdebug(`CN2: '${nameData2.name}', '${nameData2.qualifier}'`, debugDev);
 
-  if (name1.toUpperCase() !== name2.toUpperCase()) {
+  if (nameData1.name !== nameData2.name) {
     return false;
   }
 
-  // If either value does not have a qualifier, they are considered equals:
-  if (qualifier1 === undefined || qualifier2 === undefined || qualifier1 === qualifier2) {
-    return true;
+  if (nameData1.qualifier && nameData2.qualifier && nameData1.qualifier !== nameData2.qualifier) {
+    return false;
   }
+  // Currently all prefixes and suffixes are publisher information, so there's no point comparing them any further...
 
-  if (isKustantaja(qualifier1) && isKustantaja(qualifier2)) {
-    return true;
+  return true;
+
+  /*
+  function isKustantaja(nameData) {
+    if (nameData.suffix.match(/^(?:Kustannus|Kustannus oy|kustannusosakeyhtiö)$/iu)) {
+      return true;
+    }
+    if (nameData.prefix.match(/^Kustannus Oy$/i)) {
+      return true;
+    }
+    return false;
   }
-
-  return false;
-
-  function isKustantaja(qualifier) {
-    return qualifier.match(/^(?: Kustannus| Kustannus oy|, kustannusosakeyhtiö)$/iu);
-  }
+  */
 }
 
 

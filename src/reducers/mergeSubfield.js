@@ -1,9 +1,9 @@
 import createDebugLogger from 'debug';
 import {partsAgree, subfieldContainsPartData} from '@natlibfi/marc-record-validators-melinda/dist/normalizeSubfieldValueForComparison';
 import {valueCarriesMeaning} from './worldKnowledge';
-import {nvdebug, subfieldToString} from './utils';
+import {nvdebug} from './utils';
 import {tagAndSubfieldCodeReferToIsbn} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
-import {splitToNameAndQualifier} from './counterpartField';
+import {canContainOptionalQualifier, splitToNameAndQualifier} from './counterpartField';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeSubfield');
 //const debugData = debug.extend('data');
@@ -146,7 +146,7 @@ function isSynonym(field, candSubfield, relevantSubfields) {
     return coverTypesMatch(candSubfield, relevantSubfields);
   }
 
-  nvdebug(`Looking for synonyms for '${subfieldToString(candSubfield)}'...`, debugDev);
+  //nvdebug(`Looking for synonyms for '${subfieldToString(candSubfield)}'...`, debugDev);
 
   if (relationInformationMatches(candSubfield, relevantSubfields)) {
     return true;
@@ -193,12 +193,13 @@ function preferHttpsOverHttp(candSubfield, relevantSubfields) {
   return true;
 }
 
+
 function preferQualifierVersion(field, candSubfield, relevantSubfields) {
-  if (!fieldAllowsQualifierInOneOfTheSubfields(field, candSubfield)) { // || !candSubfield.value.includes('(')) {
+  if (!canContainOptionalQualifier(field.tag, candSubfield.code)) { // currently only 300$a and 776$i can prefer source...
     return false;
   }
 
-  const [name1, qualifier1] = genericSplitToNameAndQualifier(candSubfield.value);
+  const [name1, qualifier1] = splitToNameAndQualifier(candSubfield.value);
   const pair = relevantSubfields.find(sf => subfieldQualifierCheck(sf, name1, qualifier1));
   if (!pair) {
     return false;
@@ -212,7 +213,7 @@ function preferQualifierVersion(field, candSubfield, relevantSubfields) {
   return true;
 
   function subfieldQualifierCheck(subfield, name, qualifier) {
-    const [name2, qualifier2] = genericSplitToNameAndQualifier(candSubfield.value);
+    const [name2, qualifier2] = splitToNameAndQualifier(candSubfield.value);
     if (name !== name2) {
       return false;
     }
@@ -222,24 +223,6 @@ function preferQualifierVersion(field, candSubfield, relevantSubfields) {
     return false;
   }
 
-  function genericSplitToNameAndQualifier(value) {
-    if (value.match(/^.* \([^()]+\)$/u)) {
-      const name = value.replace(/^(.*) \([^()]+\)$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-      const qualifier = value.replace(/^.* (\([^()]+\))$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-      return [name, qualifier];
-    }
-    return [value, undefined];
-  }
-
-  function fieldAllowsQualifierInOneOfTheSubfields(field, subfield) {
-    if (field.tag === '300' && subfield.code === 'a') {
-      return true;
-    }
-    if (field.tag === '776' && subfield.code === 'i') {
-      return true;
-    }
-    return false;
-  }
 }
 
 function preferSourceCorporateName(field, candSubfield, pair) {
@@ -262,11 +245,12 @@ function preferSourceCorporateName(field, candSubfield, pair) {
       return true;
     }
     // Prefer (qualifier):
-    const [name1, qualifier1] = splitToNameAndQualifier(candSubfield.value);
-    const [name2, qualifier2] = splitToNameAndQualifier(pair.value);
-    if (name1 === name2 && qualifier2 === undefined && qualifier1.match(/^ ?\(.*\)$/u)) {
+    const [sourceName, sourceQualifier] = splitToNameAndQualifier(candSubfield.value);
+    const [baseName, baseQualifier] = splitToNameAndQualifier(pair.value);
+    if (sourceName === baseName && baseQualifier === undefined && sourceQualifier !== undefined) {
       return true;
     }
+    // Not taking prefix and suffix into account here...
     return false;
   }
 
