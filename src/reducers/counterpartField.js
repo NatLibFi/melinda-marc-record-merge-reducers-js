@@ -58,12 +58,7 @@ export function splitToNameAndQualifierAndProcessName(name) {
 
   function stripPrefixAndSuffix(companyName) {
     const [nameOnly, suffix] = extractSuffix(companyName);
-    // NB! Currently we only have either prefix or suffix. However, we could/should support type "Oy Lukko Ab"...
-    if (nameOnly !== companyName) {
-      // Currently we only have either prefix or suffix
-      return [undefined, nameOnly, suffix];
-    }
-    const [nameOnly2, prefix] = extractPrefix(companyName);
+    const [nameOnly2, prefix] = extractPrefix(nameOnly);
     return [prefix, nameOnly2, suffix];
   }
 
@@ -76,7 +71,7 @@ export function splitToNameAndQualifierAndProcessName(name) {
   }
 
   function extractPrefix(name) {
-    const nameOnly = name.replace(/^(?:Kustannusosakeyhtiö|Kustannus Oy) /ugi, '');
+    const nameOnly = name.replace(/^(?:Ab|Kustannusosakeyhtiö|Kustannus Oy|Oy) /ugi, '');
     if (nameOnly === name) {
       return [name, undefined];
     }

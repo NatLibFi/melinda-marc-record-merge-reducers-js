@@ -4,6 +4,9 @@
     { "tag": "001", "value": "123456" },
     { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
       { "code": "a", "value": "Duodecim, kustannusosakeyhtiö." }
+    ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Oy Nimi Ab." }
     ]}
   ]
 }

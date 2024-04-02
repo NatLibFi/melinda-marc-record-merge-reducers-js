@@ -1,5 +1,5 @@
 {
   "description":"MET-535: combine differently named publishers",
-  "only": true,
+  "only": false,
   "skip": false
 }

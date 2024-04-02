@@ -5,6 +5,9 @@
     { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
       { "code": "a", "value": "Kustannus Oy Duodecim," },
       { "code": "e", "value": "kustantaja." }
+    ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Nimi." }
     ]}
   ]
 }
