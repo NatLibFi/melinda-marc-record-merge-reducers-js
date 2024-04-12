@@ -166,7 +166,7 @@ function corporateNamesAgree(value1, value2, tag, subfieldCode) {
 
 function pairableValue(tag, subfieldCode, value1, value2) {
   // This function could just return true or false.
-  // I thought of preference when I wrote this, but preference is not currently implemented *here*.
+  // I thought of preference when I wrote this, but preference implemented *here* (modularity). mergeFields.js should handle preference.
   if (withAndWithoutQualifierAgree(value1, value2, tag, subfieldCode)) {
     // 300$a "whatever" and "whatever (123 sivua)"
     return value1;
@@ -649,12 +649,39 @@ function field264Exception(baseField, sourceRecord, sourceField, config) {
   return syntacticallyMergablePair(sourceField, baseField, config);
 }
 
+function getCounterpartCandidates(field, record) {
+  const counterpartCands = record.get(tagToRegexp(field.tag));
+
+  // MELKEHITYS-2969: copyright years should not merge with non-copyright years
+  if (field.tag === '260' && isNotCopyrightYear(field)) {
+    return counterpartCands.filter(candField => !isCopyrightField264(candField));
+  }
+
+  if (field.tag === '264' && isCopyrightField264(field)) { // Copyright year
+    return counterpartCands.filter(candField => !isNotCopyrightYear(candField));
+  }
+
+  function isCopyrightField264(field) {
+    return field.tag === '264' && field.ind2 === '4';
+  }
+  function isNotCopyrightYear(field) {
+    if (field.tag === '264') {
+      return !isCopyrightField264(field);
+    }
+    // Copyright year does not contain $a or $b:
+    return !field.subfields.some(sf => sf.code === 'a' && sf.code === 'b');
+  }
+
+  return counterpartCands;
+
+}
+
 export function getCounterpart(baseRecord, sourceRecord, field, config) {
   // First get relevant candidate fields. Note that 1XX and corresponding 7XX are considered equal.
   // Tags 260 and 264 are lumped together.
   // Hacks: 973 can merge with 773, 940 can merge with 240 (but not the other way around)
   //nvdebug(`COUNTERPART FOR '${fieldToString(field)}'?`, debugDev);
-  const counterpartCands = baseRecord.get(tagToRegexp(field.tag));
+  const counterpartCands = getCounterpartCandidates(field, baseRecord);
 
   if (!counterpartCands || counterpartCands.length === 0) {
     //nvdebug(`No counterpart(s) found for ${fieldToString(field)}`, debugDev);
