@@ -13,7 +13,7 @@
 		"type": "git",
 		"url": "git@github.com:natlibfi/melinda-marc-record-merge-reducers-js.git"
 	},
-	"license": "LGPL-3.0+",
+	"license": "MIT",
 	"version": "2.2.3",
 	"main": "./dist/index.js",
 	"engines": {
