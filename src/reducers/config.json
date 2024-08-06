@@ -14,7 +14,7 @@
             {
                 "operation": "removeField",
                 "recordType": "source",
-                "comment": "MRA-763: remove many fields from a source prepublication if base record is good enough",
+                "comment": "MRA-763: remove various fields from a source prepublication if base record is good enough (ENNAKKOTIETO)",
                 "fieldSpecification": {
                     "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|500|506|540|594|776|856|884|946|974).)*$",
                     "encodingLevel": ["8"]
@@ -32,7 +32,28 @@
             {
                 "operation": "removeField",
                 "recordType": "source",
-                "comment": "MRA-763: remove many fields from a source prepublication if base record is good enough (Koneellisesti tuotettu tietue)",
+                "comment": "MET-571: remove 594 $a EI VASTAANOTETTU from a source prepublication if base record is good enough",
+                "fieldSpecification": {
+                    "tagPattern": "^594$",
+                    "encodingLevel": ["8"],
+                    "subfieldFilters": [
+                        {"code": "a", "value": "EI VASTAANOTETTU"},
+                        {"code": "5", "value": "FENNI"}
+                    ]
+                },
+                "requireBaseField": {
+                    "tag": "LOW",
+                    "subfieldFilters": [
+                        {"code": "a", "value": "FENNI"}
+                    ],
+                    "encodingLevel": [" ", "1", "2", "3", "4", "5", "7"]
+                }
+            },
+
+            {
+                "operation": "removeField",
+                "recordType": "source",
+                "comment": "MRA-763: remove various fields from a source prepublication if base record is good enough (Koneellisesti tuotettu tietue)",
                 "fieldSpecification": {
                     "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|500|506|540|594|776|856|884|946|974).)*$",
                     "encodingLevel": ["2", "8"]
@@ -254,13 +275,13 @@
 
             {
                 "operation": "removeField",
-                "comment": "Remove 041 so that a repeatable field won't be copied from source if base already has one",
+                "comment": "Remove source 041 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
                 "fieldSpecification": {
                     "tag": "041"
                 },
                 "requireBaseField": {
-                    "tagPattern": "^(041)$"
+                    "tag": "041"
                 }
             },
 
