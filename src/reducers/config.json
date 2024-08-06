@@ -44,7 +44,7 @@
                 "requireBaseField": {
                     "tag": "LOW",
                     "subfieldFilters": [
-                        {"code": "a", "value": "FENNI"}
+                        {"code": "a", "valuePattern": "^(?:FENNI|FIKKA)$"}
                     ],
                     "encodingLevel": [" ", "1", "2", "3", "4", "5", "7"]
                 }
