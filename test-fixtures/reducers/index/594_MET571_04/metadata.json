@@ -1,0 +1,4 @@
+{
+  "description":"MET-571/04: don't remove source 594 $a EI VASTAANOTETTU as base is non-FENNI (thus base LDR/17!=8 does not matter). Normal source->base transfer applies.",
+  "only": false
+}
