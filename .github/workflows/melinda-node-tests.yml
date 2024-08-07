@@ -34,7 +34,8 @@ jobs:
   njsscan:
     name: Njsscan check
     runs-on: ubuntu-latest
-
+    container: docker://node:18
+    
     steps:
     - name: Checkout the code
       uses: actions/checkout@v4
