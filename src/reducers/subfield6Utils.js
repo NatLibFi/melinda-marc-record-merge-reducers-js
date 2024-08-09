@@ -3,7 +3,7 @@ import {getSubfield8Index, isValidSubfield8} from './reindexSubfield8';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
-
+import {isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
@@ -14,14 +14,6 @@ const debugDev = debug.extend('dev');
 // NB! Index size is always 2 (preceding 0 required for 01..09)
 // How to handle non-linking value '00'? (Now accepted.) Support for 100+ was added on 2023-02-27.
 const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
-
-
-export function isValidSubfield6(subfield) {
-  if (subfield.code !== '6') {
-    return false;
-  }
-  return subfield.value.match(sf6Regexp);
-}
 
 function fieldHasValidSubfield6(field) {
   return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));

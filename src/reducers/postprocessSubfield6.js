@@ -1,5 +1,6 @@
 import createDebugLogger from 'debug';
-import {isRelevantField6, isValidSubfield6, pairAndStringify6, removeField6IfNeeded, subfieldGetIndex6} from './subfield6Utils';
+import {isRelevantField6, pairAndStringify6, removeField6IfNeeded, subfieldGetIndex6} from './subfield6Utils';
+import {isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preProcessSubfield6');
