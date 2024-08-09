@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
-import {fieldToNormalizedString, fieldsToNormalizedString, isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldToNormalizedString, fieldsToNormalizedString, isSubfield6Pair, isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
@@ -14,9 +14,11 @@ const debugDev = debug.extend('dev');
 // How to handle non-linking value '00'? (Now accepted.) Support for 100+ was added on 2023-02-27.
 const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
 
+/*
 function fieldHasValidSubfield6(field) {
   return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
 }
+  */
 
 // Validators' corresponding function should be exportable...
 export function subfieldGetTag6(subfield) {
@@ -70,62 +72,6 @@ export function fieldGetIndex6(field) {
   return subfield6GetOccurrenceNumber(sf6);
 }
 
-function fieldGetTag6(field) {
-  if (!field.subfields) {
-    return undefined;
-  }
-  // Subfield $6 should always be the 1st subfield... (not implemented)
-  // There should be only one $6, so find is ok.
-  const sf6 = field.subfields.find(subfield => isValidSubfield6(subfield));
-  if (sf6 === undefined) {
-    return undefined;
-  }
-  return subfieldGetTag6(sf6);
-}
-
-export function isSubfield6Pair(field, otherField) {
-  // No need to log this:
-  if (!fieldHasValidSubfield6(field) || !fieldHasValidSubfield6(otherField)) {
-    return false;
-  }
-
-  if (!tagsArePairable6(field.tag, otherField.tag)) {
-    //nvdebug(` FAILED. REASON: TAGS NOT PAIRABLE!`, debugDev);
-    return false;
-  }
-
-  nvdebug(`LOOK for $6-pair:\n ${fieldToString(field)}\n ${fieldToString(otherField)}`, debugDev);
-
-  const fieldIndex = fieldGetIndex6(field);
-  if (fieldIndex === undefined || fieldIndex === '00') {
-    nvdebug(` FAILED. REASON: NO INDEX FOUND`, debugDev);
-    return false;
-  }
-
-  const otherFieldIndex = fieldGetIndex6(otherField);
-
-  if (fieldIndex !== otherFieldIndex) {
-    nvdebug(` FAILURE: INDEXES: ${fieldIndex} vs ${otherFieldIndex}`, debugDev);
-    return false;
-  }
-
-  if (fieldGetTag6(field) !== otherField.tag || field.tag !== fieldGetTag6(otherField)) {
-    nvdebug(` FAILURE: TAG vs $6 TAG`, debugDev);
-    return false;
-  }
-  return true;
-
-  function tagsArePairable6(tag1, tag2) {
-    // How to do XOR operation in one line? Well, this is probably more readable...
-    if (tag1 === '880' && tag2 === '880') {
-      return false;
-    }
-    if (tag1 !== '880' && tag2 !== '880') {
-      return false;
-    }
-    return true;
-  }
-}
 
 export function fieldGetSubfield6Pairs(field, record) {
   return record.fields.filter(otherField => isSubfield6Pair(field, otherField));
