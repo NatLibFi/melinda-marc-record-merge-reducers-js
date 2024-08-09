@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
-import {isRelevantField6, pairAndStringify6, removeField6IfNeeded, subfieldGetIndex6} from './subfield6Utils';
-import {isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
+import {isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 import {fieldHasSubfield, fieldToString, nvdebug, subfieldToString} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preProcessSubfield6');
@@ -49,8 +49,8 @@ function subfieldApplies(subfield, lookFor) {
 
 function getPairValue(subfield6, myTag) {
   //const index = subfield6.value.replace(/^[0-9][0-9][0-9]-([0-9][0-9]+).*$/u, '$1'); // eslint-disable-line prefer-named-capture-group
-  const index = subfieldGetIndex6(subfield6);
-  const lookFor = `${myTag}-${index}`;
+  const occurrenceNumber = subfield6GetOccurrenceNumber(subfield6);
+  const lookFor = `${myTag}-${occurrenceNumber}`;
   return lookFor;
 }
 

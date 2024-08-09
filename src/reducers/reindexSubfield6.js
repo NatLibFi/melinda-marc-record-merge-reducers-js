@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldToString, nvdebug} from './utils';
-import {recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
-import {fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6, resetSubfield6Index, subfieldGetIndex6} from './subfield6Utils';
+import {recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6, resetSubfield6Index} from './subfield6Utils';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 
@@ -24,7 +24,7 @@ export default () => (base, source) => {
 };
 
 function subfield6Index(subfield) {
-  const indexPart = subfieldGetIndex6(subfield);
+  const indexPart = subfield6GetOccurrenceNumber(subfield);
   if (indexPart === undefined) {
     return 0;
   }

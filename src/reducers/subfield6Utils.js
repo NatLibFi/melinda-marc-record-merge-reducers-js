@@ -3,7 +3,7 @@ import {getSubfield8Index, isValidSubfield8} from './reindexSubfield8';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
-import {isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
@@ -19,6 +19,8 @@ function fieldHasValidSubfield6(field) {
   return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
 }
 
+/*
+// Use subfield6GetOccurrenceNumber(subfield)
 export function subfieldGetIndex6(subfield) {
   if (isValidSubfield6(subfield)) {
     // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
@@ -26,6 +28,7 @@ export function subfieldGetIndex6(subfield) {
   }
   return undefined;
 }
+  */
 
 export function subfieldGetTag6(subfield) {
   if (isValidSubfield6(subfield)) {
@@ -66,26 +69,17 @@ export function resetSubfield6Index(subfield, strindex) {
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
-/*
-export function subfieldGetIndex(subfield) {
-  if (!isValidSubfield6(subfield)) {
-    return undefined;
-  }
-  return subfield.value.substring(4, 6);
-}
-*/
-
 export function fieldGetIndex6(field) {
   if (!field.subfields) {
     return undefined;
   }
   // Subfield $6 should always be the 1st subfield... (not implemented)
-  // There should be only one $6, so find is ok.
+  // There should be only one $6, so find() is ok.
   const sf6 = field.subfields.find(subfield => isValidSubfield6(subfield));
   if (sf6 === undefined) {
     return undefined;
   }
-  return subfieldGetIndex6(sf6);
+  return subfield6GetOccurrenceNumber(sf6);
 }
 
 function fieldGetTag6(field) {
@@ -229,6 +223,6 @@ export function getFieldsWithSubfield6Index(record, index) {
     if (!field.subfields) {
       return false;
     }
-    return field.subfields.find(sf => isValidSubfield6(sf) && subfieldGetIndex6(sf) === index);
+    return field.subfields.find(sf => isValidSubfield6(sf) && subfield6GetOccurrenceNumber(sf) === index);
   }
 }
