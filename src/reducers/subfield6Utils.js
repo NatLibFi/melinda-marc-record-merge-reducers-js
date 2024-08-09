@@ -1,9 +1,8 @@
 import createDebugLogger from 'debug';
-import {getSubfield8Index, isValidSubfield8} from './reindexSubfield8';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
-import {isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldToNormalizedString, fieldsToNormalizedString, isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
@@ -19,24 +18,13 @@ function fieldHasValidSubfield6(field) {
   return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
 }
 
-/*
-// Use subfield6GetOccurrenceNumber(subfield)
-export function subfieldGetIndex6(subfield) {
-  if (isValidSubfield6(subfield)) {
-    // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
-    return subfield.value.substring(4).replace(/\D.*$/u, '');
-  }
-  return undefined;
-}
-  */
-
+// Validators' corresponding function should be exportable...
 export function subfieldGetTag6(subfield) {
   if (isValidSubfield6(subfield)) {
     return subfield.value.substring(0, 3);
   }
   return undefined;
 }
-
 
 export function intToTwoDigitString(i) {
   return i < 10 ? `0${i}` : `${i}`;
@@ -156,52 +144,18 @@ export function pairAndStringify6(field, record) {
   if (!pairs6.length) {
     return fieldToNormalizedString(field);
   }
-  return fieldsToNormalizedString([field].concat(pairs6));
+  return fieldsToNormalizedString([field].concat(pairs6), 0, true);
 }
 
-
-export function fieldToNormalizedString(field, currIndex = 0) {
-  function subfieldToNormalizedString(sf) {
-    if (isValidSubfield6(sf)) {
-      // Replace index with XX:
-      return `‡${sf.code} ${sf.value.substring(0, 3)}-XX${getSubfield6Tail(sf)}`;
-    }
-    if (isValidSubfield8(sf)) {
-      const index8 = getSubfield8Index(sf);
-      if (currIndex === 0 || currIndex === index8) {
-        // For $8 we should only XX the index we are looking at...
-        const normVal = sf.value.replace(/^[0-9]+/u, 'XX');
-        return `‡${sf.code} ${normVal}`;
-      }
-      return ''; // Other $8 subfields are meaningless in this context
-    }
-    return `‡${sf.code} ${sf.value}`;
-  }
-
-  if ('subfields' in field) {
-    return `${field.tag} ${field.ind1}${field.ind2}${formatAndNormalizeSubfields(field)}`;
-  }
-  return `${field.tag}    ${field.value}`;
-
-  function formatAndNormalizeSubfields(field) {
-    return field.subfields.map(sf => `${subfieldToNormalizedString(sf)}`).join('');
-  }
-}
-
-export function fieldsToNormalizedString(fields, index = 0) {
-  const strings = fields.map(field => fieldToNormalizedString(field, index));
-  strings.sort(); // eslint-disable-line functional/immutable-data
-  return strings.join('\t__SEPARATOR__\t');
-}
 
 export function removeField6IfNeeded(field, record, fieldsAsString) {
   const pairFields = fieldGetSubfield6Pairs(field, record);
-  const asString = pairFields ? fieldsToNormalizedString([field].concat(pairFields)) : fieldToNormalizedString(field);
+  const asString = pairFields ? fieldsToNormalizedString([field, ...pairFields], 0, true) : fieldToNormalizedString(field, 0, true);
   nvdebug(`SOURCE: '${asString}' -- REALITY: ${fieldToString(field)}`, debugDev);
   //fieldsAsString.forEach(str => nvdebug(`TARGET: '${str}'`, debugDev));
   const tmp = pairFields.length ? fieldsToString(pairFields) : 'HUTI';
   nvdebug(`PAIR: ${tmp}`, debugDev);
-  nvdebug(`BASE:\n ${fieldsAsString.join('\n ')}`, debugDev);
+  nvdebug(`BASE:\n ${fieldsAsString.join(' ')}`, debugDev);
   if (!fieldsAsString.includes(asString)) {
     return;
   }
