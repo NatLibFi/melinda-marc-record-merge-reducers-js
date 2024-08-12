@@ -42,36 +42,6 @@ export function resetSubfield6Tag(subfield, tag) {
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
-function getSubfield6Tail(subfield) {
-  if (isValidSubfield6(subfield)) {
-    // Skip "TAG-" prefix. 2023-02-20: removed 2-digit requirement from here...
-    return subfield.value.replace(/^\d+-\d+/u, '');
-  }
-  return '';
-}
-
-export function resetSubfield6Index(subfield, strindex) {
-  if (!isValidSubfield6(subfield)) {
-    return;
-  }
-  const newValue = subfield.value.substring(0, 4) + strindex + getSubfield6Tail(subfield); // eslint-disable-line functional/immutable-data
-  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
-  subfield.value = newValue; // eslint-disable-line functional/immutable-data
-}
-
-export function fieldGetIndex6(field) {
-  if (!field.subfields) {
-    return undefined;
-  }
-  // Subfield $6 should always be the 1st subfield... (not implemented)
-  // There should be only one $6, so find() is ok.
-  const sf6 = field.subfields.find(subfield => isValidSubfield6(subfield));
-  if (sf6 === undefined) {
-    return undefined;
-  }
-  return subfield6GetOccurrenceNumber(sf6);
-}
-
 
 export function fieldGetSubfield6Pairs(field, record) {
   return record.fields.filter(otherField => isSubfield6Pair(field, otherField));
