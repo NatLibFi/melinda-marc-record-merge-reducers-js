@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldToString, nvdebug} from './utils';
-import {recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
-import {fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, intToTwoDigitString, isRelevantField6} from './subfield6Utils';
+import {recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, isRelevantField6} from './subfield6Utils';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 
@@ -58,7 +58,7 @@ function fieldUpdateSubfield6s(field, max) {
         return;
       }
       const index = origIndex + max;
-      const strindex = intToTwoDigitString(index);
+      const strindex = intToOccurrenceNumberString(index);
       subfield6ResetOccurrenceNumber(sf, strindex);
     }
   }

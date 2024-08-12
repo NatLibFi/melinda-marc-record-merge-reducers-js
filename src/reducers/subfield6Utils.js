@@ -28,9 +28,11 @@ export function subfieldGetTag6(subfield) {
   return undefined;
 }
 
+/*
 export function intToTwoDigitString(i) {
   return i < 10 ? `0${i}` : `${i}`;
 }
+  */
 
 export function resetSubfield6Tag(subfield, tag) {
   if (!isValidSubfield6(subfield)) {
