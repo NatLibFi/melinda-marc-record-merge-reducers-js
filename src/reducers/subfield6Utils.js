@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
-import {fieldToNormalizedString, fieldsToNormalizedString, isSubfield6Pair, isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, fieldToNormalizedString, fieldsToNormalizedString, isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
@@ -14,11 +14,6 @@ const debugDev = debug.extend('dev');
 // How to handle non-linking value '00'? (Now accepted.) Support for 100+ was added on 2023-02-27.
 const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
 
-/*
-function fieldHasValidSubfield6(field) {
-  return field.subfields && field.subfields.some(sf => isValidSubfield6(sf));
-}
-  */
 
 // Validators' corresponding function should be exportable...
 export function subfieldGetTag6(subfield) {
@@ -44,11 +39,6 @@ export function resetSubfield6Tag(subfield, tag) {
   subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
-
-export function fieldGetSubfield6Pairs(field, record) {
-  return record.fields.filter(otherField => isSubfield6Pair(field, otherField));
-}
-
 export function isRelevantField6(field) { // ...
   if (!field.subfields || field.tag === '880') {
     return false;
@@ -58,7 +48,7 @@ export function isRelevantField6(field) { // ...
 }
 
 export function pairAndStringify6(field, record) {
-  const pairs6 = fieldGetSubfield6Pairs(field, record);
+  const pairs6 = fieldGetOccurrenceNumberPairs(field, record.fields);
   if (!pairs6.length) {
     return fieldToNormalizedString(field);
   }
@@ -67,7 +57,7 @@ export function pairAndStringify6(field, record) {
 
 
 export function removeField6IfNeeded(field, record, fieldsAsString) {
-  const pairFields = fieldGetSubfield6Pairs(field, record);
+  const pairFields = fieldGetOccurrenceNumberPairs(field, record.fields);
   const asString = pairFields ? fieldsToNormalizedString([field, ...pairFields], 0, true) : fieldToNormalizedString(field, 0, true);
   nvdebug(`SOURCE: '${asString}' -- REALITY: ${fieldToString(field)}`, debugDev);
   //fieldsAsString.forEach(str => nvdebug(`TARGET: '${str}'`, debugDev));

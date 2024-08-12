@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldToString, nvdebug} from './utils';
-import {recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
-import {fieldGetSubfield6Pairs, getFieldsWithSubfield6Index, isRelevantField6} from './subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {getFieldsWithSubfield6Index, isRelevantField6} from './subfield6Utils';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 
@@ -96,7 +96,7 @@ export function reindexDuplicateSubfield6Indexes(record) {
       nvdebug(`NEED TO REINDEX ${fieldToString(currField)}`, debugDev);
       const max = recordGetMaxSubfield6OccurrenceNumberAsInteger(record);
       if (max) {
-        const pairFields = fieldGetSubfield6Pairs(currField, record);
+        const pairFields = fieldGetOccurrenceNumberPairs(currField, record.fields);
         if (pairFields.length) {
           nvdebug(` PAIR ${fieldsToString(pairFields)}`, debugDev);
           fieldUpdateSubfield6s(currField, max);

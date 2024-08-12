@@ -1,4 +1,5 @@
-import {fieldGetSubfield6Pairs, resetSubfield6Tag, subfieldGetTag6} from './subfield6Utils';
+import {resetSubfield6Tag, subfieldGetTag6} from './subfield6Utils';
+import {fieldGetOccurrenceNumberPairs} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 import {fieldToString, nvdebug} from './utils';
 import createDebugLogger from 'debug';
 
@@ -7,7 +8,7 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:re
 const debugDev = debug.extend('dev');
 
 export function resetCorrespondingField880(field, record, newTag) {
-  const pairedFields = fieldGetSubfield6Pairs(field, record);
+  const pairedFields = fieldGetOccurrenceNumberPairs(field, record.fields);
 
   nvdebug(`RESET6: ${fieldToString(field)} got ${pairedFields.length} pair(s)`, debugDev);
   pairedFields.forEach(pairedField => fixPaired880(pairedField));

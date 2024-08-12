@@ -12,7 +12,7 @@ import {preprocessBeforeAdd} from './processFilter.js';
 
 import fs from 'fs';
 import path from 'path';
-import {fieldGetSubfield6Pairs} from './subfield6Utils';
+import {fieldGetOccurrenceNumberPairs} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils.js';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
@@ -223,8 +223,7 @@ function mergeField(baseRecord, sourceRecord, sourceField, config) {
       swapDataBetweenFields(counterpartField, sourceField);
     }
 
-
-    const candFieldPairs880 = sourceField.tag === '880' ? undefined : fieldGetSubfield6Pairs(sourceField, sourceRecord);
+    const candFieldPairs880 = sourceField.tag === '880' ? undefined : fieldGetOccurrenceNumberPairs(sourceField, sourceRecord.fields);
     nvdebug(`mergeField(): Got counterpart: '${fieldToString(counterpartField)}'. Thus try merge...`, debugDev);
     nvdebug(`PAIR: ${candFieldPairs880 ? fieldsToString(candFieldPairs880) : 'NADA'}`, debugDev);
     mergeField2(baseRecord, counterpartField, sourceField, config, candFieldPairs880);
