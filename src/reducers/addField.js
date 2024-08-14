@@ -7,7 +7,7 @@ import {postprocessRecords} from './mergeOrAddPostprocess.js';
 import {preprocessBeforeAdd} from './processFilter.js';
 import fs from 'fs';
 import path from 'path';
-import {isValidSubfield6} from './subfield6Utils';
+import {isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 

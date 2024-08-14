@@ -2,7 +2,8 @@
 
 import createDebugLogger from 'debug';
 import {getSubfield8Index, getSubfield8Value} from './reindexSubfield8';
-import {fieldsToNormalizedString, fieldToNormalizedString, isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
+import {isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils';
+import {fieldToNormalizedString, fieldsToNormalizedString} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 //import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldHasNSubfields, nvdebug} from './utils';
 
@@ -33,7 +34,7 @@ function isRelevantField8(field) {
   return field.subfields.some(sf => getSubfield8Value(sf) !== undefined);
 }
 
-function isRelevantCommonDataField(field) {
+function isUnlinkedDataField(field) {
   return field.tag !== '880' && field.subfields && !isRelevantField6(field) && !isRelevantField8(field);
 }
 
@@ -99,12 +100,12 @@ function removeSharedDatafieldsWithSubfield8FromSource(base, source) {
 
   baseIndexesToInspect.forEach(baseIndex => {
     const baseFields = getFieldsWithSubfield8Index(base, baseIndex);
-    const baseFieldsAsString = fieldsToNormalizedString(baseFields, baseIndex);
+    const baseFieldsAsString = fieldsToNormalizedString(baseFields, baseIndex, true, true);
     nvdebug(`Results for BASE ${baseIndex}:`, debugDev);
     nvdebug(`${baseFieldsAsString}`, debugDev);
     sourceIndexesToInspect.forEach(sourceIndex => {
       const sourceFields = getFieldsWithSubfield8Index(source, sourceIndex);
-      const sourceFieldsAsString = fieldsToNormalizedString(sourceFields, sourceIndex);
+      const sourceFieldsAsString = fieldsToNormalizedString(sourceFields, sourceIndex, true, true);
       // If $8 source fields match with base fields, then remove them from source:
       nvdebug(`Compare BASE and SOURCE:`, debugDev);
       nvdebug(`${baseFieldsAsString} vs\n${sourceFieldsAsString}`, debugDev);
@@ -131,21 +132,18 @@ function removeSharedDatafieldsWithSubfield6FromSource(base, source) {
 }
 
 function removeCommonSharedDataFieldsFromSource(base, source) {
-  const baseFields = base.fields.filter(field => isRelevantCommonDataField(field));
-  const sourceFields = source.fields.filter(field => isRelevantCommonDataField(field));
+  const baseFields = base.fields.filter(field => isUnlinkedDataField(field));
+  const sourceFields = source.fields.filter(field => isUnlinkedDataField(field));
   const baseFieldsAsString = baseFields.map(field => fieldToNormalizedString(field));
 
-  sourceFields.forEach(field => removeCommonDataFieldIfNeeded(field));
+  const deletableSourceFields = sourceFields.filter(field => removableField(field));
 
-  function removeCommonDataFieldIfNeeded(field) {
+  function removableField(field) {
     const fieldAsString = fieldToNormalizedString(field);
-    nvdebug(`Looking for '${fieldAsString}' in '${baseFieldsAsString.join('\', \'')}'`, debugDev);
-    if (!baseFieldsAsString.includes(fieldAsString)) {
-      return;
-    }
-    nvdebug(`rCSDFFS(): Remove ${fieldAsString}`, debugDev);
-    source.removeField(field);
+    return baseFieldsAsString.includes(fieldAsString);
   }
+
+  deletableSourceFields.forEach(f => source.removeField(f));
 }
 
 /*
