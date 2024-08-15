@@ -1,6 +1,5 @@
-import {getCounterpart} from './counterpartField';
+import {getCounterpart} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/counterpartField';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel, isEnnakkotietoField} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
-
 import {nvdebugFieldArray} from './utils';
 
 import createDebugLogger from 'debug';
