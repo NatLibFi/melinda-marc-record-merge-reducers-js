@@ -1,20 +1,20 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldHasSubfield, fieldToString, fieldsAreIdentical, nvdebug, hasCopyright, removeCopyright, subfieldToString} from './utils';
-import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison';
-import {mergeOrAddSubfield} from './mergeOrAddSubfield';
-import {mergeIndicators} from './mergeIndicator';
-import {mergableTag} from './mergableTag';
-import {getCounterpart} from './counterpartField';
+import {fieldToString, nvdebug} from './utils';
+//import {cloneAndNormalizeFieldForComparison, cloneAndRemovePunctuation} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison';
+//import {mergeOrAddSubfield} from './mergeOrAddSubfield';
+//import {mergeIndicators} from './mergeIndicator';
+//import {mergableTag} from './mergableTag';
+//import {getCounterpart} from './counterpartField';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 import {postprocessRecords} from './mergeOrAddPostprocess.js';
 import {preprocessBeforeAdd} from './processFilter.js';
 
 import fs from 'fs';
 import path from 'path';
-import {fieldGetOccurrenceNumberPairs} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils.js';
-import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
-
+//import {fieldGetOccurrenceNumberPairs} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils.js';
+//import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
+import {mergeField} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeField.js';
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
@@ -76,7 +76,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   }
 };
 
-
+/*
 // NB! Can be do this via config.json?
 function removeEnnakkotieto(field) {
   const tmp = field.subfields.filter(subfield => subfield.code !== 'g' || subfield.value !== 'ENNAKKOTIETO.');
@@ -85,8 +85,10 @@ function removeEnnakkotieto(field) {
     field.subfields = tmp; // eslint-disable-line functional/immutable-data
   }
 }
+*/
 
 
+/*
 function copyrightYearHack(baseRecord, baseField, sourceField) {
   if (baseField.tag !== '264' || sourceField.tag !== '260') {
     return;
@@ -101,7 +103,9 @@ function copyrightYearHack(baseRecord, baseField, sourceField) {
     sf.value = removeCopyright(sf.value); // eslint-disable-line functional/immutable-data
   });
 }
+*/
 
+/*
 // eslint-disable-next-line max-params
 function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs880 = []) {
   //// Identical fields
@@ -153,8 +157,9 @@ function mergeField2(baseRecord, baseField, sourceField, config, candFieldPairs8
 
   });
 }
+*/
 
-
+/*
 function skipMergeField(baseRecord, sourceField, config) {
   if (!mergableTag(sourceField.tag, config)) {
     nvdebug(`skipMergeField(): field '${fieldToString(sourceField)}' listed as skippable!`, debugDev);
@@ -170,7 +175,9 @@ function skipMergeField(baseRecord, sourceField, config) {
 
   return false;
 }
+*/
 
+/*
 function sourceRecordIsBetter(baseField, sourceField) {
   if (!baseField.subfields) {
     return;
@@ -187,7 +194,9 @@ function sourceRecordIsBetter(baseField, sourceField) {
   }
   return false;
 }
+*/
 
+/*
 function swapDataBetweenFields(field1, field2) {
   // NB! Does not support controlfields yet! Add support if the need arises.
   if (field1.subfields) { // If field1 has subfields, then also field2 has them. No need to check the other field here.
@@ -205,8 +214,10 @@ function swapDataBetweenFields(field1, field2) {
   }
 
 }
+*/
 
-function mergeField(baseRecord, sourceRecord, sourceField, config) {
+/*
+function oldMergeField(baseRecord, sourceRecord, sourceField, config) {
   nvdebug(`SELF: ${fieldToString(sourceField)}`, debugDev);
 
   // skip duplicates and special cases:
@@ -234,4 +245,4 @@ function mergeField(baseRecord, sourceRecord, sourceField, config) {
   debugDev(`mergeField(): No mergable counterpart found for '${fieldToString(sourceField)}'.`);
   return false;
 }
-
+*/
