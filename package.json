@@ -36,11 +36,11 @@
 		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
 	},
 	"dependencies": {
-		"@natlibfi/marc-record": "^9.0.0",
-		"@natlibfi/marc-record-merge": "^7.0.3",
-		"@natlibfi/marc-record-validate": "^8.0.8",
-		"@natlibfi/marc-record-validators-melinda": "^11.3.1",
-		"@natlibfi/melinda-commons": "^13.0.15",
+		"@natlibfi/marc-record": "^9.0.1",
+		"@natlibfi/marc-record-merge": "^7.0.4",
+		"@natlibfi/marc-record-validate": "^8.0.9",
+		"@natlibfi/marc-record-validators-melinda": "https://github.com/NatLibFi/marc-record-validators-melinda.git#mergeFields",
+		"@natlibfi/melinda-commons": "^13.0.16",
 		"debug": "^4.3.6",
 		"isbn3": "^1.1.51"
 	},
@@ -51,8 +51,8 @@
 		"@babel/preset-env": "^7.25.3",
 		"@babel/register": "^7.24.6",
 		"@natlibfi/eslint-config-melinda-backend": "^3.0.5",
-		"@natlibfi/fixugen": "^2.0.8",
-		"@natlibfi/fixura": "^3.0.7",
+		"@natlibfi/fixugen": "^2.0.9",
+		"@natlibfi/fixura": "^3.0.8",
 		"babel-plugin-istanbul": "^6.1.1",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.5.0",
