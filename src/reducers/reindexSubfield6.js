@@ -1,3 +1,6 @@
+//
+// This file reindexes source record's subfield $6 occurrence numbers, so that they won't overlap with base record's corresponding indexes when merging.
+//
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldToString, nvdebug} from './utils';
