@@ -9,12 +9,6 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:su
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-// NB! Subfield 6 is non-repeatable and always comes first!
-// NB! Index size is always 2 (preceding 0 required for 01..09)
-// How to handle non-linking value '00'? (Now accepted.) Support for 100+ was added on 2023-02-27.
-const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
-
-
 // Validators' corresponding function should be exportable...
 export function subfieldGetTag6(subfield) {
   if (isValidSubfield6(subfield)) {
@@ -22,12 +16,6 @@ export function subfieldGetTag6(subfield) {
   }
   return undefined;
 }
-
-/*
-export function intToTwoDigitString(i) {
-  return i < 10 ? `0${i}` : `${i}`;
-}
-  */
 
 export function resetSubfield6Tag(subfield, tag) {
   if (!isValidSubfield6(subfield)) {
@@ -43,7 +31,7 @@ export function isRelevantField6(field) { // ...
   if (!field.subfields || field.tag === '880') {
     return false;
   }
-  const sf6s = field.subfields.filter(sf => sf.code === '6' && sf.value.match(sf6Regexp));
+  const sf6s = field.subfields.filter(sf => isValidSubfield6(sf));
   return sf6s.length === 1;
 }
 
