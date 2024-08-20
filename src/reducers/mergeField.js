@@ -2,7 +2,7 @@
 import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
-import {postprocessRecords} from './mergeOrAddPostprocess.js';
+import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess';
 import {preprocessBeforeAdd} from './processFilter.js';
 
 import fs from 'fs';
