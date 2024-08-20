@@ -4,8 +4,8 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldToString, nvdebug} from './utils';
-import {fieldGetOccurrenceNumberPairs, recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6ResetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
-import {getFieldsWithSubfield6Index, isRelevantField6} from './subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, get6s, recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6ResetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {isRelevantField6} from './subfield6Utils';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 
@@ -60,8 +60,6 @@ function fieldUpdateSubfield6s(field, max) {
 export function reindexDuplicateSubfield6Indexes(record) {
   // MET-219: same index is used twice.
   // This should be converted into a validator/fixer and moved to marc-record-validate.
-  /* eslint-disable */
-  let cache = {};
 
   // 1. Get all non-880 fields.
   const fields6 = record.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
@@ -69,34 +67,28 @@ export function reindexDuplicateSubfield6Indexes(record) {
   fields6.forEach(field => reindexIfNeeded(field));
 
   function reindexIfNeeded(currField) {
-    if (currField.tag === '880') {
-      return;
-    }
-
     const index = fieldGetUnambiguousOccurrenceNumber(currField);
     if (index === undefined || index === '00') {
       return;
     }
 
-    const relevantFields = getFieldsWithSubfield6Index(record, index);
+    const relevantFields = get6s(currField, record.fields);
     if (relevantFields.length < 3) { // Default 2: XXX $6 880-NN and 880 $6 XXX-NN
       return;
     }
 
     const currTagFields = relevantFields.filter(f => f.tag === currField.tag);
-    if ( currTagFields.length === 1) {
+    if (currTagFields.length === 1) {
       nvdebug(`NEED TO REINDEX ${fieldToString(currField)}`, debugDev);
       const max = recordGetMaxSubfield6OccurrenceNumberAsInteger(record);
       if (max) {
         const pairFields = fieldGetOccurrenceNumberPairs(currField, record.fields);
-        if (pairFields.length) {
+        if (pairFields.length) { // eslint-disable-line functional/no-conditional-statements
           nvdebug(` PAIR ${fieldsToString(pairFields)}`, debugDev);
           fieldUpdateSubfield6s(currField, max);
-          pairFields.forEach(pairField => fieldUpdateSubfield6s(pairField, max));;
+          pairFields.forEach(pairField => fieldUpdateSubfield6s(pairField, max));
         }
       }
     }
   }
-  /* eslint-enable */
-
 }

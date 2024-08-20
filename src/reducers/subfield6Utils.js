@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
-import {fieldGetOccurrenceNumberPairs, fieldToNormalizedString, fieldsToNormalizedString, isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, fieldToNormalizedString, fieldsToNormalizedString, isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
@@ -65,14 +65,3 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
   pairFields.forEach(pairField => record.removeField(pairField));
 }
 
-
-export function getFieldsWithSubfield6Index(record, index) {
-  return record.fields.filter(field => fieldHasIndex(field, index));
-
-  function fieldHasIndex(field, index) {
-    if (!field.subfields) {
-      return false;
-    }
-    return field.subfields.find(sf => isValidSubfield6(sf) && subfield6GetOccurrenceNumber(sf) === index);
-  }
-}
