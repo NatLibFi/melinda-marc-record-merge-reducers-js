@@ -39,8 +39,7 @@
 		"@natlibfi/marc-record": "^9.0.1",
 		"@natlibfi/marc-record-merge": "^7.0.5",
 		"@natlibfi/marc-record-validate": "^8.0.10",
-		"@natlibfi/marc-record-validators-melinda": "https://github.com/NatLibFi/marc-record-validators-melinda.git#mergeFields",
-		"clone": "^2.1.2",
+		"@natlibfi/marc-record-validators-melinda": "^11.3.2",
 		"debug": "^4.3.6",
 		"isbn3": "^1.1.51"
 	},
