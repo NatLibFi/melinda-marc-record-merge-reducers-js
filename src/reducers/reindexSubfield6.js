@@ -41,19 +41,17 @@ function fieldUpdateSubfield6s(field, max) {
   if (!field.subfields) {
     return;
   }
-  field.subfields.forEach(sf => updateSubfield6(sf, max));
+  field.subfields.forEach(sf => updateOccurrenceNumber(sf, max));
 
-  function updateSubfield6(sf, max) {
+  function updateOccurrenceNumber(sf, baseline) {
     if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statements
       //const origIndex = subfield6Index(sf);
-      const origIndex = subfield6GetOccurrenceNumberAsInteger(sf);
-      if (origIndex === 0) {
-        // "00" is valid exception value. It is not reindexed!
+      const originalOccurrenceNumber = subfield6GetOccurrenceNumberAsInteger(sf);
+      if (originalOccurrenceNumber === 0) { // "00" is not reset
         return;
       }
-      const index = origIndex + max;
-      const strindex = intToOccurrenceNumberString(index);
-      subfield6ResetOccurrenceNumber(sf, strindex);
+      const newOccurrenceNumber = originalOccurrenceNumber + baseline;
+      subfield6ResetOccurrenceNumber(sf, intToOccurrenceNumberString(newOccurrenceNumber));
     }
   }
 }
