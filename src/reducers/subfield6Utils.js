@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
-import {fieldGetOccurrenceNumberPairs, fieldToNormalizedString, fieldsToNormalizedString, isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, fieldsToNormalizedString, isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
@@ -37,16 +37,13 @@ export function isRelevantField6(field) { // ...
 
 export function pairAndStringify6(field, record) {
   const pairs6 = fieldGetOccurrenceNumberPairs(field, record.fields);
-  if (!pairs6.length) {
-    return fieldToNormalizedString(field);
-  }
-  return fieldsToNormalizedString([field].concat(pairs6), 0, true);
+  return fieldsToNormalizedString([field, ...pairs6], 0, true);
 }
 
 
 export function removeField6IfNeeded(field, record, fieldsAsString) {
   const pairFields = fieldGetOccurrenceNumberPairs(field, record.fields);
-  const asString = pairFields ? fieldsToNormalizedString([field, ...pairFields], 0, true) : fieldToNormalizedString(field, 0, true);
+  const asString = fieldsToNormalizedString([field, ...pairFields], 0, true);
   nvdebug(`SOURCE: '${asString}' -- REALITY: ${fieldToString(field)}`, debugDev);
   //fieldsAsString.forEach(str => nvdebug(`TARGET: '${str}'`, debugDev));
   const tmp = pairFields.length ? fieldsToString(pairFields) : 'HUTI';
