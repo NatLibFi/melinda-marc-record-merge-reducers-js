@@ -2,12 +2,11 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "fin" } ] },
-    { "tag": "700", "ind1": " ", "ind2": " ",
-      "subfields": [
-          { "code": "a", "value": "Nimi," },
-          { "code": "e", "value": "esittäjä," },
-          { "code": "e", "value": "sanoittaja," },
-          { "code": "e", "value": "säveltäjä." }
+    { "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Nimi," },
+      { "code": "e", "value": "säveltäjä," },
+      { "code": "e", "value": "sanoittaja," },
+      { "code": "e", "value": "esittäjä." }
       ] },
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "i", "value": "Elokuvaversion perustana (teos)" },

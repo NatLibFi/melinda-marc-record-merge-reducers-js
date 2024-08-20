@@ -4,8 +4,9 @@
     { "tag": "100", "ind1": "1", "ind2": " ",
       "subfields": [
         { "code": "a", "value": "Sukunimi, Etunimi," },
-        { "code": "e", "value": "sovittaja," },
-        { "code": "e", "value": "sanoittaja." }
+        { "code": "e", "value": "sanoittaja," },
+        { "code": "e", "value": "sovittaja." }
+
       ]
     }
   ]
