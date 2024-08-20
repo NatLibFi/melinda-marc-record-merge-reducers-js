@@ -4,7 +4,7 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {fieldToString, nvdebug} from './utils';
-import {fieldGetOccurrenceNumberPairs, recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6GetOccurrenceNumber, subfield6ResetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6ResetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 import {getFieldsWithSubfield6Index, isRelevantField6} from './subfield6Utils';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
@@ -26,16 +26,6 @@ export default () => (base, source) => {
   return {base, source: sourceRecord};
 };
 
-function subfield6Index(subfield) {
-  const indexPart = subfield6GetOccurrenceNumber(subfield);
-  if (indexPart === undefined) {
-    return 0;
-  }
-
-  const result = parseInt(indexPart, 10);
-  //nvdebug(`SF6: ${subfield.value} => ${indexPart} => ${result}`, debugDev);
-  return result;
-}
 
 function reindexSubfield6s(record, baseMax = 0) {
   if (baseMax === 0 || !record.fields) { // No action required
@@ -55,7 +45,8 @@ function fieldUpdateSubfield6s(field, max) {
 
   function updateSubfield6(sf, max) {
     if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statements
-      const origIndex = subfield6Index(sf);
+      //const origIndex = subfield6Index(sf);
+      const origIndex = subfield6GetOccurrenceNumberAsInteger(sf);
       if (origIndex === 0) {
         // "00" is valid exception value. It is not reindexed!
         return;
