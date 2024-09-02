@@ -41,13 +41,13 @@
 		"@natlibfi/marc-record-validate": "^8.0.10",
 		"@natlibfi/marc-record-validators-melinda": "^11.3.2",
 		"debug": "^4.3.6",
-		"isbn3": "^1.1.51"
+		"isbn3": "^1.1.52"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.24.8",
+		"@babel/cli": "^7.25.6",
 		"@babel/core": "^7.25.2",
 		"@babel/node": "^7.25.0",
-		"@babel/preset-env": "^7.25.3",
+		"@babel/preset-env": "^7.25.4",
 		"@babel/register": "^7.24.6",
 		"@natlibfi/eslint-config-melinda-backend": "^3.0.5",
 		"@natlibfi/fixugen": "^2.0.9",
