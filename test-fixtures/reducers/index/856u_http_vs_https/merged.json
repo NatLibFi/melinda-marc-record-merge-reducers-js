@@ -4,8 +4,8 @@
     { "tag": "001", "value": "12345"},
 
     { "tag": "856", "ind1": "4", "ind2": "0", "subfields": [
-      { "code": "u", "value": "https://urn.fi/polku/123" },
-      { "code": "q", "value": "Wanha"}
+      { "code": "q", "value": "Wanha"},
+      { "code": "u", "value": "https://urn.fi/polku/123" }
     ] },
 
     { "tag": "856", "ind1": "4", "ind2": "0", "subfields": [

@@ -4,9 +4,10 @@
     { "tag": "700", "ind1": "1", "ind2": " ",
       "subfields": [
         { "code": "a", "value": "Koivu, Matti Johannes," },
-        { "code": "e", "value": "esittäjä," },
         { "code": "e", "value": "sanoittaja," },
-        { "code": "e", "value": "sovittaja." }
+        { "code": "e", "value": "sovittaja," },
+        { "code": "e", "value": "esittäjä." }
+
       ]
     }
   ]
