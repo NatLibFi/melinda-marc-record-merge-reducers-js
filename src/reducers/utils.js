@@ -13,16 +13,6 @@ export function getTags(fields) {
   return tags;
 }
 
-export function fieldsAreIdentical(field1, field2) {
-  if (field1.tag !== field2.tag) { // NB! We are skipping normalizations here on purpose! They should be done beforehand...
-    return false;
-  }
-  return fieldToString(field1) === fieldToString(field2);
-
-  // The order of subfields is relevant! Bloody JS idiotisms make people use conditions such as:
-  // return field1.subfields.every(sf => field2.subfields.some(sf2 => sf.code === sf2.code && sf.value === sf2.value));
-}
-
 export function subfieldToString(sf) {
   return `‡${sf.code} ${sf.value}`;
 }
@@ -55,75 +45,6 @@ export function copyFields(record, fields) {
 const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
 
 
-function marc21GetTagsLegalIndicators(tag) {
-  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
-  if (fieldSpecs.length === 0) {
-    return undefined;
-  }
-  return fieldSpecs[0].indicators;
-}
-
-export function marc21GetTagsLegalInd1Value(tag) {
-  const indicator = marc21GetTagsLegalIndicators(tag);
-  if (indicator === undefined) {
-    return undefined;
-  }
-  return indicator.ind1;
-}
-
-export function marc21GetTagsLegalInd2Value(tag) {
-  const indicator = marc21GetTagsLegalIndicators(tag);
-  if (indicator === undefined) {
-    return undefined;
-  }
-  return indicator.ind2;
-}
-
-
-function isNonStandardNonrepeatableSubfield(tag, subfieldCode) {
-  // Put these into config or so...
-  if (tag === '264') {
-    return ['a', 'b', 'c'].includes(subfieldCode);
-  }
-
-  if (['336', '337', '338'].includes(tag)) {
-    return ['a', 'b', '2'].includes(subfieldCode);
-  }
-
-  return false;
-}
-
-
-export function subfieldIsRepeatable(tag, subfieldCode) {
-
-  if (isNonStandardNonrepeatableSubfield(tag, subfieldCode)) {
-    return false;
-  }
-
-  // These we know or "know":
-  // NB2! $5 is (according to MARC21 format) non-repeatable, and not usable in all fields, but Melinda has a local exception to this, see MET-300
-  if ('0159'.indexOf(subfieldCode) > -1) {
-    // Uh, can $0 appear on any field?
-    return true;
-  }
-
-  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
-  if (fieldSpecs.length !== 1) {
-    nvdebug(` WARNING! Getting field ${tag} data failed! ${fieldSpecs.length} hits. Default value true is used for'${subfieldCode}' .`, debugDev);
-    return true;
-  }
-
-  const subfieldSpecs = fieldSpecs[0].subfields.filter(subfield => subfield.code === subfieldCode);
-  // Currently we don't support multiple $6 fields due to re-indexing limitations...
-  // Well, $6 is non-repeatable, isn't it?!?
-  // (This might actually already be fixed... Marginal issue, but check eventually.)
-  if (subfieldSpecs.length !== 1 || subfieldCode === '6') {
-    return false; // repeatable if not specified, I guess. Maybe add log or warn?
-  }
-  return subfieldSpecs[0].repeatable;
-}
-
-
 export function tagIsRepeatable(tag) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
@@ -132,11 +53,6 @@ export function tagIsRepeatable(tag) {
   }
   return fieldSpecs[0].repeatable;
 }
-
-export function subfieldsAreIdentical(subfieldA, subfieldB) {
-  return subfieldA.code === subfieldB.code && subfieldA.value === subfieldB.value;
-}
-
 
 // NVOLK's marc record modifications
 export function fieldHasSubfield(field, subfieldCode, subfieldValue = null) {
@@ -158,9 +74,6 @@ export function fieldHasNSubfields(field, subfieldCode/*, subfieldValue = null*/
   //return subset.length;
 }
 
-export function fieldHasMultipleSubfields(field, subfieldCode/*, subfieldValue = null*/) {
-  return fieldHasNSubfields(field, subfieldCode) > 1;
-}
 
 /*
 export function recordHasField(record, tag) {
@@ -192,19 +105,6 @@ export function nvdebug(message, func = undefined) {
 
 export function nvdebugFieldArray(fields, prefix = '  ', func = undefined) {
   fields.forEach(field => nvdebug(`${prefix}${fieldToString(field)}`, func));
-}
-
-export function nvdebugSubfieldArray(subfields, prefix = '  ', func = undefined) {
-  subfields.forEach(subfield => nvdebug(`${prefix}${subfieldToString(subfield)}`, func));
-}
-
-export function removeCopyright(value) {
-  return value.replace(/^(?:c|p|©|℗|Cop\. ?) ?((?:1[0-9][0-9][0-9]|20[012][0-9])\.?)$/ui, '$1'); // eslint-disable-line prefer-named-capture-group
-}
-
-export function hasCopyright(value) {
-  const modValue = removeCopyright(value);
-  return value !== modValue;
 }
 
 /*
