@@ -1,6 +1,10 @@
+//
+// This file reindexes source record's subfield $8 indexes, so that they won't overlap with base record's corresponding indexes when merging.
+//
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {nvdebug} from './utils';
+
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:reindexSubfield8');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');

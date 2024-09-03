@@ -3,7 +3,7 @@ import createDebugLogger from 'debug';
 import {tagIsRepeatable, fieldToString, nvdebug} from './utils';
 
 import {MarcRecord} from '@natlibfi/marc-record';
-import {postprocessRecords} from './mergeOrAddPostprocess.js';
+import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess';
 import {preprocessBeforeAdd} from './processFilter.js';
 import fs from 'fs';
 import path from 'path';

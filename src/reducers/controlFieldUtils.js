@@ -19,7 +19,7 @@ export function hasLegalLength(field) {
       //nvdebug(`${c0}: COMPARE ${f007Lengths[c0]} vs ${field.value.length}`, debugDev);
       return field.value.length === f007Lengths[c0];
     }
-    return false; // Sanity check. It's ok that no test reaches this poin.
+    return false; // Sanity check. It's ok that no test reaches this point.
   }
 
   if (field.tag === '008') {

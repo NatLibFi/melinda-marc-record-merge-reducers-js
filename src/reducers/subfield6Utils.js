@@ -2,18 +2,12 @@ import createDebugLogger from 'debug';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
 import {fieldToString, nvdebug, subfieldToString} from './utils';
-import {fieldGetOccurrenceNumberPairs, fieldToNormalizedString, fieldsToNormalizedString, isValidSubfield6, subfield6GetOccurrenceNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, fieldsToNormalizedString, isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
-
-// NB! Subfield 6 is non-repeatable and always comes first!
-// NB! Index size is always 2 (preceding 0 required for 01..09)
-// How to handle non-linking value '00'? (Now accepted.) Support for 100+ was added on 2023-02-27.
-const sf6Regexp = /^[0-9][0-9][0-9]-(?:[0-9][0-9]|[1-9][0-9]+)(?:[^0-9].*)?$/u;
-
 
 // Validators' corresponding function should be exportable...
 export function subfieldGetTag6(subfield) {
@@ -22,12 +16,6 @@ export function subfieldGetTag6(subfield) {
   }
   return undefined;
 }
-
-/*
-export function intToTwoDigitString(i) {
-  return i < 10 ? `0${i}` : `${i}`;
-}
-  */
 
 export function resetSubfield6Tag(subfield, tag) {
   if (!isValidSubfield6(subfield)) {
@@ -43,22 +31,19 @@ export function isRelevantField6(field) { // ...
   if (!field.subfields || field.tag === '880') {
     return false;
   }
-  const sf6s = field.subfields.filter(sf => sf.code === '6' && sf.value.match(sf6Regexp));
+  const sf6s = field.subfields.filter(sf => isValidSubfield6(sf));
   return sf6s.length === 1;
 }
 
 export function pairAndStringify6(field, record) {
   const pairs6 = fieldGetOccurrenceNumberPairs(field, record.fields);
-  if (!pairs6.length) {
-    return fieldToNormalizedString(field);
-  }
-  return fieldsToNormalizedString([field].concat(pairs6), 0, true);
+  return fieldsToNormalizedString([field, ...pairs6], 0, true);
 }
 
 
 export function removeField6IfNeeded(field, record, fieldsAsString) {
   const pairFields = fieldGetOccurrenceNumberPairs(field, record.fields);
-  const asString = pairFields ? fieldsToNormalizedString([field, ...pairFields], 0, true) : fieldToNormalizedString(field, 0, true);
+  const asString = fieldsToNormalizedString([field, ...pairFields], 0, true);
   nvdebug(`SOURCE: '${asString}' -- REALITY: ${fieldToString(field)}`, debugDev);
   //fieldsAsString.forEach(str => nvdebug(`TARGET: '${str}'`, debugDev));
   const tmp = pairFields.length ? fieldsToString(pairFields) : 'HUTI';
@@ -77,14 +62,3 @@ export function removeField6IfNeeded(field, record, fieldsAsString) {
   pairFields.forEach(pairField => record.removeField(pairField));
 }
 
-
-export function getFieldsWithSubfield6Index(record, index) {
-  return record.fields.filter(field => fieldHasIndex(field, index));
-
-  function fieldHasIndex(field, index) {
-    if (!field.subfields) {
-      return false;
-    }
-    return field.subfields.find(sf => isValidSubfield6(sf) && subfield6GetOccurrenceNumber(sf) === index);
-  }
-}

@@ -10,7 +10,8 @@
 
     { "tag": "856", "ind1": "4", "ind2": "0", "subfields": [
       { "code": "u", "value": "https://urn.fi/polku/321" },
-      { "code": "q", "value": "Wanha 2"}
+      { "code": "q", "value": "Wanha 2"},
+      { "code": "q", "value": "Uusi 2"}
     ] },
     { "tag": "856", "ind1": "4", "ind2": "0", "subfields": [
       { "code": "u", "value": "http://urn.fi/polku/432" },
