@@ -1,7 +1,5 @@
 import createDebugLogger from 'debug';
-
-import fs from 'fs';
-import path from 'path';
+import {melindaCustomMergeFields as melindaFields} from '@natlibfi/marc-record-validators-melinda/dist/melindaCustomMergeFields';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils');
 //const debugData = debug.extend('data');
@@ -40,10 +38,6 @@ export function copyFields(record, fields) {
   // tags.forEach(tag => debugDev('Field '+ mapDataField(copied from source to base`));
   return record;
 }
-
-// Get field specs from melindaCustomMergeFields.json
-const melindaFields = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'melindaCustomMergeFields.json'), 'utf8'));
-
 
 export function tagIsRepeatable(tag) {
   const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
