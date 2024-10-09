@@ -1,0 +1,5 @@
+{
+  "description":"Check MET-573: don't merge $5",
+  "skip": false,
+  "only": true
+}
