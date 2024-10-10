@@ -7,12 +7,12 @@
       { "code": "b", "value": "helka" }
     ]},
     { "tag": "SID", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "c", "value": "873414" },
-      { "code": "b", "value": "vaari" }
-    ]},
-    { "tag": "SID", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "c", "value": "98765" },
       { "code": "b", "value": "helmet" }
+    ]},
+    { "tag": "SID", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "c", "value": "873414" },
+      { "code": "b", "value": "vaari" }
     ]},
     { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "FIKKA" } ]},
     { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "HELKA" } ]},
