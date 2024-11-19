@@ -1,4 +1,4 @@
 {
   "description": "MELINDA-10692: add 341 and 347, don't add these 500 and 594",
-  "only": true
+  "only": false
 }
