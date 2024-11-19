@@ -16,7 +16,7 @@
                 "recordType": "source",
                 "comment": "MRA-763: remove various fields from a source prepublication if base record is good enough (ENNAKKOTIETO)",
                 "fieldSpecification": {
-                    "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|341|347|500|506|540|594|776|856|884|946|974).)*$",
+                    "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|306|341|344|347|500|506|532|540|594|776|856|884|946|974).)*$",
                     "encodingLevel": ["8"]
                 },
                 "requireSourceField": {
@@ -55,7 +55,7 @@
                 "recordType": "source",
                 "comment": "MRA-763: remove various fields from a source prepublication if base record is good enough (Koneellisesti tuotettu tietue)",
                 "fieldSpecification": {
-                    "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|341|347|500|506|540|594|776|856|884|946|974).)*$",
+                    "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|306|341|344|347|500|506|532|540|594|776|856|884|946|974).)*$",
                     "encodingLevel": ["2", "8"]
                 },
                 "requireSourceField": {
