@@ -1,7 +1,7 @@
 import createDebugLogger from 'debug';
 import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 
-import {fieldToString, nvdebug, subfieldToString} from './utils';
+import {fieldToString, nvdebug} from './utils';
 import {fieldGetOccurrenceNumberPairs, fieldsToNormalizedString, isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 // import {fieldToString, nvdebug} from './utils';
 
@@ -15,16 +15,6 @@ export function subfieldGetTag6(subfield) {
     return subfield.value.substring(0, 3);
   }
   return undefined;
-}
-
-export function resetSubfield6Tag(subfield, tag) {
-  if (!isValidSubfield6(subfield)) {
-    return;
-  }
-  // NB! mainly for 1XX<->7XX transfers
-  const newValue = `${tag}-${subfield.value.substring(4)}`;
-  nvdebug(`Set subfield $6 value from ${subfieldToString(subfield)} to ${newValue}`, debugDev);
-  subfield.value = newValue; // eslint-disable-line functional/immutable-data
 }
 
 export function isRelevantField6(field) { // ...
