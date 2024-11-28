@@ -37,9 +37,8 @@
 	},
 	"dependencies": {
 		"@natlibfi/marc-record": "^9.1.1",
-		"@natlibfi/marc-record-merge": "^7.0.6",
-		"@natlibfi/marc-record-validate": "^8.0.11",
-		"@natlibfi/marc-record-validators-melinda": "^11.4.2",
+		"@natlibfi/marc-record-validate": "^8.0.12",
+		"@natlibfi/marc-record-validators-melinda": "^11.4.3",
 		"debug": "^4.3.7",
 		"isbn3": "^1.2.3"
 	},
@@ -52,6 +51,7 @@
 		"@natlibfi/eslint-config-melinda-backend": "^3.0.5",
 		"@natlibfi/fixugen": "^2.0.12",
 		"@natlibfi/fixura": "^3.0.11",
+		"@natlibfi/marc-record-merge": "^7.0.7",
 		"babel-plugin-istanbul": "^7.0.0",
 		"babel-plugin-rewire": "^1.2.0",
 		"chai": "^4.5.0",
