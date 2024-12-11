@@ -1,4 +1,6 @@
 {
   "description":"MET-571/02: remove source 594 $a EI VASTAANOTETTU as base LDR/17!=8 and has FENNI LOW",
+  "comment": "DEPRECATED TEST! Replaced by MELKEHITYS-3107 logic.",
+  "skip": true,
   "only": false
 }
