@@ -1,5 +1,5 @@
-import {resetSubfield6Tag, subfieldGetTag6} from './subfield6Utils';
-import {fieldGetOccurrenceNumberPairs} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {subfieldGetTag6} from './subfield6Utils';
+import {fieldGetOccurrenceNumberPairs, resetSubfield6Tag} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 import {fieldToString, nvdebug} from './utils';
 import createDebugLogger from 'debug';
 

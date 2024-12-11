@@ -33,10 +33,9 @@
             {
                 "operation": "removeField",
                 "recordType": "source",
-                "comment": "MET-571: remove 594 $a EI VASTAANOTETTU from a source prepublication if base record is good enough",
+                "comment": "MELKEHITYS-3107: remove 594 $a EI VASTAANOTETTU from a source if base belongs to FIKKA. Replaces tighter MET-571 rule.",
                 "fieldSpecification": {
                     "tagPattern": "^594$",
-                    "encodingLevel": ["8"],
                     "subfieldFilters": [
                         {"code": "a", "value": "EI VASTAANOTETTU"},
                         {"code": "5", "value": "FENNI"}
@@ -45,9 +44,8 @@
                 "requireBaseField": {
                     "tag": "LOW",
                     "subfieldFilters": [
-                        {"code": "a", "valuePattern": "^(?:FENNI|FIKKA)$"}
-                    ],
-                    "encodingLevel": [" ", "1", "2", "3", "5", "7"]
+                        {"code": "a", "value": "FIKKA"}
+                    ]
                 }
             },
 
