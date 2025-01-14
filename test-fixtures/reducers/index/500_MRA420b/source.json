@@ -6,10 +6,10 @@
       { "code": "a", "value": "finb" }
     ]},
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS" }
+      { "code": "a", "value": "tarkistettu ennakkotieto / KIRJAVÄLITYS" }
     ]},
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "ENNAKKOTIETO" }
+      { "code": "a", "value": "ennakkotieto" }
     ]},
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "Random noise should go through" }

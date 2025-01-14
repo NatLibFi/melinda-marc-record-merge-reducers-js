@@ -6,10 +6,10 @@
       { "code": "a", "value": "EI VIELÄ ILMESTYNYT, arvioitu ilmestymisaika 01.08.2022" }
     ]},
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "ENNAKKOTIETO" }
+      { "code": "a", "value": "ENNAKKOTIETO." }
     ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS" },
+      { "code": "a", "value": "tarkistettu ennakkotieto / KIRJAVÄLITYS" },
       { "code": "5", "value": "FENNI" }
     ]}
   ]

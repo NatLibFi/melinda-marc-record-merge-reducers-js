@@ -5,7 +5,7 @@
     { "tag": "100", "ind1": "1", "ind2": "0", "subfields": [
       { "code": "a", "value": "Etunimi, Sukunimi," },
       { "code": "e", "value": "kirjoittaja." },
-      { "code": "g", "value": "ENNAKKOTIETO" }
+      { "code": "g", "value": "ennakkotieto" }
     ]},
     { "tag": "700", "ind1": "1", "ind2": "0", "subfields": [
       { "code": "a", "value": "Etunimi, Sukunimi," },
@@ -15,7 +15,7 @@
     { "tag": "700", "ind1": "1", "ind2": "0", "subfields": [
       { "code": "a", "value": "Etunimi, Sukunimi," },
       { "code": "e", "value": "kansikuva." },
-      { "code": "g", "value": "ENNAKKOTIETO" }
+      { "code": "g", "value": "Ennakkotieto" }
     ]}
   ]
 }
