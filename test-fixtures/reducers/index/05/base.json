@@ -7,14 +7,14 @@
       { "code": "c", "value": "Getaway games & Roope Lipasti" }
 
     ] },
-    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 500 base" } ]},
-    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "ENNAKKOTIETO 500 base" } ] },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "tarkistettu ennakkotieto 500 base" } ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "ennakkotieto 500 base" } ] },
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 594 base" },
+        { "code": "a", "value": "tarkistettu ennakkotieto 594 base" },
         { "code": "5", "value": "FIKKA" }
     ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "ENNAKKOTIETO 594 base" },
+        { "code": "a", "value": "ennakkotieto 594 base" },
         { "code": "5", "value": "VIOLA" }
     ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
