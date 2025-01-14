@@ -102,5 +102,8 @@
 		"statements": 80,
 		"functions": 80,
 		"branches": 80
+	},
+	"overrides": {
+		"nanoid": "^3.3.8"
 	}
 }
