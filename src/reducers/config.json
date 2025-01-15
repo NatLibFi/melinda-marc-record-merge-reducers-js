@@ -76,6 +76,7 @@
                     "tagPattern": "^(648|650|651|653|655)$",
                     "subfieldFilters": [{"code": "g", "valuePattern": "^(?:[Ee]nnakkotieto|ENNAKKOTIETO)\\.?$"}]
                 },
+                "requireBaseField": {
                     "tagPattern": "^(648|650|651|655)$",
                     "subfieldFilters": [{"missingCode": "g"}]
                 }
