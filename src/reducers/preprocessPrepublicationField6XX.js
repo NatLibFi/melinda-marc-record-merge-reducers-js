@@ -10,7 +10,7 @@ const debugDev = debug.extend('dev');
 /* // MET-33 (comments):
 ENNAKKOTIETOMERKINNÄLLISET ASIASANAT (600-655) $gENNAKOTIETO / $9 ENNAKKOTIETO
 
-    If baseRecordLevel > prePub && baseRecord has some fields 600-655 -> drop NV: siis tiputetaan kaikki sourcen 6XX-kentät, joissa on $g ENNAKKOTIE tai $9 ENNAKKOTIETO?
+    If baseRecordLevel > prePub && baseRecord has some fields 600-655 -> drop NV: siis tiputetaan kaikki sourcen 6XX-kentät, joissa on $g ENNAKKOTIETO tai $9 ENNAKKOTIETO?
     OK
     If baseRecordLevel === prePub -> keepFromSource, merge with existing fields, drop prePubSubfield if existing doesn't have it, for merge search just based on term (sf $a), search in all subjectHeadings fields
     OK
