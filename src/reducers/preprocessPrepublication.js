@@ -5,7 +5,7 @@
 // Ennakkotietokenttä / prePublicationNote:
 // ========================================
 //
-// "500 jossa ENNAKKOTIETO/TARKISTETTU ENNAKKOTIETO/KONEELLISESTI TUOTETTU TIETUE
+// "500 jossa ennakkotieto/tarkistettu ennakkotieto/Koneellisesti tuotettu tietue [and legay ENNAKKOTIETO/TARKISTETTU ENNAKKOTIETO]
 // KEEP fromSource if baseRecordLevel/mergedRecordLevel === prePub,
 // merge by keeping the most advanced prePublicationNote (or keep all first?).
 // DROP fromSource if baseRecordLevel/mergedRecordLevel > prePub"
@@ -115,7 +115,7 @@ function removeUnwantedSourceField594s(base, source) {
 
 function removeUninterestingSourceField594s(base, source) {
   // Remove them source 594 fields that already have same or better base 594 source field
-  // Koneellisesti tuotettu tietue > Tarkistettu ennakkotieto > Ennakkotieto.
+  // "Koneellisesti tuotettu tietue" > "tarkistettu ennakkotieto" > "ennakkotieto".
   const baseFields594 = getRelevant5XXFields(base, false, true); // 2nd are true means 594 $5 FIKKA/FENNI/VIOLA
   if (baseFields594.length === 0) {
     return;
@@ -172,7 +172,7 @@ function preprocessSourceFields594And500(base, source) {
   // Prepub encoding level can't be worse that Fennica prepub level, can it?
   // Apply to source, but how about base?
   copySource594ToSource500(source);
-  removeWorsePrepubField500s(source); // Eg. if has "Koneellisesti tuotettu tietue", remove "ENNAKKOTIETO" etc
+  removeWorsePrepubField500s(source); // Eg. if has "Koneellisesti tuotettu tietue", remove "ennakkotieto" etc
 
   removeUnwantedSourceField500s(base, source); // Base > prepub, drop sources prepub fields
 
