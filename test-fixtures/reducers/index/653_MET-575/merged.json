@@ -1,0 +1,18 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "245", "ind1": "0", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Pakoretki mestauslavalta." }
+    ] },
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "taikasana" },
+      { "code": "2", "value": "yso/fin" }
+    ]},
+    { "tag": "651", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "Turku" },
+      { "code": "2", "value": "yso/fin" }
+    ]},
+    { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "FIKKA" } ] }
+
+   ]
+}

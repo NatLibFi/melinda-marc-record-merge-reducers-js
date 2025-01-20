@@ -7,7 +7,7 @@
 
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 500 source." } ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 594 source" },
+        { "code": "a", "value": "tarkistettu ennakkotieto 594 source" },
         { "code": "5", "value": "FIKKA" }
       ]
     },

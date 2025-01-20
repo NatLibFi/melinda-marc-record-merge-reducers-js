@@ -22,7 +22,7 @@
                 },
                 "requireSourceField": {
                     "tag": "500",
-                    "subfieldFilters": [{"code": "a", "valuePattern": "^(?:TARKISTETTU )?ENNAKKOTIETO"}]
+                    "subfieldFilters": [{"code": "a", "valuePattern": "^(?:[Ee]nnakkotieto|ENNAKKOTIETO|[Tt]arkistettu ennakkotieto|TARKISTETTU ENNAKKOTIETO)"}]
                 },
                 "requireBaseField": {
                     "tag": "...",
@@ -74,7 +74,7 @@
                 "comment": "Remove 65X $g ENNAKKOTIETO fields from source if base has 65X without a $g ENNAKKOTIETO",
                 "fieldSpecification": {
                     "tagPattern": "^(648|650|651|653|655)$",
-                    "subfieldFilters": [{"code": "g", "value": "ENNAKKOTIETO"}]
+                    "subfieldFilters": [{"code": "g", "valuePattern": "^(?:[Ee]nnakkotieto|ENNAKKOTIETO)\\.?$"}]
                 },
                 "requireBaseField": {
                     "tagPattern": "^(648|650|651|655)$",

@@ -1,3 +1,4 @@
 {
-  "description":"57: merge fields, skip source's $g ENNAKKOTIETO"
+  "description":"57: merge fields, skip source's $g ennakkotieto",
+  "only": false
 }
