@@ -5,7 +5,7 @@
       { "code": "a", "value": "Pakoretki mestauslavalta." }
     ] },
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Koneellisesti tuotettu tietue." } ] },
-    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "ENNAKKOTIETO" } ] },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Ennakkotieto." } ] },
 
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "Koneellisesti tuotettu tietue" },

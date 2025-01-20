@@ -19,24 +19,13 @@
       "subfields": [
         {
           "code": "a",
-          "value": "TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS."
+          "value": "Tarkistettu ennakkotieto / KIRJAVÄLITYS."
         }
       ]
     },
-    {
-      "tag": "594",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS"
-        },
-        {
-          "code": "9",
-          "value": "FENNI<KEEP>"
-        }
-      ]
-    }
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS" },
+      { "code": "9", "value": "FENNI<KEEP>" }
+    ]}
   ]
 }

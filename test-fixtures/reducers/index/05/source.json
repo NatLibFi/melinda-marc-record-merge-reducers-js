@@ -13,25 +13,25 @@
         { "code": "a", "value": "Koneellisesti tuotettu tietue 500 index 01 source" }
     ]},
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 500 index 01 source" }
+        { "code": "a", "value": "tarkistettu ennakkotieto 500 index 01 source" }
     ]},
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "ENNAKKOTIETO 500 source" }
+        { "code": "a", "value": "ennakkotieto 500 source" }
     ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
         { "code": "a", "value": "Koneellisesti tuotettu tietue 594 source" },
         { "code": "5", "value": "FENNI" }
     ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "TARKISTETTU ENNAKKOTIETO 594 source" },
+        { "code": "a", "value": "tarkistettu ennakkotieto 594 source" },
         { "code": "5", "value": "FIKKA" }
     ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "ENNAKKOTIETO 594 source" },
+        { "code": "a", "value": "ennakkotieto 594 source" },
         { "code": "5", "value": "VIOLA" }
     ]},
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
-        { "code": "a", "value": "ENNAKKOTIETO 594 source" },
+        { "code": "a", "value": "ennakkotieto 594 source" },
         { "code": "5", "value": "WHATEVER" }
     ]},
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [

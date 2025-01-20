@@ -5,7 +5,7 @@
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "a", "value": "Sukunimi, Etunimi," },
       { "code": "d", "value": "1980-" },
-      { "code": "g", "value": "ENNAKKOTIETO."}
+      { "code": "g", "value": "ennakkotieto."}
       ]
     }
   ]

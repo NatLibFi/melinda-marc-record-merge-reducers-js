@@ -27,81 +27,82 @@
             "fieldSpecification": {
                 "tagPattern": "^(?:24[0-9])$"
             },
-                "deletableSubfieldFilter": {"code": "k"}
-            },
-            {
-                "operation": "removeField",
-                "recordType": "source",
-                "comment": "Remove 65X $g ENNAKKOTIETO fields from source if base has 65X without a $g ENNAKKOTIETO",
-                "fieldSpecification": {
-                    "tagPattern": "^(648|650|651|653|655)$",
-                    "subfieldFilters": [{"code": "g", "value": "ENNAKKOTIETO"}]
-                },
-                "requireBaseField": {
-                    "tagPattern": "^(648|650|651|655)$",
-                    "subfieldFilters": [{"missingCode": "g"}]
-                }
-            },
+            "deletableSubfieldFilter": {"code": "k"}
+        },
 
-            {
-                "operation": "removeSubfield",
-                "comment": "Remove X00$d with old and deprecated (1) style value. (1) ... (99) are removed.",
-                "recordType": "both",
-                "fieldSpecification": {
-                    "tagPattern": "^[1678]00$",
-                    "subfieldFilters": [{"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$"}]
-                },
-                "deletableSubfieldFilter": {"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$" }
-            },        
-
-            {
-                "operation": "renameSubfield",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tag": "040",
-                    "subfieldFilters": [{"code": "a"}]
-                },
-                "renamableSubfieldFilter": {"code": "a", "newCode": "d"}
+        {
+            "operation": "removeField",
+            "recordType": "source",
+            "comment": "Remove 65X $g ENNAKKOTIETO fields from source if base has 65X without a $g ENNAKKOTIETO",
+            "fieldSpecification": {
+                "tagPattern": "^(648|650|651|653|655)$",
+                "subfieldFilters": [{"code": "g", "valuePattern": "^(?:ennakkotieto|ENNAKKOTIETO)\\.?$"}]
             },
-
-            {
-                "operation": "removeSubfield",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tag": "041",
-                    "subfieldFilters": [{
-                        "code": "a",
-                        "value": "zxx"
-                    }]
-                },
-                "deletableSubfieldFilter": {"code": "a", "value": "zxx"}
-            },
-
-            {
-                "operation": "removeField",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tagPattern": "^(?:648|650|651|655)$",
-                    "subfieldFilters": [{
-                        "code": "2",
-                        "valuePattern": "^(allars|cilla|musa|ysa)$"
-                    }]
-                }
-            },
-
-            {
-                "operation": "removeField",
-                "recordType": "source",
-                "fieldSpecification": {
-                    "tag": "830",
-                    "subfieldFilters": [{"missingCode": "x"}]
-                },
-                "comment": "NB! Domain-specific. As in specs."
+            "requireBaseField": {
+                "tagPattern": "^(648|650|651|655)$",
+                "subfieldFilters": [{"missingCode": "g"}]
             }
+        },
 
-        ],
+        {
+            "operation": "removeSubfield",
+            "comment": "Remove X00$d with old and deprecated (1) style value. (1) ... (99) are removed.",
+            "recordType": "both",
+            "fieldSpecification": {
+                "tagPattern": "^[1678]00$",
+                "subfieldFilters": [{"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$"}]
+            },
+            "deletableSubfieldFilter": {"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$" }
+        },
+
+        {
+            "operation": "renameSubfield",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tag": "040",
+                "subfieldFilters": [{"code": "a"}]
+            },
+            "renamableSubfieldFilter": {"code": "a", "newCode": "d"}
+        },
+
+        {
+            "operation": "removeSubfield",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tag": "041",
+                "subfieldFilters": [{
+                    "code": "a",
+                    "value": "zxx"
+                }]
+            },
+            "deletableSubfieldFilter": {"code": "a", "value": "zxx"}
+        },
+
+        {
+            "operation": "removeField",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tagPattern": "^(?:648|650|651|655)$",
+                "subfieldFilters": [{
+                    "code": "2",
+                    "valuePattern": "^(allars|cilla|musa|ysa)$"
+                }]
+            }
+        },
+
+        {
+            "operation": "removeField",
+            "recordType": "source",
+            "fieldSpecification": {
+                "tag": "830",
+                "subfieldFilters": [{"missingCode": "x"}]
+            },
+            "comment": "NB! Domain-specific. As in specs."
+        }
+
+    ],
     "mergeConfiguration" :
-    {   
+    {
         "comment": "note that mergeConfiguration refer to field-level merge of subfields",
         "preprocessorDirectives": [
             {
@@ -287,6 +288,5 @@
                 }
             }
         ]
-    
 
 }
