@@ -30,10 +30,10 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   const activeTagPattern = getTagPattern(tagPattern, config);
 
-  //debugData(JSON.stringify(baseRecord));
-  //debugData(JSON.stringify(sourceRecord));
+  nvdebug(JSON.stringify(baseRecord));
+  nvdebug(JSON.stringify(sourceRecord));
 
-  //sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`, debugDev));
+  sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`, debugDev));
 
   //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debugDev);
 
@@ -43,14 +43,14 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
 
 
-  //sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`, debugDev));
+  sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`, debugDev));
 
   const candidateFields = sourceRecord.get(activeTagPattern);
   //  .filter(field => !isMainOrCorrespondingAddedEntryField(field)); // current handle main entries as well
 
 
   candidateFields.forEach(candField => {
-    debugDev(`Now merging (or trying to) field ${fieldToString(candField)}`);
+    nvdebug(`Now merging (or trying to) field ${fieldToString(candField)}`, debug);
     mergeField(baseRecord, sourceRecord, candField, config);
   });
 

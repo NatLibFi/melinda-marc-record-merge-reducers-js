@@ -90,7 +90,7 @@ export function isControlSubfieldCode(subfieldCode) {
 }
 
 export function nvdebug(message, func = undefined) {
-  if (func) {
+  if (func) { // eslint-disable-line functional/no-conditional-statements
     func(message);
     return;
   }
