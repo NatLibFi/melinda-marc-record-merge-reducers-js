@@ -363,12 +363,6 @@ function process008(base, source) {
 
   //console.info(`B: '${base008.value}'\nS: '${source008.value}'`); // eslint-disable-line no-console
 
-  // Switch fields it base has illegal length:
-  if (base008.value.length !== 40) {
-    base008.value = source008.value; // eslint-disable-line functional/immutable-data
-    return;
-  }
-
   //console.info(`${base008.value}\n${source008.value}`); // eslint-disable-line no-console
 
   // All materials (008/00-17, and 008/35-39)
