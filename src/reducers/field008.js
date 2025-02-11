@@ -361,36 +361,33 @@ function process008(base, source) {
     return;
   }
 
-  //console.info(`B: '${base008.value}'\nS: '${source008.value}'`); // eslint-disable-line no-console
+  mergeFields008();
 
-  // Switch fields it base has illegal length:
-  if (base008.value.length !== 40) {
-    base008.value = source008.value; // eslint-disable-line functional/immutable-data
-    return;
+  function mergeFields008() {
+    //console.info(`B: '${base008.value}'\nS: '${source008.value}'`); // eslint-disable-line no-console
+
+    //console.info(`${base008.value}\n${source008.value}`); // eslint-disable-line no-console
+
+    // All materials (008/00-17, and 008/35-39)
+    setOlderDateToBase(base008, source008); // 008/00-05
+    setDates(base008, source008); // 008/06,07-10,11-14
+    setPlaceOfPublication(base008, source008); // 008/15-17
+
+    setLanguage(base008, source008); // 008/35-37
+    setCatalogingSource(base008, source008); // 008/39
+    // Type of material specific code:
+    const baseTypeOfMaterial = base.getTypeOfMaterial();
+    const sourceTypeOfMaterial = source.getTypeOfMaterial();
+    singleCharacterPositionRules.forEach(rule => genericFix(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial, rule));
+
+    // Non-generic rules that require non-generic code:
+    setFormOfItem(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
+    setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16 (selects more specific value if possible)
+    mergeNatureOfContents(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK and CR 008/24-27 (with CR 008/24 adn 008/25-27 being in either-or relation)
+    // Generic rules:
+    const relevantMulticharRules = allGenericMulticharRules.filter(rule => rule.types.includes(baseTypeOfMaterial) && rule.types.includes(sourceTypeOfMaterial));
+    relevantMulticharRules.forEach(rule => genericMergeMultiCharRule(base008, source008, rule));
   }
-
-  //console.info(`${base008.value}\n${source008.value}`); // eslint-disable-line no-console
-
-  // All materials (008/00-17, and 008/35-39)
-  setOlderDateToBase(base008, source008); // 008/00-05
-  setDates(base008, source008); // 008/06,07-10,11-14
-  setPlaceOfPublication(base008, source008); // 008/15-17
-
-  setLanguage(base008, source008); // 008/35-37
-  setCatalogingSource(base008, source008); // 008/39
-  // Type of material specific code:
-  const baseTypeOfMaterial = base.getTypeOfMaterial();
-  const sourceTypeOfMaterial = source.getTypeOfMaterial();
-  singleCharacterPositionRules.forEach(rule => genericFix(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial, rule));
-
-  // Non-generic rules that require non-generic code:
-  setFormOfItem(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // 008/23 or 008/29: 'o' and 'q' are better than 's'. Sort of Item also uses generic fix. See above.
-  setLiteraryForm(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK 008/33 and 006/16 (selects more specific value if possible)
-  mergeNatureOfContents(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial); // BK and CR 008/24-27 (with CR 008/24 adn 008/25-27 being in either-or relation)
-  // Generic rules:
-  const relevantMulticharRules = allGenericMulticharRules.filter(rule => rule.types.includes(baseTypeOfMaterial) && rule.types.includes(sourceTypeOfMaterial));
-  relevantMulticharRules.forEach(rule => genericMergeMultiCharRule(base008, source008, rule));
-
 }
 
 export default () => (base, source) => {
