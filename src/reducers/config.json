@@ -33,11 +33,11 @@
             {
                 "operation": "removeField",
                 "recordType": "source",
-                "comment": "MELKEHITYS-3107: remove 594 $a EI VASTAANOTETTU from a source if base belongs to FIKKA. Replaces tighter MET-571 rule.",
+                "comment": "MELKEHITYS-3107: remove 594 $a 'Ei vastaanotettu' from a source if base belongs to FIKKA. Replaces tighter MET-571 rule.",
                 "fieldSpecification": {
                     "tagPattern": "^594$",
                     "subfieldFilters": [
-                        {"code": "a", "value": "EI VASTAANOTETTU"},
+                        {"code": "a", "valuePattern": "^[Ee][Ii] [Vv][Aa][Ss][Tt][Aa][Aa][Nn][Oo][Tt][Ee][Tt][Tt][Uu]\\.?$"},
                         {"code": "5", "value": "FENNI"}
                     ]
                 },
