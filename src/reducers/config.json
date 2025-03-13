@@ -53,8 +53,9 @@
                 "operation": "removeField",
                 "recordType": "source",
                 "comment": "MRA-763: remove various fields from a source prepublication if base record is good enough (Koneellisesti tuotettu tietue)",
+                "comment2": "Added 024 as per MET-628",
                 "fieldSpecification": {
-                    "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|306|341|344|347|500|506|532|540|594|776|856|884|946|974).)*$",
+                    "tagPattern": "^((?!CAT|LOW|SID|00[135678]|024|035|040|042|306|341|344|347|500|506|532|540|594|776|856|884|946|974).)*$",
                     "comment": "Note that the above regex uses negation, and lists the tags that are retained",
                     "encodingLevel": ["2", "8"]
                 },
