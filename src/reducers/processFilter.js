@@ -1,4 +1,4 @@
-import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
+
 
 import {fieldToString, nvdebug} from './utils.js';
 import {getEncodingLevel} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
@@ -280,17 +280,6 @@ function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFi
   });
 }
 
-function operationRetag(record, fieldSpecification, newTag) {
-  const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
-  relevantFields.forEach(field => {
-    const oldTag = field.tag;
-    resetCorrespondingField880(field, record, newTag);
-    field.tag = newTag; // eslint-disable-line functional/immutable-data
-    nvdebug(`Retagged field ${oldTag} => ${fieldToString(field)}`, debugDev); //, debugDev);
-
-  });
-}
-
 function operationSwapFields(record, otherRecord, fieldSpecification) {
   const relevantFields1 = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
   const relevantFields2 = getSpecifiedFieldsAndFilterThem(otherRecord, fieldSpecification);
@@ -379,10 +368,6 @@ export function filterOperation(base, source, operation) {
     }
     if (operation.operation === 'renameSubfield') {
       operationRenameSubfield(targetRecord, operation.fieldSpecification, operation.renamableSubfieldFilter);
-      return;
-    }
-    if (operation.operation === 'retag') {
-      operationRetag(targetRecord, operation.fieldSpecification, operation.newTag);
       return;
     }
     if (operation.operation === 'swapFields') {

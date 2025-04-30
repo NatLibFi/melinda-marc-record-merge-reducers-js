@@ -229,34 +229,6 @@
             "541", "542", "544", "545", "561", "583", "588", "856"],
         "tolerateBlankIndicator2": ["024", "033", "082", "246", "363", "382", "856" ],
         "preprocessorDirectives" : [
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "100"},
-                "comment": "NB! Retags should check corresponding 880 fields as well.",
-                "newTag": "700"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "110"},
-                "newTag": "710"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "111"},
-                "newTag": "711"
-            },
-
-            {
-                "operation": "retag",
-                "recordType": "source",
-                "fieldSpecification": {"tag": "130"},
-                "newTag": "730"
-            }
         ]
     },
 
@@ -264,7 +236,7 @@
         "preprocessorDirectives" : [
             {
                 "operation": "removeField",
-                "comment": "this should be done after field merge and before copy (could be merged, but not added)",
+                "comment": "This is done after field merge and before copy (could be merged, but not added) (can/should these merge with 130?)",
                 "recordType": "source",
                 "fieldSpecification": {
                     "tag": "240"

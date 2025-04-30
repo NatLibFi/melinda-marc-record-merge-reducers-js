@@ -39,14 +39,9 @@
       ]
     },
     {
-      "tag": "130",
-      "ind1": " ",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "but who cares"
-        }
+      "tag": "130", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "6", "value": "880-02" },
+        { "code": "a", "value": "but who cares" }
       ]
     },
     {
@@ -73,6 +68,13 @@
           "code": "a",
           "value": "lagelli si"
         }
+      ]
+    },
+
+    { "tag": "880", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "6", "value": "130-02" },
+        { "code": "a", "value": "lorum ipsum" }
       ]
     }
 

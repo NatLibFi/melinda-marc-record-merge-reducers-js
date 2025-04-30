@@ -27,6 +27,12 @@
         }
       ]
     },
+
+    { "tag": "240", "ind1": "1", "ind2": "0", "subfields": [
+        { "code": "6", "value": "880-01" },
+        { "code": "a", "value": "but who cares" }
+    ] },
+
     {
       "tag": "700",
       "ind1": " ",
@@ -45,7 +51,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "880-01"
+          "value": "880-02"
         },
         {
           "code": "a",
@@ -64,18 +70,11 @@
         }
       ]
     },
-    {
-      "tag": "730",
-      "ind1": "0",
-      "ind2": " ",
-      "subfields": [
-        {
-          "code": "a",
-          "value": "but who cares"
-        }
-      ]
-    },
-
+    { "tag": "880", "ind1": " ", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "240-01" },
+      { "code": "a", "value": "lorum ipsum" }
+    ]},
     {
       "tag": "880",
       "ind1": " ",
@@ -83,7 +82,7 @@
       "subfields": [
         {
           "code": "6",
-          "value": "710-01"
+          "value": "710-02"
         },
         {
           "code": "a",

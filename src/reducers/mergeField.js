@@ -4,6 +4,7 @@ import {fieldToString, nvdebug} from './utils';
 import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
 import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess';
 import {preprocessBeforeAdd} from './processFilter.js';
+import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 
 import fs from 'fs';
 import path from 'path';
@@ -40,7 +41,8 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   normalizeEncoding().fix(baseRecord);
   normalizeEncoding().fix(sourceRecord);
 
-  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
+  retagSource1XX(sourceRecord);
+  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives); // NB! we should rename func, this may have nothing to with add
 
 
   sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`, debugDev));
@@ -70,3 +72,27 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
     return defCandFieldsRegexp;
   }
 };
+
+export function retagSource1XX(record) {
+  record.fields.forEach(f => retagField(f));
+
+  // NB! 880$6 stuff is nor currently checked...
+
+  function retagField(field) {
+    if (['100', '110', '111'].includes(field.tag)) { // 1XX -> 7XX
+      const newTag = `7${field.tag.substring(1)}`;
+      resetCorrespondingField880(field, record, newTag);
+      field.tag = newTag; // eslint-disable-line functional/immutable-data
+      return;
+    }
+    if (field.tag === '130') {
+      resetCorrespondingField880(field, record, '240');
+      field.tag = '240'; // eslint-disable-line functional/immutable-data
+      field.ind2 = field.ind1; // eslint-disable-line functional/immutable-data
+      field.ind1 = '1'; // eslint-disable-line functional/immutable-data
+      // NB! 130 might have a $t, but that's so theoretical, that I'm not checking nor handling it.
+      // No other known differences (subfields, punctuation etc.)
+      return;
+    }
+  }
+}
