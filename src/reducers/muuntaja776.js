@@ -25,7 +25,7 @@ export default () => (base, source) => {
 
 /*
 function removeIdentifierFields(record) {
-  record.fields = record.fields.filter(f => !['015', '020', '022', '338'].includes(f.tag)); // eslint-disable-line functional/immutable-data
+  record.fields = record.fields.filter(f => !['015', '020', '022', '338'].includes(f.tag));
 }
 */
 

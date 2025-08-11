@@ -37,10 +37,10 @@ export default (tagPattern = false, config = muuntajaConfig) => (base, source) =
   //const val3 = swapAuthorFields(val4.base, val4.source);
 
   const mergeDataFields = mergeDataFieldsProto(tagPattern, config.mergeConfiguration);
-  const val = mergeDataFields(val4.base, val4.source); // eslint-disable-line functional/immutable-data
+  const val = mergeDataFields(val4.base, val4.source);
 
   const addDataFields = addDataFieldsProto(config.addConfiguration); // base, source);
-  const val2 = addDataFields(val.base, val.source); // eslint-disable-line functional/immutable-data
+  const val2 = addDataFields(val.base, val.source);
 
   nvdebug(`PAST MERGE'N'ADD`, debugDev);
 
@@ -63,5 +63,5 @@ function copyLanguage(base, source) {
     return;
   }
 
-  base008.value = base008.value.substring(0, 35) + sourceLang + base008.value.substring(38); // eslint-disable-line functional/immutable-data
+  base008.value = base008.value.substring(0, 35) + sourceLang + base008.value.substring(38);
 }

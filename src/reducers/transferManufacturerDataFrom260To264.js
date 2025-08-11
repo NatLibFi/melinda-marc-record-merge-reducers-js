@@ -11,7 +11,7 @@ export default () => (base, source) => {
   const source264 = source.get('264');
 
   //handleRecord(base);
-  if (source264.length === 0 && base264.length > 0) { // eslint-disable-line functional/no-conditional-statements
+  if (source264.length === 0 && base264.length > 0) {
     handleRecord(source);
   }
   return {base, source};
@@ -42,15 +42,15 @@ function isRelevantField(field) {
 function renameSubfield(subfield) {
   nvdebug(`renameSubfield(${subfieldToString(subfield)})`, debugDev);
   if (subfield.code === 'e') {
-    subfield.code = 'a'; // eslint-disable-line functional/immutable-data
+    subfield.code = 'a';
     return;
   }
   if (subfield.code === 'f') {
-    subfield.code = 'b'; // eslint-disable-line functional/immutable-data
+    subfield.code = 'b';
     return;
   }
   if (subfield.code === 'g') {
-    subfield.code = 'c'; // eslint-disable-line functional/immutable-data
+    subfield.code = 'c';
     return;
   }
 }
@@ -70,7 +70,7 @@ function extractSubfield(field, index) {
     return null;
   }
 
-  const [subfield] = field.subfields.splice(index, 1); // eslint-disable-line functional/immutable-data
+  const [subfield] = field.subfields.splice(index, 1);
 
   renameSubfield(subfield);
   return subfield;
@@ -85,8 +85,8 @@ function subfieldArrayRemoveParentheses(subfields) {
   if (lastSubfield.value.slice(-1) !== ')') {
     return;
   }
-  subfields[0].value = subfields[0].value.substring(1); // eslint-disable-line functional/immutable-data
-  lastSubfield.value = lastSubfield.value.slice(0, -1); // eslint-disable-line functional/immutable-data
+  subfields[0].value = subfields[0].value.substring(1);
+  lastSubfield.value = lastSubfield.value.slice(0, -1);
 }
 
 function extractField(field) {
@@ -109,8 +109,8 @@ function extractField(field) {
 }
 
 function retag(field) {
-  field.tag = '264'; // eslint-disable-line functional/immutable-data
-  field.ind2 = '3'; // eslint-disable-line functional/immutable-data
+  field.tag = '264';
+  field.ind2 = '3';
   field.subfields.forEach(subfield => renameSubfield(subfield));
   subfieldArrayRemoveParentheses(field.subfields);
 

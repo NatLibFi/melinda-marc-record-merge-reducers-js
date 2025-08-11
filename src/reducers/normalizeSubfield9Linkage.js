@@ -25,8 +25,8 @@ export default function () { // (commented) validator/fixer style default functi
   function fix(record) {
     const res = {message: [], fix: [], valid: true};
     recordNormalizeSubfield9Linkage(record);
-    // message.fix = []; // eslint-disable-line functional/immutable-data
-    // message.valid = !(message.message.length >= 1); // eslint-disable-line functional/immutable-data
+    // message.fix = [];
+    // message.valid = !(message.message.length >= 1);
     return res;
   }
 
@@ -37,8 +37,8 @@ export default function () { // (commented) validator/fixer style default functi
 
     const position = getIndexOfNextLinkableField(record);
     if (position !== -1) { // Fail
-      res.message.push(`Record had $9 linkage that may need to removed`); // eslint-disable-line functional/immutable-data
-      res.valid = false; // eslint-disable-line functional/immutable-data
+      res.message.push(`Record had $9 linkage that may need to removed`);
+      res.valid = false;
       return res;
     }
 
@@ -110,7 +110,7 @@ function getIndexOfNextLinkableField(record, currPosition = 0) {
 function removeLHSLinkingCharacter(field, replacement) {
   const lastSubfield = getLastSubfield(field);
   nvdebug(`Modify last subfield '${lastSubfield.value}', replacement: '${replacement}'`, debugDev);
-  lastSubfield.value = lastSubfield.value.replace(/\^$/u, replacement); // eslint-disable-line functional/immutable-data
+  lastSubfield.value = lastSubfield.value.replace(/\^$/u, replacement);
   nvdebug(` Modified last subfield '${lastSubfield.value}'`, debugDev);
 }
 
@@ -120,7 +120,7 @@ function addSubfields(targetField, sourceField, subfieldIndex) {
   }
   nvdebug(` sf9-linking: Added subfield $${sourceField.subfields[subfieldIndex].code} ${sourceField.subfields[subfieldIndex].value}`, debugDev);
   // Add subfield to the end of all subfields. NB! Implement a separate function that does this + subfield reordering somehow...
-  targetField.subfields.push(sourceField.subfields[subfieldIndex]); // eslint-disable-line functional/immutable-data
+  targetField.subfields.push(sourceField.subfields[subfieldIndex]);
   return addSubfields(targetField, sourceField, subfieldIndex + 1);
 }
 
@@ -136,10 +136,10 @@ export function recordNormalizeSubfield9Linkage(record, startPosition = 0) {
   const linkageType = getRHSLinkage(nextField); // either '^^' or '^'
 
   removeLHSLinkingCharacter(currField, linkageType === '^^' ? ' ' : ''); // Replace '^' with either ' ' or ''.
-  if (linkageType === '^^') { // eslint-disable-line functional/no-conditional-statements
+  if (linkageType === '^^') {
     nvdebug('CONCAT SUBS BASED ON "^^"', debugDev);
     // Take 2nd subfield (1st is the '$9 ^^') from nextField and append it to the last subfield of currField
-    currField.subfields[currField.subfields.length - 1].value += nextField.subfields[1].value; // eslint-disable-line functional/immutable-data
+    currField.subfields[currField.subfields.length - 1].value += nextField.subfields[1].value;
     nvdebug(`POS${position} value is now ${currField.subfields[currField.subfields.length - 1].value}`, debugDev);
   }
 
@@ -148,7 +148,7 @@ export function recordNormalizeSubfield9Linkage(record, startPosition = 0) {
 
   // Remove next field:
   nvdebug('TRY AND REMOVE NEXT FIELD, AS ITS DATA WAS MERGED', debugDev);
-  record.fields.splice(position + 1, 1); // eslint-disable-line functional/immutable-data
+  record.fields.splice(position + 1, 1);
 
   // Recurse/continue from merged record.fields[position]
   recordNormalizeSubfield9Linkage(record, position);

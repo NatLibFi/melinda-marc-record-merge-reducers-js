@@ -173,7 +173,7 @@ function areMergable007Pair(field1, field2) {
   }
 
   function spaceContainsInformation(position) {
-    console.info(`Spaceman at ${categoryOfMaterial} 007/${position}?`); // eslint-disable-line no-console
+    console.info(`Spaceman at ${categoryOfMaterial} 007/${position}?`);
     if (position === 5 && ['c', 'g', 'k', 'm', 'v'].includes(categoryOfMaterial)) { // No sound (silent)
       return true;
     }
@@ -205,7 +205,7 @@ export default () => (base, source) => {
 
   // If both sides have same number of entries, and they apparently are in the same order, let's try to fill them gaps:
   if (baseFields.length > 0 && baseFields.length === sourceFields.length) {
-    if (baseFields.every((baseField, i) => areMergable007Pair(baseField, sourceFields[i]))) { // eslint-disable-line functional/no-conditional-statements
+    if (baseFields.every((baseField, i) => areMergable007Pair(baseField, sourceFields[i]))) {
       // Umm.. 007/00=f has character groups 03-04, 06-08, and 007/00=h 06-08, and 007/00=r 09-10
       baseFields.forEach((baseField, i) => fillField007Gaps(baseField, sourceFields[i]));
     }
@@ -228,7 +228,7 @@ function mergeImageBitDepth(baseField, sourceField, categoryOfMaterial) {
   const sourceScore = scoreImageBitDepth(sourceValue);
 
   if (sourceScore > baseScore) {
-    baseField.value = `${baseField.value.substring(0, 6)}${sourceValue}${baseField.value.substring(9)}`; // eslint-disable-line functional/immutable-data
+    baseField.value = `${baseField.value.substring(0, 6)}${sourceValue}${baseField.value.substring(9)}`;
     return;
   }
   return;
@@ -257,7 +257,7 @@ function mergeClassOfBrailleWriting(baseField, sourceField, categoryOfMaterial) 
   const baseValue = baseField.value.substring(3, 5);
   const sourceValue = sourceField.value.substring(3, 5);
   if (baseValue === '||' && !['||', '  '].includes(sourceValue)) {
-    baseField.value = `${baseField.value.substring(0, 3)}${sourceValue}${baseField.value.substring(5)}`; // eslint-disable-line functional/immutable-data
+    baseField.value = `${baseField.value.substring(0, 3)}${sourceValue}${baseField.value.substring(5)}`;
     return;
   }
   return;
@@ -274,7 +274,7 @@ function mergeBrailleMusicFormat(baseField, sourceField, categoryOfMaterial) {
   const baseValue = baseField.value.substring(start, end);
   const sourceValue = sourceField.value.substring(start, end);
   if (baseValue === '|||' && !['|||', '   '].includes(sourceValue)) {
-    baseField.value = `${baseField.value.substring(0, start)}${sourceValue}${baseField.value.substring(end)}`; // eslint-disable-line functional/immutable-data
+    baseField.value = `${baseField.value.substring(0, start)}${sourceValue}${baseField.value.substring(end)}`;
     return;
   }
   return;
@@ -293,7 +293,7 @@ function mergeMicroformReductionRatio(baseField, sourceField, categoryOfMaterial
   const sourceScore = scoreReductionRatio(sourceValue);
 
   if (sourceScore > baseScore) {
-    baseField.value = `${baseField.value.substring(0, start)}${sourceValue}${baseField.value.substring(end)}`; // eslint-disable-line functional/immutable-data
+    baseField.value = `${baseField.value.substring(0, start)}${sourceValue}${baseField.value.substring(end)}`;
     return;
   }
   return;
@@ -312,7 +312,7 @@ function mergeMicroformReductionRatio(baseField, sourceField, categoryOfMaterial
 
 function fillField007Gaps(baseField, sourceField) {
   if (!hasLegalLength(baseField) && hasLegalLength(sourceField)) {
-    baseField.value = sourceField.value; // eslint-disable-line functional/immutable-data
+    baseField.value = sourceField.value;
     return;
   }
   const categoryOfMaterial = baseField.value.charAt(0);
