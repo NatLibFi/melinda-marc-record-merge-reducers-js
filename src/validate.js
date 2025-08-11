@@ -1,4 +1,3 @@
-/* eslint-disable new-cap */
 import validateFactory from '@natlibfi/marc-record-validate';
 //import validateFactoryPunctuation from '@natlibfi/marc-record-validators-melinda/src/punctuation/';
 import {
