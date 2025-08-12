@@ -82,14 +82,14 @@ export function retagSource1XX(record) {
     if (['100', '110', '111'].includes(field.tag)) { // 1XX -> 7XX
       const newTag = `7${field.tag.substring(1)}`;
       resetCorrespondingField880(field, record, newTag);
-      field.tag = newTag; // eslint-disable-line functional/immutable-data
+      field.tag = newTag;
       return;
     }
     if (field.tag === '130') {
       resetCorrespondingField880(field, record, '240');
-      field.tag = '240'; // eslint-disable-line functional/immutable-data
-      field.ind2 = field.ind1; // eslint-disable-line functional/immutable-data
-      field.ind1 = '1'; // eslint-disable-line functional/immutable-data
+      field.tag = '240';
+      field.ind2 = field.ind1;
+      field.ind1 = '1';
       // NB! 130 might have a $t, but that's so theoretical, that I'm not checking nor handling it.
       // No other known differences (subfields, punctuation etc.)
       return;

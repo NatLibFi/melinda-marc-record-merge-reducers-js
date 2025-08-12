@@ -20,7 +20,6 @@ export default () => (base, source) => {
   */
 
   // Test 01: If LDR 000/06 or 07 is different, do not merge
-  /* eslint-disable functional/no-conditional-statements */
   if (source.leader[6] !== base.leader[6] || source.leader[7] !== base.leader[7]) {
     throw new Error(`LDR 000/06 or 07 is different in base and source`);
   }
@@ -44,7 +43,7 @@ function setRecordStatus(base, source) {
   if (baseStatus === 'n') {
     // Replace 'n' with source's 'c'. Used the array in condition here, so that it's easy to expand it with other values if needed/wanted.
     if (['c'].includes(sourceStatus)) {
-      base.leader = base.leader.substring(0, 5) + sourceStatus + base.leader.substring(6); // eslint-disable-line functional/immutable-data
+      base.leader = base.leader.substring(0, 5) + sourceStatus + base.leader.substring(6);
       return;
     }
   }
@@ -59,6 +58,6 @@ function setBaseEncodingLevel(base, source) { // See MET-33
     return; // No action required
   }
   // Source's LDR/17 is copied to base's LDR/17:
-  base.leader = base.leader.substring(0, 17) + sourceEncodingLevel + base.leader.substring(18); // eslint-disable-line functional/immutable-data
+  base.leader = base.leader.substring(0, 17) + sourceEncodingLevel + base.leader.substring(18);
   deleteAllPrepublicationNotesFromField500InNonPubRecord(base);
 }

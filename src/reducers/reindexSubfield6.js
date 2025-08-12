@@ -44,7 +44,7 @@ function fieldUpdateSubfield6s(field, max) {
   field.subfields.forEach(sf => updateOccurrenceNumber(sf, max));
 
   function updateOccurrenceNumber(sf, baseline) {
-    if (sf.code === '6') { // eslint-disable-line functional/no-conditional-statements
+    if (sf.code === '6') {
       //const origIndex = subfield6Index(sf);
       const originalOccurrenceNumber = subfield6GetOccurrenceNumberAsInteger(sf);
       if (originalOccurrenceNumber === 0) { // "00" is not reset
@@ -83,7 +83,7 @@ export function reindexDuplicateSubfield6Indexes(record) {
       const max = recordGetMaxSubfield6OccurrenceNumberAsInteger(record);
       if (max) {
         const pairFields = fieldGetOccurrenceNumberPairs(currField, record.fields);
-        if (pairFields.length) { // eslint-disable-line functional/no-conditional-statements
+        if (pairFields.length) {
           nvdebug(` PAIR ${fieldsToString(pairFields)}`, debugDev);
           fieldUpdateSubfield6s(currField, max);
           pairFields.forEach(pairField => fieldUpdateSubfield6s(pairField, max));

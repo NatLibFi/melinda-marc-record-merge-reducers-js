@@ -26,7 +26,6 @@ function trimRecord(record) {
   record.fields?.forEach(f => fieldTrimSubfieldValues(f));
 }
 
-// eslint-disable-next-line max-statements
 export default (config = defaultConfig) => (base, source) => {
 
   normalizeEncoding().fix(base);

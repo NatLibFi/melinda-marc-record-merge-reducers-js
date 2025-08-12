@@ -30,7 +30,7 @@ export function hasLegalLength(field) {
 }
 
 
-export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial, rule) { // eslint-disable-line max-params
+export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOfMaterial, sourceTypeOfMaterial, rule) {
   // Initially written fro field 008, but may be applied to 006 and 007 as well (I guess).
   // We apply some rules (eg. for government publication) even if baseTypeOfMaterial !== sourceTypeOfMaterial
   if (!rule.types.includes(baseTypeOfMaterial) || !rule.types.includes(sourceTypeOfMaterial) || rule.validateOnly) {
@@ -52,7 +52,7 @@ export function genericControlFieldCharPosFix(baseField, sourceField, baseTypeOf
 
   if (applyFix()) {
     //console.info(`Apply ${'description' in rule ? rule.description : 'unnamed'} rule at ${rule.startPosition}:\n'${fieldToString(baseField)}' +\n'${fieldToString(sourceField)}' =`); // eslint-disable-line no-console
-    baseField.value = `${baseField.value.substring(0, position)}${sourceValue}${baseField.value.substring(position + len)}`; // eslint-disable-line functional/immutable-data
+    baseField.value = `${baseField.value.substring(0, position)}${sourceValue}${baseField.value.substring(position + len)}`;
     //console.info(`'${fieldToString(baseField)}'`); // eslint-disable-line no-console
     return;
   }
