@@ -36,10 +36,10 @@
 		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
 	},
 	"dependencies": {
-		"@natlibfi/marc-record": "^9.1.4",
+		"@natlibfi/marc-record": "^9.1.6",
 		"@natlibfi/marc-record-merge": "^7.0.10",
 		"@natlibfi/marc-record-validate": "^8.0.14",
-		"@natlibfi/marc-record-validators-melinda": "^11.6.6",
+		"@natlibfi/marc-record-validators-melinda": "^11.6.7",
 		"debug": "^4.4.1",
 		"isbn3": "^1.2.13"
 	},
