@@ -54,7 +54,7 @@ function removeFieldOrSubfield8(record, field, index = 0) {
   if (index === 0) {
     return;
   }
-  field.subfields = field.subfields.filter(sf => sf.code !== '8' || getSubfield8LinkingNumber(sf) !== index); // eslint-disable-line functional/immutable-data
+  field.subfields = field.subfields.filter(sf => sf.code !== '8' || getSubfield8LinkingNumber(sf) !== index);
 
 }
 

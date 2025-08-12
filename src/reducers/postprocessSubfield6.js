@@ -41,7 +41,7 @@ function subfieldApplies(subfield, lookFor) {
   if (subfield.code !== '6') {
     return false;
   }
-  const key = subfield.value.replace(/^([0-9][0-9][0-9]-[0-9][0-9]+).*$/u, '$1'); // eslint-disable-line prefer-named-capture-group
+  const key = subfield.value.replace(/^([0-9][0-9][0-9]-[0-9][0-9]+).*$/u, '$1'); 
   nvdebug(` Compare '${key}' vs '${lookFor}'`, debugDev);
   return key === lookFor;
 }
@@ -87,7 +87,7 @@ function cleanAndReturnTrueIfDeletable(field, fields) {
         const removables = field.subfields.filter(sf => pairlessSixes.every(sf2 => sf2.code === sf.code && sf2.value === sf.value));
         removables.forEach(sf => nvdebug(`Remove pairless $6 subfield: ${subfieldToString(sf)}`, debugDev));
 
-        field.subfields = remainingSubfields; // eslint-disable-line functional/immutable-data
+        field.subfields = remainingSubfields;
         return false;
       }
       return true;
@@ -108,15 +108,13 @@ function recordRemovePairlessFields(record) {
 
 }
 
-
 export function removeDuplicatedDatafieldsWithSubfield6(record) {
-  /* eslint-disable */
   let seen = {};
 
   record.fields.forEach(field => nvdebug(`CHECK ${fieldToString(field)}`, debugDev));
-  
+
   const fields6 = record.fields.filter(field => isRelevantField6(field)); // Does not get 880 fields
-  
+
   fields6.forEach(field => removeDuplicatedDatafieldWithSubfield6(field));
 
   function removeDuplicatedDatafieldWithSubfield6(field) {
@@ -130,5 +128,4 @@ export function removeDuplicatedDatafieldsWithSubfield6(record) {
     seen[fieldAsString] = 1;
   }
 
-  /* eslint-enable */
 }

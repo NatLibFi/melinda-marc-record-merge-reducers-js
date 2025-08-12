@@ -46,7 +46,7 @@ export function reindexSubfield8s(record, baseMax) {
 
     const index = oldIndex + max;
     const strindex = `${index}`;
-    sf.value = sf.value.replace(`${oldIndex}`, strindex); // eslint-disable-line functional/immutable-data
+    sf.value = sf.value.replace(`${oldIndex}`, strindex);
     debugDev(`SF8 is now ${sf.value}`);
   }
 }

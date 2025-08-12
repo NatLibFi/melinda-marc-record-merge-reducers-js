@@ -34,7 +34,7 @@ function setOlderDateToBase(base008, source008) { // 008/00-05
   }
 
   // Use 008/00-05 date from source
-  base008.value = `${sourceDate}${base008.value.substring(6)}`; // eslint-disable-line functional/immutable-data
+  base008.value = `${sourceDate}${base008.value.substring(6)}`;
 
   function getCentury(decadeString) {
     if (['5', '6', '7', '8', '9'].includes(decadeString.charAt(0))) {
@@ -56,7 +56,7 @@ function sourceTypeOfDateIsBetter(base008Value, source008Value) {
 
 function setDates(base008, source008) { // 008/06-14 (stub, extend later on)
   if (sourceTypeOfDateIsBetter(base008.value, source008.value)) {
-    base008.value = `${getDateEnteredOnFile(base008)}${source008.value.substring(6, 15)}${base008.value.substring(15)}`; // eslint-disable-line functional/immutable-data
+    base008.value = `${getDateEnteredOnFile(base008)}${source008.value.substring(6, 15)}${base008.value.substring(15)}`;
     return;
   }
 }
@@ -73,7 +73,7 @@ export function setFormOfItem(baseField, sourceField, baseTypeOfMaterial, source
     const sourceFormOfItemPosition = getFormOfItemPosition(sourceTypeOfMaterial);
     const sourceFormOfItem = sourceField.value.charAt(sourceFormOfItemPosition);
     if (['o', 'q'].includes(sourceFormOfItem)) {
-      baseField.value = `${baseField.value.substring(0, baseFormOfItemPosition)}${sourceFormOfItem}${baseField.value.substring(baseFormOfItemPosition + 1)}`; // eslint-disable-line functional/immutable-data
+      baseField.value = `${baseField.value.substring(0, baseFormOfItemPosition)}${sourceFormOfItem}${baseField.value.substring(baseFormOfItemPosition + 1)}`;
       return;
     }
   }
@@ -101,7 +101,7 @@ export function setLiteraryForm(baseField, sourceField, baseTypeOfMaterial, sour
   if (baseLiteraryForm === '1') {
     const sourceLiteraryForm = sourceField.value.charAt(literaryFormPosition);
     if (isSpecificLiteraryForm(sourceLiteraryForm)) {
-      baseField.value = `${baseField.value.substring(0, literaryFormPosition)}${sourceLiteraryForm}${baseField.value.substring(literaryFormPosition + 1)}`; // eslint-disable-line functional/immutable-data
+      baseField.value = `${baseField.value.substring(0, literaryFormPosition)}${sourceLiteraryForm}${baseField.value.substring(literaryFormPosition + 1)}`;
       return;
     }
   }
@@ -115,7 +115,7 @@ function getPlaceOfPublication(field008) {
 function setPlaceOfPublication(base008, source008) { // 008/15-17
   const basePlaceOfPub = getPlaceOfPublication(base008);
   if (['xx ', '|||'].includes(basePlaceOfPub)) {
-    base008.value = `${base008.value.substring(0, 15)}${getPlaceOfPublication(source008)}${base008.value.substring(18)}`; // eslint-disable-line functional/immutable-data
+    base008.value = `${base008.value.substring(0, 15)}${getPlaceOfPublication(source008)}${base008.value.substring(18)}`;
     return;
   }
 }
@@ -126,14 +126,14 @@ function setLanguage(base008, source008) {
   const langS = getLanguage(source008);
 
   if (langB === '|||' && langS.match(/^[a-z]{3}$/u)) {
-    base008.value = `${base008.value.substring(0, 35)}${langS}${base008.value.substring(38)}`; // eslint-disable-line functional/immutable-data
+    base008.value = `${base008.value.substring(0, 35)}${langS}${base008.value.substring(38)}`;
     return;
   }
 }
 
 function setCatalogingSource(base008, source008) {
   const catSource = getBetterCatalogingSource(base008, source008);
-  base008.value = `${base008.value.substring(0, 39)}${catSource}`; // eslint-disable-line functional/immutable-data
+  base008.value = `${base008.value.substring(0, 39)}${catSource}`;
 
   function getBetterCatalogingSource(base008, source008) {
     const b39 = base008.value.substring(39);
@@ -160,7 +160,7 @@ function sortChars(string, reallySort = true) { // similiar code is in validator
   // NB! If reallySort is false, we only move '#' and '|' to the end, and meaningful data to the front, even if reallySort is false.
   const charArray = string.split('');
 
-  charArray.sort(function(a, b) { // eslint-disable-line functional/immutable-data, prefer-arrow-callback
+  charArray.sort(function(a, b) {
     return scoreChar(a) - scoreChar(b);
   });
 
@@ -234,7 +234,7 @@ export function mergeNatureOfContents(baseField, sourceField, baseTypeOfMaterial
   const finalValue = tuneNatureOfContentValue(mergedString);
   //console.info(`B: '${baseString}' +\nS: '${sourceString}' =\n   '${finalValue}'`); // eslint-disable-line no-console
   const startPosition = getNatureOfContentsStartPosition(baseField);
-  baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + 4)}`; // eslint-disable-line functional/immutable-data
+  baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + 4)}`;
   return;
 
   function tuneNatureOfContentValue(string) {
@@ -283,7 +283,7 @@ export function genericMergeMultiCharRule(baseField, sourceField, rule) {
   const finalValue = sortChars(resizeNewValue(mergedString, rule.length), rule.sort);
   //console.info(`${rule.description}:\n '${baseString}' +\n '${sourceString}' =\n '${finalValue}'`); // eslint-disable-line no-console
   const startPosition = getMultiCharStartPosition(baseField);
-  baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + rule.length)}`; // eslint-disable-line functional/immutable-data
+  baseField.value = `${baseField.value.substring(0, startPosition)}${finalValue}${baseField.value.substring(startPosition + rule.length)}`;
   return;
 
   function getMultiCharStartPosition(field) {
@@ -357,7 +357,7 @@ function process008(base, source) {
     return;
   }
   if (!hasLegalLength(base008)) {
-    base008.value = source008.value; // eslint-disable-line functional/immutable-data
+    base008.value = source008.value;
     return;
   }
 

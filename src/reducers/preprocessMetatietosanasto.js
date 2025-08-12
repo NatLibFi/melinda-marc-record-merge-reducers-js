@@ -34,7 +34,7 @@ function fixMtsQualifyingInformationAbbreviation(value) {
 }
 
 function fixMtsQualifyingInformationAbbreviationSubfield(subfield) {
-  subfield.value = fixMtsQualifyingInformationAbbreviation(subfield.value); // eslint-disable-line functional/immutable-data
+  subfield.value = fixMtsQualifyingInformationAbbreviation(subfield.value);
 }
 
 const translationTable = [
@@ -82,7 +82,7 @@ function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
   if (['015', '020', '024', '028'].includes(tag) && subfield.code === 'q') {
     fixMtsQualifyingInformationAbbreviationSubfield(subfield);
     nvdebug(`Translate $q term '${subfield.value}' to ${catalogingLanguage}`, debugDev);
-    subfield.value = translateMtsTerm(subfield.value, catalogingLanguage, 'all'); // eslint-disable-line functional/immutable-data
+    subfield.value = translateMtsTerm(subfield.value, catalogingLanguage, 'all');
     return;
   }
 
@@ -91,7 +91,7 @@ function mtsCaseSubfield(tag, subfield, catalogingLanguage) {
     const modValue = translateMtsTerm(subfield.value, catalogingLanguage, 'all');
     nvdebug(`MTS: ${subfield.value} => ${modValue}`, debugDev);
 
-    subfield.value = modValue; // eslint-disable-line functional/immutable-data
+    subfield.value = modValue;
     return;
   }
   */
@@ -108,7 +108,7 @@ function fixQualifierInformation(field, catalogingLanguage) {
   }
 
   if (catalogingLanguage) {
-    qs.forEach(sf => mtsCaseSubfield(field.tag, sf, catalogingLanguage)); // eslint-disable-line functional/immutable-data
+    qs.forEach(sf => mtsCaseSubfield(field.tag, sf, catalogingLanguage));
     return;
   }
 
@@ -118,7 +118,7 @@ function fixQualifierInformation(field, catalogingLanguage) {
     // Translate all the values to Finnish (iffy, some other language might be better),
     // so that the duplicates can be removed elsewhere...
     // Not the best way to do this, but doing it properly is an overkill...
-    qs.forEach(sf => mtsCaseSubfield(field.tag, sf, 'fin')); // eslint-disable-line functional/immutable-data
+    qs.forEach(sf => mtsCaseSubfield(field.tag, sf, 'fin'));
     return;
   }
 

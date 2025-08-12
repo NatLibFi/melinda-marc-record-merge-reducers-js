@@ -23,7 +23,7 @@ export default () => (base, source) => {
 
   // If both sides have same number of entries, and they apparently are in the same order, let's try to fill the gaps:
   if (baseFields.length > 0 && baseFields.length === sourceFields.length) {
-    if (baseFields.every((baseField, i) => areMergable006Pair(baseField, sourceFields[i]))) { // eslint-disable-line functional/no-conditional-statements
+    if (baseFields.every((baseField, i) => areMergable006Pair(baseField, sourceFields[i]))) {
       baseFields.forEach((baseField, i) => fillField006Gaps(baseField, sourceFields[i]));
     }
     return {base: baseRecord, source};
@@ -45,7 +45,7 @@ const singleCharacterPositionRules = getSingleCharacterPositionRules();
 
 function fillField006Gaps(baseField, sourceField) {
   if (!hasLegalLength(baseField) && hasLegalLength(sourceField)) {
-    baseField.value = sourceField.value; // eslint-disable-line functional/immutable-data
+    baseField.value = sourceField.value;
     return;
   }
   const typeOfMaterial = mapFieldToTypeOfMaterial(baseField);

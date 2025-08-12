@@ -83,7 +83,7 @@ export function handleField6XX(base, source) {
       return;
     }
     nvdebug(`Try to remove prepub subfields from ${fieldToString(field)}`, debugDev);
-    field.subfields = field.subfields.filter(sf => !isEnnakkotietoSubfield(sf)); // eslint-disable-line functional/immutable-data
+    field.subfields = field.subfields.filter(sf => !isEnnakkotietoSubfield(sf));
     nvdebug(`Result: ${fieldToString(field)}`, debugDev);
   }
 

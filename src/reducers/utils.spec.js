@@ -18,7 +18,7 @@ describe('utils/getTags', () => {
     const {getFixture} = fixturesFactory(__dirname, '..', '..', 'test-fixtures', 'utils', 'getTags');
     // getFixture({components: ['foo', 'bar.txt'], reader: READERS.JSON})
     const test = getFixture({components: ['testi.json'], reader: READERS.JSON});
-    debug(test); // eslint-disable-line
+    debug(test);
     expect(utils.getTags(test.fields, [])).to.eql(['jotain']);
   });
 });

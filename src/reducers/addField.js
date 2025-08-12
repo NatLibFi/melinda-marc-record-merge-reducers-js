@@ -66,7 +66,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
 };
 
 function removeNonRepeatableDataFieldsFromSourceIfFieldExistsInBase(base, source) {
-  source.fields = source.fields.filter(f => keepField(f)); // eslint-disable-line functional/immutable-data
+  source.fields = source.fields.filter(f => keepField(f));
 
   function keepField(field) {
     if (!field.subfields) {
@@ -130,7 +130,7 @@ function skipAddField(record, field) {
 
 function cloneAddableField(field) {
   // mark it as coming from source:
-  field.added = 1; // eslint-disable-line functional/immutable-data
+  field.added = 1;
   return JSON.parse(JSON.stringify(field));
 }
 
@@ -143,7 +143,7 @@ export function addField(record, field, config = {}) {
 
   // Normal situation: marc field as deleted from source
   const newField = cloneAddableField(field, config); // clone for base + set field.added = 1
-  field.deleted = 1; // eslint-disable-line functional/immutable-data
+  field.deleted = 1;
 
   nvdebug(`ADD NEW FIELD: '${fieldToString(field)}'`, debugDev);
   // NB! We don't we sort subfields in added fields.

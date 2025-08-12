@@ -33,8 +33,8 @@ describe('subfield 8 reindexing tests: ', () => {
     expect(modifiedSource.toObject()).to.eql(expectedRecord);
 
     function generateReducers(tagPattern, config = {}) {
-      if (tagPattern) { // eslint-disable-line functional/no-conditional-statements
-        config.tagPattern = tagPattern; // eslint-disable-line functional/immutable-data
+      if (tagPattern) {
+        config.tagPattern = tagPattern;
       }
 
       /*
