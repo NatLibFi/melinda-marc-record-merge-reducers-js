@@ -33,7 +33,8 @@ import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
   prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
   removeWorsePrepubField594s,
-  removeWorsePrepubField500s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
+  removeWorsePrepubField500s,
+  firstFieldHasBetterPrepubEncodingLevel} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
 import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries';
 import createDebugLogger from 'debug';
 
@@ -75,14 +76,30 @@ function removeUnwantedSourceField500s(base, source) {
 
   // See MET-33 for details.
   // No action required:
-  const baseEncodingLevel = getEncodingLevel(base);
-  if (!encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
-    return;
-  }
-
-  const sourceFields500 = getRelevant5XXFields(source, true, false);
+  const sourceFields500 = getRemovable500SourceFields();
   nvdebugFieldArray(sourceFields500, '  Remove unneeded source 500: ', debugDev);
   sourceFields500.forEach(field => source.removeField(field));
+
+  function getRemovable500SourceFields() {
+    const sourceFields500 = getRelevant5XXFields(source, true, false);
+    const baseEncodingLevel = getEncodingLevel(base);
+
+    // Remove all prepublication level notes if base is not a prepublication:
+    if (sourceFields500.length === 0 || encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
+      return sourceFields500;
+    }
+
+    // Remove those prepublication level notes that are not better than the ones base record already has:
+    const baseFields500 = getRelevant5XXFields(base, true, false);
+    if (baseFields500.length === 0) {
+      // Should we remove all or nothing? Currently we remove nothing, if base-500 has no prepublication level info.
+      return []; // or return sourceFields500?
+    }
+
+    return sourceFields500.filter(sourceField => baseFields500.some(baseField => !firstFieldHasBetterPrepubEncodingLevel(sourceField, baseField)));
+
+  }
+
 }
 
 
