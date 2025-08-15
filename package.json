@@ -44,11 +44,11 @@
 		"isbn3": "^1.2.13"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.28.0",
-		"@babel/core": "^7.28.0",
+		"@babel/cli": "^7.28.3",
+		"@babel/core": "^7.28.3",
 		"@babel/node": "^7.28.0",
-		"@babel/preset-env": "^7.28.0",
-		"@babel/register": "^7.27.1",
+		"@babel/preset-env": "^7.28.3",
+		"@babel/register": "^7.28.3",
 		"@natlibfi/fixugen": "^2.0.15",
 		"@natlibfi/fixura": "^3.0.14",
 		"babel-plugin-istanbul": "^7.0.0",
