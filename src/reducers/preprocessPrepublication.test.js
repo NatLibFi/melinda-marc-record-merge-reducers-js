@@ -1,14 +1,15 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
+import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './mergeField';
+import createReducer from './preprocessPrepublication.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
 
-describe('merge data field tests: ', () => {
+describe('merge preprocess prepublication tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'mergeDataFields'],
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'preprocessPrepublication'],
     recurse: true,
     useMetadataFile: true,
     fixura: {
@@ -28,8 +29,8 @@ describe('merge data field tests: ', () => {
     const marcReducers = generateReducers(tagPattern, config);
     const bothRecords = marcReducers(base, source);
 
-    expect(bothRecords.base.toObject()).to.eql(expectedRecord);
-    expect(bothRecords.source.toObject()).to.eql(expectedModifiedSourceRecord);
+    assert.deepEqual(bothRecords.base.toObject(), expectedRecord);
+    assert.deepEqual(bothRecords.source.toObject(), expectedModifiedSourceRecord);
 
     function generateReducers(tagPattern, config) {
 

@@ -1,15 +1,15 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
+import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './transferManufacturerDataFrom260To264';
+import createReducer from './reindexSubfield8.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
+//import {nvdebug} from './utils';
 
-// import {nvdebug} from './utils';
-
-describe('subfield 6 reindexing tests: ', () => {
+describe('subfield 8 reindexing tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'manufacturer260'],
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'reindexSubfield8'],
     recurse: false,
     useMetadataFile: true,
     fixura: {
@@ -23,11 +23,15 @@ describe('subfield 6 reindexing tests: ', () => {
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
+    //nvdebug('SF8 WP8', debug);
     const expectedRecord = getFixture('modifiedSource.json');
+    //nvdebug('SF8 WP9', debug);
     const marcReducers = generateReducers(tagPattern, config);
+    //nvdebug('SF8 WP10', debug);
     const modBaseAndSource = marcReducers(base, source);
-    const modifiedSource = modBaseAndSource.source; // modBaseAndSource[modBaseAndSource.length - 1];
-    expect(modifiedSource.toObject()).to.eql(expectedRecord);
+    //nvdebug('SF8 WP11', debug);
+    const modifiedSource = modBaseAndSource.source; //modBaseAndSource[modBaseAndSource.length - 1];
+    assert.deepEqual(modifiedSource.toObject(), expectedRecord);
 
     function generateReducers(tagPattern, config = {}) {
       if (tagPattern) {

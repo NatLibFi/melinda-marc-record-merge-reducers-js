@@ -1,15 +1,15 @@
+import assert from 'node:assert';
 import merger from '@natlibfi/marc-record-merge';
 import {inspect} from 'util';
-import {MelindaReducers} from './index';
+import {MelindaReducers} from './index.js';
 import createDebugLogger from 'debug';
-import {expect} from 'chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'reducers', 'index'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'reducers', 'index'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
@@ -40,7 +40,7 @@ function callback({getFixture}) {
   debug(`Merge result is: ${result.constructor.name}`);
   debugData(`${JSON.stringify(result)}`);
   //expect(result.base.toObject()).to.eql(expectedRecord);
-  expect(result.toObject()).to.eql(expectedRecord);
+  assert.deepEqual(result.toObject(), expectedRecord);
 
 
 }

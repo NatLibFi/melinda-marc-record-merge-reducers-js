@@ -1,9 +1,10 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
+import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './normalizeSubfield9Linkage';
+import createReducer from './normalizeSubfield9Linkage.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import {nvdebug} from './utils';
+import {nvdebug} from './utils.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeSubfield9Linkage:test');
@@ -13,7 +14,7 @@ const debugDev = debug.extend('dev');
 describe('normalizeSubfield9Linkage tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'subfield9Linkage'],
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'subfield9Linkage'],
     recurse: false,
     useMetadataFile: true,
     fixura: {
@@ -36,9 +37,9 @@ describe('normalizeSubfield9Linkage tests: ', () => {
     const mergedRecord = both.base;
     const modifiedSourceRecord = both.source;
     nvdebug('FFS WP 664', debugDev);
-    expect(mergedRecord.toObject()).to.eql(expectedRecord);
+    assert.deepEqual(mergedRecord.toObject(), expectedRecord);
     nvdebug('FFS WP 666', debugDev);
-    expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
+    assert.deepEqual(modifiedSourceRecord.toObject(), expectedModifiedSourceRecord);
 
     function generateReducers(tagPattern, config = {}) {
       if (tagPattern) {

@@ -1,6 +1,7 @@
-import {expect} from 'chai';
+import assert from 'node:assert'
+import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './removeIdenticalDataFields';
+import createReducer from './removeIdenticalDataFields.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
@@ -9,7 +10,7 @@ import generateTests from '@natlibfi/fixugen';
 describe('Remove identical datafields: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'removeIdentical'],
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'removeIdentical'],
     recurse: false,
     useMetadataFile: true,
     fixura: {
@@ -27,7 +28,7 @@ describe('Remove identical datafields: ', () => {
     const marcReducers = generateReducers(tagPattern, config);
     const modBaseAndSource = marcReducers(base, source);
     const modifiedSource = modBaseAndSource.source; // modBaseAndSource[modBaseAndSource.length - 1];
-    expect(modifiedSource.toObject()).to.eql(expectedRecord);
+    assert.deepEqual(modifiedSource.toObject(), expectedRecord);
 
     function generateReducers(tagPattern, config = {}) {
       if (tagPattern) {

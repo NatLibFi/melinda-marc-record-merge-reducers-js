@@ -1,6 +1,7 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
+import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './reindexSubfield6';
+import createReducer from './transferManufacturerDataFrom260To264.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
@@ -9,7 +10,7 @@ import generateTests from '@natlibfi/fixugen';
 describe('subfield 6 reindexing tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'reindexSubfield6'],
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'manufacturer260'],
     recurse: false,
     useMetadataFile: true,
     fixura: {
@@ -27,7 +28,7 @@ describe('subfield 6 reindexing tests: ', () => {
     const marcReducers = generateReducers(tagPattern, config);
     const modBaseAndSource = marcReducers(base, source);
     const modifiedSource = modBaseAndSource.source; // modBaseAndSource[modBaseAndSource.length - 1];
-    expect(modifiedSource.toObject()).to.eql(expectedRecord);
+    assert.deepEqual(modifiedSource.toObject(), expectedRecord);
 
     function generateReducers(tagPattern, config = {}) {
       if (tagPattern) {
