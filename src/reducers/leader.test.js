@@ -25,7 +25,7 @@ function callback({getFixture, expectedError = false}) {
   } catch (error) {
     assert.equal(error instanceof Error, true);
     if (expectedError) {
-      //expect(() => createReducer.to.throw(Error, 'LDR'));
+      //expect(() => createReducer.to.throw(Error, 'LDR')); // Not sure about this
       assert.equal(error.message, expectedError);
       return;
     }
