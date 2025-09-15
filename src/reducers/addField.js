@@ -1,17 +1,17 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {tagIsRepeatable, fieldToString, nvdebug} from './utils';
+import {tagIsRepeatable, fieldToString, nvdebug} from './utils.js';
 
 import {MarcRecord} from '@natlibfi/marc-record';
-import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess';
+import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess.js';
 import {preprocessBeforeAdd} from './processFilter.js';
 import fs from 'fs';
 import path from 'path';
-import {isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils.js';
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 const debugData = debug.extend('data');

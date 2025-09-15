@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 
-import {fieldHasControlSubfieldCode, fieldHasNSubfields, nvdebug, subfieldToString} from './utils';
+import {fieldHasControlSubfieldCode, fieldHasNSubfields, nvdebug, subfieldToString} from './utils.js';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:transferManufacturerDataFrom260To264');
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');

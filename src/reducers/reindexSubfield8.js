@@ -3,8 +3,8 @@
 //
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {nvdebug} from './utils';
-import {getSubfield8LinkingNumber, recordGetAllSubfield8LinkingNumbers} from '@natlibfi/marc-record-validators-melinda/dist/subfield8Utils';
+import {nvdebug} from './utils.js';
+import {getSubfield8LinkingNumber, recordGetAllSubfield8LinkingNumbers} from '@natlibfi/marc-record-validators-melinda/dist/subfield8Utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:reindexSubfield8');
 //const debugData = debug.extend('data');

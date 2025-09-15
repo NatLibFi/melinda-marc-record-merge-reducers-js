@@ -1,25 +1,25 @@
 //import createDebugLogger from 'debug';
-//import internalFields from './internalFields';
-import leader from './leader';
-import field006 from './field006';
-import field007 from './field007';
-import field008 from './field008';
-//import field995 from './field995';
-//import genericDatafield from './genericDatafield';
-import reindexSubfield6 from './reindexSubfield6';
-import reindexSubfield8 from './reindexSubfield8';
+//import internalFields from './internalFields.js';
+import leader from './leader.js';
+import field006 from './field006.js';
+import field007 from './field007.js';
+import field008 from './field008.js';
+//import field995 from './field995.js';
+//import genericDatafield from './genericDatafield.js';
+import reindexSubfield6 from './reindexSubfield6.js';
+import reindexSubfield8 from './reindexSubfield8.js';
 
 
 import genericPreprocessor from './preprocessor.js';
-import prepublicationPreprocessor from './preprocessPrepublication';
+import prepublicationPreprocessor from './preprocessPrepublication.js';
 import {default as addDataFields} from './addField.js';
-import {default as mergeDataFields} from './mergeField';
-import {default as muuntajaMergeDataFields} from './muuntaja';
-//import {default as postprocessSubfield6} from './postprocessSubfield6';
-import {default as metatietosanastoNormalizations} from './preprocessMetatietosanasto';
-import postprocessor from './postprocessor';
-import {default as manufacturer260To264} from './transferManufacturerDataFrom260To264';
-import {default as removeDuplicatesFromSource} from './removeIdenticalDataFields';
+import {default as mergeDataFields} from './mergeField.js';
+import {default as muuntajaMergeDataFields} from './muuntaja.js';
+//import {default as postprocessSubfield6} from './postprocessSubfield6.js';
+import {default as metatietosanastoNormalizations} from './preprocessMetatietosanasto.js';
+import postprocessor from './postprocessor.js';
+import {default as manufacturer260To264} from './transferManufacturerDataFrom260To264.js';
+import {default as removeDuplicatesFromSource} from './removeIdenticalDataFields.js';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
 export const localReducers = [

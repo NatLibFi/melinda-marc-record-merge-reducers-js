@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {melindaCustomMergeFields as melindaFields} from '@natlibfi/marc-record-validators-melinda/dist/melindaCustomMergeFields';
+import {melindaCustomMergeFields as melindaFields} from '@natlibfi/marc-record-validators-melinda/dist/melindaCustomMergeFields.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils');
 //const debugData = debug.extend('data');

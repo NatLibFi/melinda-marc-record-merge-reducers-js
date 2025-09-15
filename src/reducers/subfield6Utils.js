@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
-import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
+import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils.js';
 
-import {fieldToString, nvdebug} from './utils';
-import {fieldGetOccurrenceNumberPairs, fieldsToNormalizedString, isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
+import {fieldToString, nvdebug} from './utils.js';
+import {fieldGetOccurrenceNumberPairs, fieldsToNormalizedString, isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils.js';
 // import {fieldToString, nvdebug} from './utils';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:subfield6Utils');

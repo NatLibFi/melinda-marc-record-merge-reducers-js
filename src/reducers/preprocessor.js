@@ -4,23 +4,23 @@ import path from 'path';
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {getCatalogingLanguage} from './utils.js';
-import {recordFixRelatorTerms} from '@natlibfi/marc-record-validators-melinda/dist/fixRelatorTerms';
+import {recordFixRelatorTerms} from '@natlibfi/marc-record-validators-melinda/dist/fixRelatorTerms.js';
 import {filterOperations} from './processFilter.js';
-import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
+import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics.js';
 import {fieldTrimSubfieldValues} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
-import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melinda/dist/sanitize-vocabulary-source-codes';
-import {default as modernize540} from '@natlibfi/marc-record-validators-melinda/dist/update-field-540';
-import {default as normalize505} from '@natlibfi/marc-record-validators-melinda/dist/field-505-separators';
-import {default as normalizeQualifyingInformation} from '@natlibfi/marc-record-validators-melinda/dist/normalize-qualifying-information';
-import {default as normalizeVariousSubfields} from '@natlibfi/marc-record-validators-melinda/dist/subfieldValueNormalizations';
+import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melinda/dist/sanitize-vocabulary-source-codes.js';
+import {default as modernize540} from '@natlibfi/marc-record-validators-melinda/dist/update-field-540.js';
+import {default as normalize505} from '@natlibfi/marc-record-validators-melinda/dist/field-505-separators.js';
+import {default as normalizeQualifyingInformation} from '@natlibfi/marc-record-validators-melinda/dist/normalize-qualifying-information.js';
+import {default as normalizeVariousSubfields} from '@natlibfi/marc-record-validators-melinda/dist/subfieldValueNormalizations.js';
 
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
 //const debugData = debug.extend('data');
 //const debugDev = debug.extend('dev');
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 function trimRecord(record) {
   record.fields?.forEach(f => fieldTrimSubfieldValues(f));

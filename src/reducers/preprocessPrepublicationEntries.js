@@ -1,6 +1,6 @@
-import {getCounterpart} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/counterpartField';
-import {encodingLevelIsBetterThanPrepublication, getEncodingLevel, isEnnakkotietoField} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
-import {nvdebugFieldArray} from './utils';
+import {getCounterpart} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/counterpartField.js';
+import {encodingLevelIsBetterThanPrepublication, getEncodingLevel, isEnnakkotietoField} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils.js';
+import {nvdebugFieldArray} from './utils.js';
 
 import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessPrepublicationEntries');

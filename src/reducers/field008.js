@@ -1,6 +1,6 @@
 import clone from 'clone';
-import {genericControlFieldCharPosFix as genericFix, hasLegalLength} from './controlFieldUtils';
-import {uniqArray} from './utils';
+import {genericControlFieldCharPosFix as genericFix, hasLegalLength} from './controlFieldUtils.js';
+import {uniqArray} from './utils.js';
 
 // NB! Used by field 006 as well as 008/18-34 = 006/01-17...
 

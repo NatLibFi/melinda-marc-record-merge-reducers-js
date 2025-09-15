@@ -2,8 +2,8 @@
 import {nvdebug, subfieldToString} from './utils.js';
 import createDebugLogger from 'debug';
 import {cloneAndRemovePunctuation} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
-import {sortAdjacentSubfields} from '@natlibfi/marc-record-validators-melinda/dist/sortSubfields'; //'./sortSubfields.js';
-import {fieldFixPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2';
+import {sortAdjacentSubfields} from '@natlibfi/marc-record-validators-melinda/dist/sortSubfields.js';
+import {fieldFixPunctuation} from '@natlibfi/marc-record-validators-melinda/dist/punctuation2.js';
 
 
 // NB This should be moved and converted to a validator/fixer as well...

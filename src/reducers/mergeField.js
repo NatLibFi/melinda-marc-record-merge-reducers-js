@@ -1,8 +1,8 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils';
-import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
-import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess';
+import {fieldToString, nvdebug} from './utils.js';
+import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics.js';
+import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess.js';
 import {preprocessBeforeAdd} from './processFilter.js';
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 
@@ -11,7 +11,7 @@ import path from 'path';
 //import {fieldGetOccurrenceNumberPairs} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils.js';
 //import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
 import {mergeField} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeField.js';
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 

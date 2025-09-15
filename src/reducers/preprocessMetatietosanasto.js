@@ -1,8 +1,8 @@
 import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
-import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields';
-import {fieldToString, getCatalogingLanguage, nvdebug, uniqArray} from './utils';
+import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields.js';
+import {fieldToString, getCatalogingLanguage, nvdebug, uniqArray} from './utils.js';
 
 // Handle various MTS terms: open abbreviations, normalize to MTS format, translate
 
