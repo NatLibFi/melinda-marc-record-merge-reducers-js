@@ -6,16 +6,10 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import {getCatalogingLanguage} from './utils.js';
 import {recordFixRelatorTerms} from '@natlibfi/marc-record-validators-melinda/dist/fixRelatorTerms.js';
 import {filterOperations} from './processFilter.js';
-import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics.js';
 import {fieldTrimSubfieldValues} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
-import {default as fixSourceOfTerm} from '@natlibfi/marc-record-validators-melinda/dist/sanitize-vocabulary-source-codes.js';
-import {default as modernize540} from '@natlibfi/marc-record-validators-melinda/dist/update-field-540.js';
-import {default as normalize505} from '@natlibfi/marc-record-validators-melinda/dist/field-505-separators.js';
-import {default as normalizeQualifyingInformation} from '@natlibfi/marc-record-validators-melinda/dist/normalize-qualifying-information.js';
-import {default as normalizeVariousSubfields} from '@natlibfi/marc-record-validators-melinda/dist/subfieldValueNormalizations.js';
-
+import {Field505Separators, NormalizeQualifyingInformation, NormalizeUTF8Diacritics, UpdateField540, SanitizeVocabularySourceCodes, SubfieldValueNormalizations} from '@natlibfi/marc-record-validators-melinda';
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
 //const debugData = debug.extend('data');
 //const debugDev = debug.extend('dev');
@@ -27,33 +21,23 @@ function trimRecord(record) {
 }
 
 export default (config = defaultConfig) => (base, source) => {
-
-  normalizeEncoding().fix(base);
-  normalizeEncoding().fix(source);
+  const fixers = [ NormalizeUTF8Diacritics(), SanitizeVocabularySourceCodes(), NormalizeQualifyingInformation(), SubfieldValueNormalizations(), Field505Separators(), UpdateField540() ];
 
   trimRecord(base);
   trimRecord(source);
 
-  fixSourceOfTerm().fix(base);
-  fixSourceOfTerm().fix(source);
+  fixers.forEach(fixer => applyFixer(fixer));
+
+  function applyFixer(fixer) {
+    fixer.fix(base);
+    fixer.fix(source);
+  }
 
   const fromLanguage = getCatalogingLanguage(source);
   const toLanguage = getCatalogingLanguage(base);
   recordFixRelatorTerms(source, fromLanguage, fromLanguage); // Expand terms: "säv." => "säveltäjä"
   recordFixRelatorTerms(source, fromLanguage, toLanguage); // "säveltäjä" => "composer"
   recordFixRelatorTerms(base, toLanguage, toLanguage); // Expand terms: "säv." => "säveltäjä"
-
-  normalizeQualifyingInformation().fix(base); // Modernize 015/020/024/028$q
-  normalizeQualifyingInformation().fix(source);
-
-  normalizeVariousSubfields().fix(base); // Capitalize 130/240/243/600/.../830$l value etc
-  normalizeVariousSubfields().fix(source);
-
-  normalize505().fix(base);
-  normalize505().fix(source);
-
-  modernize540().fix(base);
-  modernize540().fix(source);
 
   //nvdebug(`BASE: Reindex $6 duplicates`, debugDev);
   reindexDuplicateSubfield6Indexes(base);

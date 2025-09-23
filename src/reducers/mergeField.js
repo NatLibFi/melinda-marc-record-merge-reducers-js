@@ -1,7 +1,7 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {fieldToString, nvdebug} from './utils.js';
-import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics.js';
+import {NormalizeUTF8Diacritics} from '@natlibfi/marc-record-validators-melinda';
 import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess.js';
 import {preprocessBeforeAdd} from './processFilter.js';
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
@@ -38,8 +38,9 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debugDev);
 
-  normalizeEncoding().fix(baseRecord);
-  normalizeEncoding().fix(sourceRecord);
+  const fixer = NormalizeUTF8Diacritics();
+  fixer.fix(baseRecord);
+  fixer.fix(sourceRecord);
 
   retagSource1XX(sourceRecord);
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives); // NB! we should rename func, this may have nothing to with add
