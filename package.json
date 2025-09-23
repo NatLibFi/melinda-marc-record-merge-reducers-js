@@ -35,20 +35,23 @@
 		"build": "esbuild \"src/**/*.js\" --sourcemap --platform=node --outdir=dist",
 		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
 	},
+	"nv-mnemonics": {
+		"@natlibfi/marc-record-validators-melinda": "^12.0.0-alpha.2"
+	},
 	"dependencies": {
 		"@natlibfi/marc-record": "^10.0.0-alpha.1",
 		"@natlibfi/marc-record-merge": "^8.0.0-alpha.1",
 		"@natlibfi/marc-record-validate": "^9.0.0-alpha.1",
-		"@natlibfi/marc-record-validators-melinda": "^12.0.0-alpha.2",
-		"debug": "^4.4.1",
-		"esbuild": "^0.25.9",
-		"isbn3": "^1.2.13"
+		"@natlibfi/marc-record-validators-melinda": "github:natlibfi/marc-record-validators-melinda#importModernization",
+		"debug": "^4.4.3",
+		"isbn3": "^1.2.14"
 	},
 	"devDependencies": {
 		"@natlibfi/fixugen": "^3.0.0-alpha.6",
 		"@natlibfi/fixura": "^4.0.0-alpha.13",
 		"cross-env": "^10.0.0",
-		"eslint": "^9.33.0"
+		"esbuild": "^0.25.10",
+		"eslint": "^9.36.0"
 	},
 	"overrides": {
 		"nanoid": "^3.3.8"
