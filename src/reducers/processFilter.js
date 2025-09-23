@@ -1,7 +1,7 @@
 
 
 import {fieldToString, nvdebug} from './utils.js';
-import {getEncodingLevel} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils.js';
+import {getEncodingLevel} from '@natlibfi/marc-record-validators-melinda';
 
 import createDebugLogger from 'debug';
 

@@ -1,8 +1,7 @@
 // This reducer compares base and source and removes identical/paired datafields from source.
 import createDebugLogger from 'debug';
-import {getSubfield8LinkingNumber, isValidSubfield8, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from '@natlibfi/marc-record-validators-melinda/dist/subfield8Utils.js';
+import {fieldToNormalizedString, fieldsToNormalizedString, getSubfield8LinkingNumber, isValidSubfield8, recordGetAllSubfield8LinkingNumbers, recordGetFieldsWithSubfield8LinkingNumber} from '@natlibfi/marc-record-validators-melinda';
 import {isRelevantField6, pairAndStringify6, removeField6IfNeeded} from './subfield6Utils.js';
-import {fieldToNormalizedString, fieldsToNormalizedString} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils.js';
 import {fieldHasNSubfields, nvdebug} from './utils.js';
 
 // NB! It this file 'common' means 'normal' not 'identical'

@@ -1,17 +1,14 @@
+import createDebugLogger from 'debug';
 import fs from 'fs';
 import path from 'path';
 
-import {fieldToString, nvdebug} from './utils.js';
-import {filterOperations} from './processFilter.js';
-import createDebugLogger from 'debug';
-
-import {removeWorsePrepubField500s, removeWorsePrepubField594s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils.js';
-import {recordResetSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/reindexSubfield6OccurenceNumbers.js';
+import {IndicatorFixes, MergeField500Lisapainokset, MultipleSubfield0s, RemoveDuplicateDataFields, RemoveInferiorDataFields, ResolveOrphanedSubfield6s, SortFields,
+        recordResetSubfield6OccurrenceNumbers, removeWorsePrepubField500s, removeWorsePrepubField594s} from '@natlibfi/marc-record-validators-melinda';
 
 import {mtsProcessRecord} from './preprocessMetatietosanasto.js';
-import {recordFixSubfield6OccurrenceNumbers} from '@natlibfi/marc-record-validators-melinda/dist/resolveOrphanedSubfield6s.js';
+import {fieldToString, nvdebug} from './utils.js';
+import {filterOperations} from './processFilter.js';
 
-import {IndicatorFixes, MergeField500Lisapainokset, MultipleSubfield0s, RemoveDuplicateDataFields, RemoveInferiorDataFields, SortFields} from '@natlibfi/marc-record-validators-melinda';
 // import factoryForMergeingRelatorFields from '@natlibfi/marc-record-validators-melinda/dist/mergeRelatorField'; // Not yet in main
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
@@ -46,7 +43,8 @@ export default (config = defaultConfig) => (base, source) => {
   mtsProcessRecord(base);
 
   //base.fields.forEach(field => nvdebug(`WP50: ${fieldToString(field)}`, debugDev));
-  recordFixSubfield6OccurrenceNumbers(base); // remove orphaned $6 fields or set them to 880 $6 700-00...
+  ResolveOrphanedSubfield6s().fix(base); // remove orphaned $6 fields or set them to 880 $6 700-00...
+
   //base.fields.forEach(field => nvdebug(`WP51: ${fieldToString(field)}`, debugDev));
   const thereCanBeOnlyOneSubfield0 = MultipleSubfield0s({}); // MRA-392
   thereCanBeOnlyOneSubfield0.fix(base);

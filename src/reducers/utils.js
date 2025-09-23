@@ -1,5 +1,5 @@
 import createDebugLogger from 'debug';
-import {melindaCustomMergeFields as melindaFields} from '@natlibfi/marc-record-validators-melinda/dist/melindaCustomMergeFields.js';
+import {melindaFieldSpecs} from '@natlibfi/marc-record-validators-melinda';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils');
 //const debugData = debug.extend('data');
@@ -40,7 +40,7 @@ export function copyFields(record, fields) {
 }
 
 export function tagIsRepeatable(tag) {
-  const fieldSpecs = melindaFields.fields.filter(field => field.tag === tag);
+  const fieldSpecs = melindaFieldSpecs.fields.filter(field => field.tag === tag);
   if (fieldSpecs.length !== 1) {
     debugDev(` WARNING! Getting field ${tag} data failed! Default to repeatable field.`);
     return true;
