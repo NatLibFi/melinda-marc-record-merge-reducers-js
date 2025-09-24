@@ -3,13 +3,13 @@ import fs from 'fs';
 import path from 'path';
 
 import {MarcRecord} from '@natlibfi/marc-record';
+import {Field505Separators, fieldTrimSubfieldValues, NormalizeQualifyingInformation, NormalizeUTF8Diacritics, recordFixRelatorTerms, SanitizeVocabularySourceCodes, SubfieldValueNormalizations, UpdateField540} from '@natlibfi/marc-record-validators-melinda';
+
+
 import {getCatalogingLanguage} from './utils.js';
-import {recordFixRelatorTerms} from '@natlibfi/marc-record-validators-melinda/dist/fixRelatorTerms.js';
 import {filterOperations} from './processFilter.js';
-import {fieldTrimSubfieldValues} from '@natlibfi/marc-record-validators-melinda/dist/normalizeFieldForComparison.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
-import {Field505Separators, NormalizeQualifyingInformation, NormalizeUTF8Diacritics, UpdateField540, SanitizeVocabularySourceCodes, SubfieldValueNormalizations} from '@natlibfi/marc-record-validators-melinda';
 //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
 //const debugData = debug.extend('data');
 //const debugDev = debug.extend('dev');
