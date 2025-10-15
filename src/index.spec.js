@@ -42,5 +42,4 @@ function callback({getFixture}) {
   //expect(result.base.toObject()).to.eql(expectedRecord);
   expect(result.toObject()).to.eql(expectedRecord);
 
-
 }
