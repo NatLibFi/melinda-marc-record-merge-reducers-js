@@ -1,0 +1,27 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456" },
+
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "termi1" },
+      { "code": "2", "value": "yso//fin"}
+    ]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "termi2" },
+      { "code": "2", "value": "yso/fin"}
+    ]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "termi3" },
+      { "code": "2", "value": "yso/fin."}
+    ]},
+    { "tag": "650", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "unfixable term" },
+      { "code": "2", "value": "yso/hun"}
+    ]},
+    { "tag": "655", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "term2" },
+      { "code": "2", "value": "slm/fin/" }
+    ]}
+  ]
+}

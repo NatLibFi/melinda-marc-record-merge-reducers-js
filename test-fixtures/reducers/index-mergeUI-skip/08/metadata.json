@@ -1,0 +1,6 @@
+{
+  "description":"Normalize 700$e relator abbreviations. Also test MRA-466 (700$i) punctuation.",
+  "comment": "note that $e subfiels are in suboptimal order.",
+  "comment #2": "as no subfields are added, and base field is unchanged, the punctation is not fixed, and the original crappy 700$i punctuation remains in one of the fields...",
+  "only": false
+}

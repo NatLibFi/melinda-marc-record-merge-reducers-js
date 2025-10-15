@@ -1,0 +1,50 @@
+{
+  "leader": "01331cam a22003498i 4500",
+  "fields": [
+    { "tag": "042", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "finb" } ] },
+    { "tag": "245", "ind1": "0", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Pakoretki mestauslavalta /" },
+      { "code": "c", "value": "Getaway games & Roope Lipasti" }
+
+    ] },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "tarkistettu ennakkotieto 500 base" } ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "ennakkotieto 500 base" } ] },
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "tarkistettu ennakkotieto 594 base" },
+        { "code": "5", "value": "FIKKA" }
+    ]},
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "ennakkotieto 594 base" },
+        { "code": "5", "value": "VIOLA" }
+    ]},
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Koneellisesti tuotettu tietue 594 base" },
+        { "code": "5", "value": "OTHER" }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "6", "value": "880-08" },
+      { "code": "a", "value": "Hindley, Kate," },
+      { "code": "e", "value": "taiteilija." }
+    ] },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Andrejev, A." },
+      { "code": "e", "value": "kääntäjä." }
+    ] },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Andrejev, A.," },
+      { "code": "e", "value": "kääntäjä." }
+    ] },
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "700-08/(N" },
+      {"code": "a", "value": "Хиндли, Кейт," },
+      {"code": "e", "value": "taiteilija." }
+    ] },
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [
+      {"code": "6", "value": "700-08/(N" },
+      {"code": "a", "value": "Андреев, А.," },
+      {"code": "e", "value": "kääntäjä." }
+    ] },
+
+    { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "FIKKA" } ] }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "leader": "01331nam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456"},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Hihde, Alkka,"},
+      { "code": "d", "value": "1975-"},
+      { "code": "e", "value": "haastateltava."},
+      { "code": "0", "value": "(FI-ASTERI-N)000305826" },
+      { "code": "e", "value": "kannen tekijä."}
+    ] },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Suokuokka, Jussi,"},
+      { "code": "e", "value": "valokuvaaja."},
+      { "code": "0", "value": "(FI-ASTERI-N)000305825" }
+    ] }
+  ]
+}

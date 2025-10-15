@@ -1,0 +1,6 @@
+{
+  "description":"MRA-412 (all): field 800 title part issues",
+  "comment": "Sources are educated guesses.",
+  "comment #2": "$l-prepuncs: merged subfields trigger punc fix, $l capitalization is done later on",
+  "only": false
+}

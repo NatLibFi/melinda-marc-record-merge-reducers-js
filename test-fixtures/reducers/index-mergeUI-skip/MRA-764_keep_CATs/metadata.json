@@ -1,0 +1,5 @@
+{
+  "description":"MRA-764: if the source record is a prepub, keep also CAT fields",
+  "skip": false,
+  "only": false
+}

@@ -1,0 +1,32 @@
+{
+  "fields": [
+    { "tag": "005", "value": "20220202020202.0" },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lisäpainokset: 7. p. 2007." },
+        { "code": "9", "value": "FENNI<KEEP>" }
+      ]
+    },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lisäpainos: 2. p. 2002." }
+      ]
+    },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lisäpainokset: 3. p. 2003. - 4. p. 2004." }
+      ]
+
+    },
+    { "tag": "774", "ind1": "0", "ind2": "8", "subfields": [ { "code": "n", "value": "31 osakohdetta"} ] },
+
+
+    { "tag": "776", "ind1": "0", "ind2": "8", "subfields": [
+      { "code": "i", "value": "Verkkoaineisto:"},
+      { "code": "z", "value": "9789518585728"},
+      { "code": "9", "value": "FENNI<KEEP>"}
+    ]},
+    { "tag": "776", "ind1": "0", "ind2": "8", "subfields": [
+      { "code": "i", "value": "Verkkoaineisto:"},
+      { "code": "z", "value": "9789518585735"}
+    ]}
+  ],
+  "leader": "01331cam a22003494i 4500"
+}

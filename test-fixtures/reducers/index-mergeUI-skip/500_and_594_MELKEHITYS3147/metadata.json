@@ -1,0 +1,5 @@
+{
+  "description":"500 and 594 (01): 'ei ilmesty' with correct punctuation",
+  "comment": "The result is a bit funny: 500 gets merged and retains the original form. However, is not merged, and better form trigger uppercased 594 removal",
+  "only": false
+}

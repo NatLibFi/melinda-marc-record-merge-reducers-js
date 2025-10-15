@@ -1,0 +1,6 @@
+{
+  "description":"MET-88, MRA-392",
+  "comment": "MET-88: Same 33X$b and $2, different $a: don't copy fields (they shouldn't merge earlier on either).",
+  "comment 2": "MRA-392: $0 Asteri vs others",
+  "only": false
+}

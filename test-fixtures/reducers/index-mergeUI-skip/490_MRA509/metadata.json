@@ -1,0 +1,6 @@
+{
+  "description":"MRA-509: field 490 $a repetition sucks. Don't repeat 490$a!",
+  "comment": "Base's 490$a is bad, but this will not touch it. Fix this issue in Melinda (outside merge)",
+  "comment2": "2023-08-18: after update (changes to punctuation2 validator etc) punctuation betweeb $a subfields changes, and duplicate subfield is removed, which is kind of nice.",
+  "only": false
+}

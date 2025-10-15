@@ -1,0 +1,40 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456" },
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Karisto, kustannusosakeyhtiö," },
+      { "code": "e", "value": "kustantaja." },
+      { "code": "0", "value": "(FI-ASTERI-N)000555888" }
+    ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Bazar Kustannus," },
+      { "code": "e", "value": "kustantaja." },
+      { "code": "0", "value": "(FI-ASTERI-N)000219017" }
+    ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Paristo, kustannusosakeyhtiö," },
+      { "code": "e", "value": "kustantaja." },
+      {  "code": "0", "value": "(FI-ASTERI-N)000555889" }
+    ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Ateena kustannus," },
+      { "code": "e", "value": "kustantaja." },
+      { "code": "0", "value": "(FI-ASTERI-N)000555777" }
+    ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Basaari Kustannus," },
+      { "code": "e", "value": "kustantaja." },
+      {  "code": "0", "value": "(FI-ASTERI-N)000555444" }
+    ]},
+
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Qualifier Mismatch (foo)" } ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Werner Söderström osakeyhtiö." } ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "ntamo." } ]},
+    { "tag": "710", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Europacorp" } ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Base-lacks-qualifier (bar)" } ]},
+    { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Qualifier Mismatch (bar)" } ]}
+
+
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "description":"040: merge values. Note that FI-KV is retained since LDR/17 is not '8'",
+  "skip": false,
+  "only": false
+}

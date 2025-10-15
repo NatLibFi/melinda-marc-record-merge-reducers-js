@@ -1,0 +1,18 @@
+ {
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "666" },
+    { "tag": "245", "ind1": " ", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "880-01" },
+      { "code": "a", "value": "Title /" },
+      { "code": "c", "value": "Author." }
+    ]},
+    { "tag": "880", "ind1": " ", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "245-01" },
+      { "code": "a", "value": "Eltit /" },
+      { "code": "c", "value": "Rohtua." }
+    ]}
+  ]
+}

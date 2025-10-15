@@ -1,0 +1,21 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456" },
+    { "tag": "600", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Etunimi, Sukunimi" },
+      { "code": "x", "value": "elämäkerrat" }
+    ]},
+    { "tag": "600", "ind1": "1", "ind2": "2", "subfields": [{ "code": "a", "value": "Rabelais, Francois." } ] },
+    { "tag": "600", "ind1": "1", "ind2": "2", "subfields": [{ "code": "a", "value": "Rabelais, Francois" }, {"code": "v", "value": "Early works."} ] },
+
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [{ "code": "a", "value": "Etunimi, Sukunimi." } ] },
+   
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Etunimi, Sukunimi" },
+      { "code": "x", "value": "elämäkerrat" }
+    ]}
+
+ 
+  ]
+}
