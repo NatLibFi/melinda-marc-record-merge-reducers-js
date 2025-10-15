@@ -1,6 +1,6 @@
 {
   "description":"Reducers should return the merged record",
   "comment": "Note that LOWs are sorted (by marc-record-js) alphabetically",
-  "only": true,
+  "only": false,
   "skip": false
 }
