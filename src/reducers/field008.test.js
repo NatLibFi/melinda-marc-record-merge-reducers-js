@@ -1,13 +1,12 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
+import createReducer from './field008.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import createReducer from './field007';
-//import createDebugLogger from 'debug';
 
 generateTests({
   callback,
-  path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'field007'],
+  path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'field008'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
@@ -21,5 +20,6 @@ function callback({getFixture}) {
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const expectedRecord = getFixture('merged.json');
   const bothRecords = createReducer()(base, source);
-  expect(bothRecords.base.toObject()).to.eql(expectedRecord);
+  const mergedRecord = bothRecords.base;
+  assert.deepEqual(mergedRecord.toObject(), expectedRecord);
 }

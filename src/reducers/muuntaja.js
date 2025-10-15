@@ -1,13 +1,13 @@
 import createDebugLogger from 'debug';
-import {default as mergeDataFieldsProto} from './mergeField';
-import {default as addDataFieldsProto} from './addField';
-import {nvdebug} from './utils';
+import {default as mergeDataFieldsProto} from './mergeField.js';
+import {default as addDataFieldsProto} from './addField.js';
+import {nvdebug} from './utils.js';
 import fs from 'fs';
 import path from 'path';
-//import {default as swapFieldsProto} from './swapAuthorFields';
-import {default as createField776Proto} from './muuntaja776';
-import {filterOperations} from './processFilter';
-const muuntajaConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname , '..', '..', 'src', 'reducers', 'muuntajaConfig.json'), 'utf8'));
+//import {default as swapFieldsProto} from './swapAuthorFields.js';
+import {default as createField776Proto} from './muuntaja776.js';
+import {filterOperations} from './processFilter.js';
+const muuntajaConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'muuntajaConfig.json'), 'utf8'));
 
 //import {sortAdjacentSubfields} from '@natlibfi/marc-record-validators-melinda/dist/sortSubfields';;
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';

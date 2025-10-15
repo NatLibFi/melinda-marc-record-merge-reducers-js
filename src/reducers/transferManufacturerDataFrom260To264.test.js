@@ -1,6 +1,7 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
+import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './postprocessSubfield6';
+import createReducer from './transferManufacturerDataFrom260To264.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
@@ -9,7 +10,7 @@ import generateTests from '@natlibfi/fixugen';
 describe('subfield 6 reindexing tests: ', () => {
   generateTests({
     callback,
-    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'postprocessSubfield6'],
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'manufacturer260'],
     recurse: false,
     useMetadataFile: true,
     fixura: {
@@ -23,11 +24,11 @@ describe('subfield 6 reindexing tests: ', () => {
     tagPattern = false}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
-    const expectedRecord = getFixture('modifiedBase.json');
+    const expectedRecord = getFixture('modifiedSource.json');
     const marcReducers = generateReducers(tagPattern, config);
     const modBaseAndSource = marcReducers(base, source);
-    const modifiedBase = modBaseAndSource.base; // modBaseAndSource[modBaseAndSource.length - 1];
-    expect(modifiedBase.toObject()).to.eql(expectedRecord);
+    const modifiedSource = modBaseAndSource.source; // modBaseAndSource[modBaseAndSource.length - 1];
+    assert.deepEqual(modifiedSource.toObject(), expectedRecord);
 
     function generateReducers(tagPattern, config = {}) {
       if (tagPattern) {

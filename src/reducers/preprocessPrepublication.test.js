@@ -1,18 +1,15 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
+import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './addField';
+import createReducer from './preprocessPrepublication.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import createDebugLogger from 'debug';
-
-const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField:test');
-const debugData = debug.extend('data');
 
 
-describe('add data field tests: ', () => {
+describe('merge preprocess prepublication tests: ', () => {
   generateTests({
     callback,
-    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'addDataFields'],
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'preprocessPrepublication'],
     recurse: true,
     useMetadataFile: true,
     fixura: {
@@ -22,27 +19,21 @@ describe('add data field tests: ', () => {
   });
 
   function callback({getFixture,
-    config = undefined,
-    tagPattern = false}) {
+    tagPattern = false,
+    config = undefined}) {
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
     const expectedRecord = getFixture('merged.json');
     const expectedModifiedSourceRecord = getFixture('modifiedSource.json');
+
     const marcReducers = generateReducers(tagPattern, config);
     const bothRecords = marcReducers(base, source);
-    const mergedRecord = bothRecords.base;
-    const modifiedSourceRecord = bothRecords.source;
 
-    debugData(mergedRecord);
-    //debugData(modifiedSourceRecord);
-
-    expect(mergedRecord.toObject()).to.eql(expectedRecord);
-    expect(modifiedSourceRecord.toObject()).to.eql(expectedModifiedSourceRecord);
+    assert.deepEqual(bothRecords.base.toObject(), expectedRecord);
+    assert.deepEqual(bothRecords.source.toObject(), expectedModifiedSourceRecord);
 
     function generateReducers(tagPattern, config) {
-      if (config && tagPattern) {
-        config.tagPattern = tagPattern;
-      }
+
 
       /*
       if (tagPattern) {
@@ -51,7 +42,7 @@ describe('add data field tests: ', () => {
       return createReducer();
       */
 
-      return createReducer(config);
+      return createReducer(tagPattern, config);
     }
   }
 });

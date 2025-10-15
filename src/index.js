@@ -1,4 +1,4 @@
-import {localReducers, muuntajaReducers, mergeReducersForMergeUI} from './reducers/index.js';
+import {localReducers as MelindaReducers, muuntajaReducers as MuuntajaReducers} from './reducers/index.js';
 
 const MelindaReducers = localReducers;
 const MuuntajaReducers = muuntajaReducers;

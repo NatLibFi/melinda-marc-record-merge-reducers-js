@@ -1,7 +1,10 @@
-import {subfieldGetTag6} from './subfield6Utils';
-import {fieldGetOccurrenceNumberPairs, resetSubfield6Tag} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
-import {fieldToString, nvdebug} from './utils';
 import createDebugLogger from 'debug';
+
+import {fieldGetOccurrenceNumberPairs, resetSubfield6Tag} from '@natlibfi/marc-record-validators-melinda';
+
+import {subfieldGetTag6} from './subfield6Utils.js';
+import {fieldToString, nvdebug} from './utils.js';
+
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:restField880Subfield6AfterFieldTransfer');
 //const debugData = debug.extend('data');

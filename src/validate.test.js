@@ -1,12 +1,12 @@
-import {expect} from 'chai';
+import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createValidator from './validate';
+import createValidator from './validate.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
 generateTests({
   callback,
-  path: [import.meta.dirname , '..', 'test-fixtures', 'validate'],
+  path: [import.meta.dirname, '..', 'test-fixtures', 'validate'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
@@ -23,5 +23,5 @@ async function callback({getFixture}) {
   const result = await validator(record, true, true);
   const formattedResult = {...result, record: result.record.toObject()};
 
-  expect(formattedResult).to.eql(expectedResult);
+  assert.deepEqual(formattedResult, expectedResult);
 }

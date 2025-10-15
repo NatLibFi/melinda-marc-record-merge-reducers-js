@@ -8,13 +8,11 @@ import {
   EmptyFields,
   EndingPunctuation,
   IsbnIssn,
+  NormalizeIdentifiers as NormalizeControlNumber,
   NormalizeUTF8Diacritics, // ex-./reducers/normalizeEncoding
   SubfieldExclusion
 } from '@natlibfi/marc-record-validators-melinda';
 //import {recordPreprocess} from './reducers/normalize';
-
-//import NormalizeEncoding from './reducers/normalizeEncoding';
-import NormalizeControlNumber from '@natlibfi/marc-record-validators-melinda/dist/normalize-identifiers';
 
 // import normalizeSubfield9Linkage from './reducers/normalizeSubfield9Linkage';
 
