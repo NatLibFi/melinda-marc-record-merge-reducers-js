@@ -1,6 +1,5 @@
 {
-  "description":"856 disappeared in 2024-05-13. See if it happens here",
-  "comment": "SKIPPED for mergeUI let's not do this",
-  "skip": true,
+  "description":"No extra clean up in internal, manual merge (856 disappeared in 2024-05-13)",
+  "skip": false,
   "only": false
 }

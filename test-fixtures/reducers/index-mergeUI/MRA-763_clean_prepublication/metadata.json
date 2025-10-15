@@ -1,6 +1,0 @@
-{
-  "description":"MRA-763: if the source record is a prepub, keep only certain tags",
-  "comment": "skip for mergeUI",
-  "skip": false,
-  "only": true
-}

@@ -1,6 +1,0 @@
-{
-  "description":"MRA-763: if the source record has LDR/17=2 + 500 'Koneellisesti tuotettu tietue', keep only certain tags",
-  "comment": "Skip for mergeUI",
-  "only": false,
-  "skip": true
-}

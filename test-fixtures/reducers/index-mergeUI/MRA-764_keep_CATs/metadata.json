@@ -1,6 +1,0 @@
-{
-  "description":"MRA-764: if the source record is a prepub, keep also CAT fields",
-  "comment": "skip for mergeUI",
-  "skip": true,
-  "only": false
-}

@@ -36,7 +36,10 @@ function callback({getFixture}) {
   //const resultRecord = merger({base: base.toObject(), source: source.toObject(), reducers, baseValidators: {subfieldValues: false}, sourceValidators: {subfieldValues: false}});
 
   debug(`Merge result is: ${result.constructor.name}`);
-  debugData(`${JSON.stringify(result)}`);
+  //debugData(`RESULT: ${inspect(result.toObject(), {depth: 4})}`);
+  //debugData(`EXPECTED: ${inspect(expectedRecord, {depth: 4})}`);
+  debugData(`RESULT: ${JSON.stringify(result.toObject())}`);
+  debugData(`EXPECTED: ${JSON.stringify(expectedRecord)}`);
   assert.deepEqual(result.toObject(), expectedRecord);
 
 }

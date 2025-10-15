@@ -391,11 +391,11 @@ export function filterOperations(base, source, config, internal = false) {
 }
 
 
-export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
+export function preprocessBeforeAdd(base, source, preprocessorDirectives, internal) {
   // nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`, debugDev);
   if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
     return;
   }
 
-  filterOperations(base, source, preprocessorDirectives);
+  filterOperations(base, source, preprocessorDirectives, internal);
 }
