@@ -20,7 +20,7 @@ function trimRecord(record) {
   record.fields?.forEach(f => fieldTrimSubfieldValues(f));
 }
 
-export default (config = defaultConfig) => (base, source) => {
+export default (config = defaultConfig, internal = false) => (base, source) => {
   const fixers = [ NormalizeUTF8Diacritics(), SanitizeVocabularySourceCodes(), NormalizeQualifyingInformation(), SubfieldValueNormalizations(), Field505Separators(), UpdateField540() ];
 
   trimRecord(base);

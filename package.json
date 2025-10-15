@@ -20,7 +20,6 @@
 	"engines": {
 		"node": ">=22"
 	},
-	"type": "module",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -51,7 +50,7 @@
 		"@natlibfi/fixugen": "^3.0.0-alpha.6",
 		"@natlibfi/fixura": "^4.0.0-alpha.13",
 		"cross-env": "^10.0.0",
-		"esbuild": "^0.25.10",
+		"esbuild": "^0.25.11",
 		"eslint": "^9.36.0"
 	},
 	"overrides": {

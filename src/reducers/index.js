@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 //import createDebugLogger from 'debug';
 //import internalFields from './internalFields.js';
 import leader from './leader.js';
@@ -21,6 +23,7 @@ import postprocessor from './postprocessor.js';
 import {default as manufacturer260To264} from './transferManufacturerDataFrom260To264.js';
 import {default as removeDuplicatesFromSource} from './removeIdenticalDataFields.js';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname , '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
