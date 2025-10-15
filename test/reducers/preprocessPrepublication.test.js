@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './preprocessPrepublication.js';
+import createReducer from '../../src/reducers/preprocessPrepublication.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 

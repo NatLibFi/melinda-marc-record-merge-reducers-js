@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './preprocessor.js';
+import createReducer from '../../src/reducers/postprocessor.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 import fs from 'fs';
@@ -9,10 +9,11 @@ import path from 'path';
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
+
 describe('source preprocessor tests: ', () => {
   generateTests({
     callback,
-    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'preprocessSource'],
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'postprocess'],
     recurse: false,
     useMetadataFile: true,
     fixura: {

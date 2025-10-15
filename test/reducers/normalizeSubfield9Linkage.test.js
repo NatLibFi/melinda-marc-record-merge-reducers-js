@@ -1,10 +1,10 @@
 import assert from 'node:assert';
 import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './normalizeSubfield9Linkage.js';
+import createReducer from '../../src/reducers/normalizeSubfield9Linkage.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
-import {nvdebug} from './utils.js';
+import {nvdebug} from '../../src/reducers/utils.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:normalizeSubfield9Linkage:test');

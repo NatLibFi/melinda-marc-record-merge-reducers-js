@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './muuntaja.js';
+import createReducer from '../../src/reducers/mergeField.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
@@ -9,8 +9,8 @@ import generateTests from '@natlibfi/fixugen';
 describe('merge data field tests: ', () => {
   generateTests({
     callback,
-    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'muuntaja'],
-    recurse: false,
+    path: [import.meta.dirname, '..', '..', 'test-fixtures', 'reducers', 'mergeDataFields'],
+    recurse: true,
     useMetadataFile: true,
     fixura: {
       failWhenNotFound: false,

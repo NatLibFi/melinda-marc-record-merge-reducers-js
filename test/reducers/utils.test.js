@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
 import fixturesFactory, {READERS} from '@natlibfi/fixura';
-import * as utils from './utils.js';
+import * as utils from '../../src/reducers/utils.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:utils:test');

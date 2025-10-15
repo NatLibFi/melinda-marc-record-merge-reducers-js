@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './leader.js';
+import createReducer from '../../src/reducers/leader.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createReducer from './reindexSubfield6.js';
+import createReducer from '../../src/reducers/reindexSubfield6.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 

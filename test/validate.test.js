@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {MarcRecord} from '@natlibfi/marc-record';
-import createValidator from './validate.js';
+import createValidator from '../src/validate.js';
 import {READERS} from '@natlibfi/fixura';
 import generateTests from '@natlibfi/fixugen';
 
