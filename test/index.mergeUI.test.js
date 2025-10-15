@@ -23,15 +23,13 @@ function callback({getFixture}) {
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const expectedRecord = getFixture('merged.json');
 
-  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:index:test');
+  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:index-mergeUI:test');
   const debugData = debug.extend('data');
 
-  // Run first copy-reducers with Melinda-configs and then the specific MelindaReducers
-
-  //const reducers = [...MelindaCopyReducerConfigs.map(conf => Reducers.copy(conf)), ...MelindaReducers];
+  // Run reducers for mergeUI
   const reducers = MergeReducersForMergeUI;
 
-  debugData(`Reducers: ${inspect(reducers, {colors: true, maxArrayLength: 10, depth: 8})})}`);
+  debugData(`Reducers: ${inspect(reducers, {colors: true, maxArrayLength: 30, depth: 8})})}`);
 
   const result = merger({base, source, reducers});
 
@@ -39,7 +37,6 @@ function callback({getFixture}) {
 
   debug(`Merge result is: ${result.constructor.name}`);
   debugData(`${JSON.stringify(result)}`);
-  //expect(result.base.toObject()).to.eql(expectedRecord);
   assert.deepEqual(result.toObject(), expectedRecord);
 
 }

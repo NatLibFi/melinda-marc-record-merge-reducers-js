@@ -296,13 +296,13 @@ function operationSwapFields(record, otherRecord, fieldSpecification) {
 
 export function filterOperation(base, source, operation, internal = false) {
   if (operation.skip) {
-    // Log?
+    nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'} SKIPPED: operation.skip: ${operation.skip}`, debugDev);
     return;
   }
 
   // If we are running internal merge and our operation is internal: false, skip operation
-  if (internal && operation.internal === false) {
-    // Log? 
+  if (internal !== undefined && internal && operation.internal === false) {
+    nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'} SKIPPED: internal: ${internal}, operation.internal: ${operation.internal}`, debugDev);
     return;
   }
 
