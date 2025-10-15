@@ -5,6 +5,8 @@
                 "operation": "removeField",
                 "comment": "Bunch of tags we always drop from the source (semantic reason; holdings data etc)",
                 "comment2": "As per specs (except 852 was removed). Not sure whether this is a good idea.",
+                "comment3": "Dropping these form incomingRecord would make sense, dropping these from databaseRecord does not",
+                "internal": false,
                 "recordType": "source",
                 "fieldSpecification": {
                     "tagPattern": "^(066|841|842|843|844|845|86[3-8]|876|877|878|HLI)$"
@@ -15,6 +17,7 @@
                 "operation": "removeField",
                 "recordType": "source",
                 "comment": "MRA-763: remove various fields from a source prepublication if base record is good enough (ENNAKKOTIETO)",
+                "internal": false,
                 "fieldSpecification": {
                     "tagPattern": "^((?!CAT|LOW|SID|00[135678]|035|040|042|306|341|344|347|500|506|532|540|594|776|856|884|946|974).)*$",
                     "comment": "Note that the above regex uses negation, and lists the tags that are retained",
@@ -34,6 +37,8 @@
                 "operation": "removeField",
                 "recordType": "source",
                 "comment": "MELKEHITYS-3107: remove 594 $a 'Ei vastaanotettu' from a source if base belongs to FIKKA. Replaces tighter MET-571 rule.",
+                "comment2": "This can be done also in internal merge",
+                "internal": true,
                 "fieldSpecification": {
                     "tagPattern": "^594$",
                     "subfieldFilters": [
@@ -54,6 +59,7 @@
                 "recordType": "source",
                 "comment": "MRA-763: remove various fields from a source prepublication if base record is good enough (Koneellisesti tuotettu tietue)",
                 "comment2": "Added 024 as per MET-628",
+                "internal": false,
                 "fieldSpecification": {
                     "tagPattern": "^((?!CAT|LOW|SID|00[135678]|024|035|040|042|306|341|344|347|500|506|532|540|594|776|856|884|946|974).)*$",
                     "comment": "Note that the above regex uses negation, and lists the tags that are retained",
@@ -72,6 +78,7 @@
             {
                 "operation": "removeField",
                 "recordType": "source",
+                "internal": true,
                 "comment": "Remove 65X $g ENNAKKOTIETO fields from source if base has 65X without a $g ENNAKKOTIETO",
                 "fieldSpecification": {
                     "tagPattern": "^(648|650|651|653|655)$",
@@ -89,6 +96,7 @@
                 "operation": "removeSubfield",
                 "comment": "Remove X00$d with old and deprecated (1) style value. (1) ... (99) are removed.",
                 "recordType": "both",
+                "internal": true,
                 "fieldSpecification": {
                     "tagPattern": "^[1678]00$",
                     "subfieldFilters": [{"code": "d", "valuePattern": "^\\([1-9][0-9]?\\)[.,]?$"}]
@@ -100,6 +108,7 @@
                 "operation": "removeSubfield",
                 "comment": "remove price information",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tagPattern": "^(?:020|024?)$",
                     "subfieldFilters": [{"code": "c"}]
@@ -111,6 +120,7 @@
                 "operation": "removeSubfield",
                 "comment": "based on https://www.kiwi.fi/display/kumea/2023-05-03#id-20230503-2)Kysymys:Kysymys040%E2%80%A1aISIL-tunnuksista",
                 "recordType": "source",
+                "internal": "true",
                 "encodingLevel": ["8"],
                 "fieldSpecification": {
                     "tag": "040",
@@ -124,6 +134,7 @@
             {
                 "operation": "renameSubfield",
                 "recordType": "source",
+                "internal": "true",
                 "fieldSpecification": {
                     "tag": "040",
                     "subfieldFilters": [{"code": "a"}]
@@ -134,6 +145,7 @@
             {
                 "operation": "removeSubfield",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "041",
                     "subfieldFilters": [{
@@ -146,6 +158,7 @@
             {
                 "operation": "removeSubfield",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "041",
                     "subfieldFilters": [{
@@ -158,7 +171,9 @@
 
             {
                 "operation": "removeField",
+                "description": "Remove subject fields from obsolete vocabularies",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tagPattern": "^(?:648|650|651|655)$",
                     "subfieldFilters": [{
@@ -171,6 +186,7 @@
             {
                 "operation": "removeField",
                 "recordType": "source",
+                "internal": false,
                 "fieldSpecification": {
                     "tag": "830",
                     "subfieldFilters": [{"missingCode": "x"}]
@@ -238,6 +254,7 @@
                 "operation": "removeField",
                 "comment": "This is done after field merge and before copy (could be merged, but not added) (can/should these merge with 130?)",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "240"
                 },
@@ -248,6 +265,7 @@
 
             {
                 "operation": "removeField",
+                "internal": true,
                 "comment": "Remove source 041 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
                 "fieldSpecification": {
@@ -262,6 +280,7 @@
                 "operation": "removeField",
                 "comment": "Never add 250; as per MET-193 (different 250) and MET-194 (base without 250) related discussion with MH)",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "250"
                 }
@@ -271,6 +290,7 @@
                 "operation": "removeField",
                 "comment": "Remove 260 so that a repeatable field won't be copied from source if base already has 260/264 field",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": { "tag": "260" },
                 "requireBaseField": { "tagPattern": "^26[04]$" }
             },
@@ -278,6 +298,7 @@
                 "operation": "removeField",
                 "comment": "Remove 880 $6 260-XX (see above rule for raison d'etrê",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "880",
                     "subfieldFilters": [{"code": "6", "valuePattern": "^260-"}]
@@ -291,6 +312,7 @@
                 "comment": "Remove 264 so that a repeatable field won't be copied from source if base already has a 260 field",
                 "comment2": "Here we lose information, but can't add a 264 if there's a 260",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": { "tag": "264" },
                 "requireBaseField": { "tagPattern": "^260$" }
             },
@@ -298,6 +320,7 @@
                 "operation": "removeField",
                 "comment": "Remove 880 $6 264-XX (see above rule for raison r'etre)",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "880",
                     "subfieldFilters": [{"code": "6", "valuePattern": "^264-"}]
@@ -309,6 +332,7 @@
                 "operation": "removeField",
                 "comment": "Remove 264 ind2=0 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "264",
                     "ind2": "0"
@@ -324,6 +348,7 @@
                 "operation": "removeField",
                 "comment": "Remove source 264 ind2=0 if base has one, so that a repeatable field won't be copied from source",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": { "tag": "264", "ind2": "0" },
                 "requireBaseField": { "tag": "264", "ind2": "0" }
             },
@@ -332,6 +357,7 @@
                 "operation": "removeField",
                 "comment": "Remove 880 $6 264-XX ind2=0 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "880",
                     "ind2": "0",
@@ -347,6 +373,7 @@
                 "operation": "removeField",
                 "comment": "Remove source 264 ind2=1 if base has one, so that a repeatable field won't be copied from source",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": { "tag": "264", "ind2": "1" },
                 "requireBaseField": { "tag": "264", "ind2": "1" }
             },
@@ -354,6 +381,7 @@
                 "operation": "removeField",
                 "comment": "Remove 880 $6 264-XX ind2=1 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "880",
                     "ind2": "1",
@@ -369,6 +397,7 @@
                 "operation": "removeField",
                 "comment": "Remove source 264 ind2=2 if base has one, so that a repeatable field won't be copied from source",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": { "tag": "264", "ind2": "2" },
                 "requireBaseField": { "tag": "264", "ind2": "2" }
             },
@@ -376,6 +405,7 @@
                 "operation": "removeField",
                 "comment": "Remove 880 $6 264-XX ind2=2 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "880",
                     "ind2": "2",
@@ -391,6 +421,7 @@
                 "operation": "removeField",
                 "comment": "Remove source 264 ind2=3 if base has one, so that a repeatable field won't be copied from source",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": { "tag": "264", "ind2": "3" },
                 "requireBaseField": { "tag": "264", "ind2": "3" }
             },
@@ -398,6 +429,7 @@
                 "operation": "removeField",
                 "comment": "Remove 880 $6 264-XX ind2=3 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "880",
                     "ind2": "3",
@@ -413,6 +445,7 @@
                 "operation": "removeField",
                 "comment": "Remove source 264 ind2=4 if base has one, so that a repeatable field won't be copied from source",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": { "tag": "264", "ind2": "4" },
                 "requireBaseField": { "tag": "264", "ind2": "4" }
             },
@@ -420,6 +453,7 @@
                 "operation": "removeField",
                 "comment": "Remove 880 $6 264-XX ind2=4 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "880",
                     "ind2": "4",
@@ -436,6 +470,7 @@
                 "operation": "removeField",
                 "comment": "Remove 300 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "300"
                 },
@@ -448,6 +483,7 @@
                 "operation": "removeField",
                 "comment": "Remove 310 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "310"
                 },
@@ -460,6 +496,7 @@
                 "operation": "removeField",
                 "comment": "Remove 321 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "321"
                 },
@@ -472,6 +509,7 @@
                 "operation": "removeField",
                 "comment": "Remove 335 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "335"
                 },
@@ -486,6 +524,7 @@
                 "operation": "removeField",
                 "comment": "Remove 336 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "336"
                 },
@@ -498,6 +537,7 @@
                 "operation": "removeField",
                 "comment": "Remove 337 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "337"
                 },
@@ -510,6 +550,7 @@
                 "operation": "removeField",
                 "comment": "Remove 338 so that a repeatable field won't be copied from source if base already has one",
                 "recordType": "source",
+                "internal": true,
                 "fieldSpecification": {
                     "tag": "338"
                 },

@@ -294,11 +294,18 @@ function operationSwapFields(record, otherRecord, fieldSpecification) {
   nvdebug(`Moved ${relevantFields2.length} field(s) from source to base`, debugDev);
 }
 
-export function filterOperation(base, source, operation) {
+export function filterOperation(base, source, operation, internal = false) {
   if (operation.skip) {
     // Log?
     return;
   }
+
+  // If we are running internal merge and our operation is internal: false, skip operation
+  if (internal && operation.internal === false) {
+    // Log? 
+    return;
+  }
+
   const targetRecords = getTargetRecordsForOperation(base, source, operation);
   //nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'}`);
   if (targetRecords.length === 0) {
@@ -379,8 +386,8 @@ export function filterOperation(base, source, operation) {
 }
 
 
-export function filterOperations(base, source, config) {
-  config.forEach(operation => filterOperation(base, source, operation));
+export function filterOperations(base, source, config, internal = false) {
+  config.forEach(operation => filterOperation(base, source, operation, internal));
 }
 
 
