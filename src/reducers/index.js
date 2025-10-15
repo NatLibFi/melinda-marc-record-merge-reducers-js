@@ -22,7 +22,7 @@ import {default as manufacturer260To264} from './transferManufacturerDataFrom260
 import {default as removeDuplicatesFromSource} from './removeIdenticalDataFields';
 // const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname , '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 export const localReducers = [
   //// PREPROCESSOR STUFF:

@@ -6,13 +6,13 @@ import generateTests from '@natlibfi/fixugen';
 import fs from 'fs';
 import path from 'path';
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname , '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 
 describe('source preprocessor tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'preprocessSource'],
+    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'preprocessSource'],
     recurse: false,
     useMetadataFile: true,
     fixura: {

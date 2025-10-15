@@ -7,7 +7,7 @@ import createReducer from './field007';
 
 generateTests({
   callback,
-  path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'field007'],
+  path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'field007'],
   recurse: false,
   useMetadataFile: true,
   fixura: {

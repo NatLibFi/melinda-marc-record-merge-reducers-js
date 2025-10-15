@@ -8,7 +8,7 @@ import generateTests from '@natlibfi/fixugen';
 describe('merge data field tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'muuntaja'],
+    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'muuntaja'],
     recurse: false,
     useMetadataFile: true,
     fixura: {

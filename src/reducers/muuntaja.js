@@ -7,7 +7,7 @@ import path from 'path';
 //import {default as swapFieldsProto} from './swapAuthorFields';
 import {default as createField776Proto} from './muuntaja776';
 import {filterOperations} from './processFilter';
-const muuntajaConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'muuntajaConfig.json'), 'utf8'));
+const muuntajaConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname , '..', '..', 'src', 'reducers', 'muuntajaConfig.json'), 'utf8'));
 
 //import {sortAdjacentSubfields} from '@natlibfi/marc-record-validators-melinda/dist/sortSubfields';;
 // import identicalFields from '@natlibfi/marc-record-validators-melinda/dist/identical-fields';

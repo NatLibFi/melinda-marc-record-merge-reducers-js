@@ -8,7 +8,7 @@ import generateTests from '@natlibfi/fixugen';
 describe('merge preprocess prepublication tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'preprocessPrepublication'],
+    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'preprocessPrepublication'],
     recurse: true,
     useMetadataFile: true,
     fixura: {

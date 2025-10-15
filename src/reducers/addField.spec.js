@@ -12,7 +12,7 @@ const debugData = debug.extend('data');
 describe('add data field tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'addDataFields'],
+    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'addDataFields'],
     recurse: true,
     useMetadataFile: true,
     fixura: {

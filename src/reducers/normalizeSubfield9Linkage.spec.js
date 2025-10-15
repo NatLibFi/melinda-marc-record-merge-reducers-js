@@ -13,7 +13,7 @@ const debugDev = debug.extend('dev');
 describe('normalizeSubfield9Linkage tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'subfield9Linkage'],
+    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'subfield9Linkage'],
     recurse: false,
     useMetadataFile: true,
     fixura: {

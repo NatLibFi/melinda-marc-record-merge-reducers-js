@@ -9,7 +9,7 @@ import generateTests from '@natlibfi/fixugen';
 describe('subfield 6 reindexing tests: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'manufacturer260'],
+    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'manufacturer260'],
     recurse: false,
     useMetadataFile: true,
     fixura: {

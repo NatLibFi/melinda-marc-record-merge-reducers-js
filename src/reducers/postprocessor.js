@@ -21,7 +21,7 @@ import factoryForThereCanBeOnlyOneSubfield0 from '@natlibfi/marc-record-validato
 import factoryForSortFields from '@natlibfi/marc-record-validators-melinda/dist/sortFields.js';
 // import factoryForMergeingRelatorFields from '@natlibfi/marc-record-validators-melinda/dist/mergeRelatorField'; // Not yet in main
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname , '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:postprocessor');
 //const debugData = debug.extend('data');

@@ -9,7 +9,7 @@ import generateTests from '@natlibfi/fixugen';
 describe('Remove identical datafields: ', () => {
   generateTests({
     callback,
-    path: [__dirname, '..', '..', 'test-fixtures', 'reducers', 'removeIdentical'],
+    path: [import.meta.dirname , '..', '..', 'test-fixtures', 'reducers', 'removeIdentical'],
     recurse: false,
     useMetadataFile: true,
     fixura: {

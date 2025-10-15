@@ -20,7 +20,7 @@ import {default as normalizeVariousSubfields} from '@natlibfi/marc-record-valida
 //const debugData = debug.extend('data');
 //const debugDev = debug.extend('dev');
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname , '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 function trimRecord(record) {
   record.fields?.forEach(f => fieldTrimSubfieldValues(f));

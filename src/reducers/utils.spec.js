@@ -15,7 +15,7 @@ const {expect} = chai;
 // vaihda oikea funktio
 describe('utils/getTags', () => {
   it('Should return valid value', () => {
-    const {getFixture} = fixturesFactory(__dirname, '..', '..', 'test-fixtures', 'utils', 'getTags');
+    const {getFixture} = fixturesFactory(import.meta.dirname , '..', '..', 'test-fixtures', 'utils', 'getTags');
     // getFixture({components: ['foo', 'bar.txt'], reader: READERS.JSON})
     const test = getFixture({components: ['testi.json'], reader: READERS.JSON});
     debug(test);

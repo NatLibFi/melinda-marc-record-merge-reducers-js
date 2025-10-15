@@ -6,7 +6,7 @@ import generateTests from '@natlibfi/fixugen';
 
 generateTests({
   callback,
-  path: [__dirname, '..', 'test-fixtures', 'validate'],
+  path: [import.meta.dirname , '..', 'test-fixtures', 'validate'],
   recurse: false,
   useMetadataFile: true,
   fixura: {
