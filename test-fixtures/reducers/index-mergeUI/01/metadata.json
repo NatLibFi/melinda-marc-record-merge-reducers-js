@@ -3,6 +3,5 @@
   "comment": "Note that LOWs are sorted (by marc-record-js) alphabetically",
   "comment2": "Note that merge note's timestamp is not tested!",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

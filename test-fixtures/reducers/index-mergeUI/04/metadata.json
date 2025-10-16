@@ -4,7 +4,7 @@
   "comment #2": "2023-02-28: Add MET-198-ish field-merge for field 245. NB! punc is added to 245$c!",
   "comment #3": "contains orphaned $6 removal stuff as well (though apparently not yet working properly)",
   "comment #4": "EX: normalize (=dehyphenate and x-uppercase) ISBN in 020$a as per MELINDA-8362-ish",
-  "only": false,
-  "skip": true,
+  "only": true,
+  "skip": false,
 "skipComment": "Skip before editing test for internal merge"
 }

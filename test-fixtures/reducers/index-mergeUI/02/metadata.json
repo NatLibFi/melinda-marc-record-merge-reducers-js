@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Drop source 010 as it is ET. MRA-284-ish: Unify languages in 020$q. MRA-511: hyphenation check",
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge",
+  "skip": false,
   "only": false
 }
