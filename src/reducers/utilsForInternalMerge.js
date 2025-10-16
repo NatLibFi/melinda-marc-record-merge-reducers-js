@@ -7,7 +7,7 @@ const debugDev = debug.extend('dev');
 
 export const defaultInternalPrefix = 'FI-MELINDA';
 
-// Convert all internal f035 $a control numbers to f035 $z
+// Convert all internal (FI-MELINDA) f035 $a control numbers to f035 $z
 // This is usable in postProcessor for internal merges, where merged record is added as a new record to database
 // and base and source are deleted
 // We handle both records, in case this is used before adding f035s from source to base
@@ -15,7 +15,7 @@ export function convertInternalControlNumbersToCanceled(base, source, internal, 
   // handle all existing internal f035 $a
   debug(`Editing f035 $a with prefix ${prefix} to f035 $z`);
   const internalIdValuePattern = `^\\(${prefix}\\)`;
-  debug(`internalValuePattern: ${internalIdValuePattern}`);
+  //debug(`internalValuePattern: ${internalIdValuePattern}`);
 
   const convertInternalControlNumbersToCanceledConfig = [
         {
@@ -25,7 +25,7 @@ export function convertInternalControlNumbersToCanceled(base, source, internal, 
             comment: "Move internal f035 $a to f035 $z",
             fieldSpecification: {
                 tag: "035",
-                subfieldFilters: [{code: "a"}]
+                subfieldFilters: [{code: "a"}, {valuePattern: internalIdValuePattern}]
             },
             renamableSubfieldFilter: {code: "a", valuePattern: internalIdValuePattern, newCode: "z"}
         }];
