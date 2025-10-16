@@ -1,5 +1,7 @@
 {
-  "description":"$6/02: merge subfield $6 from source field, if base is a (here proper) subset of base field. $0 is ignored",
+  "description":"INTERNAL MERGE: $6/02: merge subfield $6 from source field, if base is a (here proper) subset of base field. $0 is ignored",
   "comment": "$0 ignorance: see MELINDA-8107",
-  "only": false
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

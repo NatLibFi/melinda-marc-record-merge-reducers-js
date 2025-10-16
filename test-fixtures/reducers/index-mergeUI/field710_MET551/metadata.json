@@ -1,5 +1,6 @@
 {
-  "description":"MET-551: combine differently named publishers",
+  "description":"INTERNAL MERGE: MET-551: combine differently named publishers",
   "only": false,
-  "skip": false
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

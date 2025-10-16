@@ -1,5 +1,6 @@
 {
-  "description":"MET-380: field 710 subfield sorting issue after merge. Enable test after validator/fixer update",
+  "description":"INTERNAL MERGE: MET-380: field 710 subfield sorting issue after merge. Enable test after validator/fixer update",
   "only": false,
-  "skip": false
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

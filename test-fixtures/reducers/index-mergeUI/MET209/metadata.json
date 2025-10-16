@@ -1,5 +1,7 @@
 {
-  "description":"MET-209 (X00$e translations) and MET-232 (020$q translations)",
+  "description":"INTERNAL MERGE: MET-209 (X00$e translations) and MET-232 (020$q translations)",
   "only": false,
-  "comment": "Note that 700$e values are translated to base's 040$b cat language during preprocessing"
+  "comment": "Note that 700$e values are translated to base's 040$b cat language during preprocessing",
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

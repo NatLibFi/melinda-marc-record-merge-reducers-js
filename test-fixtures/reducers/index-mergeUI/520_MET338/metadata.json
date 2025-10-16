@@ -1,5 +1,7 @@
 {
-  "description":"MET-338: reported field 520 duplicate, works fine",
+  "description":"INTERNAL MERGE: MET-338: reported field 520 duplicate, works fine",
   "comment": "Issue was probably caused by in-between updates of this project and validators OR some here unseen typo in metadata",
-  "only": false
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

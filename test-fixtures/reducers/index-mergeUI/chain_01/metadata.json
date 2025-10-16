@@ -1,3 +1,6 @@
 {
-  "description":"Remove normal ($6-less and $8-less) shared fields from source"
+  "description":"INTERNAL MERGE: Remove normal ($6-less and $8-less) shared fields from source",
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

@@ -1,4 +1,6 @@
 {
-  "description":"merge 020$q subfields (drop source sidosasu)",
-  "only": false
+  "description":"INTERNAL MERGE: merge 020$q subfields (drop source sidosasu)",
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

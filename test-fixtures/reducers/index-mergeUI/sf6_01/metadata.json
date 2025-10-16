@@ -1,6 +1,8 @@
 {
-  "description":"$6/01: Merging of near-identical 100/880 pairs fails. Source is added as 700/880",
+  "description":"INTERNAL MERGE: $6/01: Merging of near-identical 100/880 pairs fails. Source is added as 700/880",
   "comment": "NV: This might not be the best solution (=merge), but balancing pros and cons this is pretty decent.",
   "comment2": "NV: No info is lost, and proper merge is very hard and not worth the effort.",
-  "only": false
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

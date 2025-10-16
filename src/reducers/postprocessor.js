@@ -8,6 +8,7 @@ import {IndicatorFixes, MergeField500Lisapainokset, MultipleSubfield0s, RemoveDu
 import {mtsProcessRecord} from './preprocessMetatietosanasto.js';
 import {fieldToString, nvdebug} from './utils.js';
 import {filterOperations} from './processFilter.js';
+import {convertInternalControlNumbersToCanceled, addMergeNoteField, cleanCats} from './utilsForInternalMerge.js';
 
 // import factoryForMergeingRelatorFields from '@natlibfi/marc-record-validators-melinda/dist/mergeRelatorField'; // Not yet in main
 
@@ -17,10 +18,11 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:po
 //const debugData = debug.extend('data');
 const debugDev = debug.extend('dev');
 
-export default (config = defaultConfig) => (base, source) => {
+export default (config = defaultConfig, internal = false) => (base, source) => {
 
   nvdebug('ENTERING postprocessor.js', debugDev);
   base.fields.forEach(field => nvdebug(`WP0: ${fieldToString(field)}`, debugDev));
+
 
   //nvdebug(JSON.stringify(base), debugDev);
   //nvdebug(JSON.stringify(source), debugDev);
@@ -28,7 +30,7 @@ export default (config = defaultConfig) => (base, source) => {
   //nvdebug(JSON.stringify(config.postprocessorDirectives), debugDev);
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
   //nvdebug(`HSP CONF ${config}`, debugDev);
-  filterOperations(base, source, config.postprocessorDirectives); // declared in preprocessor
+  filterOperations(base, source, config.postprocessorDirectives, internal); // declared in preprocessor
 
   //deleteAllPrepublicationNotesFromField500InNonPubRecord(base); // Already done when LDR/17 was copied from source
   removeWorsePrepubField500s(base);
@@ -48,6 +50,13 @@ export default (config = defaultConfig) => (base, source) => {
   //base.fields.forEach(field => nvdebug(`WP51: ${fieldToString(field)}`, debugDev));
   const thereCanBeOnlyOneSubfield0 = MultipleSubfield0s({}); // MRA-392
   thereCanBeOnlyOneSubfield0.fix(base);
+
+  if (internal) {
+    debugDev(`*** INTERNAL MERGE postprocessor additions ***`);
+    addMergeNoteField(base, source, 'FI-MELINDA');
+    convertInternalControlNumbersToCanceled(base, source, internal, 'FI-MELINDA');
+    cleanCats(base, source, internal);
+  }
 
   //const res =
   RemoveDuplicateDataFields().fix(base);

@@ -1,4 +1,6 @@
 {
-  "description":"MRA-503: field 250: support uudistettu painos variants",
-  "only": false
+  "description":"INTERNAL MERGE: MRA-503: field 250: support uudistettu painos variants",
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

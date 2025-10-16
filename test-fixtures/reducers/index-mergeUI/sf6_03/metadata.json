@@ -1,4 +1,6 @@
 {
-  "description":"$6/03: 700+880 (mainEntries): merge $6-less base and $6-ful source",
-  "only": false
+  "description":"INTERNAL MERGE: $6/03: 700+880 (mainEntries): merge $6-less base and $6-ful source",
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

@@ -61,7 +61,6 @@ export default (config = defaultConfig, internal = false) => (base, source) => {
   recordRemoveDuplicateSubfieldsFromFields(source2);
   recordRemoveDuplicateSubfieldsFromFields(base);
 
-
   const result = {base, source: source2};
   ///
   //nvdebug(JSON.stringify(result));

@@ -62,6 +62,7 @@
         }
       ]
     },
+    {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)000123456 + (FI-MELINDA)000123456"},{"code":"5","value":"MELINDA"}]},
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "a", "value": "A. A." },
       { "code": "0", "value": "(FI-ASTERI-N)000000001" }

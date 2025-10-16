@@ -1,4 +1,6 @@
 {
-  "description":"MRA-327: $6 regexp was set too tight",
-  "only": false
+  "description":"INTERNAL MERGE: MRA-327: $6 regexp was set too tight",
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

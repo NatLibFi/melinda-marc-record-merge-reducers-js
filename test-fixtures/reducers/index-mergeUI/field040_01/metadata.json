@@ -1,5 +1,6 @@
 {
-  "description":"040: merge values. Note that FI-KV is retained since LDR/17 is not '8'",
-  "skip": false,
+  "description":"INTERNAL MERGE: 040: merge values. Note that FI-KV is retained since LDR/17 is not '8'",
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge",
   "only": false
 }

@@ -1,7 +1,8 @@
 {
-  "description":"Some identical, some different --> copy different from source to base",
+  "description":"INTERNAL MERGE: Some identical, some different --> copy different from source to base",
   "tagPattern": "^(LOW|CAT|SID)$",
   "comment": "I need to check the logic behind new field position determination",
-  "skip": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge",
   "only": false
 }

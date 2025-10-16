@@ -21,7 +21,7 @@ const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
 // Should this load default configuration?
 //export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
-export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (baseRecord, sourceRecord) => {
+export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration, internal = false) => (baseRecord, sourceRecord) => {
   nvdebug(`ENTERING mergeField.js`, debugDev);
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
   //const sourceRecord = new MarcRecord(source, {subfieldValues: false});
@@ -40,7 +40,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   fixer.fix(sourceRecord);
 
   retagSource1XX(sourceRecord);
-  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives); // NB! we should rename func, this may have nothing to with add
+  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives, internal); // NB! we should rename func, this may have nothing to with add
 
 
   sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`, debugDev));

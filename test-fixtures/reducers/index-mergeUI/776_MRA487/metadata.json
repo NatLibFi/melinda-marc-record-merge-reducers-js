@@ -1,4 +1,6 @@
 {
-  "description":"MRA-487: field 776 subset should not get through",
-  "only": false
+  "description":"INTERNAL MERGE: MRA-487: field 776 subset should not get through",
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

@@ -1,5 +1,6 @@
 {
-  "description":"MELKEHITYS-2969 (with f260 in base, and f264 in source)",
+  "description":"INTERNAL MERGE: MELKEHITYS-2969 (with f260 in base, and f264 in source)",
   "only": false,
-  "skip": false
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

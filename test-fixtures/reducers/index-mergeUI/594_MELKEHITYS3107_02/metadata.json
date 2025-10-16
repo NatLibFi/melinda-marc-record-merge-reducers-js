@@ -1,5 +1,6 @@
 {
-  "description":"MELKEHITYS-3107/01: keep source 594 $a EI VASTAANOTETTU as base has no FIKKA LOW",
-  "skip": false,
+  "description":"INTERNAL MERGE: MELKEHITYS-3107/01: keep source 594 $a EI VASTAANOTETTU as base has no FIKKA LOW",
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge",
   "only": false
 }

@@ -1,6 +1,7 @@
 {
-  "description":"040: merge values. Note that FI-KV is dropped since LDR/17 is '8'",
+  "description":"INTERNAL MERGE: 040: merge values. Note that FI-KV is dropped since LDR/17 is '8'",
   "comment": "based on https://www.kiwi.fi/display/kumea/2023-05-03#id-20230503-2)Kysymys:Kysymys040%E2%80%A1aISIL-tunnuksista",
-  "skip": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge",
   "only": false
 }

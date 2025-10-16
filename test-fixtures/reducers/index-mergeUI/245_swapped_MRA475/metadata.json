@@ -1,6 +1,7 @@
 {
-  "description":"MRA-475-ish (base and source swapped): source uses $9s and has two 880 $6 245-NNs, base has one identical pair (without $9)",
+  "description":"INTERNAL MERGE: MRA-475-ish (base and source swapped): source uses $9s and has two 880 $6 245-NNs, base has one identical pair (without $9)",
   "comment": "Too complex to handle. As chains fail to pair, source is discarded altogether.",
   "only": false,
-  "skip": false
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

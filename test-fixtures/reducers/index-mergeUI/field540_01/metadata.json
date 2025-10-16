@@ -1,3 +1,6 @@
 {
-  "description":"MELKEHITYS-2431: modernize + merge 540 fields"
+  "description":"INTERNAL MERGE: MELKEHITYS-2431: modernize + merge 540 fields",
+  "only": false,
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }

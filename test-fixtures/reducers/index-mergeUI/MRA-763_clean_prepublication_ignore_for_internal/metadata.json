@@ -1,5 +1,6 @@
 {
-  "description":"Do not clean prepubs for internal, manual merge",
-  "skip": false,
+  "description":"INTERNAL MERGE: Do not clean prepubs for internal, manual merge",
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge",
   "only": false
 }

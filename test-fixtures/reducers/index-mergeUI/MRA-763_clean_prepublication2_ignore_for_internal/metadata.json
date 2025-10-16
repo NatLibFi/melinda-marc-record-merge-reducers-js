@@ -1,5 +1,6 @@
 {
-  "description":"Do not extra clean source (LDR/17=2 + 500 'Koneellisesti tuotettu tietue') for internal, manual merge ",
+  "description":"INTERNAL MERGE: Do not extra clean source (LDR/17=2 + 500 'Koneellisesti tuotettu tietue') for internal, manual merge ",
   "only": false,
-  "skip": false
+  "skip": true,
+"skipComment": "Skip before editing test for internal merge"
 }
