@@ -16,6 +16,8 @@
         { "code": "a", "value": "Porvoo :" },
         { "code": "b", "value": "Bookwell Oy," },
         { "code": "c", "value": "2019."}
-    ]}
+    ]},
+    {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)incoming-ID"},{"code":"5","value":"MELINDA"}]}
+ 
   ]
 }

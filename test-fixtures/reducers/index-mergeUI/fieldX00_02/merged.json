@@ -6,7 +6,8 @@
         { "code": "a", "value": "Ipsum," },
         { "code": "e", "value": "kirjoittaja." }
       ]
-    },
+    },        {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)source-313"},{"code":"5","value":"MELINDA"}]},
+ 
     {
       "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
         { "code": "a", "value": "Superman," },

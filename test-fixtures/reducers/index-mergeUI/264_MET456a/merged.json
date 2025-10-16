@@ -6,6 +6,7 @@
       { "code": "a", "value": "Lorum :"},
       { "code": "b", "value": "Ipsum,"},
       { "code": "c", "value": "2021."}
-    ] }
+    ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)12345"},{"code":"5","value":"MELINDA"}]}
   ]
 }

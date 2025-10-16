@@ -2,6 +2,5 @@
   "description":"INTERNAL MERGE: MET-553 test 2: merge field 300 and merge pairs' $a subfields",
   "comment": "Don't use base value as per SN: 'Kuvailuohjeiden näkökulmasta epubille ei pitäisi koskaan merkitä sivumäärää'",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

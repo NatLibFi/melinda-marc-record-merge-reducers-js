@@ -8,7 +8,7 @@ import {IndicatorFixes, MergeField500Lisapainokset, MultipleSubfield0s, RemoveDu
 import {mtsProcessRecord} from './preprocessMetatietosanasto.js';
 import {fieldToString, nvdebug} from './utils.js';
 import {filterOperations} from './processFilter.js';
-import {convertInternalControlNumbersToCanceled, addMergeNoteField, cleanCats} from './utilsForInternalMerge.js';
+import {convertInternalControlNumbersToCanceled, addMergeNoteField, removeCATFields} from './utilsForInternalMerge.js';
 
 // import factoryForMergeingRelatorFields from '@natlibfi/marc-record-validators-melinda/dist/mergeRelatorField'; // Not yet in main
 
@@ -53,9 +53,10 @@ export default (config = defaultConfig, internal = false) => (base, source) => {
 
   if (internal) {
     debugDev(`*** INTERNAL MERGE postprocessor additions ***`);
+    // Adding merge note should maybe be done in UI
     addMergeNoteField(base, source, 'FI-MELINDA');
     convertInternalControlNumbersToCanceled(base, source, internal, 'FI-MELINDA');
-    cleanCats(base, source, internal);
+    removeCATFields(base, source, internal);
   }
 
   //const res =

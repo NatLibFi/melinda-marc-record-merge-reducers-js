@@ -9,6 +9,7 @@
     ] },
     { "tag": "264", "ind1": " ", "ind2": "4", "subfields": [
       { "code": "c", "value": "©2023."}
-    ] }
+    ] },
+       {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]}
   ]
 }

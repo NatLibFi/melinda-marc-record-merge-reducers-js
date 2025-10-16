@@ -7,7 +7,8 @@
       { "code": "a", "value": "Suomen laki." },
       { "code": "n", "value": "II /" },
       { "code": "c", "value": "Etunimi Sukunimi, tomittaja." }
-    ] }
+    ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]}
 
   ]
 }

@@ -3,6 +3,5 @@
   "comment2": "Ind1=2: Base 600$a vs source 600$av: don't merge",
   "comment4": "Ind1=4: Base 600$a vs source 600$ax: don't merge",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

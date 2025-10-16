@@ -9,6 +9,7 @@
         { "code": "l", "value": "englanti." }
       ]
     },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)666"},{"code":"5","value":"MELINDA"}]},
     { "tag": "700", "ind1": "1", "ind2": "2", "subfields": [
         { "code": "6", "value": "880-02" },
         { "code": "a", "value": "Jang, Gangmyeong," },

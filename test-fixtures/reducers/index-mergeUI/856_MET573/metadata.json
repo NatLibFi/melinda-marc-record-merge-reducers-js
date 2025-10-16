@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Check MET-573: don't merge $5",
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge",
+  "skip": false,
   "only": false
 }

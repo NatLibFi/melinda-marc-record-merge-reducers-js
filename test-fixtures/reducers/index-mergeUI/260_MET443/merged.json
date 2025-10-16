@@ -7,7 +7,7 @@
       { "code": "b", "value": "Books On Demand,"},
       { "code": "c", "value": "cop. 2014."},
       { "code": "e", "value": "(Norderstedt, Saksa :"},
-      { "code": "f", "value": "Books on Demand)"}
-    ] }
+      { "code": "f", "value": "Books on Demand)"}    ] },
+       {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]}
   ]
 }

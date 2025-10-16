@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Test MRA-294 (one scenario). Fjärde edition vs 4. painos",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

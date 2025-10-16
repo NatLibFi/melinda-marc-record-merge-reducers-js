@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Remove $6-linked duplicate fields from source",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

@@ -5,7 +5,5 @@
   "comment 3": "Added MRA-245-ish tests. Added MRA-223 fields...",
   "comment 4": "Punctuation fixes create a duplicate of 'Andrejev, A.' and second instance gets removed.",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
-
+  "skip": false
 }

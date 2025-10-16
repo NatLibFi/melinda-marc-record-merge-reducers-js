@@ -15,12 +15,16 @@ generateTests({
   }
 });
 
-function callback({getFixture, expectedError = false}) {
+function callback({getFixture, ignoreLDRmismatch = undefined, expectedError = false}) {
   const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const expectedRecord = getFixture('merged.json');
   try {
-    const bothRecords = createReducer()(base, source);
+    if (ignoreLDRmismatch === undefined) {
+      const bothRecords = createReducer()(base, source);
+      assert.deepEqual(bothRecords.source.toObject(), expectedRecord);
+    }
+    const bothRecords = createReducer()(base, source, ignoreLDRmismatch);
     assert.deepEqual(bothRecords.source.toObject(), expectedRecord);
   } catch (error) {
     assert.equal(error instanceof Error, true);

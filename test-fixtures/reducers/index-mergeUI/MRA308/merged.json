@@ -5,6 +5,7 @@
       { "code": "6", "value": "880-01" },
       { "code": "a", "value": "Jarkije stranitsy" }
     ]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)source-ID"},{"code":"5","value":"MELINDA"}]},
     { "tag": "647", "ind1": " ", "ind2": "4", "subfields": [
       { "code": "6", "value": "880-02" },
       { "code": "a", "value": "Oolannin sota" }

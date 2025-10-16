@@ -2,6 +2,5 @@
   "description":"INTERNAL MERGE: X00/02: use 900$a$y pairs when pairing",
   "comment": "20230531: Implement MRA-495-ish initial+punc check. Fix requires updating ",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

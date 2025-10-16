@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: MET-553 test 1: merge field 300 and merge pairs' $a subfields",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

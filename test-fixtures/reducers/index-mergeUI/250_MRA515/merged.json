@@ -5,6 +5,7 @@
 
     { "tag": "250", "ind1": "0", "ind2": "8", "subfields": [
       { "code": "a", "value": "[Uusi p.]" }
-    ] }
+    ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)12345"},{"code":"5","value":"MELINDA"}]}
   ]
 }

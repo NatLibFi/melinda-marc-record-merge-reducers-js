@@ -32,6 +32,7 @@
         { "code": "6", "value": "880-01" },
         { "code": "a", "value": "but who cares" }
     ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)undefined"},{"code":"5","value":"MELINDA"}]},
 
     {
       "tag": "700",

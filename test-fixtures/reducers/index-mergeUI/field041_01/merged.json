@@ -8,6 +8,7 @@
     { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "eng" },
       { "code": "h", "value": "swe" }
-    ] }
+    ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)source-123"},{"code":"5","value":"MELINDA"}]}
   ]
 }

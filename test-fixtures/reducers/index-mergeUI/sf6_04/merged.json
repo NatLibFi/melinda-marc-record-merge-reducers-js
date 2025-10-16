@@ -7,6 +7,7 @@
       { "code": "a", "value": "Title /" },
       { "code": "c", "value": "Author." }
     ]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)666"},{"code":"5","value":"MELINDA"}]},
     { "tag": "880", "ind1": " ", "ind2": " ",
     "subfields": [
       { "code": "6", "value": "245-01" },

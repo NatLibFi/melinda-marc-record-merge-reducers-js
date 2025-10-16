@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: 041: Keep base's crappy $d zxx.",
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge",
+  "skip": false,
   "only": false
 }

@@ -16,6 +16,8 @@
     { "tag": "040", "ind1": " ", "ind2": " ",
       "subfields": [
         { "code": "b", "value": "swe" }
-      ]}
+      ]},
+    {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)12345"},{"code":"5","value":"MELINDA"}]}
+ 
   ]
 }

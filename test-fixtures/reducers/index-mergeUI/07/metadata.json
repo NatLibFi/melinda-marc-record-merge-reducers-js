@@ -5,6 +5,6 @@
   "comment #3": "MRA-422: illustratör translations. As of 2023-09-XX base-specific X00$e subfields are translated as well",
   "comment ¤4": "2023-09-08: Some $q abbrs are already handled by a normalize-qualifying-information validator",
   "only": false,
-  "skip": true,
+  "skip": false,
 "skipComment": "Skip before editing test for internal merge"
 }

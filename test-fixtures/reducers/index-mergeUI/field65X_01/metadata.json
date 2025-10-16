@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Merge or add 65X terms that have corrupted $2 values",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

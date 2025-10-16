@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: 041: merge values, note that source's illegal zxx gets dropped in generic preprocessing, to in merge-specific content",
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge",
+  "skip": false,
   "only": false
 }

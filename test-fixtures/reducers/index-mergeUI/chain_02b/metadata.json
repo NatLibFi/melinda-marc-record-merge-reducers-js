@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Base has multiple (and duplicate) $6 chains. One new duplicate coming up from source. Deduplicate. There can be only one.",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

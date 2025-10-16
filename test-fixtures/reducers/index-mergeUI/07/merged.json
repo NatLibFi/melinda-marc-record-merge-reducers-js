@@ -15,6 +15,8 @@
       { "code": "p", "value": "Alun perin julkaistu:" },
       { "code": "c", "value": "2018." }
     ]},
+      {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)000123456"},{"code":"5","value":"MELINDA"}]},
+  
     { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "a", "value": "Sukunimi, A.," },
       { "code": "e", "value": "illustratör." }

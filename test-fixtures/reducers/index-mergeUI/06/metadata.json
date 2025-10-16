@@ -5,7 +5,7 @@
   "MET-271": "Merge fields 490, prefer base. IND1 value is value is based on 8XX existence (post-processed using marc-record-merge-validators), not by field megre",
   "comment": "NB: I (nvolk) should check should 700 be removed from modifiedSource.json after field-merge.",
   "only": false,
-  "skip": true,
+  "skip": false,
 "skipComment": "Skip before editing test for internal merge"
   
 }

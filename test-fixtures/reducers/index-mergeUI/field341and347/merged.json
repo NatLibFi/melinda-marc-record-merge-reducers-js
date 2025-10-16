@@ -10,7 +10,8 @@
     ]},
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields" : [
       { "code": "a", "value": "Whatever." }
-    ]}
+    ]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)001122334"},{"code":"5","value":"MELINDA"}]}
 
 
   ]

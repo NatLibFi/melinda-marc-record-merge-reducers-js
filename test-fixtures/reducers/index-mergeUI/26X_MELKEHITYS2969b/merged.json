@@ -6,6 +6,7 @@
       { "code": "a", "value": "Milano :" },
       { "code": "b", "value": "Fabbri,"},
       { "code": "c", "value": "2023."}
-    ] }
+    ] },
+       {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)123456 + (FI-MELINDA)12345"},{"code":"5","value":"MELINDA"}]}
   ]
 }

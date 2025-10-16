@@ -3,6 +3,5 @@
   "comment": "Sources are educated guesses.",
   "comment #2": "$l-prepuncs: merged subfields trigger punc fix, $l capitalization is done later on",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

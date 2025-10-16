@@ -3,6 +3,5 @@
   "comment": "NV: This might not be the best solution (=merge), but balancing pros and cons this is pretty decent.",
   "comment2": "NV: No info is lost, and proper merge is very hard and not worth the effort.",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

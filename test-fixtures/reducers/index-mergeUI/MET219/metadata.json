@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: MET-219 (duplicate $6 index), MRA-376 (handle $6 re-usage)",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

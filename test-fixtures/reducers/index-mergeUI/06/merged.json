@@ -10,6 +10,8 @@
     { "tag": "511", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Gamma." }, {"code": "9", "value": "FENNI<KEEP>"} ] },
     { "tag": "511", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Delta." }, {"code": "9", "value": "FENNI<KEEP>"} ] },
     { "tag": "511", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Alpha." } ] },
-    { "tag": "520", "ind1": "8", "ind2": " ", "subfields": [ { "code": "a", "value": "Show must go off." } ] }
+    { "tag": "520", "ind1": "8", "ind2": " ", "subfields": [ { "code": "a", "value": "Show must go off." } ] },
+        {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)012345678"},{"code":"5","value":"MELINDA"}]}
+
   ]
 }

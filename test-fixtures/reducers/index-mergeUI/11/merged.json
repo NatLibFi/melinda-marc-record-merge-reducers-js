@@ -8,6 +8,7 @@
       {"code": "e", "value": "julkaisija,"},
       {"code": "e", "value": "kaivertaja."},
       {"code": "0", "value": "(FI-ASTERI-N)000037428"}
-    ]}
+    ]},
+   {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)base + (FI-MELINDA)base"},{"code":"5","value":"MELINDA"}]}
   ]
 }

@@ -6,7 +6,8 @@
         { "code": "d", "value": "zxx" },
         { "code": "h", "value": "fin" }
       ]
-    }
+    },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)source-123"},{"code":"5","value":"MELINDA"}]}
 
   ]
 }

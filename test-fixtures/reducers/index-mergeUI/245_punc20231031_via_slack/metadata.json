@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Field 245 punctuation issue discussed via slack on 2023-10-31",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

@@ -3,8 +3,9 @@
   "fields": [
     { "tag": "001", "value": "123456" },
     { "tag": "300", "ind1": " ", "ind2": " ", "subfields": [
-      { "code": "a", "value": "1 verkkoaineisto (7 h 36 min)" }
-    ]}
+      { "code": "a", "value": "1 verkkoaineisto (7 h 36 min)" }    ]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)123456 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]}
+
 
   ]
 }

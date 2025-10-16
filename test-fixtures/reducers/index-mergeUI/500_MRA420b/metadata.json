@@ -2,6 +2,5 @@
   "description":"INTERNAL MERGE: Field 500, MRA-420 (test B): 'EI VIELÄ ILMESTYNYT...' deletion",
   "comment": "As base LDR/17 is better than 8, source's 500 prepub fields are deleted, and base retains it's 500",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

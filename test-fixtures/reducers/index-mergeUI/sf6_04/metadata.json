@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: $6/04: MRA-430 (part): add $6 to NR field",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

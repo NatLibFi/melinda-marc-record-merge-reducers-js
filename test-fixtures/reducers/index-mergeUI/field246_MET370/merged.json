@@ -5,6 +5,7 @@
     { "tag": "246", "ind1": "1", "ind2": "2", "subfields": [ { "code": "a", "value": "Beta" } ] },
     { "tag": "246", "ind1": "1", "ind2": "3", "subfields": [ { "code": "a", "value": "Gamma" } ] },
     { "tag": "246", "ind1": "2", "ind2": " ", "subfields": [ { "code": "a", "value": "Delta" } ] },
-    { "tag": "246", "ind1": "1", "ind2": "4", "subfields": [ { "code": "a", "value": "Gamma" } ] }
+    { "tag": "246", "ind1": "1", "ind2": "4", "subfields": [ { "code": "a", "value": "Gamma" } ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)undefined"},{"code":"5","value":"MELINDA"}]}
   ]
 }

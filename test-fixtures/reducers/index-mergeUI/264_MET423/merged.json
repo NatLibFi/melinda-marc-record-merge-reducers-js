@@ -8,6 +8,7 @@
       { "code": "b", "value": "Lorum,"},
       { "code": "c", "value": "2021."}
     ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]},
     { "tag": "880", "ind1": " ", "ind2": "1", "subfields": [
       { "code": "6", "value": "264-01/(N" },
       { "code": "a", "value": "Bar :"},

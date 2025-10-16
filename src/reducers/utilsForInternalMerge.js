@@ -10,17 +10,19 @@ export const defaultInternalPrefix = 'FI-MELINDA';
 // Convert all internal f035 $a control numbers to f035 $z
 // This is usable in postProcessor for internal merges, where merged record is added as a new record to database
 // and base and source are deleted
-// This requires that record already has f035 $as from both merged records
+// We handle both records, in case this is used before adding f035s from source to base
 export function convertInternalControlNumbersToCanceled(base, source, internal, prefix = defaultInternalPrefix) {
   // handle all existing internal f035 $a
   debug(`Editing f035 $a with prefix ${prefix} to f035 $z`);
-  const internalIdValuePattern = `/^\(${prefix}\)/`
+  const internalIdValuePattern = `^\\(${prefix}\\)`;
+  debug(`internalValuePattern: ${internalIdValuePattern}`);
 
   const convertInternalControlNumbersToCanceledConfig = [
         {
             operation: "renameSubfield",
-            recordType: "base",
+            recordType: "both",
             internal: true,
+            comment: "Move internal f035 $a to f035 $z",
             fieldSpecification: {
                 tag: "035",
                 subfieldFilters: [{code: "a"}]
@@ -28,22 +30,23 @@ export function convertInternalControlNumbersToCanceled(base, source, internal, 
             renamableSubfieldFilter: {code: "a", valuePattern: internalIdValuePattern, newCode: "z"}
         }];
 
-  filterOperations(base, source, convertInternalControlNumbersToCanceledConfig, internal); // declared in preprocessor
+  debug(`convertInternalControlNumbersToCanceledConfig: ${JSON.stringify(convertInternalControlNumbersToCanceledConfig)}`);
+  filterOperations(base, source, convertInternalControlNumbersToCanceledConfig, internal);
 }
 
-export function cleanCats(base, source, internal) {
+export function removeCATFields(base, source, internal) {
   // delete CAT-fields
   const removeCatsConfig =
       [{
             operation: "removeField",
-            recordType: "base",
+            recordType: "both",
             internal: true,
-            comment: "Remove CAT fields from base",
+            comment: "Remove CAT fields from records",
             fieldSpecification: {
                 tagPattern: "^CAT$"
             }
         }];
-  filterOperations(base, source, removeCatsConfig, internal); // declared in preprocessor
+  filterOperations(base, source, removeCatsConfig, internal);
 }
 
 // Add merge note based on source and base ids to base

@@ -3,6 +3,5 @@
   "comment": "note that $e subfield order might be suboptimal.",
   "comment 2": "Contains also 600$c translations (fiktiv gestalt) vs (fiktiivinen hahmo) which don't merge",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

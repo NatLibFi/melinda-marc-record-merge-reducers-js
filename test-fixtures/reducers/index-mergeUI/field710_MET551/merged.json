@@ -2,6 +2,7 @@
   "leader": "01331cam a22003494i 4500",
   "fields": [
     { "tag": "001", "value": "123456" },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)123456 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]},
     { "tag": "710", "ind1": "2", "ind2": " ", "subfields": [
       { "code": "a", "value": "Kustannus Oy Duodecim," },
       { "code": "e", "value": "kustantaja." }

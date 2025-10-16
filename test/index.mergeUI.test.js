@@ -22,11 +22,11 @@ generateTests({
   }
 });
 
-function callback({getFixture}) {
+function callback({getFixture, expectedError = undefined}) {
 
-  debug(`Runnin tests for internal merge`);
-  //return;
-
+  debug(`Running tests for internal merge`);
+ //return;
+ try {
   const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
   const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
   const expectedRecord = new MarcRecord(getFixture('merged.json'));
@@ -34,7 +34,7 @@ function callback({getFixture}) {
   // Run reducers for mergeUI
   const reducers = MergeReducersForMergeUI;
 
-  debugData(`Reducers: ${inspect(reducers, {colors: true, maxArrayLength: 30, depth: 8})})}`);
+  //debugData(`Reducers: ${inspect(reducers, {colors: true, maxArrayLength: 30, depth: 8})})}`);
 
   const result = merger({base, source, reducers});
 
@@ -45,21 +45,45 @@ function callback({getFixture}) {
   //debugData(`EXPECTED: ${inspect(expectedRecord, {depth: 4})}`);
   const {formattedResult, formattedExpectedResult} = ignoreF583TimeStamp(result, expectedRecord);
 
-  debugData(`RESULT: ${JSON.stringify(result.toObject())}`);
-  debugData(`EXPECTED: ${JSON.stringify(expectedRecord.toObject())}`);
-  assert.deepEqual(formattedResult.toObject(), formattedExpectedResult.toObject());
+  //debugData(`RESULT:\n ${JSON.stringify(result.toObject())}`);
+  //debugData(`EXPECTED:\n ${JSON.stringify(expectedRecord.toObject())}`);
+  debugData(`RESULT:\n ${result.toString()}`);
+  debugData(`EXPECTED:\n ${expectedRecord.toString()}`);
+
+  const resultObj = formattedResult.toObject();
+  const expectedObj = formattedExpectedResult.toObject();
+
+  //assert.deepEqual(result.toObject(), );
+  assert.deepEqual(resultObj.leader, expectedObj.leader);
+  assert.deepEqual(resultObj.fields.length, expectedObj.fields.length);
+
+  resultObj.fields.forEach((field, index) => {
+    //debug(`Check field ${index}`);
+    assert.deepEqual(field, expectedObj.fields[index]);
+    }
+  );
+
+  } catch (error) {
+    assert.equal(error instanceof Error, true);
+    if (expectedError) {
+      assert.equal(error.message, expectedError);
+      return;
+    }
+    throw error;
+  }
 
   function ignoreF583TimeStamp(record, expectedRecord) {
-    debug(`Delete f583s with timeStamp`);
+    debug(`Delete f583 $cs with timeStamp`);
     const removeF583Config = {
            operation: "removeSubfield",
             comment: "remove 583X $c timestamp subfields",
             recordType: "both",
+            internal: true,
             fieldSpecification: {
                 tagPattern: "^583$"
             },
             deletableSubfieldFilter: {"code": "c"}
-          }
+          };
 
     filterOperation(record, expectedRecord, removeF583Config, true);
     return {formattedResult: record, formattedExpectedResult: expectedRecord};

@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: MRA-312-ish indicator test",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

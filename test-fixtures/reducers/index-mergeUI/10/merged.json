@@ -9,6 +9,8 @@
       {"code": "6", "value": "880-01" },
       {"code": "a", "value": "Tiivistelmä venäjäksi."}
     ]},
+              {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)000543999"},{"code":"5","value":"MELINDA"}]},
+
     { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Koneellisesti tuotettu tietue" }, { "code": "5", "value": "FENNI"} ] },
 
     { "tag": "880", "ind1": "8", "ind2": " ", "subfields": [

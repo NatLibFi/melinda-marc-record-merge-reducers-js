@@ -2,6 +2,5 @@
   "description":"INTERNAL MERGE: 12: Duplicate subfield removal. After that merge subfields. Postprocess: remove base's duplicate field 856.",
   "comment": "from JO via Slack 24.1.2023",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

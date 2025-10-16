@@ -1,5 +1,4 @@
 {
   "description":"INTERNAL MERGE: MRA-510: base record's subset field 776 subset be removed",
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

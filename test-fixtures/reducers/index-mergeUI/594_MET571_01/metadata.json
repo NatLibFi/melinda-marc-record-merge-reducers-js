@@ -1,7 +1,6 @@
 {
   "description": "ex-MET-571/01. Work with newer MELKEHITYS-3107 rule for different reasons",
   "oldDescription":"MET-571/01: move 594 $a EI VASTAANOTETTU as base LDR/17=8",
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge",
+  "skip": false,
   "only": false
 }

@@ -17,6 +17,7 @@
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
       {"code": "a", "value": "keep me" }
     ]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)123456 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]},
     { "tag": "880", "ind1": " ", "ind2": " ", "subfields": [
       {"code": "6", "value": "500-01"},
       {"code": "a", "value": "lorum ipsum in some other script" }

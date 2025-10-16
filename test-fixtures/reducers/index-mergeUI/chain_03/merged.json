@@ -8,6 +8,7 @@
 
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [{ "code": "8", "value": "2.1\\a"}, {"code": "a", "value": "a" } ] },
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [{ "code": "8", "value": "2.2\\a"}, {"code": "a", "value": "b" } ] },
-    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [{ "code": "8", "value": "2.3\\a"}, {"code": "a", "value": "c" } ] }
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [{ "code": "8", "value": "2.3\\a"}, {"code": "a", "value": "c" } ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)654321 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]}
   ]
 }

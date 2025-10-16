@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Copy 264 ind2=2 from source (base has no 264 ind2=2), but drop source's ind2=3 as it has been seen",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

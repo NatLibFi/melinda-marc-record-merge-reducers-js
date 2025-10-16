@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: Field 600: MET-401 plus reverse",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

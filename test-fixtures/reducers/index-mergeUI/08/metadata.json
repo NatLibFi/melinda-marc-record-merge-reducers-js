@@ -3,6 +3,5 @@
   "comment": "note that $e subfiels are in suboptimal order.",
   "comment #2": "as no subfields are added, and base field is unchanged, the punctation is not fixed, and the original crappy 700$i punctuation remains in one of the fields...",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

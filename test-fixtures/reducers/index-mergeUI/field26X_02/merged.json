@@ -6,6 +6,7 @@
         { "code": "f", "value": "(Whatever," },
         { "code": "g", "value": "2021)" }
       ]
-    }
+    },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)source-ID"},{"code":"5","value":"MELINDA"}]}
   ]
 }

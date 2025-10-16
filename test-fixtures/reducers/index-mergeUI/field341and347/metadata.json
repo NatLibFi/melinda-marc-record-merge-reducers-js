@@ -1,6 +1,5 @@
 {
   "description": "MELINDA-10692: add 341 and 347, don't add these 500 and 594",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }

@@ -2,7 +2,6 @@
   "description":"INTERNAL MERGE: MET-308",
   "MET-308": "500 TARKISTETTU ENNAKKOTIETO should be dropped",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 
 }

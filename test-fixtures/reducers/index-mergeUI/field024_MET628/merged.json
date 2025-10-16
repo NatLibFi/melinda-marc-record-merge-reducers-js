@@ -5,6 +5,7 @@
     { "tag": "024", "ind1": "7", "ind2": " ", "subfields": [
       { "code": "a", "value": "URN:ISBN:978-952-287-490-0" },
       { "code": "2", "value": "urn" }
-    ]}
+    ]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)20230913"},{"code":"5","value":"MELINDA"}]}
   ]
 }

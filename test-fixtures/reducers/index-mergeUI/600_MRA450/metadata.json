@@ -1,6 +1,5 @@
 {
   "description":"INTERNAL MERGE: MRA-450: merge various 600 fields. MRA-520: LDR/05=n, not!",
   "only": false,
-  "skip": true,
-"skipComment": "Skip before editing test for internal merge"
+  "skip": false
 }
