@@ -1,0 +1,20 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "base-ID"},
+    { "tag": "100", "ind1": "1", "ind2": " ",
+      "subfields": [
+        { "code": "6", "value": "880-01" },
+        { "code": "a", "value": "Zabara, Olena,"},
+        { "code": "e", "value": "kirjoittaja," },
+        { "code": "e", "value": "taiteilija." }
+    ]},
+    { "tag": "880", "ind1": "1", "ind2": " ",
+      "subfields": [
+        { "code": "6", "value": "100-01/(N" },
+        { "code": "a", "value": "Забара, Олена," },
+        { "code": "e", "value": "kirjoittaja," },
+        { "code": "e", "value": "taiteilija." }
+      ]}
+  ]
+}

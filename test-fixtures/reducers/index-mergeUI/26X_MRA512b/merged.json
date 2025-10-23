@@ -1,0 +1,12 @@
+{
+  "leader": "01331nam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456"},
+    { "tag": "264", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "a", "value": "UK" },
+      { "code": "b", "value": "Vintage,"},
+      { "code": "c", "value": "2023."}
+    ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)123456 + (FI-MELINDA)12345"},{"code":"5","value":"MELINDA"}]}
+  ]
+}

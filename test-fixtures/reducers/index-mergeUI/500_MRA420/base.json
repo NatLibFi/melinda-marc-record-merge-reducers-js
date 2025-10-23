@@ -1,0 +1,16 @@
+{
+  "leader": "01331cam a22003498i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456" },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "EI VIELÄ ILMESTYNYT, arvioitu ilmestymisaika 01.08.2022" }
+    ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "ENNAKKOTIETO." }
+    ]},
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "tarkistettu ennakkotieto / KIRJAVÄLITYS" },
+      { "code": "5", "value": "FENNI" }
+    ]}
+  ]
+}

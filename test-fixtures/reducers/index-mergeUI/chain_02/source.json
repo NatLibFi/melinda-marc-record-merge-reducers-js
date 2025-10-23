@@ -1,0 +1,20 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456" },
+
+
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "a", "value": "keep me" }
+    ]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "6", "value": "880-01"},
+      {"code": "a", "value": "whatever" }
+    ]},
+    { "tag": "880", "ind1": " ", "ind2": " ", "subfields": [
+      {"code": "6", "value": "500-01"},
+      {"code": "a", "value": "whatever in some other script" }
+    ]}
+
+  ]
+}

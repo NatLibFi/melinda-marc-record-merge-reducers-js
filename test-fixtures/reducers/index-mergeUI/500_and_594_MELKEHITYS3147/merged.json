@@ -1,0 +1,8 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [{ "code": "a", "value": "EI ILMESTY." }]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)undefined"},{"code":"5","value":"MELINDA"}]},
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [{ "code": "a", "value": "Ei ilmesty" }, { "code": "5", "value": "FENNI" }]}
+  ]
+}

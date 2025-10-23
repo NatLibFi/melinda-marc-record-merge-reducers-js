@@ -1,0 +1,5 @@
+{
+  "description":"INTERNAL MERGE: Do not extra clean source for internal, manual merge, do not keep CAT fields (MRA-764: keep also CAT fields)",
+  "skip": false,
+  "only": false
+}

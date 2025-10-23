@@ -16,15 +16,15 @@ const debugDev = debug.extend('dev');
 //   - code
 //   - valuePattern or value
 
-function getSpecifiedFields(record, fieldSpecs) {
-  const regexp = regexpifyFieldSpecs(fieldSpecs);
+function getSpecifiedFields(record, fieldSpecs, recordLabel = '') {
+  const regexp = regexpifyFieldSpecs(fieldSpecs, recordLabel);
   if (regexp) {
     const fieldsByTag = record.get(regexp);
     return fieldsByTag.filter(f => skipByIndicator(f));
   }
   return [];
 
-  function regexpifyFieldSpecs(fieldSpecs) {
+  function regexpifyFieldSpecs(fieldSpecs, recordLabel = '') {
     if (fieldSpecs.tagPattern) {
       //nvdebug(`Tag pattern to regexp: /${fieldSpecs.tagPattern}/`, debugDev);
       return new RegExp(`${fieldSpecs.tagPattern}`, 'u');
@@ -33,7 +33,7 @@ function getSpecifiedFields(record, fieldSpecs) {
       //nvdebug(`Tag to egexp: /^${fieldSpecs.tag}$/`, debugDev);
       return new RegExp(`^${fieldSpecs.tag}$`, 'u');
     }
-    nvdebug(`TAG Regexp: NULL`, debugDev);
+    nvdebug(`${recordLabel} TAG Regexp: NULL`, debugDev);
     return null;
   }
 
@@ -49,11 +49,11 @@ function getSpecifiedFields(record, fieldSpecs) {
 }
 
 
-function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterCodePattern = undefined) {
+function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterCodePattern = undefined, recordLabel = '') {
   // Check subfield code as a string:
   if (filterCode) {
     if (filterCode !== subfieldCode) {
-      //nvdebug(` REJECTED SUBFIELD. Reason: code`, debugDev);
+      nvdebug(` ${recordLabel} REJECTED SUBFIELD. Reason: code`, debugDev);
       return false;
     }
   }
@@ -61,7 +61,7 @@ function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterC
   if (filterCodePattern) {
     const regExp = RegExp(`${filterCodePattern}`, 'u');
     if (!subfieldCode.match(regExp)) {
-      //nvdebug(` REJECTED SUBFIELD. Reason: code regexp`, debugDev);
+      nvdebug(` ${recordLabel} REJECTED SUBFIELD. Reason: code regexp`, debugDev);
       return false;
     }
   }
@@ -69,88 +69,88 @@ function subfieldFilterMatchesCode(subfieldCode, filterCode = undefined, filterC
   return true;
 }
 
-function subfieldFilterMatchesValue(subfieldValue, targetValue, targetValuePattern) {
+function subfieldFilterMatchesValue(subfieldValue, targetValue, targetValuePattern, recordLabel = '') {
   if (targetValuePattern) {
     const valueRegExp = RegExp(`${targetValuePattern}`, 'u');
     if (!subfieldValue.match(valueRegExp)) {
-      //nvdebug(` REJECTED SUBFIELD. Reason: value regexp`, debugDev);
+      nvdebug(` ${recordLabel} REJECTED SUBFIELD. Reason: value regexp`, debugDev);
       return false;
     }
   }
 
   if (targetValue) { // eg. 041$a 'zxx' removal
     if (subfieldValue !== targetValue) {
-      //nvdebug(` REJECTED SUBFIELD. Reason: value string`, debugDev);
+      nvdebug(` ${recordLabel} REJECTED SUBFIELD. Reason: value string`, debugDev);
       return false;
     }
   }
   return true;
 }
 
-function subfieldFilterMatches(subfield, subfieldFilter) {
-  //nvdebug(`SF ${JSON.stringify(subfieldFilter)}`, debugDev);
+function subfieldFilterMatches(subfield, subfieldFilter, recordLabel = '') {
+  nvdebug(` ${recordLabel} SF ${JSON.stringify(subfieldFilter)}`, debugDev);
 
-  if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.code, subfieldFilter.codePattern)) {
+  if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.code, subfieldFilter.codePattern, recordLabel)) {
     return false;
   }
 
-  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter.value, subfieldFilter.valuePattern)) {
+  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter.value, subfieldFilter.valuePattern, recordLabel)) {
     return false;
   }
 
-  //nvdebug(` SUBFIELD ACCEPTED $${subfield.code} ${subfield.value}`, debugDev);
+  nvdebug(` ${recordLabel} SUBFIELD ACCEPTED $${subfield.code} ${subfield.value}`, debugDev);
   return true;
 }
 
-function subfieldFilterUnwantedMatches(subfield, subfieldFilter) {
+function subfieldFilterUnwantedMatches(subfield, subfieldFilter, recordLabel = '') {
   if (!subfieldFilter.missingCode) {
     return false;
   }
-  if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.missingCode, subfieldFilter.missingCodePattern)) {
+  if (!subfieldFilterMatchesCode(subfield.code, subfieldFilter.missingCode, subfieldFilter.missingCodePattern, recordLabel)) {
     return false;
   }
-  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter.value, subfieldFilter.valuePattern)) {
+  if (!subfieldFilterMatchesValue(subfield.value, subfieldFilter.value, subfieldFilter.valuePattern, recordLabel)) {
     return false;
   }
   return true;
 }
 
-function subfieldsFilterMatches(subfields, subfieldFilter) { // Field-level filter check
+function subfieldsFilterMatches(subfields, subfieldFilter, recordLabel = '') { // Field-level filter check
   // Sanity check:
   if (!subfields) {
     return false;
   }
 
-  if (!getMatches(subfields, subfieldFilter)) {
+  if (!getMatches(subfields, subfieldFilter, recordLabel)) {
     return false;
   }
 
-  return !getNegativeMatches(subfields, subfieldFilter);
+  return !getNegativeMatches(subfields, subfieldFilter, recordLabel);
 
-  function getMatches(subfields, subfieldFilter) {
-    const matchingSubfields = subfields.filter(sf => subfieldFilterMatches(sf, subfieldFilter));
+  function getMatches(subfields, subfieldFilter, recordLabel = '') {
+    const matchingSubfields = subfields.filter(sf => subfieldFilterMatches(sf, subfieldFilter, recordLabel));
     return matchingSubfields.length > 0;
   }
 
-  function getNegativeMatches(subfields, subfieldFilter) {
-    const matchingSubfields = subfields.filter(sf => subfieldFilterUnwantedMatches(sf, subfieldFilter));
+  function getNegativeMatches(subfields, subfieldFilter, recordLabel = '') {
+    const matchingSubfields = subfields.filter(sf => subfieldFilterUnwantedMatches(sf, subfieldFilter, recordLabel));
     return matchingSubfields.length > 0;
   }
 }
 
 
 // Each subfield filter matches the field...
-function subfieldFiltersMatch(field, subfieldFilters) {
+function subfieldFiltersMatch(field, subfieldFilters, recordLabel = '') {
 
-  return subfieldFilters.every(subfieldFilter => subfieldsFilterMatches(field.subfields, subfieldFilter));
+  return subfieldFilters.every(subfieldFilter => subfieldsFilterMatches(field.subfields, subfieldFilter, recordLabel));
 }
 
 
-function filterFieldsUsingSubfieldFilters(fields, subfieldFilters) {
+function filterFieldsUsingSubfieldFilters(fields, subfieldFilters, recordLabel = '') {
   if (!subfieldFilters) {
     return fields;
   }
-  return fields.filter(field => subfieldFiltersMatch(field, subfieldFilters));
+  return fields.filter(field => subfieldFiltersMatch(field, subfieldFilters, recordLabel));
 }
 
 function filterFieldsUsingFieldToString(fields, value) {
@@ -164,29 +164,29 @@ function filterFieldsUsingFieldToString(fields, value) {
   });
 }
 
-function hasValidEncodingLevel(record, fieldSpecs) {
+function hasValidEncodingLevel(record, fieldSpecs, recordLabel = '') {
   if (!fieldSpecs.encodingLevel) {
     return true;
   }
   const recordEncodingLevel = getEncodingLevel(record);
-  //nvdebug(`ENC: ${recordEncodingLevel} in [${fieldSpecs.encodingLevel.join('')}]?`);
+  //nvdebug(`${recordLabel} ENC: ${recordEncodingLevel} in [${fieldSpecs.encodingLevel.join('')}]?`);
   return fieldSpecs.encodingLevel.includes(recordEncodingLevel);
 }
 
-function getSpecifiedFieldsAndFilterThem(record, fieldSpecs) {
+function getSpecifiedFieldsAndFilterThem(record, fieldSpecs, recordLabel = '') {
   if (!hasValidEncodingLevel(record, fieldSpecs)) {
     return [];
   }
 
   const targetFields = getSpecifiedFields(record, fieldSpecs);
-  //nvdebug(`Got ${targetFields.length} fields. Filter them...`, debugDev);
+  //nvdebug(`${recordLabel} Got ${targetFields.length} fields. Filter them...`, debugDev);
   if (targetFields.length === 0) {
     return targetFields;
   }
 
-  const filteredFields1 = filterFieldsUsingSubfieldFilters(targetFields, fieldSpecs.subfieldFilters);
+  const filteredFields1 = filterFieldsUsingSubfieldFilters(targetFields, fieldSpecs.subfieldFilters, recordLabel);
   //nvdebug(`${filteredFields1.length} field(s) remain after subfield filters...`, debugDev);
-  const filteredFields2 = filterFieldsUsingFieldToString(filteredFields1, fieldSpecs.value);
+  const filteredFields2 = filterFieldsUsingFieldToString(filteredFields1, fieldSpecs.value, recordLabel);
   //nvdebug(`${filteredFields2.length} field(s) remain after whole value filtering...`, debugDev);
   return filteredFields2;
 }
@@ -204,6 +204,7 @@ function logRecordType(recordType) {
 
 function getTargetRecordsForOperation(base, source, operation) {
   const {recordType} = operation;
+  debugDev(`recordType: ${recordType}`)
   // logRecordType(recordType);
 
   // This is hard-coded exception/hack.
@@ -227,49 +228,53 @@ function getTargetRecordsForOperation(base, source, operation) {
   return [];
 }
 
-function operationRemoveField(record, fieldSpecification) {
-  const deletableFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
+function operationRemoveField(record, fieldSpecification, recordLabel = 'x') {
+  const deletableFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification, recordLabel);
   if (deletableFields.length === 0) {
     return;
   }
   //nvdebug(`operationRemoveField got ${deletableFields.length} deletable field(s)`, debugDev);
   deletableFields.forEach(field => {
-    nvdebug(`  DELETE FIELD: ${fieldToString(field)}`, debugDev);
+    nvdebug(` ${recordLabel} DELETE FIELD: ${fieldToString(field)}`, debugDev);
     record.removeField(field);
   });
 }
 
-function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFilter) {
-  const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
-  nvdebug(`operationRenameSubfield() got ${relevantFields.length} field(s)`, debugDev);
+function operationRenameSubfield(record, fieldSpecification, renamableSubfieldFilter, recordLabel = 'x') {
+  const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification, recordLabel);
+  nvdebug(`${recordLabel} operationRenameSubfield() got ${relevantFields.length} field(s)`, debugDev);
   relevantFields.forEach(field => {
-    renameSubfields(field, renamableSubfieldFilter);
+    renameSubfields(field, renamableSubfieldFilter, recordLabel);
   });
 
-  function renameSubfields(field, renamableSubfieldFilter) {
-    nvdebug(`Try to rename subfields from ${fieldToString(field)} using ${JSON.stringify(renamableSubfieldFilter)}`, debugDev);
+  function renameSubfields(field, renamableSubfieldFilter, recordLabel = 'x') {
+    nvdebug(`${recordLabel}. Try to rename subfields from ${fieldToString(field)} using ${JSON.stringify(renamableSubfieldFilter)}`, debugDev);
     field.subfields.forEach(sf => {
-      if (subfieldFilterMatches(sf, renamableSubfieldFilter)) {
+      nvdebug(`${recordLabel}. Handle subfield ${JSON.stringify(sf)}`, debugDev);
+      if (subfieldFilterMatches(sf, renamableSubfieldFilter, recordLabel)) {
+        nvdebug(`${recordLabel}. --- MATCH in${JSON.stringify(sf)}`, debugDev);
         sf.code = renamableSubfieldFilter.newCode;
-      }
+        return;
+       }
+      nvdebug(`${recordLabel}. --- NO MATCH in${JSON.stringify(sf)}`, debugDev);
     });
   }
 }
 
-function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFilter) {
-  const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification);
+function operationRemoveSubfield(record, fieldSpecification, deletableSubfieldFilter, recordLabel = 'x') {
+  const relevantFields = getSpecifiedFieldsAndFilterThem(record, fieldSpecification, recordLabel);
   if (relevantFields.length === 0) {
     return;
   }
-  nvdebug(`operationRemoveSubfield() got ${relevantFields.length} field(s)`, debugDev);
+  nvdebug(`${recordLabel}. operationRemoveSubfield() got ${relevantFields.length} field(s)`, debugDev);
   relevantFields.forEach(field => {
-    nvdebug(`Try to remove subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`, debugDev);
-    const remainingSubfields = field.subfields.filter(sf => !subfieldFilterMatches(sf, deletableSubfieldFilter));
+    nvdebug(`${recordLabel}. Try to remove subfields from ${fieldToString(field)} using ${JSON.stringify(deletableSubfieldFilter)}`, debugDev);
+    const remainingSubfields = field.subfields.filter(sf => !subfieldFilterMatches(sf, deletableSubfieldFilter, recordLabel));
     if (remainingSubfields.length < field.subfields.length) {
-      nvdebug(` Got ${remainingSubfields.length}/${field.subfields.length} keepable subfield(s)`, debugDev);
+      nvdebug(` ${recordLabel}. Got ${remainingSubfields.length}/${field.subfields.length} keepable subfield(s)`, debugDev);
       // Delete the whole field as last subfield gets deleted:
       if (remainingSubfields.length === 0) {
-        nvdebug('Delete subfieldless field', debugDev);
+        nvdebug(`${recordLabel}. Delete subfieldless field`, debugDev);
         record.removeField(field);
         return;
       }
@@ -294,27 +299,38 @@ function operationSwapFields(record, otherRecord, fieldSpecification) {
   nvdebug(`Moved ${relevantFields2.length} field(s) from source to base`, debugDev);
 }
 
-export function filterOperation(base, source, operation) {
-  if (operation.skip) {
-    // Log?
+export function filterOperation(base, source, operation, internal = false) {
+    nvdebug(`filterOps: ${JSON.stringify(operation)}`, debugDev);
+    if (operation.skip) {
+    nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'} SKIPPED: operation.skip: ${operation.skip}`, debugDev);
     return;
   }
+
+  // If we are running internal merge and our operation is internal: false, skip operation
+  if (internal !== undefined && internal && operation.internal === false) {
+    nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'} SKIPPED: internal: ${internal}, operation.internal: ${operation.internal}`, debugDev);
+    return;
+  }
+
   const targetRecords = getTargetRecordsForOperation(base, source, operation);
-  //nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'}`);
+  nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'}`);
   if (targetRecords.length === 0) {
     nvdebug('Failed to get the target record', debugDev);
     return;
   }
+  nvdebug(`filterOps for ${targetRecords.length} records`, debugDev);
 
-  targetRecords.forEach(targetRecord => processOperationForTargetRecord(targetRecord, operation));
+  targetRecords.forEach((targetRecord, index) => processOperationForTargetRecord(targetRecord, operation, `Rec-${index}`));
 
-  function processOperationForTargetRecord(targetRecord, operation) {
+  function processOperationForTargetRecord(targetRecord, operation, recordLabel = 'x') {
     if (operation.encodingLevel && !operation.encodingLevel.includes(getEncodingLevel(targetRecord))) {
       //nvdebug(' Skip. Reason: encoding level', debugDev);
       return;
     }
+    
+    nvdebug(`Handling ${recordLabel}`, debugDev);
 
-    const targetFields = getSpecifiedFieldsAndFilterThem(targetRecord, operation.fieldSpecification);
+    const targetFields = getSpecifiedFieldsAndFilterThem(targetRecord, operation.fieldSpecification, recordLabel);
 
     if (!targetFields) {
       //nvdebug(' No target fields found', debugDev);
@@ -322,7 +338,7 @@ export function filterOperation(base, source, operation) {
     }
 
     if (operation.requireBaseField) {
-      const baseFields = getSpecifiedFieldsAndFilterThem(base, operation.requireBaseField);
+      const baseFields = getSpecifiedFieldsAndFilterThem(base, operation.requireBaseField, recordLabel);
       if (baseFields.length === 0) {
         //nvdebug(' Required base field not found!', debugDev);
         return;
@@ -331,7 +347,7 @@ export function filterOperation(base, source, operation) {
     }
 
     if (operation.requireSourceField) {
-      const sourceFields = getSpecifiedFieldsAndFilterThem(source, operation.requireSourceField);
+      const sourceFields = getSpecifiedFieldsAndFilterThem(source, operation.requireSourceField, recordLabel);
       if (sourceFields.length === 0) {
         //nvdebug(' Required source field not found!', debugDev);
         return;
@@ -347,11 +363,11 @@ export function filterOperation(base, source, operation) {
     */
 
     const otherRecord = operation.operation === 'swapFields' ? source : undefined;
-    performActualOperation(targetRecord, operation, otherRecord);
+    performActualOperation(targetRecord, operation, otherRecord, recordLabel);
   }
 
-  function performActualOperation(targetRecord, operation, otherRecord) {
-    //nvdebug(' PERFORM OP');
+  function performActualOperation(targetRecord, operation, otherRecord, recordLabel = 'x') {
+    nvdebug(` PERFORM OP: ${operation.comment ? operation.comment : `NIMETÖN`} for ${recordLabel}`, debugDev);
     if (!operation.operation) {
       nvdebug('No operation defined', debugDev);
       return;
@@ -359,36 +375,37 @@ export function filterOperation(base, source, operation) {
 
     //nvdebug(`current operation: ${operation.operation}, ${operation.comment ? operation.comment : 'no comment'}`, debugDev);
     if (operation.operation === 'removeField') {
-      operationRemoveField(targetRecord, operation.fieldSpecification);
+      operationRemoveField(targetRecord, operation.fieldSpecification, recordLabel);
       return;
     }
     if (operation.operation === 'removeSubfield') {
-      operationRemoveSubfield(targetRecord, operation.fieldSpecification, operation.deletableSubfieldFilter);
+      operationRemoveSubfield(targetRecord, operation.fieldSpecification, operation.deletableSubfieldFilter, recordLabel);
       return;
     }
     if (operation.operation === 'renameSubfield') {
-      operationRenameSubfield(targetRecord, operation.fieldSpecification, operation.renamableSubfieldFilter);
+      operationRenameSubfield(targetRecord, operation.fieldSpecification, operation.renamableSubfieldFilter, recordLabel);
       return;
     }
     if (operation.operation === 'swapFields') {
-      operationSwapFields(targetRecord, otherRecord, operation.fieldSpecification);
+      operationSwapFields(targetRecord, otherRecord, operation.fieldSpecification, recordLabel);
       return;
     }
-    nvdebug(`Illegal/unknown operation: '${operation.operation}' skipped`, debugDev);
+    nvdebug(`Illegal/unknown operation: '${operation.operation}' skipped for record ${recordLabel}`, debugDev);
   }
 }
 
 
-export function filterOperations(base, source, config) {
-  config.forEach(operation => filterOperation(base, source, operation));
+export function filterOperations(base, source, config, internal = false) {
+  config.forEach(operation => filterOperation(base, source, operation, internal));
 }
 
 
-export function preprocessBeforeAdd(base, source, preprocessorDirectives) {
+export function preprocessBeforeAdd(base, source, preprocessorDirectives, internal) {
+  debug(`**** PPBA ****`);
   // nvdebug(`PPBA ${JSON.stringify(preprocessorDirectives)}`, debugDev);
   if (!preprocessorDirectives || !(preprocessorDirectives instanceof Array)) {
     return;
   }
 
-  filterOperations(base, source, preprocessorDirectives);
+  filterOperations(base, source, preprocessorDirectives, internal);
 }

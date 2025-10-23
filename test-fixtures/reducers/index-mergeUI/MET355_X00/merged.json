@@ -1,0 +1,18 @@
+{
+  "leader": "00000cam a22000002i 4500",
+  "fields": [
+    { "tag": "001", "value": "base-111" },
+    { "tag": "100", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Etunimi, Sukunimi," },
+      { "code": "e", "value": "kirjoittaja," },
+      { "code": "e", "value": "kuvittaja," },
+      { "code": "e", "value": "kansikuva." }
+    ]},
+      {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)base-111 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]},
+ 
+    { "tag": "700", "ind1": "1", "ind2": "0", "subfields": [
+      { "code": "a", "value": "Etunimi, Sukunimi," },
+      { "code": "e", "value": "kuvittaja." }
+    ]}
+  ]
+}

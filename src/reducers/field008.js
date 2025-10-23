@@ -390,7 +390,7 @@ function process008(base, source) {
   }
 }
 
-export default () => (base, source) => {
+export default (checkLDR = false) => (base, source) => {
 
   process008(base, source);
 

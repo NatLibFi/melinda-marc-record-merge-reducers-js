@@ -1,0 +1,55 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "20230913" },
+    {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "2222222222"
+        },
+        {
+          "code": "q",
+          "value": "kierreselkä"
+        }
+      ]
+    },
+    {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "1111111111"
+        },
+        {
+          "code": "q",
+          "value": "kovakantinen"
+        }
+      ]
+    },
+    {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "0000000000"
+        },
+        {
+          "code": "q",
+          "value": "osa 2"
+        },
+        {
+          "code": "q",
+          "value": "pehmeäkantinen"
+        }
+      ]
+    }
+  ]
+}

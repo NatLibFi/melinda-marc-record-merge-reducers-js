@@ -1,0 +1,18 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "12345"},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)12345"},{"code":"5","value":"MELINDA"}]},
+
+    { "tag": "753", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sony PlayStation 5" },
+      { "code": "2", "value": "gcipplatform" }
+    ] },
+
+    { "tag": "753", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Nintendo Switch" },
+      { "code": "0", "value": "https://gamemetadata.soe.ucs.edu/platform/1148"},
+      { "code": "2", "value": "gcipplatform" }
+    ] }
+  ]
+}

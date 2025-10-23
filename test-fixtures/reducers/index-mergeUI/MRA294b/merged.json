@@ -1,0 +1,9 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "250", "ind1": " ", "ind2": " ",
+      "subfields": [
+        { "code": "a", "value": "Fjärde upplagan." }
+    ]},  {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)incoming-ID"},{"code":"5","value":"MELINDA"}]}
+  ]
+}

@@ -20,7 +20,7 @@ function trimRecord(record) {
   record.fields?.forEach(f => fieldTrimSubfieldValues(f));
 }
 
-export default (config = defaultConfig) => (base, source) => {
+export default (config = defaultConfig, internal = false) => (base, source) => {
   const fixers = [ NormalizeUTF8Diacritics(), SanitizeVocabularySourceCodes(), NormalizeQualifyingInformation(), SubfieldValueNormalizations(), Field505Separators(), UpdateField540() ];
 
   trimRecord(base);
@@ -52,7 +52,7 @@ export default (config = defaultConfig) => (base, source) => {
   const clonedSource = new MarcRecord(source, {subfieldValues: false});
 
   // NB! Filter operations should be moved to their own file...
-  filterOperations(base, clonedSource, config.preprocessorDirectives);
+  filterOperations(base, clonedSource, config.preprocessorDirectives, internal);
 
   const source2 = clonedSource; // hyphenateISBN(clonedSource, config); // Should these be done to base as well?
 
@@ -60,7 +60,6 @@ export default (config = defaultConfig) => (base, source) => {
 
   recordRemoveDuplicateSubfieldsFromFields(source2);
   recordRemoveDuplicateSubfieldsFromFields(base);
-
 
   const result = {base, source: source2};
   ///

@@ -1,0 +1,95 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "020",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "9518613869"
+        },
+        {
+          "code": "q",
+          "value": "020_q_base1"
+        }
+      ]
+    },
+    {
+      "tag": "150",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "not handled"
+        }
+      ]
+    },
+
+    { "tag": "240", "ind1": "1", "ind2": "0", "subfields": [
+        { "code": "6", "value": "880-01" },
+        { "code": "a", "value": "but who cares" }
+    ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)undefined"},{"code":"5","value":"MELINDA"}]},
+
+    {
+      "tag": "700",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Multiple"
+        }
+      ]
+    },
+    {
+      "tag": "710",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "880-02"
+        },
+        {
+          "code": "a",
+          "value": "1XX fields"
+        }
+      ]
+    },
+    {
+      "tag": "711",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "is illegal"
+        }
+      ]
+    },
+    { "tag": "880", "ind1": " ", "ind2": " ",
+    "subfields": [
+      { "code": "6", "value": "240-01" },
+      { "code": "a", "value": "lorum ipsum" }
+    ]},
+    {
+      "tag": "880",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "6",
+          "value": "710-02"
+        },
+        {
+          "code": "a",
+          "value": "lagelli si"
+        }
+      ]
+    }
+  ]
+}

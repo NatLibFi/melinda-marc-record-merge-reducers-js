@@ -173,7 +173,7 @@ function areMergable007Pair(field1, field2) {
   }
 
   function spaceContainsInformation(position) {
-    console.info(`Spaceman at ${categoryOfMaterial} 007/${position}?`);
+    //console.info(`Spaceman at ${categoryOfMaterial} 007/${position}?`);
     if (position === 5 && ['c', 'g', 'k', 'm', 'v'].includes(categoryOfMaterial)) { // No sound (silent)
       return true;
     }

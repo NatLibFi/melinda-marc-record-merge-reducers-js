@@ -1,0 +1,11 @@
+{
+  "description":"INTERNAL MERGE: MET-33: toimijakirjaus: don't remove toimijakirjaus field that pairs with base",
+  "MET-248": "Merge: field 520 ind1 value difference when does not prevent merge!",
+  "MRA-300": "Merge: field 511 merge despite ind1 differences. FENNI<KEEP> source matters when setting ind value.",
+  "MET-271": "Merge fields 490, prefer base. IND1 value is value is based on 8XX existence (post-processed using marc-record-merge-validators), not by field megre",
+  "comment": "NB: I (nvolk) should check should 700 be removed from modifiedSource.json after field-merge.",
+  "only": false,
+  "skip": false,
+"skipComment": "Skip before editing test for internal merge"
+  
+}

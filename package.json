@@ -14,7 +14,7 @@
 		"url": "https://github.com/NatLibFi/melinda-marc-record-merge-reducers-js"
 	},
 	"license": "MIT",
-	"version": "3.0.0-alpha.3",
+	"version": "3.1.0-alpha.6",
 	"main": "./dist/index.js",
 	"engines": {
 		"node": ">=22"
@@ -28,9 +28,12 @@
 		"cli": "node dist/cli.js",
 		"lint": "eslint src",
 		"lint:dev": "eslint --fix src",
-		"test:base": "node --test --test-force-exit --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
-		"dev:test": "cross-env DEBUG=@natlibfi/* NODE_ENV=test node --watch --test --experimental-test-coverage --test-reporter=spec './src/*.test.js' './src/**/*.test.js'",
-		"test": "npm run lint && npm run test:base -- --recursive src",
+		"test:base": "node --test --test-force-exit --experimental-test-coverage --test-reporter=spec",
+		"test:base:only": "node --test --test-only --test-force-exit --experimental-test-coverage --test-reporter=spec './test/**/*.test.js'",
+		"dev:test": "cross-env DEBUG=@natlibfi/* NODE_ENV=test node --watch --test --experimental-test-coverage --test-reporter=spec './test/**/*.test.js'",
+		"dev:test:only": "cross-env DEBUG=@natlibfi/* NODE_ENV=test node --watch --test --test-only --experimental-test-coverage --test-reporter=spec './test/**/*.test.js'",
+		"test": "npm run lint && npm run test:base",
+		"test:only": "npm run lint && npm run test:base:only",
 		"build": "esbuild \"src/**/*.js\" --sourcemap --platform=node --outdir=dist",
 		"watch:test": "cross-env DEBUG=1 NODE_ENV=test nodemon -w src -w test-fixtures --exec 'npm run test:dev'"
 	},
@@ -40,17 +43,16 @@
 	"dependencies": {
 		"@natlibfi/marc-record": "next",
 		"@natlibfi/marc-record-merge": "^8.0.0-alpha.1",
-		"@natlibfi/marc-record-validate": "next",
-		"@natlibfi/marc-record-validators-melinda": "next",
+		"clone": "^2.1.2",
 		"debug": "^4.4.3",
-		"isbn3": "^1.2.14"
+		"isbn3": "^1.2.15"
 	},
 	"devDependencies": {
 		"@natlibfi/fixugen": "next",
 		"@natlibfi/fixura": "next",
-		"cross-env": "^10.0.0",
-		"esbuild": "^0.25.10",
-		"eslint": "^9.36.0"
+		"cross-env": "^10.1.0",
+		"esbuild": "^0.25.11",
+		"eslint": "^9.37.0"
 	},
 	"overrides": {
 		"nanoid": "^3.3.8"

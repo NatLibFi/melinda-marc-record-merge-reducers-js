@@ -1,0 +1,6 @@
+{
+  "description":"INTERNAL MERGE: Some identical, some different --> copy different from source to base, internal: delete CATs",
+  "comment": "I need to check the logic behind new field position determination",
+  "skip": false,
+  "only": false
+}

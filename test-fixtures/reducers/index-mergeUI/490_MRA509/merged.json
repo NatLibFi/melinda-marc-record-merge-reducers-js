@@ -1,0 +1,11 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "12345"},
+    { "tag": "490", "ind1": "0", "ind2": "a", "subfields": [
+      { "code": "a", "value": "[Jesse-sarja] =" },
+      { "code": "a", "value": "Jesse ;" },
+      { "code": "v", "value": "[31]" }    ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]}
+  ]
+}
