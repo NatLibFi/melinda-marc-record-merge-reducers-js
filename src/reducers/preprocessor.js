@@ -10,8 +10,8 @@ import {getCatalogingLanguage} from './utils.js';
 import {filterOperations} from './processFilter.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
-//const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
-//const debugData = debug.extend('data');
+const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessor');
+const debugData = debug.extend('data');
 //const debugDev = debug.extend('dev');
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
@@ -21,7 +21,11 @@ function trimRecord(record) {
 }
 
 export default (config = defaultConfig, internal = false) => (base, source) => {
+  debug(`Running preprocessor with ${JSON.stringify(config)}, ${internal}`);
+  debugData(`base: ${JSON.stringify(base)}`);
+  debugData(`source: ${JSON.stringify(base)}`);
   const fixers = [ NormalizeUTF8Diacritics(), SanitizeVocabularySourceCodes(), NormalizeQualifyingInformation(), SubfieldValueNormalizations(), Field505Separators(), UpdateField540() ];
+
 
   trimRecord(base);
   trimRecord(source);
