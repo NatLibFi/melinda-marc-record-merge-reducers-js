@@ -26,12 +26,16 @@ export default (config = defaultConfig, internal = false) => (base, source) => {
   //debugData(`base: ${JSON.stringify(base)}`);
   //debugData(`source: ${JSON.stringify(base)}`);
   const fixers = [ NormalizeUTF8Diacritics(), SanitizeVocabularySourceCodes(), NormalizeQualifyingInformation(), SubfieldValueNormalizations(), Field505Separators(), UpdateField540() ];
-
-
+  
   trimRecord(base);
   trimRecord(source);
 
+  debug(`Records trimmed.`);
+
+
   fixers.forEach(fixer => applyFixer(fixer));
+
+  debug(`Records fixed.`);
 
   function applyFixer(fixer) {
     fixer.fix(base);
@@ -68,8 +72,9 @@ export default (config = defaultConfig, internal = false) => (base, source) => {
 
   const result = {base, source: source2};
   ///
-  //nvdebug(JSON.stringify(result));
+  debugData(JSON.stringify(result));
   return result;
+
 
 };
 

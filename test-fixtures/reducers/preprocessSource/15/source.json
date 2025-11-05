@@ -1,0 +1,46 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "650",
+      "ind1": " ",
+      "ind2": "7",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "keep me"
+        },
+        { 
+          "code": "x"
+        },
+        { 
+          "code": "2",
+          "value": "yso/fin"
+        },
+        {
+          "code": "0",
+          "value": "link666"
+        }
+      ]
+    },
+    {
+      "tag": "650",
+      "ind1": " ",
+      "ind2": "7",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "removable"
+        },
+        {
+          "code": "x",
+          "value": "whatever"
+        },
+        { 
+          "code": "2",
+          "value": "ysa"
+        }
+      ]
+    }
+  ]
+}
