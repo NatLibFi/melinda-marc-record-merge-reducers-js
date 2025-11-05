@@ -21,9 +21,10 @@ function trimRecord(record) {
 }
 
 export default (config = defaultConfig, internal = false) => (base, source) => {
-  debug(`Running preprocessor with ${JSON.stringify(config)}, ${internal}`);
-  debugData(`base: ${JSON.stringify(base)}`);
-  debugData(`source: ${JSON.stringify(base)}`);
+  debug(`Running preprocessor (internal: ${internal})`);
+  //debug(`Running preprocessor with ${JSON.stringify(config)}, ${internal}`);
+  //debugData(`base: ${JSON.stringify(base)}`);
+  //debugData(`source: ${JSON.stringify(base)}`);
   const fixers = [ NormalizeUTF8Diacritics(), SanitizeVocabularySourceCodes(), NormalizeQualifyingInformation(), SubfieldValueNormalizations(), Field505Separators(), UpdateField540() ];
 
 
