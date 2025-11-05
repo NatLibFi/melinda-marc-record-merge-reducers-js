@@ -1,4 +1,4 @@
-//import createDebugLogger from 'debug';
+import createDebugLogger from 'debug';
 import fs from 'fs';
 import path from 'path';
 
