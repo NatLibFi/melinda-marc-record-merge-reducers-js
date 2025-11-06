@@ -1,6 +1,6 @@
 
 {
-"leader":"01331cam a22003494i 4500","fields":[{"tag":"001","value":"123456"},
+"leader":"01331cam a22003494i 4500","fields":[
     {"tag":"300","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"1 verkkoaineisto (7 h 36 min)"}]},
     {"tag":"336","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"teksti"},{"code":"b","value":"txt"},{"code":"2","value":"rdamedia"}]},
     {"tag":"500","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"Sen sijaan tämä kommentti mergeytyy."}]},

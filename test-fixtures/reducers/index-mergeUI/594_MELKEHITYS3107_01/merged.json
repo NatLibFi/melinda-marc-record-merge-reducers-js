@@ -1,7 +1,6 @@
 {
   "leader": "01331cam a22003495i 4500",
   "fields": [
-    { "tag": "001", "value": "123456" },
     { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "Whatever." }
     ]},

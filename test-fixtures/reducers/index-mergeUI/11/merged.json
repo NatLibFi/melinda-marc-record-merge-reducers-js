@@ -1,7 +1,6 @@
 {
   "leader": "01331cam a22003494i 4500",
   "fields": [
-    { "tag": "001", "value": "base"},
     { "tag": "110", "ind1": "2", "ind2": " ", "subfields": [
       {"code": "a", "value": "Marttaliitto,"},
       {"code": "e", "value": "kirjoittaja,"},

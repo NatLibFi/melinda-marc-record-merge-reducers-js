@@ -49,6 +49,21 @@ export function removeCATFields(base, source, internal) {
   filterOperations(base, source, removeCatsConfig, internal);
 }
 
+export function removeUnneededFields(base, source, internal) {
+  // delete CAT-fields
+  const removeCatsConfig =
+      [{
+            operation: "removeField",
+            recordType: "base",
+            internal: true,
+            comment: "Remove 001, 003 and 005 from base",
+            fieldSpecification: {
+                tagPattern: "^(001|003|005)$"
+            }
+        }];
+  filterOperations(base, source, removeCatsConfig, internal);
+}
+
 // Add merge note based on source and base ids to base
 export function addMergeNoteField(base, source, prefix = defaultInternalPrefix) {
 

@@ -23,7 +23,7 @@ describe('source preprocessor tests: ', () => {
 
   function callback({getFixture,
     config = defaultConfig}) {
-      console.log(`Running test`);
+     // console.log(`Running test`);
     const base = new MarcRecord(getFixture('base.json'), {subfieldValues: false});
     const source = new MarcRecord(getFixture('source.json'), {subfieldValues: false});
     const expectedRecord = getFixture('merged.json');
@@ -32,7 +32,7 @@ describe('source preprocessor tests: ', () => {
     const bothRecords = marcReducers(base, source);
     const mergedRecord = bothRecords.base;
     const modifiedSourceRecord = bothRecords.source;
-    console.log(JSON.stringify(bothRecords));
+    // console.log(JSON.stringify(bothRecords));
     assert.deepEqual(mergedRecord.toObject(), expectedRecord);
     assert.deepEqual(modifiedSourceRecord.toObject(), expectedModifiedSourceRecord);
 
