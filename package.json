@@ -42,7 +42,7 @@
 	},
 	"dependencies": {
 		"@natlibfi/marc-record": "^10.0.0",
-		"@natlibfi/marc-record-merge": "^8.0.0-alpha.1",
+		"@natlibfi/marc-record-merge": "^8.0.0-alpha",
 		"@natlibfi/marc-record-validators-melinda": "^12.0.0",
 		"clone": "^2.1.2",
 		"debug": "^4.4.3",
@@ -52,7 +52,7 @@
 		"@natlibfi/fixugen": "^3.0.0",
 		"@natlibfi/fixura": "^4.0.0",
 		"cross-env": "^10.1.0",
-		"esbuild": "^0.25.12",
+		"esbuild": "^0.27.0",
 		"eslint": "^9.39.1"
 	},
 	"overrides": {
