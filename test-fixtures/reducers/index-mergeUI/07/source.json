@@ -1,0 +1,35 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "000123456" },
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "1234567890" } ] },
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "1234567890" } ] },
+    { "tag": "024", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "FILNM9500119" },
+        { "code": "q", "value": "hft" },
+        { "code": "q", "value": "sid." },
+        { "code": "q", "value": "Mp3," },
+        { "code": "q", "value": "(pdf)" }
+      ]
+    },
+    { "tag": "506", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Sallittu." } ]},
+    { "tag": "506", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "S" } ]},
+    { "tag": "534", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "p", "value": "Alunperin julkaistu:" },
+      { "code": "c", "value": "2018." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, B.," },
+      { "code": "e", "value": "illustratör." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, C.," },
+      { "code": "e", "value": "kuvittaja." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, D.," },
+      { "code": "e", "value": "illustratör," },
+      { "code": "e", "value": "kuvittaja." }
+    ]}
+  ]
+}

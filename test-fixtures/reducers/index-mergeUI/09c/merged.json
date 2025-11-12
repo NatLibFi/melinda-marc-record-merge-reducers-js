@@ -1,0 +1,18 @@
+{
+  "fields": [
+    {
+      "tag": "500",
+      "ind1": " ",
+      "ind2": " ",
+      "subfields": [
+        {
+          "code": "a",
+          "value": "Lisäpainokset: 2. p. 2002. - 3. painos 2003. - 4. p. 2004. - 6. p. 2006. - 7. uppl. 2007."
+        }
+      ]
+    },
+              {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)undefined"},{"code":"5","value":"MELINDA"}]}
+
+  ],
+  "leader": "01331com a22003494i 4500"
+}

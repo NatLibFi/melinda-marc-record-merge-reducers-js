@@ -1,17 +1,14 @@
+import fs from 'fs';
+import path from 'path';
+
 //import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {fieldToString, nvdebug} from './utils';
-import {default as normalizeEncoding} from '@natlibfi/marc-record-validators-melinda/dist/normalize-utf8-diacritics';
-import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess';
+import {fieldToString, nvdebug} from './utils.js';
+import {mergeField, NormalizeUTF8Diacritics, postprocessRecords} from '@natlibfi/marc-record-validators-melinda';
 import {preprocessBeforeAdd} from './processFilter.js';
 import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTransfer.js';
 
-import fs from 'fs';
-import path from 'path';
-//import {fieldGetOccurrenceNumberPairs} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils.js';
-//import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
-import {mergeField} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeField.js';
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 // Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
 
@@ -24,7 +21,7 @@ const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
 // Should this load default configuration?
 //export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (base, source) => {
-export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration) => (baseRecord, sourceRecord) => {
+export default (tagPattern = undefined, config = defaultConfig.mergeConfiguration, internal = false) => (baseRecord, sourceRecord) => {
   nvdebug(`ENTERING mergeField.js`, debugDev);
   //const baseRecord = new MarcRecord(base, {subfieldValues: false});
   //const sourceRecord = new MarcRecord(source, {subfieldValues: false});
@@ -38,11 +35,12 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   //nvdebug(`MERGE CONFIG: ${JSON.stringify(config)}`, debugDev);
 
-  normalizeEncoding().fix(baseRecord);
-  normalizeEncoding().fix(sourceRecord);
+  const fixer = NormalizeUTF8Diacritics();
+  fixer.fix(baseRecord);
+  fixer.fix(sourceRecord);
 
   retagSource1XX(sourceRecord);
-  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives); // NB! we should rename func, this may have nothing to with add
+  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives, internal); // NB! we should rename func, this may have nothing to with add
 
 
   sourceRecord.fields.forEach(f => nvdebug(`SRC2: ${fieldToString(f)}`, debugDev));

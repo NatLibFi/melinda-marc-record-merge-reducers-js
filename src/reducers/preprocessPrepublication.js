@@ -27,14 +27,14 @@
 //
 
 
-import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
-import {handleField6XX} from './preprocessPrepublicationField6XX';
+import {fieldToString, nvdebug, nvdebugFieldArray} from './utils.js';
+import {handleField6XX} from './preprocessPrepublicationField6XX.js';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
   prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
   removeWorsePrepubField594s,
-  removeWorsePrepubField500s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
-import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries';
+  removeWorsePrepubField500s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils.js';
+import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries.js';
 import createDebugLogger from 'debug';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessPrepublication');

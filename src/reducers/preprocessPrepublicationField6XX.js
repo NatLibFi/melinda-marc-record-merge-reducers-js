@@ -1,7 +1,8 @@
-import {/*encodingLevelIsBetterThanPrepublication,*/ getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
-
-import {fieldToString, nvdebug, nvdebugFieldArray} from './utils';
 import createDebugLogger from 'debug';
+
+import {getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from '@natlibfi/marc-record-validators-melinda';
+
+import {fieldToString, nvdebug, nvdebugFieldArray} from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessPrepublicationField6XX');
 //const debugData = debug.extend('data');

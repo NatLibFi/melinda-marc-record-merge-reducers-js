@@ -1,0 +1,17 @@
+{
+  "leader": "01331cam a22003492i 4500",
+  "fields": [
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "123-456-789-X" } ] },
+    { "tag": "042", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "finb" } ] },
+    { "tag": "245", "ind1": "0", "ind2": "0", "subfields": [ { "code": "a", "value": "Pakoretki mestauslavalta /" }, { "code": "c", "value": "Getaway games & Roope Lipasti." } ] },
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Koneellisesti tuotettu tietue 500 source" } ] },
+    { "tag": "583", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)undefined"},{"code":"5","value":"MELINDA"}]},
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Koneellisesti tuotettu tietue 594 base"}, {"code": "5", "value": "OTHER"}]},
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Koneellisesti tuotettu tietue 594 source"}, {"code": "5", "value": "FENNI"}]},
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "EnnakkotietO 594 source" }, { "code": "5", "value": "WHATEVER" } ] },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Some, Name." } ] },
+    { "tag": "880", "ind1": "1", "ind2": " ", "subfields": [ { "code": "6", "value" : "700-00" }, { "code": "a", "value": "Other, Name." } ] },
+
+    { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "FIKKA" } ] }
+  ]
+}

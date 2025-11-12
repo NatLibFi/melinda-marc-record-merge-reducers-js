@@ -1,9 +1,9 @@
 //import {MarcRecord} from '@natlibfi/marc-record';
-//import createDebugLogger from 'debug';
-import {baseHasEqualOrHigherEncodingLevel, deleteAllPrepublicationNotesFromField500InNonPubRecord, getEncodingLevel} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils';
+import createDebugLogger from 'debug';
+import {baseHasEqualOrHigherEncodingLevel, deleteAllPrepublicationNotesFromField500InNonPubRecord, getEncodingLevel} from '@natlibfi/marc-record-validators-melinda';
 
-export default () => (base, source) => {
-  //const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers');
+export default () => (base, source, ignoreLDRmismatch = false) => {
+  const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:leader');
   //debug(`********* We have base: **********`);
   //debug(base.constructor.name);
   /*
@@ -19,8 +19,12 @@ export default () => (base, source) => {
   debugDev(`source.leader: ${source.leader}`);
   */
 
+  debug(`ignoreLDRmismatch: ${ignoreLDRmismatch}`);
+
   // Test 01: If LDR 000/06 or 07 is different, do not merge
-  if (source.leader[6] !== base.leader[6] || source.leader[7] !== base.leader[7]) {
+  // use ignoreLDRmismatch to allow merge anyways
+  if (!ignoreLDRmismatch && (source.leader[6] !== base.leader[6] || source.leader[7] !== base.leader[7])) {
+    debug(`Differing LDR/06 or LDR/07, not able to merge`);
     throw new Error(`LDR 000/06 or 07 is different in base and source`);
   }
 

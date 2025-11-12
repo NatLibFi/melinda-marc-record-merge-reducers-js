@@ -1,0 +1,9 @@
+{
+  "leader":"00000nam a22000002i 4500",
+  "fields": [
+    {"tag":"001","value":"029852932"},
+    {"tag":"003","value":"FI-MELINDA"},
+    {"tag":"035","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"(FI-MELINDA)029852932"}]},
+    {"tag":"245","ind1":"0","ind2":"0","subfields":[{"code":"a","value":"Lämpökuvaus rakentamisessa."}]}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "2222222222" } ] },
+    { "tag": "024", "ind1": "7", "ind2": " ", "subfields": [ { "code": "a", "value": "URN:ISBN:978-952-287-490-0" }, { "code": "2", "value": "urn" }]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)20230913"},{"code":"5","value":"MELINDA"}]}
+  ]
+}

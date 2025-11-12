@@ -1,0 +1,9 @@
+{
+   "leader":"04848cam a22010334i 4500",
+   "fields":[
+    {"tag":"035","ind1":" ","ind2":" ","subfields":[{"code":"z","value":"(FI-MELINDA)009852932"}]},
+    {"tag":"035","ind1":" ","ind2":" ","subfields":[{"code":"z","value":"(FI-MELINDA)029852932"}]},
+    {"tag":"245","ind1":"0","ind2":"0","subfields":[{"code":"a","value":"Lämpökuvaus rakentamisessa /"},{"code":"c","value":"Sauli Paloniitty, Juho Paloniitty, Jouni Haimilahti."}]},
+    {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)009852932 + (FI-MELINDA)029852932"},{"code":"5","value":"MELINDA"}]}
+   ]
+}

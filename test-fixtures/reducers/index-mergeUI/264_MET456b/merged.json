@@ -1,0 +1,15 @@
+{
+  "leader": "01331nam a22003494i 4500",
+  "fields": [
+    { "tag": "264", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "b", "value": "Ipsum,"},
+      { "code": "c", "value": "2021."}
+    ] },
+    { "tag": "264", "ind1": " ", "ind2": "1", "subfields": [
+      { "code": "b", "value": "Foobar,"},
+      { "code": "c", "value": "2021."}
+    ] },
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)12345"},{"code":"5","value":"MELINDA"}]}
+  ]
+}
+

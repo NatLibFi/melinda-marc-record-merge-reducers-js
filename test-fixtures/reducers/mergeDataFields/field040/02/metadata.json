@@ -11,6 +11,5 @@
         },
         "deletableSubfieldFilter": {"codePattern": "^[^abcde0-9]$"}
       } ]
-    
   }
 }

@@ -1,0 +1,7 @@
+{
+  "description":"INTERNAL MERGE: MET-355: remove $g ennakkotieto when merging (=adding source $g subfield to base field).",
+  "comment": "Eventually use relator term merge validator/fixer",
+  "only": false,
+  "skip": false
+
+}

@@ -1,0 +1,14 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456"},
+    { "tag": "776", "ind1": "0", "ind2": "8", "subfields": [
+      { "code": "i", "value": "Verkkoaineisto:" },
+      { "code": "z", "value": "9789518585728"}
+    ] },
+    { "tag": "776", "ind1": "0", "ind2": "8", "subfields": [
+      { "code": "i", "value": "Verkkoaineisto:" },
+      { "code": "z", "value": "9789518585735" }
+    ] }
+  ]
+}

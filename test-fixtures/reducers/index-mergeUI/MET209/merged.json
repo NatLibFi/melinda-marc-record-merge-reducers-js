@@ -1,0 +1,30 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "978-952-7005-95-8" },
+      { "code": "q", "value": "mjuka pärmar"}
+    ] },
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "b", "value": "swe"}
+    ]},
+        {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)12345 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]},
+
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Finn-Sven, Alfa," },
+      { "code": "e", "value": "författare." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sven-Sven, Beta," },
+      { "code": "e", "value": "författare." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sven-Finn, Gamma," },
+      { "code": "e", "value": "författare." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Finn-Finn, Delta," },
+      { "code": "e", "value": "författare." }
+    ]}
+  ]
+}

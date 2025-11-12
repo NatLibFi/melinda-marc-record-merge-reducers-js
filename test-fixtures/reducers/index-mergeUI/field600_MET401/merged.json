@@ -1,0 +1,36 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)123456 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]},
+    { "tag": "600", "ind1": "4", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi1, Etunimi1," },
+      { "code": "d", "value": "2000-" },
+      { "code": "t", "value": "Nimeke." },
+      { "code": "0", "value": "(FI-ASTERI-N)000777999" },
+      { "code": "9", "value": "WHATEVER1<KEEP>" }
+    ]},
+    { "tag": "600", "ind1": "4", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi2, Etunimi2," },
+      { "code": "d", "value": "2020-" },
+      { "code": "t", "value": "Nimeke." },
+      { "code": "0", "value": "(FI-ASTERI-N)000777998" },
+      { "code": "9", "value": "WHATEVER2<KEEP>" }
+    ]},
+    { "tag": "600", "ind1": "4", "ind2": " ", "subfields": [
+      { "code": "a", "value": "MET366.1" },
+      { "code": "9", "value": "WHATEVER<KEEP>" }
+    ]},
+    { "tag": "600", "ind1": "4", "ind2": " ", "subfields": [
+      { "code": "a", "value": "MET366.2." },
+      { "code": "9", "value": "WHATEVER<KEEP>" }
+    ]},
+    { "tag": "600", "ind1": "4", "ind2": " ", "subfields": [
+      { "code": "a", "value": "MET366.3." },
+      { "code": "9", "value": "WHATEVER<KEEP>" }
+    ]},
+    { "tag": "600", "ind1": "4", "ind2": " ", "subfields": [
+      { "code": "a", "value": "MET366.4." },
+      { "code": "9", "value": "WHATEVER<KEEP>" }
+    ]}
+  ]
+}

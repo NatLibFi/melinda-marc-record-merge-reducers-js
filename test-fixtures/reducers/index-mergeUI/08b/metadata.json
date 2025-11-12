@@ -1,0 +1,7 @@
+{
+  "description":"INTERNAL MERGE: 08b: MET-183: Normalize 700$e relator abbreviations. Also MELKEHITYS-2382-ish 600$c stuff.",
+  "comment": "note that $e subfield order might be suboptimal.",
+  "comment 2": "Contains also 600$c translations (fiktiv gestalt) vs (fiktiivinen hahmo) which don't merge",
+  "only": false,
+  "skip": false
+}

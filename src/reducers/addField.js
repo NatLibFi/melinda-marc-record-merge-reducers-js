@@ -1,17 +1,17 @@
-//import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
-import {tagIsRepeatable, fieldToString, nvdebug} from './utils';
-
-import {MarcRecord} from '@natlibfi/marc-record';
-import {postprocessRecords} from '@natlibfi/marc-record-validators-melinda/dist/merge-fields/mergeOrAddPostprocess';
-import {preprocessBeforeAdd} from './processFilter.js';
 import fs from 'fs';
 import path from 'path';
-import {isValidSubfield6} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
 
-// Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
+import {MarcRecord} from '@natlibfi/marc-record';
+import {isValidSubfield6, postprocessRecords} from '@natlibfi/marc-record-validators-melinda';
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+import {tagIsRepeatable, fieldToString, nvdebug} from './utils.js';
+import {preprocessBeforeAdd} from './processFilter.js';
+
+
+// (Deprecated) specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
+
+const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:addField');
 const debugData = debug.extend('data');
@@ -23,7 +23,7 @@ const debugDev = debug.extend('dev');
 
 const defCandFieldsRegexp = /^(?:0[1-9][0-9]|[1-9][0-9][0-9]|CAT|LOW|SID)$/u;
 
-export default (config = defaultConfig.addConfiguration) => (base, source) => {
+export default (config = defaultConfig.addConfiguration, internal = false) => (base, source) => {
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});
@@ -34,7 +34,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
   debugDev(`CONFIG: ${JSON.stringify(config.preprocessorDirectives)}`);
   // There are bunch of rules we want to apply after field merge and before field add.
   // They are run here.
-  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives);
+  preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives, internal);
 
   // NR fields are removed from source if they can not be added to base.
   removeNonRepeatableDataFieldsFromSourceIfFieldExistsInBase(baseRecord, sourceRecord);
@@ -49,7 +49,7 @@ export default (config = defaultConfig.addConfiguration) => (base, source) => {
     addField(baseRecord, candField, config);
   });
 
-  postprocessRecords(baseRecord, sourceRecord);
+  postprocessRecords(baseRecord, sourceRecord, internal);
 
   debugData(`Base after addField: ${JSON.stringify(baseRecord)}`);
   debugData(`Source after addField: ${JSON.stringify(sourceRecord)}`);

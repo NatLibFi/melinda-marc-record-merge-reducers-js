@@ -1,0 +1,66 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    {
+      "tag": "100", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Ipsum," },
+        { "code": "e", "value": "kirjoittaja." }
+      ]
+    },        {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)source-313"},{"code":"5","value":"MELINDA"}]},
+ 
+    {
+      "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Superman," },
+        { "code": "e", "value": "valokuvaaja," },
+        { "code": "e", "value": "toimittaja." }
+
+      ]
+    },
+    {
+      "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Minnasson, Henrik L.," },
+        { "code": "e", "value": "toimittaja." },
+        { "code": "0", "value": "(FI-ASTERI-N)000666000" }
+      ]
+    },
+    {
+      "tag": "700", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lepakkomies," },
+        { "code": "e", "value": "lepakko," },
+        { "code": "e", "value": "mies." }
+      ]
+    },
+    {
+      "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Litku, Linda." }
+      ]
+    },
+    {
+      "tag": "900", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lorum" },
+        { "code": "y", "value": "Ipsum" }
+      ]
+    },
+    {
+      "tag": "900", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Superman" },
+        { "code": "y", "value": "Teräsmies" }
+      ]
+    },
+    { "tag": "900", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Minnasson, Henrik" },
+      { "code": "y", "value": "Minnasson, Henrik L." }
+    ]},
+    { "tag": "900", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Litku, Linda I." },
+      { "code": "y", "value": "Litku, Linda" }
+    ]},
+    {
+      "tag": "900", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Lepakkomies" },
+        { "code": "y", "value": "Batman" }
+      ]
+    }
+
+  ]
+}

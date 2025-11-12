@@ -1,0 +1,12 @@
+{
+"leader":"01331cam a22003494i 4500",
+"fields":[
+  {"tag":"300","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"1 verkkoaineisto (7 h 36 min)"}]},
+  {"tag":"336","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"teksti"},{"code":"b","value":"txt"},{"code":"2","value":"rdamedia"}]},
+  {"tag":"500","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"Sen sijaan tämä kommentti mergeytyy."}]},
+  {"tag":"502","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"Väitöskirja."}]},
+    {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)123456 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]},
+   {"tag":"SID","ind1":" ","ind2":" ","subfields":[{"code":"c","value":"123"},
+  {"code":"b","value":"owner"}]}
+  ]
+}

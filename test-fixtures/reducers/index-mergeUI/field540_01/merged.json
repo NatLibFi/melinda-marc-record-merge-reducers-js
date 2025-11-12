@@ -1,0 +1,19 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "540", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "f", "value": "CC BY 4.0" },
+      { "code": "2", "value": "cc" },
+      { "code": "u", "value": "https://creativecommons.org/licenses/by/4.0/deed.fi" }
+    ]},
+    { "tag": "540", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "f", "value": "CC BY-NC 4.0" },
+      { "code": "2", "value": "cc" },
+      { "code": "u", "value": "https://creativecommons.org/licenses/by-nc/4.0/deed.fi" }
+    ]},
+    { "tag": "540", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Lainausoikeus" }
+    ]},
+     {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)123456 + (FI-MELINDA)123456"},{"code":"5","value":"MELINDA"}]}
+  ]
+}

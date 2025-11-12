@@ -1,0 +1,5 @@
+{
+  "description": "merge 500 Lisäpainokset fields, MRA-487 field 776 double-ish",
+  "only": false,
+  "skip": false
+}

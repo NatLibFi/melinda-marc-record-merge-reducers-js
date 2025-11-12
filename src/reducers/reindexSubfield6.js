@@ -3,11 +3,9 @@
 //
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {fieldToString, nvdebug} from './utils';
-import {fieldGetOccurrenceNumberPairs, get6s, recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6ResetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger} from '@natlibfi/marc-record-validators-melinda/dist/subfield6Utils';
-import {isRelevantField6} from './subfield6Utils';
-import {fieldsToString} from '@natlibfi/marc-record-validators-melinda/dist/utils';
-
+import {fieldToString, nvdebug} from './utils.js';
+import {fieldGetOccurrenceNumberPairs, fieldsToString, get6s, recordGetMaxSubfield6OccurrenceNumberAsInteger, fieldGetUnambiguousOccurrenceNumber, intToOccurrenceNumberString, subfield6ResetOccurrenceNumber, subfield6GetOccurrenceNumberAsInteger} from '@natlibfi/marc-record-validators-melinda';
+import {isRelevantField6} from './subfield6Utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:reindexSubfield6');
 //const debugData = debug.extend('data');

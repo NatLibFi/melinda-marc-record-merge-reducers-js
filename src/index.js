@@ -1,3 +1,3 @@
-import {localReducers as MelindaReducers, muuntajaReducers as MuuntajaReducers} from './reducers';
+import {localReducers as MelindaReducers, muuntajaReducers as MuuntajaReducers, mergeReducersForMergeUI as MergeReducersForMergeUI} from './reducers/index.js';
 
-export {MelindaReducers, MuuntajaReducers};
+export {MelindaReducers, MuuntajaReducers, MergeReducersForMergeUI};

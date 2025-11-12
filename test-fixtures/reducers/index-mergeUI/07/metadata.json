@@ -1,0 +1,10 @@
+{
+  "description":"INTERNAL MERGE: Normalize 024$q (despite both base and source have crappier values). MRA-309 and MRA-311: normalize 506$a and 534$p as well.",
+  "comment": "NB! 506$a missing final punc is not added; as the base field is not changed, it stays as it is.",
+  "comment #2": "Source fields 020 double is a test relocated here after refactoring addField.js",
+  "comment #3": "MRA-422: illustratör translations. As of 2023-09-XX base-specific X00$e subfields are translated as well",
+  "comment ¤4": "2023-09-08: Some $q abbrs are already handled by a normalize-qualifying-information validator",
+  "only": false,
+  "skip": false,
+"skipComment": "Skip before editing test for internal merge"
+}

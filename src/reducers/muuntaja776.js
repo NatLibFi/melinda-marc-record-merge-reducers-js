@@ -86,7 +86,7 @@ function getIsbn(record) {
 
   if (subfields.length) {
     // NB! The "recommendation" is that ISBN is returned without '-' hyphens.
-    // (I think removing them is a bir stupid, but let's go with the flow):
+    // (I think removing them is a bit stupid, but let's go with the flow):
     const isbnString = subfields[0].value.replace(/-/gu, '');
     return isbnString;
   }
@@ -96,8 +96,13 @@ function getIsbn(record) {
     if (subfield.code !== 'a') {
       return false;
     }
-    const auditedISBN = ISBN.audit(subfield.value);
-    return auditedISBN.validIsbn;
+    try {
+      const auditedIsbn = ISBN.audit(subfield.value);
+      return auditedIsbn.validIsbn;
+    }
+    catch {
+      return false;
+    }
   }
 }
 

@@ -1,0 +1,30 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [ { "code": "b", "value": "fin" } ] },
+          {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)000654987"},{"code":"5","value":"MELINDA"}]},
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Melkehitys-2382, Biljett" },
+      { "code": "c", "value": "(fiktiv gestalt)"}
+  ] },
+  { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+    { "code": "a", "value": "Melkehitys-2382, Tiketti" },
+    { "code": "c", "value": "(fiktiivinen hahmo)"}
+  ] },
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Melkehitys-2382, Biljett" },
+      { "code": "c", "value": "(fiktiivinen hahmo)"}
+    ] },
+    { "tag": "600", "ind1": "1", "ind2": "4", "subfields": [
+      { "code": "a", "value": "Melkehitys-2382, Tiketti" },
+      { "code": "c", "value": "(fiktiv gestalt)"}
+    ] },
+    { "tag": "700", "ind1": " ", "ind2": " ",
+      "subfields": [
+          { "code": "a", "value": "MET-183," },
+          { "code": "e", "value": "kirjoittaja,"},
+          { "code": "e", "value": "taiteilija," },
+          { "code": "e", "value": "julkaisija."}
+    ] }        
+  ]
+}

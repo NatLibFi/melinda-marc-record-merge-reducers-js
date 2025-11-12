@@ -1,0 +1,24 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "012345678" },
+    { "tag": "100", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Source, Etunimi." },
+      { "code": "g", "value": "ENNAKKOTIETO."}
+      ]
+    },
+    { "tag": "490", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "MET-271 ;"}, { "code": "v", "value": "3"}]},
+    { "tag": "511", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Alpha." } ] },
+    { "tag": "511", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Beta." }, {"code": "9", "value": "FENNI<KEEP>"}  ] },
+    { "tag": "511", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Gamma." } ] },
+    { "tag": "511", "ind1": "1", "ind2": " ", "subfields": [ { "code": "a", "value": "Delta." }, {"code": "9", "value": "FENNI<KEEP>"} ] },
+ 
+    { "tag": "520", "ind1": " ", "ind2": " ", "subfields": [ { "code": "a", "value": "Show must go off." } ] },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, Etunimi," },
+      { "code": "d", "value": "1980-" },
+      { "code": "g", "value": "ennakkotieto."}
+      ]
+    }
+  ]
+}

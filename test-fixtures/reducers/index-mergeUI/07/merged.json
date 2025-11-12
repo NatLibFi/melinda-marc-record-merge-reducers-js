@@ -1,0 +1,37 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "020", "ind1": " ", "ind2": " ", "subfields": [ {"code": "a", "value": "1234567890" } ] },
+    { "tag": "024", "ind1": " ", "ind2": " ", "subfields": [
+        { "code": "a", "value": "FILNM9500119" },
+        { "code": "q", "value": "mjuka pärmar" },
+        { "code": "q", "value": "hårda pärmar" },
+        { "code": "q", "value": "MP3" },
+        { "code": "q", "value": "PDF" }
+    ]},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [ {"code": "b", "value": "swe"}]},
+    { "tag": "506", "ind1": "0", "ind2": " ", "subfields": [ { "code": "a", "value": "Sallittu kaikenikäisille" } ]},
+    { "tag": "534", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "p", "value": "Alun perin julkaistu:" },
+      { "code": "c", "value": "2018." }
+    ]},
+      {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)undefined + (FI-MELINDA)000123456"},{"code":"5","value":"MELINDA"}]},
+  
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, A.," },
+      { "code": "e", "value": "illustratör." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, B.," },
+      { "code": "e", "value": "illustratör." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, C.," },
+      { "code": "e", "value": "illustratör." }
+    ]},
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Sukunimi, D.," },
+      { "code": "e", "value": "illustratör." }
+    ]}
+  ]
+}
