@@ -26,7 +26,7 @@ export default (config = defaultConfig, internal = false) => (base, source) => {
   //debugData(`base: ${JSON.stringify(base)}`);
   //debugData(`source: ${JSON.stringify(base)}`);
   const fixers = [ NormalizeUTF8Diacritics(), SanitizeVocabularySourceCodes(), NormalizeQualifyingInformation(), SubfieldValueNormalizations(), Field505Separators(), UpdateField540() ];
-  
+
   trimRecord(base);
   trimRecord(source);
 
@@ -44,7 +44,7 @@ export default (config = defaultConfig, internal = false) => (base, source) => {
 
   const fromLanguage = getCatalogingLanguage(source);
   const toLanguage = getCatalogingLanguage(base);
-  recordFixRelatorTerms(source, fromLanguage, fromLanguage); // Expand terms: "säv." => "säveltäjä"
+  recordFixRelatorTerms(source, fromLanguage, fromLanguage); // Expand terms: "säv." => "säveltäjä" (should this be a validator?)
   recordFixRelatorTerms(source, fromLanguage, toLanguage); // "säveltäjä" => "composer"
   recordFixRelatorTerms(base, toLanguage, toLanguage); // Expand terms: "säv." => "säveltäjä"
 
