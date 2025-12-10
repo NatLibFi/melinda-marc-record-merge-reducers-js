@@ -1,5 +1,4 @@
 {
-  "description":"500 and 594: MET-701 Unexpected behaviour",
-  "comment": "...",
+  "description":"MET: source's better prepublication data in field 500 overrides base's existing prepublication data",
   "only": false
 }
