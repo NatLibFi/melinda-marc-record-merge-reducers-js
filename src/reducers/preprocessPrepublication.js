@@ -33,7 +33,8 @@ import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
   prepublicationLevelIsKoneellisestiTuotettuTietueOrTarkistettuEnnakkotieto, isKingOfTheHill,
   removeWorsePrepubField594s,
-  removeWorsePrepubField500s} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils.js';
+  removeWorsePrepubField500s,
+  firstFieldHasBetterPrepubEncodingLevel} from '@natlibfi/marc-record-validators-melinda/dist/prepublicationUtils.js';
 import {handlePrepublicationNameEntries} from './preprocessPrepublicationEntries.js';
 import createDebugLogger from 'debug';
 
@@ -70,19 +71,29 @@ export default () => (base, source) => {
 };
 
 
-function removeUnwantedSourceField500s(base, source) {
-  // Removes prepub 500 fields, if base is not a prepub
-
-  // See MET-33 for details.
-  // No action required:
-  const baseEncodingLevel = getEncodingLevel(base);
-  if (!encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
-    return;
-  }
-
-  const sourceFields500 = getRelevant5XXFields(source, true, false);
+function removeUnwantedSourceField500s(base, source) { // Handles MET-33 and MET-701
+  const sourceFields500 = getRemovable500SourceFields();
   nvdebugFieldArray(sourceFields500, '  Remove unneeded source 500: ', debugDev);
   sourceFields500.forEach(field => source.removeField(field));
+
+  function getRemovable500SourceFields() {
+    const sourceFields500 = getRelevant5XXFields(source, true, false);
+    const baseEncodingLevel = getEncodingLevel(base);
+
+    // MET-33: Remove all prepublication level notes if base is not a prepublication:
+    if (sourceFields500.length === 0 || encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
+      return sourceFields500;
+    }
+
+    // MET-701: Remove those prepublication level notes that are not better than the ones base record already has:
+    const baseFields500 = getRelevant5XXFields(base, true, false);
+    if (baseFields500.length === 0) {
+      // Should we remove all or nothing? Currently we remove nothing, if base-500 has no prepublication level info.
+      return []; // or return sourceFields500?
+    }
+
+    return sourceFields500.filter(sourceField => baseFields500.some(baseField => !firstFieldHasBetterPrepubEncodingLevel(sourceField, baseField)));
+  }
 }
 
 
