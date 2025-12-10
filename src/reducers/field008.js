@@ -125,7 +125,7 @@ function setLanguage(base008, source008) {
   const langB = getLanguage(base008);
   const langS = getLanguage(source008);
 
-  if (langB === '|||' && langS.match(/^[a-z]{3}$/u)) {
+  if (['und', '|||'].includes(langB) && langS.match(/^[a-z]{3}$/u)) {
     base008.value = `${base008.value.substring(0, 35)}${langS}${base008.value.substring(38)}`;
     return;
   }
