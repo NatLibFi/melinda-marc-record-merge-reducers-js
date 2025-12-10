@@ -1,0 +1,4 @@
+{
+  "description":"MET: source's better prepublication data in field 500 overrides base's existing prepublication data",
+  "only": false
+}

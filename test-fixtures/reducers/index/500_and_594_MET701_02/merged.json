@@ -1,0 +1,9 @@
+{
+  "leader": "01331cam a22003498i 4500",
+  "fields": [
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [{ "code": "a", "value": "Some random note."}]},
+    { "tag": "500", "ind1": " ", "ind2": " ", "subfields": [{ "code": "a", "value": "Koneellisesti tuotettu tietue / Storia." }]},
+    { "tag": "594", "ind1": " ", "ind2": " ", "subfields": [{ "code": "a", "value": "TARKISTETTU ENNAKKOTIETO / KIRJAVÄLITYS" }, { "code": "5", "value": "FENNI" }]},
+    { "tag": "LOW", "ind1": " ", "ind2": " ", "subfields": [{ "code": "a", "value": "FIKKA"}]}
+  ]
+}

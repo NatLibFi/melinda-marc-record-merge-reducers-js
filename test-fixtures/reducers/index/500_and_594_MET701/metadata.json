@@ -1,0 +1,4 @@
+{
+  "description":"MET-701: prepublication data from source's 500 and 594 is dropped, since base already has data with same prepublication level",
+  "only": false
+}
