@@ -6,22 +6,87 @@ function consistsOfThreeLetters(val) {
   return val.match(/^[a-z][a-z][a-z]$/u);
 }
 
+const relevantSubfieldCodes = ['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 't'];
+
+function removeSubfield(field, subfieldCode, value) {
+  field.subfields = field.subfields.filter(sf => !isRemovableSubfield(sf));
+
+  function isRemovableSubfield(sf) {
+    if (sf.code !== subfieldCode) {
+      return true;
+    }
+    if (!value || sf.value === value) {
+      return true;
+    }
+    return false;
+  }
+}
+
+function handleMul(baseField, sourceField) {
+  if (baseField.subfields.some(sf => sf.code === '2') || sourceField.subfields.some(sf => sf.code === '2')) {
+    return;
+  }
+
+  relevantSubfieldCodes.forEach(code => handleMulSubfield(code));
+
+  function handleMulSubfield(code) {
+    if (hasRemovableMul(sourceField, baseField, code)) {
+      removeSubfield(sourceField, code, 'mul');
+      return;
+    }
+    if (hasRemovableMul(baseField, sourceField, code)) {
+      removeSubfield(baseField, code, 'mul');
+      return;
+    }
+    if (isFullyRemovableSourceSubfield(baseField, sourceField, code)) {
+      removeSubfield(sourceField, code, undefined); 
+    }
+  }
+
+  function isFullyRemovableSourceSubfield(baseField, sourceField, subfieldCode) {
+    // If base (field1) has 'mul' we don't want to megre anything to it: 'mul' + 'swe' is pretty stupid...
+    const baseSubfields = baseField.subfields.filter(sf => sf.code === subfieldCode);
+    if (baseSubfields.length !== 1 || baseSubfields[0].value !== 'mul') {
+      return false;
+    }
+    // Remove case where one opposing subfield is removed:
+    // 'fin' + 'swe' > 'mul', 'swe' < 'mul'
+    const sourceSubfields = sourceField.subfields.filter(sf => sf.code === subfieldCode);
+    if (sourceSubfields.length === 1) {
+      return true;
+    }
+    return false;
+  }
+
+
+  function hasRemovableMul(field1, field2, subfieldCode) {
+    const subfields1 = field1.subfields.filter(sf => sf.code === subfieldCode);
+    // Must contain 'und' for it to be removable in the first place...
+    if (subfields1.length !== 1 || subfields1[0].value !== 'mul') {
+      return false;
+    }
+    const subfields2 = field2.subfields.filter(sf => sf.code === subfieldCode);
+    if (subfields2.length < 2) {
+      return false;
+    }
+    return true;
+  }
+
+}
+
 function handleUnd(baseField, sourceField) {
   // NB! Each subfield is handled separately from others!
-  const relevantSubfieldCodes = ['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 't'];
-
   relevantSubfieldCodes.forEach(code => handleUndSubfield(code));
 
   function handleUndSubfield(subfieldCode) {
     if (hasRemovableUnd(sourceField, baseField, subfieldCode)) {
-      sourceField.subfields = sourceField.subfields.filter(sf => sf.code !== subfieldCode || sf.value !== 'und');
+      removeSubfield(sourceField, subfieldCode, 'und');
       return;
     }
     if (hasRemovableUnd(baseField, sourceField, subfieldCode)) {
-      baseField.subfields = baseField.subfields.filter(sf => sf.code !== subfieldCode || sf.value !== 'und');
+      removeSubfield(baseField, subfieldCode, 'und');
       return;
     }
-
   }
 
   function hasRemovableUnd(field1, field2, subfieldCode) {
@@ -65,7 +130,9 @@ export default () => (base, source) => {
     return {base, source};
   }
 
+  handleMul(b041[0], s041[0]);
   handleUnd(b041[0], s041[0]);
+
   // If $a und is the only subfield in the record, we might end up subfieldless:
   if (!b041[0].subfields.length === 0) {
     // If base is removed, we don't want to lose information in it's IND1!
