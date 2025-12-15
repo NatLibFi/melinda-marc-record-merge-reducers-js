@@ -1,5 +1,6 @@
 {
   "description":"INTERNAL MERGE: 041: merge values, note that source's illegal zxx gets dropped in generic preprocessing, to in merge-specific content",
+  "comment": "NB! indicator-fixes.js validator/fixer changes ind1 to '1' since f040 has $h.",
   "skip": false,
   "only": false
 }
