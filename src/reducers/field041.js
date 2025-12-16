@@ -1,12 +1,20 @@
-// Special handling for field 041 before merge.
-// Motivation:
-// - If R1 has $a und and R2 has $a eng, they should merge as $a eng
+/*
+ * Special handling for field 041 before merge.
+ *
+ * Motivation:
+ * - If R1 has $a und and R2 has $a eng, they should merge as $a eng
+ * - If R1 has $a mul and R2 has $a fin $a swe they should merge as $a fin $a swe
+ *
+ * Ref. MELKEHITYS-3367, MUU-711...
+ *
+ * Note that value 'zxx' is removed by a validator during preprocessing.
+*/
+
+const relevantSubfieldCodes = ['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 't'];
 
 function consistsOfThreeLetters(val) {
   return val.match(/^[a-z][a-z][a-z]$/u);
 }
-
-const relevantSubfieldCodes = ['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 't'];
 
 function removeSubfield(field, subfieldCode, value) {
   field.subfields = field.subfields.filter(sf => !isRemovableSubfield(sf));
@@ -49,8 +57,10 @@ function handleMul(baseField, sourceField) {
     if (baseSubfields.length !== 1 || baseSubfields[0].value !== 'mul') {
       return false;
     }
+
     // Remove case where one opposing subfield is removed:
-    // 'fin' + 'swe' > 'mul', 'swe' < 'mul'
+    // Base 'mul' < source multilang 'fin' + 'swe' =>> don't remove
+    // Base 'mul' > source lone 'swe' => remove
     const sourceSubfields = sourceField.subfields.filter(sf => sf.code === subfieldCode);
     if (sourceSubfields.length === 1) {
       return true;
