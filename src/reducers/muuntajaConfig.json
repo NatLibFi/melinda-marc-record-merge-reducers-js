@@ -66,19 +66,6 @@
         },
 
         {
-            "operation": "removeSubfield",
-            "recordType": "source",
-            "fieldSpecification": {
-                "tag": "041",
-                "subfieldFilters": [{
-                    "code": "a",
-                    "value": "zxx"
-                }]
-            },
-            "deletableSubfieldFilter": {"code": "a", "value": "zxx"}
-        },
-
-        {
             "operation": "removeField",
             "recordType": "source",
             "fieldSpecification": {

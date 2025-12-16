@@ -1,0 +1,5 @@
+{
+  "description":"041 06: source's 'mul' is dropped, and base's language data is kept",
+  "skip": false,
+  "only": false
+}

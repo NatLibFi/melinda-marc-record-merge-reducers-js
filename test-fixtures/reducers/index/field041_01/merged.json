@@ -5,7 +5,7 @@
         { "code": "a", "value": "testing" }
       ]
     },
-    { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [
+    { "tag": "041", "ind1": "1", "ind2": " ", "subfields": [
       { "code": "a", "value": "eng" },
       { "code": "h", "value": "swe" }
     ] }
