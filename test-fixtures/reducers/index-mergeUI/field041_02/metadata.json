@@ -1,5 +1,6 @@
 {
-  "description":"INTERNAL MERGE: 041: Keep base's crappy $d zxx.",
+  "description":"INTERNAL MERGE: 041: Validator removes base's crappy $d zxx (and the whole field).",
+  "comment": "Rather funnily, the result contains no data (expect in 583) from the base field",
   "skip": false,
   "only": false
 }

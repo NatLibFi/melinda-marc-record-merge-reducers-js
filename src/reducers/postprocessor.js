@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 import fs from 'fs';
 import path from 'path';
 
-import {IndicatorFixes, MergeField500Lisapainokset, MultipleSubfield0s, RemoveDuplicateDataFields, RemoveInferiorDataFields, ResolveOrphanedSubfield6s, SortFields,
+import {IndicatorFixes, MergeField500Lisapainokset, MultipleSubfield0s, RemoveDuplicateDataFields, RemoveInferiorDataFields, ResolveOrphanedSubfield6s, SortFields, SyncLanguage,
         recordResetSubfield6OccurrenceNumbers, removeWorsePrepubField500s, removeWorsePrepubField594s} from '@natlibfi/marc-record-validators-melinda';
 
 import {mtsProcessRecord} from './preprocessMetatietosanasto.js';
@@ -70,6 +70,8 @@ export default (config = defaultConfig, internal = false) => (base, source) => {
   //res.message.forEach(msg => nvdebug(msg, debugDev));
 
   //removeDuplicateDatafieldsOld(base);
+
+  SyncLanguage().fix(base); // Sync 008/35-37 and 041$a/$d
 
   const sorter = SortFields({});
   sorter.fix(base);

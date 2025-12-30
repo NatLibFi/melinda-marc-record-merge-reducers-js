@@ -1,0 +1,6 @@
+{
+  "description":"041 01: source overrides base's lone 041$a 'und'",
+  "comment": "However, note that base's ind1=1 is retained (rather hackily in the code",
+  "skip": false,
+  "only": false
+}

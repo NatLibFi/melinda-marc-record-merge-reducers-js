@@ -4,6 +4,7 @@
     {"tag":"006","value":"m|||||o||d||||||||"},
     {"tag":"007","value":"cr |||||||||||"},
     {"tag":"008","value":"161108t20162016fi |||||o|||||||| 0|fin|c"},
+    {"tag":"041","ind1":" ","ind2":" ","subfields":[{"code":"a", "value": "fin"}]},
      {"tag":"583","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"MERGED FROM (FI-MELINDA)009852932 + (FI-MELINDA)009852932"},{"code":"5","value":"MELINDA"}]},
     {"tag":"856","ind1":"4","ind2":"0","subfields":[{"code":"u","value":"https://urn.fi/1"},{"code":"y","value":"Linkki verkkoaineistoon"}]},
     {"tag":"856","ind1":"4","ind2":"0","subfields":[{"code":"u","value":"https://urn.fi/2"},{"code":"z","value":"Käytettävissä vapaakappaletyöasemilla"}, {"code":"5","value":"FI-Vapaa"}]},
