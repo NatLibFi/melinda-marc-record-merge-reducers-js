@@ -43,10 +43,10 @@
 	"dependencies": {
 		"@natlibfi/marc-record": "^10.0.1",
 		"@natlibfi/marc-record-merge": "^8.0.0",
-		"@natlibfi/marc-record-validators-melinda": "^12.0.3",
+		"@natlibfi/marc-record-validators-melinda": "^12.0.4",
 		"clone": "^2.1.2",
 		"debug": "^4.4.3",
-		"isbn3": "^2.0.1"
+		"isbn3": "^2.0.2"
 	},
 	"devDependencies": {
 		"@natlibfi/fixugen": "^3.0.0",
