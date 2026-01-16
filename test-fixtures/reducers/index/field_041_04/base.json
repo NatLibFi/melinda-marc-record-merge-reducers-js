@@ -3,7 +3,8 @@
   "fields": [
     { "tag": "008", "value": "01234567890123456789012345678901234und8|" },
     { "tag": "041", "ind1": "1", "ind2": " ", "subfields": [
-      { "code": "a", "value": "mul" }
+      { "code": "a", "value": "mul" },
+      { "code": "b", "value": "ita" }
     ] }
   ]
 }
