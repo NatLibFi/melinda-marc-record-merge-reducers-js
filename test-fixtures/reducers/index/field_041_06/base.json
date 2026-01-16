@@ -1,0 +1,11 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "008", "value": "01234567890123456789012345678901234und8|" },
+    { "tag": "041", "ind1": "1", "ind2": " ", "subfields": [
+      { "code": "a", "value": "fin" },
+      { "code": "a", "value": "swe" },
+      { "code": "b", "value": "rom" }
+    ] }
+  ]
+}

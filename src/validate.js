@@ -42,7 +42,7 @@ export default async () => {
     await EmptyFields(),
     await IsbnIssn({hyphenateISBN: true}),
     await SubfieldExclusion([
-      {tag: /^041$/u, subfields: [{code: /^[ad]$/u, value: /^zxx$/u}]},
+      // {tag: /^041$/u, subfields: [{code: /^[ad]$/u, value: /^zxx$/u}]}, // done by a validator nowadays
       {tag: /^02[04]$/u, subfields: [{code: /^c$/u, value: /^.*(?:€|£|\$|FIM).*$/u}]} // price info
     ]),
     //await FieldStructure([{tag: /^007$/u, dependencies: [{leader: /^.{6}[^at]/u}]}]),
