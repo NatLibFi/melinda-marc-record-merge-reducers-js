@@ -16,14 +16,14 @@ function consistsOfThreeLetters(val) {
   return val.match(/^[a-z][a-z][a-z]$/u);
 }
 
-function removeSubfield(field, subfieldCode, value) {
+function removeSubfield(field, subfieldCode, value = undefined) {
   field.subfields = field.subfields.filter(sf => !isRemovableSubfield(sf));
 
   function isRemovableSubfield(sf) {
     if (sf.code !== subfieldCode) {
-      return true;
+      return false;
     }
-    if (!value || sf.value === value) {
+    if (value === undefined || sf.value === value) { // not having a value
       return true;
     }
     return false;
@@ -47,7 +47,7 @@ function handleMul(baseField, sourceField) {
       return;
     }
     if (isFullyRemovableSourceSubfield(baseField, sourceField, code)) {
-      removeSubfield(sourceField, code, undefined); 
+      removeSubfield(sourceField, code, undefined);
     }
   }
 
@@ -71,7 +71,7 @@ function handleMul(baseField, sourceField) {
 
   function hasRemovableMul(field1, field2, subfieldCode) {
     const subfields1 = field1.subfields.filter(sf => sf.code === subfieldCode);
-    // Must contain 'und' for it to be removable in the first place...
+    // Must contain 'mul' for it to be removable in the first place...
     if (subfields1.length !== 1 || subfields1[0].value !== 'mul') {
       return false;
     }
