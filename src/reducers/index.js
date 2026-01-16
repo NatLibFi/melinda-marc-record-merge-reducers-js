@@ -6,6 +6,8 @@ import leader from './leader.js';
 import field006 from './field006.js';
 import field007 from './field007.js';
 import field008 from './field008.js';
+import field041 from './field041.js';
+
 //import field995 from './field995.js';
 //import genericDatafield from './genericDatafield.js';
 import reindexSubfield6 from './reindexSubfield6.js';
@@ -44,6 +46,7 @@ export const localReducers = [
   field006(), // Tests 02 and 03 // (no config)
   field007(), // Tests 04 and 05 // (no config)
   field008(), // Tests 06, 07, and 08 // (no config)
+  field041(),
   mergeDataFields(), // (1. param tagPattern, 2. param config, uses config.json.mergeConfiguration as default config, 3.param internal=
   addDataFields(), // (1. param config, uses config.json.addConfiguration as default config, 2 param internal)
   postprocessor() // (1. param config, uses config.json as default config, 2. param internal)
