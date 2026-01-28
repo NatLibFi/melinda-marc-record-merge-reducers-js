@@ -1,0 +1,15 @@
+{
+  "leader":"04848cam a22010334i 4500",
+  "fields":[
+    {"tag":"001","value":"009852932"},
+    {"tag":"003","value":"FI-MELINDA"},
+    {"tag":"005","value":"20240419221403.0"},
+    {"tag":"006","value":"m|||||o||d||||||||"},
+    {"tag":"007","value":"cr |||||||||||"},
+    {"tag":"008","value":"161108t20162016fi |||||o|||||||| 0|fin|c"},
+    {"tag":"040","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"Fi-Hamk"},{"code":"b","value":"fin"},{"code":"d","value":"FI-NL"}]},
+    {"tag":"041","ind1":" ","ind2":" ","subfields":[{"code":"a","value":"fin"}]}
+  ]
+}
+
+
