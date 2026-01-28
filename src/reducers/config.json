@@ -90,6 +90,18 @@
                 }
             },
 
+            {
+                "operation": "removeSubfield",
+                "comment": "Remove 040$e 'rda' from source (MET-370). If base is ISBD-hybrid, subfield should not be added. If rda, it already has it",
+                "recordType": "source",
+                "internal": true,
+                "fieldSpecification": {
+                    "tagPattern": "040",
+                    "subfieldFilters": [{"code": "e", "valuePattern": "rda"}]
+                },
+                "deletableSubfieldFilter": {"code": "e", "valuePattern": "rda" }
+            },
+
 
 
             {
