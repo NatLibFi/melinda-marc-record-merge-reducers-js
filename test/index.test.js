@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import merger from '@natlibfi/marc-record-merge';
 import {inspect} from 'util';
 import {MelindaReducers} from '../src/index.js';
