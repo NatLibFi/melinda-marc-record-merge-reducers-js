@@ -14,7 +14,7 @@
 		"url": "https://github.com/NatLibFi/melinda-marc-record-merge-reducers-js"
 	},
 	"license": "MIT",
-	"version": "3.1.2",
+	"version": "3.1.3-alpha.1",
 	"main": "./dist/index.js",
 	"engines": {
 		"node": ">=22"
@@ -43,7 +43,7 @@
 	"dependencies": {
 		"@natlibfi/marc-record": "^10.0.1",
 		"@natlibfi/marc-record-merge": "^8.0.0",
-		"@natlibfi/marc-record-validators-melinda": "^12.0.5",
+		"@natlibfi/marc-record-validators-melinda": "^12.0.6",
 		"clone": "^2.1.2",
 		"debug": "^4.4.3",
 		"isbn3": "^2.0.3"
