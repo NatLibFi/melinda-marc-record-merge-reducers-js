@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
 import {describe} from 'node:test';
 import {MarcRecord} from '@natlibfi/marc-record';
 import createReducer from '../../src/reducers/mergeField.js';
