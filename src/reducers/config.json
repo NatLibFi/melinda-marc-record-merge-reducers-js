@@ -9,7 +9,7 @@
                 "internal": false,
                 "recordType": "source",
                 "fieldSpecification": {
-                    "tagPattern": "^(066|841|842|843|844|845|86[3-8]|876|877|878|HLI)$"
+                    "tagPattern": "^(066|841|842|843|844|845|86[3-8]|876|877|878)$"
                 }
             },
 
