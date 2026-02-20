@@ -1,6 +1,6 @@
 {
-  "description":"INTERNAL MERGE: 041: merge values, note that source's illegal zxx gets dropped in generic preprocessing, to in merge-specific content",
-  "comment": "NB! indicator-fixes.js validator/fixer changes ind1 to '1' since f040 has $h.",
+  "description":"INTERNAL MERGE: 041: f041s are not merged together as there's no common denominator",
+  "comment": "NB! source's illegal 'zxx' gets dropped in generic preprocessing, and NB #2! The whole source-f041 is deleted by a rule in muuntajaConfig between (failed) merge and add phases.",
   "skip": false,
   "only": false
 }
