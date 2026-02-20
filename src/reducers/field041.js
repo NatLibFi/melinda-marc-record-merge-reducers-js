@@ -10,6 +10,9 @@
  * Note that value 'zxx' is removed by a validator during preprocessing.
 */
 
+import clone from 'clone';
+import {fieldToString, nvdebug, subfieldToString} from './utils.js';
+
 const relevantSubfieldCodes = ['a', 'b', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 't'];
 
 function consistsOfThreeLetters(val) {
@@ -18,12 +21,12 @@ function consistsOfThreeLetters(val) {
 
 function removeSubfield(field, subfieldCode, value = undefined) {
   field.subfields = field.subfields.filter(sf => !isRemovableSubfield(sf));
-
   function isRemovableSubfield(sf) {
     if (sf.code !== subfieldCode) {
       return false;
     }
     if (value === undefined || sf.value === value) { // not having a value
+      nvdebug(`Removable subfield '${subfieldToString(sf)}'`);
       return true;
     }
     return false;
@@ -39,16 +42,29 @@ function handleMul(baseField, sourceField) {
 
   function handleMulSubfield(code) {
     if (hasRemovableMul(sourceField, baseField, code)) {
-      removeSubfield(sourceField, code, 'mul');
+      //removeSubfield(sourceField, code, 'mul');
+      overwriteMul(sourceField, code, baseField);
       return;
     }
     if (hasRemovableMul(baseField, sourceField, code)) {
-      removeSubfield(baseField, code, 'mul');
+      //removeSubfield(baseField, code, 'mul');
+      overwriteMul(baseField, code, sourceField);
       return;
     }
     if (isFullyRemovableSourceSubfield(baseField, sourceField, code)) {
-      removeSubfield(sourceField, code, undefined);
+      //removeSubfield(sourceField, code, 'mul');
+      overwriteMul(sourceField, code, baseField);
     }
+  }
+
+  function overwriteMul(field, code, otherField) {
+    // To preserve the common denominator (needed by counterpart lookup), don't delete 'mul'. Replace it with values from other field instead.
+    const i = field.subfields.findIndex(sf => sf.code === code && sf.value === 'mul');
+    if (i == -1) {
+      return;
+    }
+    const replacements = otherField.subfields.filter(sf => sf.code).map(sf => clone(sf));
+    field.subfields.splice(i, 1, ...replacements);
   }
 
   function isFullyRemovableSourceSubfield(baseField, sourceField, subfieldCode) {
@@ -85,8 +101,9 @@ function handleMul(baseField, sourceField) {
 }
 
 function handleUnd(baseField, sourceField) {
-  // NB! Each subfield is handled separately from others!
+  // NB! Each subfield code is handled separately from others!
   relevantSubfieldCodes.forEach(code => handleUndSubfield(code));
+  nvdebug('EXIT UND');
 
   function handleUndSubfield(subfieldCode) {
     if (hasRemovableUnd(sourceField, baseField, subfieldCode)) {
@@ -116,7 +133,7 @@ function handleUnd(baseField, sourceField) {
         return true;
       }
       if (subfields2[0].value !== 'und' && consistsOfThreeLetters(subfields2[0].value) ) {
-        return  true
+        return true;
       }
       return false;
     }
@@ -127,6 +144,7 @@ function handleUnd(baseField, sourceField) {
 }
 
 export default () => (base, source) => {
+  nvdebug('FIELD 041 START');
   const b041 = base.fields.filter(f => f.tag === '041');
   const s041 = source.fields.filter(f => f.tag === '041');
 
@@ -143,15 +161,18 @@ export default () => (base, source) => {
   handleMul(b041[0], s041[0]);
   handleUnd(b041[0], s041[0]);
 
-  // If $a und is the only subfield in the record, we might end up subfieldless:
-  if (!b041[0].subfields.length === 0) {
+  // If $a und is/was the only subfield in the record, we might end up subfieldless:
+  if (b041[0].subfields.length === 0) {
     // If base is removed, we don't want to lose information in it's IND1!
-    if (s041[0].ind1 === ' ') {
+    if (b041[0].ind1 !== ' ' && s041[0].ind1 === ' ') {
+      nvdebug(`Copy ind1='${b041  [0].ind1}' from base to source as base 041 gets deleted`);
       s041[0].ind1 = b041[0].ind1;
     }
+    nvdebug('Remove subfieldless base f041');
     base.removeField(b041[0]);
   }
-  if (!s041[0].subfields.length === 0) {
+  if (s041[0].subfields.length === 0) {
+    nvdebug('Remove subfieldless source f041');
     source.removeField(s041[0]);
   }
 
