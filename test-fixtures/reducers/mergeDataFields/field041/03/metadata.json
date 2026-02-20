@@ -1,5 +1,6 @@
 {
-  "description":"041: Keep base's crappy $d zxx.",
+  "description":"041: Don't merge fields as there's no common denominator/shared element.",
+  "comment": "041$d zxx is also crappy, but it is handled elsewhere.",
   "skip": false,
   "only": false
 }
