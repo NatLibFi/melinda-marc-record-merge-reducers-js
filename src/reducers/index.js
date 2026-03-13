@@ -72,6 +72,7 @@ export const mergeReducersForMergeUI = [
   field006(), // Tests 02 and 03 // (no config)
   field007(), // Tests 04 and 05 // (no config)
   field008(), // Tests 06, 07, and 08 // (no config)
+  field041(),
   mergeDataFields(undefined, defaultConfig.mergeConfiguration, true),  // (1. param tagPattern, 2. param config, uses config.json.mergeConfiguration as default config)
   addDataFields(defaultConfig.addConfiguration, true), // (1. param config, uses config.json.addConfiguration as default config, 2. param internal)
   postprocessor(defaultConfig, true)  // (1. param config, uses config.json as default config), 2. param internal

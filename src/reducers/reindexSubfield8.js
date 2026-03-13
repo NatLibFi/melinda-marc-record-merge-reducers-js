@@ -24,6 +24,9 @@ export default () => (base, source) => {
 function getMaxSubfield8(record) {
   // Should we cache the value here?
   const vals = recordGetAllSubfield8LinkingNumbers(record);
+  if (vals.length === 0) {
+    return 0;
+  }
   return Math.max(...vals);
 }
 

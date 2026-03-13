@@ -8,6 +8,7 @@
     { "tag": "041", "ind1": " ", "ind2": " ", "subfields": [
       { "code": "a", "value": "eng" },
       { "code": "d", "value": "zxx" },
+      { "code": "j", "value": "ger" },
       { "code": "h", "value": "swe" }
     ] }
   ]

@@ -79,9 +79,6 @@ function areMergable006Pair(field1, field2) {
   if (field1.value.length !== field2.value.length) {
     return false;
   }
-  if (!hasLegalLength(field1)) {
-    return false;
-  }
   // By default, we try to merge 008/18-34. However we are much stricter with 006 pairs, as we can not be sure they mean the same thing...
   // (There is always one 008, but 006 has 0...n instances.) Thus this does not allow any subsetting etc of, say, BK 006/07-10.
   // We should improve order stuff etc., but let's start with overstrict implementation, as the problem is largely theoretical.

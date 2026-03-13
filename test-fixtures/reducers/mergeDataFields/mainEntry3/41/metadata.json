@@ -1,3 +1,4 @@
 {
-  "description":"41: megre fields, source lacks $u and $g"
+  "description":"41: merge fields, source lacks $u and $g",
+  "only": false
 }

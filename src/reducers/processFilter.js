@@ -300,8 +300,8 @@ function operationSwapFields(record, otherRecord, fieldSpecification) {
 }
 
 export function filterOperation(base, source, operation, internal = false) {
-    nvdebug(`filterOps: ${JSON.stringify(operation)}`, debugDev);
-    if (operation.skip) {
+  //nvdebug(`filterOps: ${JSON.stringify(operation)}`, debugDev);
+  if (operation.skip) {
     nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'} SKIPPED: operation.skip: ${operation.skip}`, debugDev);
     return;
   }
@@ -313,12 +313,9 @@ export function filterOperation(base, source, operation, internal = false) {
   }
 
   const targetRecords = getTargetRecordsForOperation(base, source, operation);
-  nvdebug(`filterOps: ${operation.comment ? operation.comment : 'NIMETÖN'}`);
   if (targetRecords.length === 0) {
-    nvdebug('Failed to get the target record', debugDev);
     return;
   }
-  nvdebug(`filterOps for ${targetRecords.length} records`, debugDev);
 
   targetRecords.forEach((targetRecord, index) => processOperationForTargetRecord(targetRecord, operation, `Rec-${index}`));
 
@@ -328,7 +325,7 @@ export function filterOperation(base, source, operation, internal = false) {
       return;
     }
     
-    nvdebug(`Handling ${recordLabel}`, debugDev);
+    //nvdebug(`Handling ${recordLabel}`, debugDev);
 
     const targetFields = getSpecifiedFieldsAndFilterThem(targetRecord, operation.fieldSpecification, recordLabel);
 
@@ -367,7 +364,6 @@ export function filterOperation(base, source, operation, internal = false) {
   }
 
   function performActualOperation(targetRecord, operation, otherRecord, recordLabel = 'x') {
-    nvdebug(` PERFORM OP: ${operation.comment ? operation.comment : `NIMETÖN`} for ${recordLabel}`, debugDev);
     if (!operation.operation) {
       nvdebug('No operation defined', debugDev);
       return;

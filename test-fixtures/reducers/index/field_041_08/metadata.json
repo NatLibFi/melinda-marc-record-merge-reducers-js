@@ -1,0 +1,5 @@
+{
+  "description":"041/08: (041-04 derivate) source does not override base's lone 041$a 'mul' with 2+ language codes. Gets dropped instead.",
+  "skip": false,
+  "only": false
+}

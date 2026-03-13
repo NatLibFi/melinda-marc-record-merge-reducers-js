@@ -23,7 +23,7 @@ export default () => (base, source, ignoreLDRmismatch = false) => {
 
   // Test 01: If LDR 000/06 or 07 is different, do not merge
   // use ignoreLDRmismatch to allow merge anyways
-  if (!ignoreLDRmismatch && (source.leader[6] !== base.leader[6] || source.leader[7] !== base.leader[7])) {
+  if (!ignoreLDRmismatch && !compatibleLeaders(source.leader, base.leader)) {
     debug(`Differing LDR/06 or LDR/07, not able to merge`);
     throw new Error(`LDR 000/06 or 07 is different in base and source`);
   }
@@ -32,6 +32,22 @@ export default () => (base, source, ignoreLDRmismatch = false) => {
 
   setBaseEncodingLevel(base, source); // take the better LDR/17
   return {base, source};
+
+  function compatibleLeaders(leader1, leader2) {
+    if (leader1[6] !== leader2[6]) {
+      return false;
+    }
+    if (leader1[7] !== leader2[7]) {
+      // Hard-coded exception: don't let these prevent merge:
+      // We have 1000000+ cases with article 'b' that should be 'a'...
+      if (['a', 'b'].includes(leader1[7]) && ['a', 'b'].includes(leader2[7])) {
+        return true;
+      }
+      return false;
+    }
+
+    return true;
+  }
 };
 
 function getRecordStatus(record) {

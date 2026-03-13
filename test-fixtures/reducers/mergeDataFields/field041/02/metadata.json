@@ -1,6 +1,6 @@
 {
-  "description":"041: merge values, note that source's illegal zxx is not dropped here",
-  "comment": "it typically gets dropped in earleic generic preprocessing",
+  "description":"041: merge values, note that $j precedes $h on purpose",
+  "comment": "'zxx' gets typically dropped in earleic generic preprocessing",
   "skip": false,
   "only": false
 }

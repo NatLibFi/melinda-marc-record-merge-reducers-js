@@ -1,6 +1,6 @@
 {
-  "description":"47: don't merge fields ($0 match, but name differs)",
-  "comment": "$0 is no longer enough for acceptance. Note that source 110 becomes 710.",
+  "description":"47: merge fields ($0 match, but name differs)",
+  "comment": "pairing $0 (FIN11)012345678 is again enough for acceptance.",
   "skip": false,
   "only": false
 }
