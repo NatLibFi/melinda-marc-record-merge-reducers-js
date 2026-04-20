@@ -92,7 +92,7 @@
 
             {
                 "operation": "removeSubfield",
-                "comment": "Remove 040$e 'rda' from source (MET-370). If base is ISBD-hybrid, subfield should not be added. If rda, it already has it",
+                "comment": "Remove 040$e 'rda' from source (MET-730). If base is ISBD-hybrid, subfield should not be added. If rda, base should already have it",
                 "recordType": "source",
                 "internal": true,
                 "fieldSpecification": {
