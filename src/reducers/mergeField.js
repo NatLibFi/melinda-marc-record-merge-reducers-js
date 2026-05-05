@@ -39,7 +39,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   fixer.fix(baseRecord);
   fixer.fix(sourceRecord);
 
-  retagSource1XX(sourceRecord);
+  retagSourceFields(sourceRecord, baseRecord);
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives, internal); // NB! we should rename func, this may have nothing to with add
 
 
@@ -71,7 +71,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   }
 };
 
-export function retagSource1XX(record) {
+export function retagSourceFields(record, baseRecord) {
   record.fields.forEach(f => retagField(f));
 
   // NB! 880$6 stuff is nor currently checked...
@@ -91,6 +91,12 @@ export function retagSource1XX(record) {
       // NB! 130 might have a $t, but that's so theoretical, that I'm not checking nor handling it.
       // No other known differences (subfields, punctuation etc.)
       return;
+    }
+    if (field.tag === '243') {
+      const base243 = baseRecord.get('243');
+      if (base243) {
+        field.tag = '240';
+      }
     }
   }
 }
