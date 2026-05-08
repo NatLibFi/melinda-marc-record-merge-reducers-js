@@ -3,7 +3,8 @@
   "fields": [
     { "tag": "001", "value": "source-1" },
     { "tag": "240", "ind1": "1", "ind2": "0", "subfields": [
-        { "code": "a", "value": "Sonaatit." },
+        { "code": "a", "value": "Sonaatit," },
+        { "code": "m", "value": "piano." },
         { "code": "k", "value": "Valikoima" }
     ] }
   ]
