@@ -39,7 +39,7 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
   fixer.fix(baseRecord);
   fixer.fix(sourceRecord);
 
-  retagSourceFields(sourceRecord, baseRecord);
+  retagSourceFields(sourceRecord, baseRecord); // source f100->f700
   preprocessBeforeAdd(baseRecord, sourceRecord, config.preprocessorDirectives, internal); // NB! we should rename func, this may have nothing to with add
 
 
@@ -72,6 +72,9 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 };
 
 export function retagSourceFields(record, baseRecord) {
+  const base240 = baseRecord.get('240');
+  const base243 = baseRecord.get('243');
+
   record.fields.forEach(f => retagField(f));
 
   // NB! 880$6 stuff is nor currently checked...
@@ -90,13 +93,18 @@ export function retagSourceFields(record, baseRecord) {
       field.ind1 = '1';
       // NB! 130 might have a $t, but that's so theoretical, that I'm not checking nor handling it.
       // No other known differences (subfields, punctuation etc.)
+      // return; // We might feed the f240->f243 rule
+    }
+
+    // 240 and 243 should not co-exist -> make source use the same tag as base
+    if (field.tag === '240' && base240.length === 0 && base243.length > 0) {
+      field.tag = '243';
       return;
     }
-    if (field.tag === '243') {
-      const base243 = baseRecord.get('243');
-      if (base243) {
-        field.tag = '240';
-      }
+    if (field.tag === '243' && base240.length > 0 && base243.length === 0) {
+      field.tag = '240';
+      return;
     }
+
   }
 }
