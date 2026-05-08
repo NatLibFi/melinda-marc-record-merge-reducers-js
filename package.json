@@ -41,18 +41,18 @@
 		"@natlibfi/whatever-uses-branch": "github:natlibfi/marc-record-validators-melinda#branchName"
 	},
 	"dependencies": {
-		"@natlibfi/marc-record": "^10.0.1",
+		"@natlibfi/marc-record": "^10.0.2",
 		"@natlibfi/marc-record-merge": "^8.0.1",
 		"@natlibfi/marc-record-validators-melinda": "^12.0.15",
 		"clone": "^2.1.2",
 		"debug": "^4.4.3",
-		"isbn3": "^2.0.6"
+		"isbn3": "^2.0.7"
 	},
 	"devDependencies": {
 		"@natlibfi/fixugen": "^3.0.1",
 		"@natlibfi/fixura": "^4.0.1",
 		"cross-env": "^10.1.0",
 		"esbuild": "^0.28.0",
-		"eslint": "^10.2.1"
+		"eslint": "^10.3.0"
 	}
 }
