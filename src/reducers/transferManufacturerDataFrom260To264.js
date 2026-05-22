@@ -30,7 +30,7 @@ function hasNonManufacturerData(field) {
   return field.subfields.some(subfield => ['a', 'b', 'c'].includes(subfield.code));
 }
 
-function retagableField(field) {
+function retagableManufacturerField(field) {
   return !hasNonManufacturerData(field) && !hasTooMuchManufacturerData(field);
 }
 
@@ -108,7 +108,7 @@ function extractField(field) {
 
 }
 
-function retag(field) {
+function retagManufacturer(field) {
   field.tag = '264';
   field.ind2 = '3';
   field.subfields.forEach(subfield => renameSubfield(subfield));
@@ -132,8 +132,8 @@ function handleRecord(record) {
   relevantFields.forEach(field => processField(field));
 
   function processField(field) {
-    if (retagableField(field)) {
-      retag(field);
+    if (retagableManufacturerField(field)) {
+      retagManufacturer(field);
       return;
     }
     const newField = extractField(field);
