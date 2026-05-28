@@ -1,0 +1,61 @@
+{
+  "leader": "00000cz  a2200000n  4500",
+  "fields": [
+    { "tag": "001", "value": "000224121" },
+    { "tag": "005", "value": "20230615175905.0" },
+    { "tag": "008", "value": "970925|n|anznnbabn           | ana      " },
+    { "tag": "024", "ind1": "7", "ind2": " ", "subfields": [
+      { "code": "a", "value": "http://www.yso.fi/onto/yso/p13996" },
+      { "code": "2", "value": "uri" }
+    ]},
+    { "tag": "040", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "FI-NL" },
+      { "code": "b", "value": "fin" },
+      { "code": "f", "value": "yso/fin" }
+    ]},
+    { "tag": "065", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "00" },
+      { "code": "c", "value": "Yleistermit" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p26556" },
+      { "code": "2", "value": "yso" }
+    ]},
+    { "tag": "150", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "kaaos (lisätty tarke)" },
+      { "code": "2", "value": "yso/fin" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p13996" }
+    ]},
+    { "tag": "550", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "w", "value": "g" },
+      { "code": "a", "value": "olosuhteet" },
+      { "code": "2", "value": "yso/fin" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p25374" }
+    ]},
+    { "tag": "550", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "w", "value": "n" },
+      { "code": "a", "value": "anarkia" },
+      { "code": "2", "value": "yso/fin" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p13995" }
+    ]},
+    { "tag": "550", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "w", "value": "n" },
+      { "code": "a", "value": "epäjärjestys" },
+      { "code": "2", "value": "yso/fin" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p21058" }
+    ]},
+    { "tag": "667", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Uusi kenttä" }
+    ]},
+    { "tag": "750", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "chaos" },
+      { "code": "4", "value": "EQ" },
+      { "code": "2", "value": "yso/eng" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p13996" }
+    ]},
+    { "tag": "750", "ind1": " ", "ind2": "7", "subfields": [
+      { "code": "a", "value": "kaos" },
+      { "code": "4", "value": "EQ" },
+      { "code": "2", "value": "yso/swe" },
+      { "code": "0", "value": "http://www.yso.fi/onto/yso/p13996" }
+    ]}
+  ]
+}
