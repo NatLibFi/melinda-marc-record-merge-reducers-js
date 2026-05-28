@@ -43,6 +43,9 @@
       { "code": "2", "value": "yso/fin" },
       { "code": "0", "value": "http://www.yso.fi/onto/yso/p21058" }
     ]},
+    { "tag": "667", "ind1": " ", "ind2": " ", "subfields": [
+      { "code": "a", "value": "Tämä kenttä poistetaan" }
+    ]},
     { "tag": "750", "ind1": " ", "ind2": "7", "subfields": [
       { "code": "a", "value": "chaos" },
       { "code": "4", "value": "EQ" },
