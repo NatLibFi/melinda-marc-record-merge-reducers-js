@@ -1,7 +1,7 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import createDebugLogger from 'debug';
 import {genericControlFieldCharPosFix, hasLegalLength} from './controlFieldUtils.js';
-import {copyFields} from './utils.js';
+import {copyFields, isAuthRecord} from './utils.js';
 
 // Author: Nicholas Volk
 const singleCharacterPositionRulesForField007 = [ // (Also fixed-value longer units)
@@ -188,6 +188,10 @@ function areMergable007Pair(field1, field2) {
 }
 
 export default () => (base, source) => {
+  if (isAuthRecord(base)) { // NB! Auth does not have this field!
+    return {base, source};
+  }
+
   // NB! This implementation differs from the specs. However, that's because the specs are bad. See comments for details about the actual implementation.
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});

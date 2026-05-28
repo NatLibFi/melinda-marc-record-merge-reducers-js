@@ -1,0 +1,33 @@
+{
+    "preprocessorDirectives" :
+        [
+            {
+                "operation": "removeField",
+                "comment": "Remove all data fields from base, source is better, keep only CAT stuff",
+                "internal": false,
+                "recordType": "source",
+                "fieldSpecification": {
+                    "tagPattern": "^([1-9][1-9][1-9)$"
+                }
+            }
+        ],
+    "mergeConfiguration" :
+    {
+        "comment #1" : "These should not be any fields to merge",
+        "indicator1PreferredValues": {},
+        "indicator2PreferredValues": {},
+        "comment #2" : "List indicators that don't block merge here. Non-filing indicators do not prevent field merge (their support is hard-coded). They are mainly listed here as an example.",
+        "ignoreIndicator1" : [],
+        "ignoreIndicator2" : [],
+        "comment #3" : "If one indicator has value, and the other has not, it does not necessarily mean mismatch",
+        "tolerateBlankIndicator1": [],
+        "tolerateBlankIndicator2": [],
+        "preprocessorDirectives" : []
+    },
+
+    "addConfiguration" : {
+        "preprocessorDirectives" : []
+    },
+    "postprocessorDirectives" : []
+
+}
