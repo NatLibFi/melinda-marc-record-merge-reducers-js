@@ -3,11 +3,20 @@
         [
             {
                 "operation": "removeField",
-                "comment": "Remove all data fields from base, source is better, keep only CAT stuff",
+                "comment": "Remove all data fields from base, source is better, keep only CAT stuff and f001",
                 "internal": false,
-                "recordType": "source",
+                "recordType": "base",
                 "fieldSpecification": {
-                    "tagPattern": "^([1-9][1-9][1-9)$"
+                    "tagPattern": "^(00[2-9]|0[1-9][0-9]|[1-9][0-9][0-9])$"
+                }
+            },
+            {
+                "operation": "swapFields",
+                "comment": "Copy data from source to base",
+                "internal": false,
+                "recordType": "base",
+                "fieldSpecification": {
+                    "tagPattern": "^(00[2-9]|0[1-9][0-9]|[1-9][0-9][0-9])$"
                 }
             }
         ],
