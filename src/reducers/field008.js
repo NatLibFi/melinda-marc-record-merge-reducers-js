@@ -1,6 +1,6 @@
 import clone from 'clone';
 import {genericControlFieldCharPosFix as genericFix, hasLegalLength} from './controlFieldUtils.js';
-import {uniqArray} from './utils.js';
+import {isAuthRecord, uniqArray} from './utils.js';
 
 // NB! Used by field 006 as well as 008/18-34 = 006/01-17...
 
@@ -368,14 +368,22 @@ function process008(base, source) {
 
     //console.info(`${base008.value}\n${source008.value}`); // eslint-disable-line no-console
 
+    // 008/00-05 and 008/39 are identical for bib and auth records:
+    setOlderDateToBase(base008, source008); // 008/00-05 (OK for auth as well)
+    setCatalogingSource(base008, source008); // 008/39 (OK for auth as well)
+
+    if (isAuthRecord(base)) {
+      return;
+    }
+    // BIB-specific fixes:
+    // Type of material specific code:
     // All materials (008/00-17, and 008/35-39)
-    setOlderDateToBase(base008, source008); // 008/00-05
+
     setDates(base008, source008); // 008/06,07-10,11-14
     setPlaceOfPublication(base008, source008); // 008/15-17
 
     setLanguage(base008, source008); // 008/35-37
-    setCatalogingSource(base008, source008); // 008/39
-    // Type of material specific code:
+
     const baseTypeOfMaterial = base.getTypeOfMaterial();
     const sourceTypeOfMaterial = source.getTypeOfMaterial();
     singleCharacterPositionRules.forEach(rule => genericFix(base008, source008, baseTypeOfMaterial, sourceTypeOfMaterial, rule));
@@ -391,7 +399,6 @@ function process008(base, source) {
 }
 
 export default (checkLDR = false) => (base, source) => {
-
   process008(base, source);
 
   return {base, source};
