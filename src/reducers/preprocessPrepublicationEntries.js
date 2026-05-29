@@ -1,5 +1,5 @@
 import {encodingLevelIsBetterThanPrepublication, getCounterpart, getEncodingLevel, isEnnakkotietoField} from '@natlibfi/marc-record-validators-melinda';
-import {nvdebugFieldArray} from './utils.js';
+import {isAuthRecord, nvdebugFieldArray} from './utils.js';
 
 import createDebugLogger from 'debug';
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessPrepublicationEntries');
@@ -7,6 +7,9 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:pr
 const debugDev = debug.extend('dev');
 
 export function handlePrepublicationNameEntries(base, source) {
+  if (isAuthRecord(base)) {
+    return;
+  }
   const baseEncodingLevel = getEncodingLevel(base);
   if (!encodingLevelIsBetterThanPrepublication(baseEncodingLevel)) {
     // NB! Name entry fields can be merged or added to base later on. They just don't need preprocessing.
