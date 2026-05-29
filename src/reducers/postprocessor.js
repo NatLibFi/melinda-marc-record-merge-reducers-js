@@ -6,7 +6,7 @@ import {IndicatorFixes, MergeField500Lisapainokset, MultipleSubfield0s, RemoveDu
         recordResetSubfield6OccurrenceNumbers, removeWorsePrepubField500s, removeWorsePrepubField594s} from '@natlibfi/marc-record-validators-melinda';
 
 import {mtsProcessRecord} from './preprocessMetatietosanasto.js';
-import {fieldToString, nvdebug} from './utils.js';
+import {fieldToString, isAuthRecord, nvdebug} from './utils.js';
 import {filterOperations} from './processFilter.js';
 import {convertInternalControlNumbersToCanceled, addMergeNoteField, removeCATFields, removeUnneededFields} from './utilsForInternalMerge.js';
 
@@ -32,46 +32,49 @@ export default (config = defaultConfig, internal = false) => (base, source) => {
   //nvdebug(`HSP CONF ${config}`, debugDev);
   filterOperations(base, source, config.postprocessorDirectives, internal); // declared in preprocessor
 
-  //deleteAllPrepublicationNotesFromField500InNonPubRecord(base); // Already done when LDR/17 was copied from source
-  removeWorsePrepubField500s(base);
-  removeWorsePrepubField594s(base);
-  //base.fields.forEach(field => nvdebug(`WP5: ${fieldToString(field)}`, debugDev));
+  if (!isAuthRecord(base)) {
+    //deleteAllPrepublicationNotesFromField500InNonPubRecord(base); // Already done when LDR/17 was copied from source
+    removeWorsePrepubField500s(base);
+    removeWorsePrepubField594s(base);
+    //base.fields.forEach(field => nvdebug(`WP5: ${fieldToString(field)}`, debugDev));
 
-  IndicatorFixes().fix(base); // Fix 245 and non-filing indicators
-  //base.fields.forEach(field => nvdebug(`WP6: ${fieldToString(field)}`, debugDev));
+    IndicatorFixes().fix(base); // Fix 245 and non-filing indicators
+    //base.fields.forEach(field => nvdebug(`WP6: ${fieldToString(field)}`, debugDev));
 
-  MergeField500Lisapainokset().fix(base);
-  //base.fields.forEach(field => nvdebug(`WP7: ${fieldToString(field)}`, debugDev));
-  mtsProcessRecord(base);
+    MergeField500Lisapainokset().fix(base);
+    //base.fields.forEach(field => nvdebug(`WP7: ${fieldToString(field)}`, debugDev));
+    mtsProcessRecord(base);
 
-  //base.fields.forEach(field => nvdebug(`WP50: ${fieldToString(field)}`, debugDev));
-  ResolveOrphanedSubfield6s().fix(base); // remove orphaned $6 fields or set them to 880 $6 700-00...
+    //base.fields.forEach(field => nvdebug(`WP50: ${fieldToString(field)}`, debugDev));
+    ResolveOrphanedSubfield6s().fix(base); // remove orphaned $6 fields or set them to 880 $6 700-00...
 
-  //base.fields.forEach(field => nvdebug(`WP51: ${fieldToString(field)}`, debugDev));
-  const thereCanBeOnlyOneSubfield0 = MultipleSubfield0s({}); // MRA-392
-  thereCanBeOnlyOneSubfield0.fix(base);
+    //base.fields.forEach(field => nvdebug(`WP51: ${fieldToString(field)}`, debugDev));
+    const thereCanBeOnlyOneSubfield0 = MultipleSubfield0s({}); // MRA-392
+    thereCanBeOnlyOneSubfield0.fix(base);
 
-  if (internal) {
-    debugDev(`*** INTERNAL MERGE postprocessor additions ***`);
-    // Adding merge note should maybe be done in UI
-    addMergeNoteField(base, source, 'FI-MELINDA');
-    // Convert 035 $a to 035 $z
-    convertInternalControlNumbersToCanceled(base, source, internal, 'FI-MELINDA');
-    removeCATFields(base, source, internal);
-    // Remove 001+003+005
-    removeUnneededFields(base, source, internal);
+    if (internal) {
+      debugDev(`*** INTERNAL MERGE postprocessor additions ***`);
+      // Adding merge note should maybe be done in UI
+      addMergeNoteField(base, source, 'FI-MELINDA');
+      // Convert 035 $a to 035 $z
+      convertInternalControlNumbersToCanceled(base, source, internal, 'FI-MELINDA');
+      removeCATFields(base, source, internal);
+      // Remove 001+003+005
+      removeUnneededFields(base, source, internal);
+    }
+
+    //const res =
+    RemoveDuplicateDataFields().fix(base);
+    //nvdebug(`Re-DUP ${JSON.stringify(res)}`, debugDev);
+
+    RemoveInferiorDataFields().fix(base);
+    //res.message.forEach(msg => nvdebug(msg, debugDev));
+
+    //removeDuplicateDatafieldsOld(base);
+
+    SyncLanguage().fix(base); // Sync 008/35-37 and 041$a/$d
+
   }
-
-  //const res =
-  RemoveDuplicateDataFields().fix(base);
-  //nvdebug(`Re-DUP ${JSON.stringify(res)}`, debugDev);
-
-  RemoveInferiorDataFields().fix(base);
-  //res.message.forEach(msg => nvdebug(msg, debugDev));
-
-  //removeDuplicateDatafieldsOld(base);
-
-  SyncLanguage().fix(base); // Sync 008/35-37 and 041$a/$d
 
   const sorter = SortFields({});
   sorter.fix(base);
