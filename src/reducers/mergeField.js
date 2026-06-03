@@ -10,7 +10,7 @@ import {resetCorrespondingField880} from './resetField880Subfield6AfterFieldTran
 
 const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
 
-// Specs: https://workgroups.helsinki.fi/x/K1ohCw (though we occasionally differ from them)...
+// Original *outdated* specs: https://workgroups.helsinki.fi/x/K1ohCw
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:mergeField');
 //const debugData = debug.extend('data');
@@ -28,8 +28,8 @@ export default (tagPattern = undefined, config = defaultConfig.mergeConfiguratio
 
   const activeTagPattern = getTagPattern(tagPattern, config);
 
-  nvdebug(JSON.stringify(baseRecord));
-  nvdebug(JSON.stringify(sourceRecord));
+  //nvdebug(JSON.stringify(baseRecord));
+  //nvdebug(JSON.stringify(sourceRecord));
 
   sourceRecord.fields.forEach(f => nvdebug(`SRC1: ${fieldToString(f)}`, debugDev));
 
@@ -80,20 +80,29 @@ export function retagSourceFields(record, baseRecord) {
   // NB! 880$6 stuff is nor currently checked...
 
   function retagField(field) {
+    // 100, 110 and 111 are moved to corresponding (and repeatable) 7XX field. It is possible for them to merge back to base's 1XX field, though.
+    // But, in essence, source-1XX never becomes 1XX in the merged record.
     if (['100', '110', '111'].includes(field.tag)) { // 1XX -> 7XX
       const newTag = `7${field.tag.substring(1)}`;
       resetCorrespondingField880(field, record, newTag);
       field.tag = newTag;
       return;
     }
+    // 130 (pairs with 240) is a bit trickier, as either f130 and f240 should really exist.
     if (field.tag === '130') {
-      resetCorrespondingField880(field, record, '240');
-      field.tag = '240';
-      field.ind2 = field.ind1;
-      field.ind1 = '1';
-      // NB! 130 might have a $t, but that's so theoretical, that I'm not checking nor handling it.
-      // No other known differences (subfields, punctuation etc.)
-      // return; // We might feed the f240->f243 rule
+      // Added base f100/f110/f111&f240 sanity check after MELINDA-12703.
+      // If condition is not triggered, the source f130 can now merge with base's f130 or be copied to base, if there's no f130.
+      const baseFields = baseRecord.fields.filter(f => ['100', '110', '111', '240'].includes(f.tag));
+      if (baseFields.length > 0) {
+        resetCorrespondingField880(field, record, '240');
+        field.tag = '240';
+        field.ind2 = field.ind1;
+        field.ind1 = '1';
+        field.merged = 1; // triggers ending punctuation check (f130 has punc, and f240 has not)
+        // NB! 130 might have a $t, but that's so theoretical, that I'm not checking nor handling it.
+        // No other known differences (subfields, punctuation etc.)
+        // return; // We might feed the f240->f243 rule
+      }
     }
 
     // 240 and 243 should not co-exist -> make source use the same tag as base
