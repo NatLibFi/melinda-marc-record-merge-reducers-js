@@ -22,7 +22,7 @@
         ],
     "mergeConfiguration" :
     {
-        "comment #1" : "These should not be any fields to merge",
+        "comment #1" : "There should not be any fields to merge (as per auth record update logic)",
         "indicator1PreferredValues": {},
         "indicator2PreferredValues": {},
         "comment #2" : "List indicators that don't block merge here. Non-filing indicators do not prevent field merge (their support is hard-coded). They are mainly listed here as an example.",
