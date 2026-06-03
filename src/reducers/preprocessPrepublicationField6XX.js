@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 
 import {getEncodingLevel, isEnnakkotietoField, isEnnakkotietoSubfield} from '@natlibfi/marc-record-validators-melinda';
 
-import {fieldToString, nvdebug, nvdebugFieldArray} from './utils.js';
+import {fieldToString, isAuthRecord, nvdebug, nvdebugFieldArray} from './utils.js';
 
 const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:preprocessPrepublicationField6XX');
 //const debugData = debug.extend('data');
@@ -24,6 +24,9 @@ ENNAKKOTIETOMERKINNÄLLISET ASIASANAT (600-655) $gENNAKOTIETO / $9 ENNAKKOTIETO
 */
 
 export function handleField6XX(base, source) {
+  if (isAuthRecord(base)) {
+    return;
+  }
   // This might form it's own file reprocessPrepublication6XX.js...
   const baseEncodingLevel = getEncodingLevel(base);
   if (baseEncodingLevel === '8') {

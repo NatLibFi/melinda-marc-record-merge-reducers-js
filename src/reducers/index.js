@@ -33,7 +33,7 @@ export const localReducers = [
   //// PREPROCESSOR STUFF:
   // UTF-8 normalization: if wanted, see mergeField.js for an example
   genericPreprocessor(), // Should this be moved downward? // (1 param config, uses config.json as default config, 2 param. internal)
-  metatietosanastoNormalizations(),  // (no config)
+  metatietosanastoNormalizations(),  // (no config) (auth check added)
   prepublicationPreprocessor(), // (noconfig)
   removeDuplicatesFromSource(), // handles $6 and $8 chains as well (but apparently badly) // (no config)
   reindexSubfield6(), // Reindex $6 subfields from source, base remains unchanged. // (no config)

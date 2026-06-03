@@ -1,0 +1,4 @@
+{
+  "description":"Auth record 01: remove fields from base, and copy the from source 010-999",
+  "only": true
+}

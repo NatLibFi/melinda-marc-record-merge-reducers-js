@@ -27,7 +27,7 @@
 //
 
 
-import {fieldToString, nvdebug, nvdebugFieldArray} from './utils.js';
+import {fieldToString, isAuthRecord, nvdebug, nvdebugFieldArray} from './utils.js';
 import {handleField6XX} from './preprocessPrepublicationField6XX.js';
 import {encodingLevelIsBetterThanPrepublication, getEncodingLevel,
   getPrepublicationLevel, getRelevant5XXFields, isFikkaRecord,
@@ -45,6 +45,9 @@ const debugDev = debug.extend('dev');
 //const NA = 4; // Non-Applicable; used by Fennica-specific encoding level only
 
 export default () => (base, source) => {
+  if (isAuthRecord(base)) {
+    return {base, source};
+  }
   //nvdebug('BASE', debugDev);
   //nvdebug(JSON.stringify(base), debugDev);
   //nvdebug('SOURCE', debugDev);

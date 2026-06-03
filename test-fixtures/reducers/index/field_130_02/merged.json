@@ -1,0 +1,8 @@
+{
+  "leader": "01331cam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "base" },
+    { "tag": "100", "ind1": "0", "ind2": " ", "subfields": [ {"code": "a", "value": "Snorri Sturluson."} ]},
+    { "tag": "240", "ind1": "1", "ind2": "0", "subfields": [ { "code": "a", "value": "Whatever" } ] }
+  ]
+}
