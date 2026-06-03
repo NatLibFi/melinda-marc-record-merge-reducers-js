@@ -6,7 +6,7 @@ import {MarcRecord} from '@natlibfi/marc-record';
 import {Field505Separators, fieldTrimSubfieldValues, FixSami041, NormalizeQualifyingInformation, NormalizeUTF8Diacritics, recordFixRelatorTerms, Remove041zxx, SanitizeVocabularySourceCodes, SubfieldValueNormalizations, UpdateField540} from '@natlibfi/marc-record-validators-melinda';
 
 
-import {getCatalogingLanguage} from './utils.js';
+import {getCatalogingLanguage, isAuthRecord} from './utils.js';
 import {filterOperations} from './processFilter.js';
 import {recordRemoveDuplicateSubfieldsFromFields} from './removeDuplicateSubfields.js';
 import {reindexDuplicateSubfield6Indexes} from './reindexSubfield6.js';
@@ -14,13 +14,22 @@ const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:pr
 const debugData = debug.extend('data');
 //const debugDev = debug.extend('dev');
 
-const defaultConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultBibConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'config.json'), 'utf8'));
+const defaultAuthConfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'src', 'reducers', 'configAuth.json'), 'utf8'));
+
 
 function trimRecord(record) {
   record.fields?.forEach(f => fieldTrimSubfieldValues(f));
 }
 
-export default (config = defaultConfig, internal = false) => (base, source) => {
+function getDefaultConfig(record) {
+  if (isAuthRecord(record)) {
+    return defaultAuthConfig;
+  }
+  return defaultBibConfig;
+}
+export default (externalConfig = undefined, internal = false) => (base, source) => {
+  const config = externalConfig || getDefaultConfig(base);
   debug(`Running preprocessor (internal: ${internal})`);
   //debug(`Running preprocessor with ${JSON.stringify(config)}, ${internal}`);
   //debugData(`base: ${JSON.stringify(base)}`);

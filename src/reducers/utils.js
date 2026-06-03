@@ -122,3 +122,8 @@ export function getCatalogingLanguage(record) {
 export function uniqArray(arr) {
   return arr.filter((val, i) => arr.indexOf(val) === i);
 }
+
+
+export function isAuthRecord(record) {
+  return record.leader[6] === 'z';
+}

@@ -1,0 +1,5 @@
+{
+  "description": "f130/03: MELINDA-12703-ish: Drop source f130",
+  "comment": "f130 is moved to f240, but it fails to merged and is not added since f240 is NR.",
+  "only": false
+}

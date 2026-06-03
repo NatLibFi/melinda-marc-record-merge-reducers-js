@@ -1,6 +1,6 @@
 import createDebugLogger from 'debug';
 import {MarcRecord} from '@natlibfi/marc-record';
-import {copyFields, nvdebug} from './utils.js';
+import {copyFields, isAuthRecord, nvdebug} from './utils.js';
 import {genericControlFieldCharPosFix, hasLegalLength} from './controlFieldUtils.js';
 import {getSingleCharacterPositionRules, isSpecificLiteraryForm, setFormOfItem, setLiteraryForm} from './field008.js';
 // Test 02: If Leader 000/06 is 'o' or 'p' in source, copy 006 from source to base as new field (2x)
@@ -14,6 +14,9 @@ const debugDev = debug.extend('dev');
 export default () => (base, source) => {
   // NB! This implementation differs from the specs. https://workgroups.helsinki.fi/x/K1ohCw
   // However, that's because the specs are bad. See comments for details.
+  if (isAuthRecord(base)) { // NB! Auth does not have this field!
+    return {base, source};
+  }
 
   const baseRecord = new MarcRecord(base, {subfieldValues: false});
   const sourceRecord = new MarcRecord(source, {subfieldValues: false});

@@ -2,7 +2,7 @@ import createDebugLogger from 'debug';
 //import {/*fieldToString,*/ nvdebug} from './utils';
 
 import {fieldRemoveDuplicateSubfields} from './removeDuplicateSubfields.js';
-import {fieldToString, getCatalogingLanguage, nvdebug, uniqArray} from './utils.js';
+import {fieldToString, getCatalogingLanguage, isAuthRecord, nvdebug, uniqArray} from './utils.js';
 
 // Handle various MTS terms: open abbreviations, normalize to MTS format, translate
 
@@ -142,6 +142,10 @@ function mtsCaseField(field, catalogingLanguage) {
 
 
 export function mtsProcessRecord(record) {
+  if (isAuthRecord(record)) {
+    return;
+  }
+
   const catalogingLanguage = getCatalogingLanguage(record);
   record.fields.forEach(field => mtsCaseField(field, catalogingLanguage));
 }
