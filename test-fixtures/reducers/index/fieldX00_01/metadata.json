@@ -1,5 +1,5 @@
 {
-  "description":"X00/01: Retag 1XX fields using preprocessor rule, now with a field 880 twist",
-  "comment": "Note that 130 goes to 240",
-  "only": false
+  "description":"X00/01: Retag 1XX fields using a preprocessor rule, now with a field 880 twist and f130 tuning",
+  "comment": "Note that 1XX->7XX applies to 100, 110 and 111. f130 is moved beacuse of base-f240.",
+  "only": true
 }
