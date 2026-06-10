@@ -68,7 +68,7 @@ export const mergeReducersForMergeUI = [
 
   //// ACTUAL MERGE/ADD STUFF:
   //internalFields(), // LOW, CAT, SID. Nowadays part of genericDatafield()
-  leader(true), // Test 01 // (1. param ignoreLDRmismatch, defaults to false so that differing LDR/06 + LDR/07 are errored
+  leader(), // Test 01 // (1. param ignoreLDRmismatch, defaults to false so that differing LDR/06 + LDR/07 are errored
   field006(), // Tests 02 and 03 // (no config)
   field007(), // Tests 04 and 05 // (no config)
   field008(), // Tests 06, 07, and 08 // (no config)
