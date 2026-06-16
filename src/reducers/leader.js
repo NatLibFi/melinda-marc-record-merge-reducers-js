@@ -3,7 +3,7 @@ import createDebugLogger from 'debug';
 import {baseHasEqualOrHigherEncodingLevel, deleteAllPrepublicationNotesFromField500InNonPubRecord, getEncodingLevel} from '@natlibfi/marc-record-validators-melinda';
 import {isAuthRecord} from './utils.js';
 
-export default () => (base, source, ignoreLDRmismatch = false) => {
+export default (ignoreLDRmismatch = false) => (base, source) => {
   const debug = createDebugLogger('@natlibfi/melinda-marc-record-merge-reducers:leader');
   if (isAuthRecord(base)) {
     base.leader = source.leader; // Can't do leader with config
