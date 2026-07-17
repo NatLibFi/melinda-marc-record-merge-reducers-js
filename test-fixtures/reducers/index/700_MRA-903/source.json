@@ -1,0 +1,39 @@
+{
+  "leader": "01331nam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "123456"},
+     {
+                "tag": "100",
+                "ind1": "1",
+                "ind2": " ",
+                "subfields": [
+                    {
+                        "code": "a",
+                        "value": "Fichtelius, Erik,"
+                    },
+                    {
+                        "code": "e",
+                        "value": "författare,"
+                    },
+                    {
+                        "code": "e",
+                        "value": "intervjuare."
+                    }
+                ]
+            },            {
+                "tag": "700",
+                "ind1": "1",
+                "ind2": " ",
+                "subfields": [
+                    {
+                        "code": "a",
+                        "value": "Persson, Göran,"
+                    },
+                    {
+                        "code": "e",
+                        "value": "intervjuobjekt."
+                    }
+                ]
+            }
+  ]
+}

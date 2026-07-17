@@ -1,0 +1,32 @@
+{
+  "leader": "01331nam a22003494i 4500",
+  "fields": [
+    { "tag": "001", "value": "12345"},
+                {
+                "tag": "040",
+                "ind1": " ",
+                "ind2": " ",
+                "subfields": [
+                    {
+                        "code": "b",
+                        "value": "fin"
+                    }
+                ]
+            },
+     {
+                "tag": "100",
+                "ind1": "1",
+                "ind2": " ",
+                "subfields": [
+                    {
+                        "code": "a",
+                        "value": "Fichtelius, Erik,"
+                    },
+                    {
+                        "code": "e",
+                        "value": "kirjoittaja."
+                    }
+                ]
+            }
+  ]
+}
