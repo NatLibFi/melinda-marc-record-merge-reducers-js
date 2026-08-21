@@ -47,14 +47,23 @@ function setOlderDateToBase(base008, source008) { // 008/00-05
 function sourceTypeOfDateIsBetter(base008Value, source008Value) {
   const typeOfDateB = base008Value.substring(6, 7);
   const typeOfDateS = source008Value.substring(6, 7);
+  // If base value is not coded, use a legal source value:
+  if (typeOfDateB === '|' && ['b', 'c', 'd', 'e', 'i', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u']) {
+    // Should we check 008/07-10 to see that some sanity is preserved? (Bit of an overkill, though)
+    return true;
+  }
   // Source knows that CR has ended, base does not...
   if (typeOfDateS === 'd' && ['c', 'u', '|'].includes(typeOfDateB)) {
     return true;
   }
+
   return false;
 }
 
 function setDates(base008, source008) { // 008/06-14 (stub, extend later on)
+  // Replace the whole range? Eg. "s2000####" vs "r19902000"?
+
+  // Currently replace only 008/06 in certain contexts...
   if (sourceTypeOfDateIsBetter(base008.value, source008.value)) {
     base008.value = `${getDateEnteredOnFile(base008)}${source008.value.substring(6, 15)}${base008.value.substring(15)}`;
     return;
