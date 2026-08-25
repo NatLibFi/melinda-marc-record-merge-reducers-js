@@ -1,0 +1,5 @@
+{
+  "description":"19: reprint > single year",
+  "comment": "008/06-14 prefers reprint over a single year, if reprint's 008/11-14 === single year's 008/07-10",
+  "only": false
+}
