@@ -47,18 +47,56 @@ function setOlderDateToBase(base008, source008) { // 008/00-05
 function sourceTypeOfDateIsBetter(base008Value, source008Value) {
   const typeOfDateB = base008Value.substring(6, 7);
   const typeOfDateS = source008Value.substring(6, 7);
-  // Source knows that CR has ended, base does not...
-  if (typeOfDateS === 'd' && ['c', 'u', '|'].includes(typeOfDateB)) {
+    // If base value is not coded, use a legal source value:
+  if (typeOfDateB === '|' && ['b', 'c', 'd', 'e', 'i', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u'].includes(typeOfDateS)) {
+    // Should we check 008/07-10 to see that some sanity is preserved? (Bit of an overkill, though)
     return true;
   }
   return false;
 }
 
+function sourceTypeOfDateAndDatesAreBetter(base008Value, source008Value) {
+  const typeOfDateB = base008Value.substring(6, 7);
+  const typeOfDateS = source008Value.substring(6, 7);
+
+  const year1B = base008Value.substring(7, 10);
+  const year1S = source008Value.substring(7, 10);
+
+  //const year2B = base008Value.substring(11, 14);
+  const year2S = source008Value.substring(11, 14);
+
+  if (typeOfDateB === 's' && typeOfDateS === 'r' && year1B === year2S ) { // reprint 'r' might be more accurate than normal 's'
+    return true;
+  }
+
+  if (typeOfDateB === 's' && typeOfDateS === 't' && year1B === year1S) { // 't' is contains more information (008/10-14) than 's'
+    return true;
+  }
+
+  // Source knows that CR has ended, base does not...
+  if (typeOfDateS === 'd' && ['c', 'u', '|'].includes(typeOfDateB)) {
+    return true;
+  }
+
+  return false;
+}
+
 function setDates(base008, source008) { // 008/06-14 (stub, extend later on)
-  if (sourceTypeOfDateIsBetter(base008.value, source008.value)) {
+  // Replace the whole range? Eg. "s2000####" vs "r19902000"?
+
+
+  if (sourceTypeOfDateIsBetter(base008.value, source008.value)) { // 008/06 eg. source 's' is better than base '|'
+    base008.value = `${getDateEnteredOnFile(base008)}${source008.value.substring(6, 7)}${base008.value.substring(7)}`;
+    return;
+  }
+
+  if (sourceTypeOfDateAndDatesAreBetter(base008.value, source008.value)) { // 008/06-14
     base008.value = `${getDateEnteredOnFile(base008)}${source008.value.substring(6, 15)}${base008.value.substring(15)}`;
     return;
   }
+
+
+
 }
 
 // NB! good, not all, since uu/unknown and '||' are not listed:
