@@ -48,7 +48,7 @@ function sourceTypeOfDateIsBetter(base008Value, source008Value) {
   const typeOfDateB = base008Value.substring(6, 7);
   const typeOfDateS = source008Value.substring(6, 7);
     // If base value is not coded, use a legal source value:
-  if (typeOfDateB === '|' && ['b', 'c', 'd', 'e', 'i', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u']) {
+  if (typeOfDateB === '|' && ['b', 'c', 'd', 'e', 'i', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u'].includes(typeOfDateS)) {
     // Should we check 008/07-10 to see that some sanity is preserved? (Bit of an overkill, though)
     return true;
   }
@@ -60,12 +60,16 @@ function sourceTypeOfDateAndDatesAreBetter(base008Value, source008Value) {
   const typeOfDateS = source008Value.substring(6, 7);
 
   const year1B = base008Value.substring(7, 10);
-  //const years2S = source008Value.substring(7, 10);
+  const year1S = source008Value.substring(7, 10);
 
   //const year2B = base008Value.substring(11, 14);
   const year2S = source008Value.substring(11, 14);
 
   if (typeOfDateB === 's' && typeOfDateS === 'r' && year1B === year2S ) { // reprint 'r' might be more accurate than normal 's'
+    return true;
+  }
+
+  if (typeOfDateB === 's' && typeOfDateS === 't' && year1B === year1S) { // 't' is contains more information (008/10-14) than 's'
     return true;
   }
 
