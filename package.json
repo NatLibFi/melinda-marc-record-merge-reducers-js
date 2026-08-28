@@ -41,9 +41,9 @@
 		"@natlibfi/whatever-uses-branch": "github:natlibfi/marc-record-validators-melinda#branchName"
 	},
 	"dependencies": {
-		"@natlibfi/marc-record": "^10.0.2",
+		"@natlibfi/marc-record": "^11.0.3",
 		"@natlibfi/marc-record-validate": "^9.0.1",
-		"@natlibfi/marc-record-validators-melinda": "^13.0.1",
+		"@natlibfi/marc-record-validators-melinda": "^13.0.4",
 		"clone": "^2.1.2",
 		"debug": "^4.4.3",
 		"isbn3": "^2.0.10"
