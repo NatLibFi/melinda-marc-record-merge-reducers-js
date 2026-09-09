@@ -6,18 +6,13 @@
       "ind1": "1",
       "ind2": " ",
       "subfields": [
-        {
-          "code": "a",
-          "value": "Tuisku, Sara,"
-        },
-        {
-          "code": "d",
-          "value": "1974-"
-        },
-        {
-          "code": "0",
-          "value": "(FIN11)000123456"
-        }
+        { "code": "a", "value": "Tuisku, Sara." },
+        { "code": "0", "value": "(FIN11)000123456" }
+      ]
+    },
+    { "tag": "700", "ind1": "1", "ind2": " ", "subfields": [
+        { "code": "a", "value": "Ruisku, Lara," },
+        { "code": "d", "value": "1974-" }
       ]
     }
   ]
