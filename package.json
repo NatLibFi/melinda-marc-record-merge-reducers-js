@@ -42,11 +42,11 @@
 	},
 	"dependencies": {
 		"@natlibfi/marc-record": "^11.0.3",
-		"@natlibfi/marc-record-validate": "^9.0.1",
-		"@natlibfi/marc-record-validators-melinda": "^13.0.4",
+		"@natlibfi/marc-record-validate": "^9.0.2",
+		"@natlibfi/marc-record-validators-melinda": "^13.0.5",
 		"clone": "^2.1.2",
 		"debug": "^4.4.3",
-		"isbn3": "^2.0.10"
+		"isbn3": "^2.0.11"
 	},
 	"devDependencies": {
 		"@natlibfi/fixugen": "^3.0.1",
@@ -54,6 +54,6 @@
 		"@natlibfi/marc-record-merge": "^8.0.1",
 		"cross-env": "^10.1.0",
 		"esbuild": "^0.28.2",
-		"eslint": "^10.9.1"
+		"eslint": "^10.10.0"
 	}
 }
